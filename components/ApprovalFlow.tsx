@@ -27,13 +27,15 @@ export default function ApprovalFlow() {
       display: "flex",
       alignItems: "center",
       gap: 9,
-      padding: "9px 18px",
+      justifyContent: "center",
+      flex: "none",
+      padding: "9px 16px",
       borderRadius: 999,
       whiteSpace: "nowrap",
       fontFamily: "var(--font-space)",
       fontSize: 11.5,
       fontWeight: 600,
-      letterSpacing: "0.16em",
+      letterSpacing: "0.14em",
       transition: "all 520ms cubic-bezier(0.4,0,0.2,1)",
       border: active ? "1px solid rgba(11,95,255,0.85)" : "1px solid var(--es-line)",
       color: active ? "#8FBAFF" : "var(--es-faint)",
@@ -57,14 +59,18 @@ export default function ApprovalFlow() {
 
   return (
     <div style={{ marginTop: "clamp(26px,4vh,44px)", display: "flex", flexDirection: "column", gap: "clamp(20px,3vh,30px)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 0, flexWrap: "wrap", rowGap: 14 }}>
-        {STAGES.map((label, i) => (
-          <div key={label} style={{ display: "contents" }}>
+      <div className="es-tracker" style={{ display: "flex", alignItems: "center", flexWrap: "wrap", rowGap: 12 }}>
+        <div style={pill(0)}>
+          <span style={dot(0)} />
+          {STAGES[0]}
+        </div>
+        {[1, 2].map((i) => (
+          <div key={STAGES[i]} className="es-step" style={{ display: "flex", alignItems: "center", flex: "1 1 auto", minWidth: 0 }}>
+            <span className="es-conn" style={{ flex: "1 1 20px", minWidth: 16, height: 1, background: "var(--es-line)" }} />
             <div style={pill(i)}>
               <span style={dot(i)} />
-              {label}
+              {STAGES[i]}
             </div>
-            {i < 2 && <div style={{ flex: "1 1 30px", minWidth: 24, height: 1, position: "relative", background: "var(--es-line)" }} />}
           </div>
         ))}
       </div>
@@ -75,9 +81,10 @@ export default function ApprovalFlow() {
 
       <div
         style={{
-          border: idle ? "1px solid var(--es-line)" : "1px solid rgba(11,95,255,0.3)",
-          borderRadius: 12,
-          padding: "20px 22px",
+          border: idle ? "1px solid var(--es-edge)" : "1px solid rgba(11,95,255,0.42)",
+          borderRadius: 6,
+          padding: "18px 20px",
+          background: "var(--es-card)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -85,7 +92,7 @@ export default function ApprovalFlow() {
           flexWrap: "wrap",
           transition: "border-color 600ms ease,box-shadow 600ms ease,opacity 600ms ease",
           opacity: idle ? 0.35 : 1,
-          boxShadow: idle ? "none" : "0 0 34px rgba(11,95,255,0.09)",
+          boxShadow: `inset 0 1px 0 ${idle ? "var(--es-lip)" : "rgba(120,175,255,0.22)"}`,
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 7, minWidth: 0, flex: "1 1 220px" }}>

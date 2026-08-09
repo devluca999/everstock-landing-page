@@ -10,10 +10,14 @@
   --es-dim: rgba(242, 241, 237, 0.72);
   --es-faint: rgba(242, 241, 237, 0.44);
   --es-line: rgba(242, 241, 237, 0.16);
+  --es-hair: rgba(242, 241, 237, 0.07);
   --es-grid: rgba(226, 222, 214, 0.11);
   --es-glow: 0 0 22px rgba(16, 17, 21, 0.98), 0 0 58px rgba(16, 17, 21, 0.85);
   --es-logo-glow: 0 0 20px rgba(16, 17, 21, 0.9);
-  --es-panel: rgba(20, 21, 25, 0.74);
+  --es-panel: rgba(23, 29, 36, 0.78);
+  --es-edge: rgba(190, 212, 240, 0.16);
+  --es-lip: rgba(206, 226, 252, 0.1);
+  --es-card: rgba(32, 40, 50, 0.5);
   --es-pill: rgba(242, 241, 237, 0.07);
   --es-grad-mid: #8A8D93;
   --es-grad-end: #55585F;
@@ -28,10 +32,14 @@
   --es-dim: rgba(22, 23, 27, 0.7);
   --es-faint: rgba(22, 23, 27, 0.46);
   --es-line: rgba(22, 23, 27, 0.18);
+  --es-hair: rgba(22, 23, 27, 0.09);
   --es-grid: rgba(18, 18, 20, 0.15);
   --es-glow: 0 0 22px rgba(255, 255, 255, 0.98), 0 0 58px rgba(255, 255, 255, 0.9);
   --es-logo-glow: 0 0 18px rgba(255, 255, 255, 0.95);
-  --es-panel: rgba(255, 255, 255, 0.8);
+  --es-panel: rgba(247, 250, 253, 0.82);
+  --es-edge: rgba(22, 40, 66, 0.15);
+  --es-lip: rgba(255, 255, 255, 0.85);
+  --es-card: rgba(255, 255, 255, 0.55);
   --es-pill: rgba(22, 23, 27, 0.05);
   --es-grad-mid: #5F6268;
   --es-grad-end: #9B9EA4;
@@ -113,32 +121,81 @@ a:hover {
 }
 
 /* ============================================================
-   Responsive layout system (3-step ladder). Real cascade rules,
-   so no !important hacks: mobile-first base, md/lg add richness.
+   Panel system (redesign): full-width industrial bands +
+   asymmetric offset tabs on edge/lip surfaces. clamp-responsive.
    ============================================================ */
-.es-panel {
-  margin: 0 16px clamp(30px, 4.2vh, 46px);
-  border-radius: 22px;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  padding: clamp(40px, 7vh, 66px) clamp(20px, 5vw, 30px);
+.es-band,
+.es-tab {
+  position: relative;
+  border-top: 1px solid var(--es-edge);
+  border-bottom: 1px solid var(--es-edge);
+  box-shadow: inset 0 1px 0 var(--es-lip);
+  backdrop-filter: blur(18px) saturate(132%);
+  -webkit-backdrop-filter: blur(18px) saturate(132%);
+}
+/* full-width band */
+.es-band {
+  width: 100%;
+  margin: 0;
+  padding: clamp(74px, 10vh, 130px) 0;
+}
+.es-band-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 68px);
+}
+/* offset "tab" that extends from a screen edge */
+.es-tab {
+  width: min(1080px, calc(100% - clamp(56px, 15vw, 360px)));
+  padding: clamp(62px, 9vh, 116px) clamp(30px, 4vw, 64px);
+  backdrop-filter: blur(20px) saturate(132%);
+  -webkit-backdrop-filter: blur(20px) saturate(132%);
+}
+.es-tab--left {
+  margin: clamp(34px, 5.5vh, 72px) auto clamp(34px, 5.5vh, 72px) 0;
+  padding-left: clamp(28px, 14.5vw, 208px);
+  border-right: 1px solid var(--es-edge);
+  border-radius: 0 7px 7px 0;
+}
+.es-tab--right {
+  margin: clamp(34px, 5.5vh, 72px) 0 clamp(34px, 5.5vh, 72px) auto;
+  padding-right: clamp(28px, 14.5vw, 208px);
+  border-left: 1px solid var(--es-edge);
+  border-radius: 7px 0 0 7px;
 }
 .es-panel--blue {
-  background: linear-gradient(146deg, rgba(11, 95, 255, 0.06), rgba(11, 95, 255, 0.015) 54%, rgba(64, 255, 168, 0.028)), var(--es-panel);
+  background: linear-gradient(160deg, rgba(11, 95, 255, 0.055), rgba(11, 95, 255, 0.012) 55%, rgba(64, 255, 168, 0.022)), var(--es-panel);
 }
 .es-panel--green {
-  background: linear-gradient(146deg, rgba(64, 255, 168, 0.05), rgba(64, 255, 168, 0.012) 54%, rgba(11, 95, 255, 0.035)), var(--es-panel);
+  background: linear-gradient(160deg, rgba(64, 255, 168, 0.045), rgba(64, 255, 168, 0.01) 55%, rgba(11, 95, 255, 0.028)), var(--es-panel);
 }
-@media (min-width: 1024px) {
-  .es-panel {
-    width: min(1040px, calc(100% - clamp(76px, 15vw, 220px)));
-    margin-left: auto;
-    margin-right: auto;
-    padding: clamp(66px, 9vh, 124px) clamp(36px, 4.4vw, 76px);
+
+/* scroll reveal: content rises as it enters. Hidden by default (no flash),
+   revealed via JS on intersection; reduced-motion shows everything at rest. */
+.es-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 820ms cubic-bezier(0.22, 1, 0.36, 1), transform 820ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.es-reveal.es-revealed {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .es-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
-  /* desktop-only left/right alternation rhythm */
-  .es-panel[data-side="left"] { transform: translateX(calc(-1 * clamp(16px, 3.2vw, 60px))); }
-  .es-panel[data-side="right"] { transform: translateX(clamp(16px, 3.2vw, 60px)); }
+}
+
+/* approval tracker: stack the connectors+pills vertically on narrow screens */
+@media (max-width: 745px) { .es-rail { display: none; } }
+@media (max-width: 1120px) {
+  .es-tracker { flex-direction: column; align-items: flex-start; row-gap: 0; }
+  .es-tracker .es-step { flex-direction: column; align-items: flex-start; flex: none; width: auto; }
+  .es-tracker .es-conn { flex: none; width: 1px; min-width: 1px; height: 16px; margin-left: 22px; }
 }
 
 /* full-viewport height with a dvh upgrade (avoids the mobile address-bar jump) */

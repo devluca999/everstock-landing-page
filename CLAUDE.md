@@ -62,7 +62,13 @@ Mobile: collapse to logo + hamburger icon (pills don't fit narrow viewports). Sa
 
 ### Section panels (below the hero)
 
-Translucent/solid graphite panels behind section copy, needed because the grid persists full-page. Subtle hue tint pulling from the blue/green palette (very low saturation). Desktop: alternate left/right alignment section-to-section for rhythm — restrained, not busy. Mobile: no alternation — full-width, centered, stacked in document order (the alternation was a desktop-only device; scroll itself provides rhythm on mobile).
+Alternate between two treatments down the page, not a floating box on every section:
+- **Full-bleed** — background tint/panel spans the entire section width edge-to-edge (content still sits in the centered max-width container, but the background covers the whole section, no visible margins or rounded box).
+- **Contained** — content pane is deliberately narrower, aligned left or right (alternating), grid visible and uncovered on the other side. Should read as intentional and asymmetric, not a randomly placed card.
+
+Order: full-bleed, contained-left, full-bleed, contained-right, etc. Mobile: no alternation — full-width, centered, stacked in document order.
+
+Subtle hue tint pulling from the blue/green palette (very low saturation) on both treatments. Use https://cluely-next-git-origin-pixelpoint.vercel.app/ as the craft/motion reference for scroll-triggered reveals and section-to-section transitions — smooth and connected, not independently placed boxes.
 
 ## Typography outside the hero
 
@@ -80,7 +86,7 @@ Left-aligned body copy and headlines inside a centered max-width container, ever
 - Nav: Platform · Pricing · Company · Log in
 - Primary CTA: "Request access" — Secondary CTA: "See how it works" (repeated verbatim at the bottom of the page, matching the hero)
 
-Full section-by-section copy and structure (trust bar, problem statement, how it works, trust architecture / approval queue visualization, ops-user reassurance, integrations, footer) is in the project's design brief docs — ask if you need the full site map restated.
+Full section-by-section copy and structure (trust bar, problem statement, how it works, trust architecture / approval queue visualization, ops-user reassurance, integrations, footer) is in the project's design brief docs — ask if you need the full site map restated. Integrations section should include Excel/spreadsheet import-export alongside named ERP/EDI systems — many mid-market distributors run on spreadsheets rather than a formal ERP, and that's the lower-friction on-ramp for that segment.
 
 ## Accessibility & performance (non-negotiable, not nice-to-haves)
 

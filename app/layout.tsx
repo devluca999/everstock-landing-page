@@ -5,6 +5,7 @@ import {
   Anton,
   Syne,
   IBM_Plex_Sans,
+  IBM_Plex_Mono,
 } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider, themeScript } from "./theme";
@@ -39,6 +40,12 @@ const plex = IBM_Plex_Sans({
   variable: "--font-plex",
   display: "swap",
 });
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Everstock — Agentic procurement for mid-market distributors",
@@ -61,7 +68,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body
-        className={`${spaceGrotesk.variable} ${unbounded.variable} ${anton.variable} ${syne.variable} ${plex.variable}`}
+        className={`${spaceGrotesk.variable} ${unbounded.variable} ${anton.variable} ${syne.variable} ${plex.variable} ${plexMono.variable}`}
       >
         <ThemeProvider>{children}</ThemeProvider>
       </body>
