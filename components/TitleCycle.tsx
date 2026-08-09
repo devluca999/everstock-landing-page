@@ -124,16 +124,35 @@ export default function TitleCycle() {
     const chars = () => {
       const el = titleRef.current!;
       el.textContent = "";
+      // ROOT-CAUSE FIX (title-invisible bug): the dark glow text-shadow (var(--es-glow))
+      // inherits into the transparent-filled child spans and fills their glyph shapes dark.
+      // The plain h1 tolerates it, but gradient-clipped inline-block spans render dark. Clear
+      // it while spans are present. Also neutralize the h1's own clip so it acts as a plain
+      // container (each span paints its own gradient); plain() restores both afterwards.
+      el.style.textShadow = "none";
+      el.style.backgroundImage = "none";
+      el.style.webkitBackgroundClip = "border-box";
+      el.style.backgroundClip = "border-box";
+      el.style.webkitTextFillColor = "currentColor";
+      el.style.color = "var(--es-ink)";
       return [...TEXT].map((ch) => {
         const s = document.createElement("span");
         s.textContent = ch;
         s.style.display = "inline-block";
-        s.style.willChange = "transform,opacity,filter";
         fillGradient(s);
         el.appendChild(s);
         return s;
       });
     };
+
+    // return spans to a clean, correctly-clipped resting state (no leftover layer promotion)
+    const settleChars = (cs: HTMLSpanElement[]) =>
+      cs.forEach((s) => {
+        s.style.willChange = "auto";
+        s.style.transform = "";
+        s.style.filter = "";
+        s.style.opacity = "1";
+      });
 
     const plain = () => {
       const el = titleRef.current;
@@ -320,11 +339,7 @@ export default function TitleCycle() {
           s.style.filter = "blur(" + (e * 2.2).toFixed(2) + "px)";
         });
       });
-      cs.forEach((s) => {
-        s.style.transform = "";
-        s.style.opacity = "1";
-        s.style.filter = "";
-      });
+      settleChars(cs);
       await wait(320);
     };
 
