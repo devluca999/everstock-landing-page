@@ -461,7 +461,9 @@ class Component extends DCLogic {
     this.isMobile = vw < 1024;               /* below Tailwind lg */
     const t = Math.max(0, Math.min(1, (vw - 480) / 800));
     this.rT = t;
-    this.beamCount = Math.max(1, Math.round(10 + (this.beamMax - 10) * t));
+    /* floor the phone anchor at min(10, beamMax) so a low configured max never inverts (phone > desktop) */
+    const beamLo = Math.min(10, this.beamMax);
+    this.beamCount = Math.max(1, Math.round(beamLo + (this.beamMax - beamLo) * t));
     this.warpScale = 0.12 + (1.0 - 0.12) * t;
     this.dprCap = vw < 1024 ? 1.5 : 2;
   }
@@ -475,6 +477,9 @@ class Component extends DCLogic {
     window.removeEventListener('scroll', this._onScroll);
     document.removeEventListener('visibilitychange', this._onVis);
     if (this._onKeydown) document.removeEventListener('keydown', this._onKeydown);
+    /* if we unmount while the nav sheet is open, don't leave the page scroll-locked or listeners bound */
+    document.body.style.overflow = '';
+    if (this._onSheetClick && this.sheetRef.current) this.sheetRef.current.removeEventListener('click', this._onSheetClick);
     this.dead = true;
   }
 
@@ -521,6 +526,9 @@ class Component extends DCLogic {
     sheet.style.opacity = '1';
     document.body.style.overflow = 'hidden';
     if (this.hamburgerRef.current) this.hamburgerRef.current.setAttribute('aria-expanded', 'true');
+    /* take the rest of the page out of the a11y tree + tab order (aria-modal alone isn't reliably honored) */
+    this._bgEls = Array.from(sheet.parentElement ? sheet.parentElement.children : []).filter((el) => el !== sheet);
+    this._bgEls.forEach((el) => { el.setAttribute('inert', ''); el.setAttribute('aria-hidden', 'true'); });
     this._focusables = Array.from(sheet.querySelectorAll('a[href],button'));
     this._lastFocus = document.activeElement;
     if (this._focusables[0]) this._focusables[0].focus();
@@ -549,6 +557,7 @@ class Component extends DCLogic {
     this.timers.push(setTimeout(() => { if (!this._sheetOpen) sheet.style.display = 'none'; }, 280));
     document.body.style.overflow = '';
     if (this.hamburgerRef.current) this.hamburgerRef.current.setAttribute('aria-expanded', 'false');
+    if (this._bgEls) { this._bgEls.forEach((el) => { el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); }); this._bgEls = null; }
     if (this._onKeydown) { document.removeEventListener('keydown', this._onKeydown); this._onKeydown = null; }
     if (this._onSheetClick) { sheet.removeEventListener('click', this._onSheetClick); this._onSheetClick = null; }
     const back = this.hamburgerRef.current || this._lastFocus;
@@ -565,7 +574,8 @@ class Component extends DCLogic {
     window.addEventListener('resize', this._onResize);
     this.resize();
     this.beams = [];
-    for (let i = 0; i < this.beamCount; i++) this.beams.push(this.spawnBeam(true, i));
+    /* reduced-motion never draws beams (drawStatic renders only the lattice) — don't allocate them */
+    if (!this.reduced) for (let i = 0; i < this.beamCount; i++) this.beams.push(this.spawnBeam(true, i));
     this._prevBeamCount = this.beamCount;
     this._last = performance.now();
     /* reduced-motion: draw one static lattice and stop — no animation loop, no beams */
@@ -577,6 +587,8 @@ class Component extends DCLogic {
     const c = this.canvas;
     if (!c) return;
     this.computeResponsive();
+    /* crossing up to desktop while the mobile sheet is open would leave it covering + page scroll-locked */
+    if (!this.isMobile && this._sheetOpen) this.closeSheet();
     const dpr = Math.min(window.devicePixelRatio || 1, this.dprCap);
     this.w = window.innerWidth;
     this.h = window.innerHeight;
@@ -586,7 +598,7 @@ class Component extends DCLogic {
     this.cols = Math.ceil(this.w / this.spacing) + 4;
     this.rows = Math.ceil(this.h / this.spacing) + 4;
     /* rebuild beams only when the interpolated count actually changes (avoids per-resize churn/pop) */
-    if (this.beams && this.beamCount !== this._prevBeamCount) {
+    if (this.beams && !this.reduced && this.beamCount !== this._prevBeamCount) {
       this.beams = [];
       for (let i = 0; i < this.beamCount; i++) this.beams.push(this.spawnBeam(true, i));
       this._prevBeamCount = this.beamCount;
@@ -666,7 +678,7 @@ class Component extends DCLogic {
     this._last = now;
     const ctx = this.ctx;
     if (!ctx) return;
-    const t = now * 0.001 * (this.reduced ? 0.25 : 1);
+    const t = now * 0.001;  /* frame() only runs when not reduced-motion (reduced uses drawStatic) */
     const S = this.spacing, ox = -S * 2, oy = -S * 2;
 
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
@@ -697,7 +709,7 @@ class Component extends DCLogic {
     };
     for (const b of this.beams) {
       if (b.wait > 0) { b.wait -= dt * 1000; continue; }
-      b.u += b.speed * dt * (this.reduced ? 0.3 : 1);
+      b.u += b.speed * dt;
       const span = b.h ? this.cols : this.rows;
       if (b.u > span + TRAIL * STEP + 2) { Object.assign(b, this.spawnBeam(false, b.slot)); continue; }
       const C = b.green ? [64, 255, 168] : [56, 122, 255];
@@ -877,6 +889,9 @@ class Component extends DCLogic {
 
   async fireEffect() {
     if (this.dead) return;
+    /* re-read the live flag: if the viewport shrank below lg since this was scheduled,
+       stop the occasional-effect layer (and don't re-arm) — mobile keeps only the base cycle */
+    if (this.isMobile) { this.busy = false; return; }
     if (this.busy) { this.timers.push(setTimeout(() => this.fireEffect(), 1500)); return; }
     const now = performance.now();
     const reveal = ['shuffle', 'type', 'splitflap', 'mask'];
