@@ -26,24 +26,27 @@ a:hover{color:var(--es-ink,#F2F1ED);}
 @keyframes esPulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important}}
 /* ===== Responsive mobile system (3-step ladder: phone <768 / tablet 768-1024 / desktop >=1024) ===== */
-/* dvh: progressive enhancement — the inline 100vh stays as the fallback for browsers without dvh */
-@supports (min-height:100dvh){[style*="min-height:100vh"]{min-height:100dvh !important;}}
+/* dvh: progressive enhancement — the inline 100vh stays as the fallback for browsers without dvh.
+   NOTE: substrings are colon/comma-free on purpose — the React runtime re-serializes inline
+   styles (width:min -> "width: min", minmax(0,0.34fr) -> "minmax(0, 0.34fr)"), so selectors must
+   match the invariant token, not the authored spacing. */
+@supports (min-height:100dvh){[style*="100vh"]{min-height:100dvh !important;}}
 /* hamburger is desktop-hidden by default; pills carry the nav */
 .es-hamburger{display:none;}
 /* ---- below lg (tablet + phone): layout collapse ---- */
 @media (max-width:1023.98px){
   /* section panels: drop the left/right translateX alternation, go full-width centered with tight gutters */
-  [style*="width:min(1040px"]{width:auto !important;margin-left:16px !important;margin-right:16px !important;transform:none !important;padding-left:clamp(20px,5vw,30px) !important;padding-right:clamp(20px,5vw,30px) !important;}
+  [style*="min(1040px"]{width:auto !important;margin-left:16px !important;margin-right:16px !important;transform:none !important;padding-left:clamp(20px,5vw,30px) !important;padding-right:clamp(20px,5vw,30px) !important;}
   /* nav: pills give way to the hamburger */
   .es-navlinks{display:none !important;}
   .es-hamburger{display:inline-flex !important;}
+}
+/* ---- phone only: stack the internal 2-col grids AND the CTAs (tablet keeps both side-by-side) ---- */
+@media (max-width:767.98px){
+  [style*="0.34fr"]{grid-template-columns:1fr !important;gap:20px !important;}
   /* CTAs: stack vertically, capped full-width, centered (primary stays on top via source order) */
   .es-cta{flex-direction:column !important;align-items:center !important;}
   .es-cta > a{width:100% !important;max-width:360px !important;text-align:center !important;justify-content:center !important;}
-}
-/* ---- phone only: stack the internal label/content 2-col grids ---- */
-@media (max-width:767.98px){
-  [style*="minmax(0,0.34fr)"]{grid-template-columns:1fr !important;gap:20px !important;}
 }
 </style>
 </helmet>
