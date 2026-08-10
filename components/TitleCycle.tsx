@@ -6,7 +6,7 @@ import { computeResponsive } from "@/lib/responsive";
 const TEXT = "EVERSTOCK";
 const BASE_SIZE = "clamp(56px, 13.2vw, 208px)";
 const GRAD =
-  "linear-gradient(180deg,var(--es-ink,#FAF9F5) 0%,var(--es-ink,#FAF9F5) 38%,var(--es-grad-mid,#8A8D93) 76%,var(--es-grad-end,#55585F) 100%)";
+  "linear-gradient(180deg,var(--es-ink,#FAF9F5) 0%,var(--es-ink,#FAF9F5) 22%,var(--es-grad-mid,#7F838B) 60%,var(--es-grad-end,#42454C) 100%)";
 
 const FONTS = [
   { name: "var(--font-space), 'Space Grotesk', sans-serif", weight: 700, ls: "-0.03em", scale: 1, pick: 0.46, hold: [6000, 8500] },

@@ -19,8 +19,8 @@
   --es-lip: rgba(206, 226, 252, 0.1);
   --es-card: rgba(32, 40, 50, 0.5);
   --es-pill: rgba(242, 241, 237, 0.07);
-  --es-grad-mid: #8A8D93;
-  --es-grad-end: #55585F;
+  --es-grad-mid: #7F838B;
+  --es-grad-end: #42454C;
   /* signal colors — electric blue is agent-activity only, neon green the beam accent */
   --es-blue: #0B5FFF;
   --es-green: #40FFA8;
@@ -50,8 +50,8 @@
   --es-title-grad: linear-gradient(
     180deg,
     var(--es-ink) 0%,
-    var(--es-ink) 38%,
-    var(--es-grad-mid) 76%,
+    var(--es-ink) 22%,
+    var(--es-grad-mid) 60%,
     var(--es-grad-end) 100%
   );
 }

@@ -9,23 +9,25 @@ export default function Hero() {
       className="es-fullvh"
       style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(96px,13vh,120px) 40px 0", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}
     >
-      <p style={{ fontFamily: "var(--font-space)", fontSize: 11, fontWeight: 500, letterSpacing: "0.34em", color: "#0B5FFF", textShadow: "0 0 26px rgba(11,95,255,0.55)", margin: "0 0 44px" }}>
+      <p style={{ fontFamily: "var(--font-space)", fontSize: 11, fontWeight: 500, letterSpacing: "0.34em", color: "#0B5FFF", textShadow: "0 0 26px rgba(11,95,255,0.55)", margin: "0 0 clamp(22px,3vh,34px)" }}>
         AGENTIC PROCUREMENT, DETERMINISTIC TRUST
       </p>
 
-      {/* Fixed-height clearance zone. Its height reserves the WORST-CASE title box
-          (tallest font, e.g. Anton scale 1.16, + effect-layer transform overflow).
-          The title overflows this box visually if it ever needs to, but the box
-          height never changes — so nothing below it (the logo) reacts to the
-          title's live font/effect state. overflow:visible keeps effects unclipped. */}
-      <div style={{ width: "100%", height: "clamp(120px, 20.5vw, 300px)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" }}>
-        <TitleCycle />
+      {/* Logo mark — sits directly below the eyebrow, above the title. Position is
+          fixed (anchored to the eyebrow, not the title's live font/effect size). */}
+      <div style={{ marginBottom: "clamp(26px,3.6vh,46px)" }}>
+        <HeroLogo height={60} />
       </div>
 
-      {/* Logo mark — static, fixed distance below the clearance zone (not tied to the
-          title's rendered size). Position is stable under every font/effect combo. */}
-      <div style={{ marginTop: "clamp(22px, 3vh, 40px)" }}>
-        <HeroLogo height={60} />
+      {/* Fixed-height clearance zone for the title. Its height reserves the WORST-CASE
+          title box (tallest font, e.g. Anton scale 1.16, + effect-layer transform
+          overflow). The title overflows this box visually if it ever needs to, but the
+          box height never changes — so nothing above it (the logo) or below it (the
+          tagline) reacts to the title's live font/effect state; the logo above also
+          keeps a fixed gap from the title's upward effect overflow. overflow:visible
+          keeps effects unclipped. */}
+      <div style={{ width: "100%", height: "clamp(120px, 20.5vw, 300px)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" }}>
+        <TitleCycle />
       </div>
 
       <p style={{ fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: "clamp(16px,1.5vw,21px)", lineHeight: 1.55, letterSpacing: "0.005em", color: "var(--es-dim)", margin: "clamp(24px,3vh,40px) 0 0", maxWidth: 640, textWrap: "pretty" }}>
