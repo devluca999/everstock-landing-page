@@ -55,7 +55,7 @@ export default function Home() {
             <div className="es-split">
               <Eyebrow>01 — THE LEAK</Eyebrow>
               <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
-                <p style={stmtLg}>You&apos;re already spending thousands a month on tires, filters, brake pads, and fluids — with no visibility into price.</p>
+                <h2 style={stmtLg}>You&apos;re already spending thousands a month on tires, filters, brake pads, and fluids — with no visibility into price.</h2>
                 <p style={{ ...body, fontSize: "clamp(15px,1.4vw,18px)", margin: 0, maxWidth: 600 }}>
                   Vendor quotes arrive by email, phone, and PDF. Nobody on your team has time to check whether last week&apos;s price still holds.
                 </p>
