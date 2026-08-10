@@ -26,7 +26,11 @@ Next.js (App Router) + TypeScript + Tailwind CSS.
 - No blue used decoratively outside the agent-activity signal role
 - Motion stays utility-focused, not decorative-for-its-own-sake
 
-**Logo mark:** An infinite loop that doesn't fully close, its open tail resolving into a "C." Doubles as a live/working indicator — a blue beam occasionally traces through the open loop.
+**Logo mark — LOCKED (segmented chrome infinity).** The final mark is a true infinity symbol (lemniscate) — one continuous stroke that crosses at its center (a genuine figure-eight, not two adjacent "oo" rings) — divided into discrete faceted **chrome** segments. It's a deliberate visual echo of the product's "discrete deterministic state, not smooth interpolation" principle. Single reflective chrome material (specular sheen, not flat grey); **static — no beam / no motion dependency.** Ships as a **two-tier facet cut** (per `everstock-product-design-system.md` → "Logo exploration", which is the source of truth):
+- **Display cut — 12 facets (6 per lobe), used at ≥24px** — nav, footer, wordmark lockup, app icons 32px+. Theme-inverted tones are swapped by `[data-theme]` (bright chrome on graphite, dark chrome on eggshell).
+- **Small cut — 7 facets, used <24px** — favicon / small icons; a separately-drawn simplification (not the display cut scaled) that also inverts metal tone by background, since contrast beats tonal fidelity at that size.
+
+Implemented from the actual Claude Design assets (`public/logo/*.svg`, favicon at `app/icon.svg`) — **do not redraw the facets by hand.** This **supersedes** the older "open loop that doesn't fully close, blue beam tracing through the gap" description, which was an earlier exploration and is *not* the locked mark. The chrome + glass-window "live" variant (beam through a real glass segment) is retained only for motion/onboarding contexts, never as the primary static identity.
 
 ### Grid background
 
@@ -53,6 +57,8 @@ Two independent systems on separate clocks:
 - Bottom-half gradient on each letter: off-white at top fading to matte asphalt/concrete grey at the bottom — strictly neutral, no blue/green in this gradient, so it doesn't compete with the beams as the signal color. Letters read as grounded industrial material; beams are the only glowing/colored element on screen.
 
 Rule for all of the above: "EVERSTOCK" must stay legible at every single frame, even mid-transition.
+
+**STANDING DECISION — the hero title system is intentional and locked, not a placeholder or draft.** The font-cycle list (Space Grotesk / Unbounded / Anton / Syne), the effect-layer weighting (~60% reveal / ~30% ambient / ~10% rare, with Fuzzy/Particle dropped on mobile), and the reflective bottom-half gradient sheen described above were designed and approved on their own terms and look good as-is. **They are explicitly EXEMPT from matching `everstock-product-design-system.md`.** That doc governs the **product / app interface's** typography and material rules; this is the **marketing site's hero** — a separate, independently-built, already-working system that is *allowed to diverge*. Do NOT simplify, replace, "align," or "correct" the hero's fonts/effects to match the product design system in a future session — the divergence is deliberate and approved. (The reflective sheen here is conceptually related to the design system's "chrome material rendered as typography" idea, but the hero's specific execution stands on its own and does not need to be reconciled 1:1 with the product's material rules.)
 
 ### Nav
 
