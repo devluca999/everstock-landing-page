@@ -102,12 +102,6 @@ a:hover {
   88% { opacity: 1; }
   100% { left: 100%; opacity: 0; }
 }
-@keyframes esLogoBeam {
-  0% { stroke-dashoffset: 130; opacity: 0; }
-  3% { opacity: 1; }
-  13% { stroke-dashoffset: -70; opacity: 0; }
-  100% { stroke-dashoffset: -70; opacity: 0; }
-}
 @keyframes esScroll {
   0% { transform: scaleY(0); transform-origin: top center; opacity: 0; }
   25% { opacity: 1; }
@@ -237,6 +231,12 @@ a:hover {
     justify-content: center;
   }
 }
+
+/* ---------- locked logo: theme-inverted chrome mark swap ---------- */
+.es-logo-img { display: block; }
+.es-logo-light { display: none; }
+:root[data-theme="light"] .es-logo-dark { display: none; }
+:root[data-theme="light"] .es-logo-light { display: block; }
 
 /* ---------- interaction states (ported from the mockup's style-hover) ---------- */
 .es-navpill:hover {

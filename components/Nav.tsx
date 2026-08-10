@@ -145,7 +145,7 @@ export default function Nav() {
             <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", padding: "clamp(20px,5vw,36px)" }} onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <a href="#top" onClick={closeAnd()} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <Logo width={52} height={32} beam={false} />
+                  <Logo height={32} />
                   <span style={{ fontFamily: "var(--font-space)", fontWeight: 700, fontSize: 15, letterSpacing: "0.2em", color: "var(--es-ink)" }}>EVERSTOCK</span>
                 </a>
                 <button onClick={() => setOpen(false)} aria-label="Close menu" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 42, height: 42, padding: 0, borderRadius: 999, background: "var(--es-pill)", border: "1px solid var(--es-line)", color: "var(--es-ink)", cursor: "pointer" }}>

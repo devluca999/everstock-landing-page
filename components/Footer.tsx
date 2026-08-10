@@ -1,3 +1,5 @@
+import Logo from "./Logo";
+
 const col: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 13 };
 const head: React.CSSProperties = { fontFamily: "var(--font-space)", fontSize: 10, fontWeight: 600, letterSpacing: "0.24em", color: "var(--es-faint)" };
 const link: React.CSSProperties = { fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: 14, color: "var(--es-dim)", transition: "color 160ms ease" };
@@ -11,9 +13,7 @@ export default function Footer() {
       <div className="es-reveal" style={{ maxWidth: 1160, margin: "0 auto", padding: "0 clamp(24px,5vw,68px)", display: "flex", flexDirection: "column", gap: "clamp(44px,6vh,72px)" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <svg width="44" height="27" viewBox="0 0 44 26" fill="none" style={{ display: "block" }} aria-hidden="true">
-              <path d="M21,13 C18,4.5 6,4.5 6,13 C6,21.5 18,21.5 21,13 C23.2,7.5 28.4,3.6 35.66,7.34 A8.5,8.5 0 1 0 35.66,18.66" stroke="var(--es-dim)" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-            </svg>
+            <Logo height={28} />
             <span style={{ fontFamily: "var(--font-space)", fontWeight: 700, fontSize: 13, letterSpacing: "0.2em", color: "var(--es-dim)" }}>EVERSTOCK</span>
           </div>
           <p style={{ fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: 13, lineHeight: 1.55, margin: 0, maxWidth: 250, color: "var(--es-faint)" }}>
