@@ -9,10 +9,10 @@ const GRAD =
   "linear-gradient(180deg,var(--es-ink,#FAF9F5) 0%,var(--es-ink,#FAF9F5) 38%,var(--es-grad-mid,#8A8D93) 76%,var(--es-grad-end,#55585F) 100%)";
 
 const FONTS = [
-  { name: "var(--font-space), 'Space Grotesk', sans-serif", weight: 700, ls: "-0.03em", scale: 1, pick: 0.46, hold: [3000, 4000] },
-  { name: "var(--font-unbounded), 'Unbounded', sans-serif", weight: 700, ls: "-0.012em", scale: 0.68, pick: 0.18, hold: [1600, 2500] },
-  { name: "var(--font-anton), 'Anton', sans-serif", weight: 400, ls: "0.005em", scale: 1.16, pick: 0.18, hold: [1700, 2600] },
-  { name: "var(--font-syne), 'Syne', sans-serif", weight: 800, ls: "-0.02em", scale: 0.62, pick: 0.18, hold: [1600, 2600] },
+  { name: "var(--font-space), 'Space Grotesk', sans-serif", weight: 700, ls: "-0.03em", scale: 1, pick: 0.46, hold: [6000, 8500] },
+  { name: "var(--font-unbounded), 'Unbounded', sans-serif", weight: 700, ls: "-0.012em", scale: 0.68, pick: 0.18, hold: [3400, 5000] },
+  { name: "var(--font-anton), 'Anton', sans-serif", weight: 400, ls: "0.005em", scale: 1.16, pick: 0.18, hold: [3600, 5200] },
+  { name: "var(--font-syne), 'Syne', sans-serif", weight: 800, ls: "-0.02em", scale: 0.62, pick: 0.18, hold: [3400, 5200] },
 ] as const;
 
 /**
@@ -350,7 +350,7 @@ export default function TitleCycle() {
     };
 
     const scheduleEffect = () => {
-      timers.push(setTimeout(() => fireEffect(), 20000 + Math.random() * 20000));
+      timers.push(setTimeout(() => fireEffect(), 40000 + Math.random() * 30000));
     };
 
     const fireEffect = async () => {

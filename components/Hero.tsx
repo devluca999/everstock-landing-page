@@ -25,7 +25,7 @@ export default function Hero() {
       {/* Logo mark — static, fixed distance below the clearance zone (not tied to the
           title's rendered size). Position is stable under every font/effect combo. */}
       <div style={{ marginTop: "clamp(22px, 3vh, 40px)" }}>
-        <HeroLogo height={46} />
+        <HeroLogo height={60} />
       </div>
 
       <p style={{ fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: "clamp(16px,1.5vw,21px)", lineHeight: 1.55, letterSpacing: "0.005em", color: "var(--es-dim)", margin: "clamp(24px,3vh,40px) 0 0", maxWidth: 640, textWrap: "pretty" }}>
