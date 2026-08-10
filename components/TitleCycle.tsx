@@ -366,6 +366,10 @@ export default function TitleCycle() {
       if (r > 0.9 && now - lastRare > 60000) { pool = rare; lastRare = now; }
       else if (r > 0.6) pool = ambient;
       const name = pool[Math.floor(Math.random() * pool.length)];
+      // sync signal: the hero logo mark flourishes only when the rare/signature layer fires
+      if (pool === rare) {
+        window.dispatchEvent(new CustomEvent("es:hero-flourish", { detail: { green: Math.random() < 0.4 } }));
+      }
       busy = true;
       setLayerVis(0);
       try {

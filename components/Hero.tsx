@@ -1,4 +1,5 @@
 import TitleCycle from "./TitleCycle";
+import HeroLogo from "./HeroLogo";
 import { PrimaryCta, SecondaryCta } from "./ui";
 
 export default function Hero() {
@@ -12,9 +13,22 @@ export default function Hero() {
         AGENTIC PROCUREMENT, DETERMINISTIC TRUST
       </p>
 
-      <TitleCycle />
+      {/* Fixed-height clearance zone. Its height reserves the WORST-CASE title box
+          (tallest font, e.g. Anton scale 1.16, + effect-layer transform overflow).
+          The title overflows this box visually if it ever needs to, but the box
+          height never changes — so nothing below it (the logo) reacts to the
+          title's live font/effect state. overflow:visible keeps effects unclipped. */}
+      <div style={{ width: "100%", height: "clamp(120px, 20.5vw, 300px)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" }}>
+        <TitleCycle />
+      </div>
 
-      <p style={{ fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: "clamp(16px,1.5vw,21px)", lineHeight: 1.55, letterSpacing: "0.005em", color: "var(--es-dim)", margin: "40px 0 0", maxWidth: 640, textWrap: "pretty" }}>
+      {/* Logo mark — static, fixed distance below the clearance zone (not tied to the
+          title's rendered size). Position is stable under every font/effect combo. */}
+      <div style={{ marginTop: "clamp(22px, 3vh, 40px)" }}>
+        <HeroLogo height={46} />
+      </div>
+
+      <p style={{ fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: "clamp(16px,1.5vw,21px)", lineHeight: 1.55, letterSpacing: "0.005em", color: "var(--es-dim)", margin: "clamp(24px,3vh,40px) 0 0", maxWidth: 640, textWrap: "pretty" }}>
         Supply-chain intelligence, at your command.
       </p>
 
