@@ -1,5 +1,4 @@
 import TitleCycle from "./TitleCycle";
-import HeroLogo from "./HeroLogo";
 import { PrimaryCta, SecondaryCta } from "./ui";
 
 export default function Hero() {
@@ -13,19 +12,12 @@ export default function Hero() {
         AGENTIC PROCUREMENT, DETERMINISTIC TRUST
       </p>
 
-      {/* Logo mark — sits directly below the eyebrow, above the title. Position is
-          fixed (anchored to the eyebrow, not the title's live font/effect size). */}
-      <div style={{ marginBottom: "clamp(26px,3.6vh,46px)" }}>
-        <HeroLogo height={60} />
-      </div>
-
       {/* Fixed-height clearance zone for the title. Its height reserves the WORST-CASE
           title box (tallest font, e.g. Anton scale 1.16, + effect-layer transform
           overflow). The title overflows this box visually if it ever needs to, but the
-          box height never changes — so nothing above it (the logo) or below it (the
-          tagline) reacts to the title's live font/effect state; the logo above also
-          keeps a fixed gap from the title's upward effect overflow. overflow:visible
-          keeps effects unclipped. */}
+          box height never changes — so nothing above it (the eyebrow) or below it (the
+          tagline) reacts to the title's live font/effect state. overflow:visible keeps
+          effects unclipped. */}
       <div style={{ width: "100%", height: "clamp(120px, 20.5vw, 300px)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" }}>
         <TitleCycle />
       </div>
