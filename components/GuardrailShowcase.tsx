@@ -38,8 +38,6 @@ const BEATS: Beat[] = [
 ];
 
 const HOLD_MS = 2000;
-const MARK_PATH =
-  "M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z";
 
 const beatVideoStyle: CSSProperties = {
   display: "block",
@@ -86,8 +84,6 @@ export default function GuardrailShowcase() {
 
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-  const markSvgRef = useRef<SVGSVGElement>(null);
-  const markBeamRef = useRef<SVGGElement>(null);
   const onScreenRef = useRef(false);
   const mobileRef = useRef(false);
 
@@ -174,70 +170,13 @@ export default function GuardrailShowcase() {
       watchdog = setTimeout(next, 5100 + HOLD_MS);
     }
 
-    // --- Beat 2 mark: sync unify/beam to the video's vendor-scanning window ---
-    let raf = 0;
-    const svg = markSvgRef.current;
-    const beam = markBeamRef.current;
-    const runMark = () => {
-      if (!svg || !beam) return;
-      const facets = svg.querySelectorAll<SVGPathElement>("[data-facet]");
-      const cut = (v: string) => facets.forEach((p) => p.setAttribute("stroke-dasharray", v));
-      const rest = () => {
-        cut("6.63 1.7");
-        beam.style.opacity = "0";
-      };
-      if (beat !== 1) {
-        rest();
-        return;
-      }
-      if (reduced) {
-        cut("100 0");
-        beam.style.opacity = "1";
-        return;
-      }
-      const video = videoRefs.current[1];
-      if (!video) {
-        cut("100 0");
-        beam.style.opacity = "1";
-        return;
-      }
-      const HEAD = 0.45,
-        TAIL = 0.35,
-        VENDORS = 3;
-      let unified: boolean | null = null;
-      const tick = () => {
-        if (beatRef.current !== 1) {
-          rest();
-          return;
-        }
-        const d = video.duration || 5.1;
-        const t = video.currentTime;
-        const scanning = video.readyState > 1 && t > HEAD && t < d - TAIL;
-        if (scanning !== unified) {
-          unified = scanning;
-          cut(scanning ? "100 0" : "6.63 1.7");
-        }
-        if (scanning) {
-          const span = Math.max(0.2, (d - TAIL - HEAD) / VENDORS);
-          const local = ((t - HEAD) % span) / span;
-          beam.style.opacity = local < 0.16 ? "1" : "0.86";
-        } else {
-          beam.style.opacity = "0";
-        }
-        raf = requestAnimationFrame(tick);
-      };
-      tick();
-    };
-    runMark();
-
     return () => {
       clearTimeout(holdTimer);
       clearTimeout(watchdog);
       if (active && onEnded) active.removeEventListener("ended", onEnded);
       if (active && onMeta) active.removeEventListener("loadedmetadata", onMeta);
-      cancelAnimationFrame(raf);
     };
-  }, [beat, reduced]);
+  }, [beat]);
 
   // mobile tap-to-play on the stage
   const onStageTap = () => {
@@ -358,39 +297,10 @@ export default function GuardrailShowcase() {
               aria-label={b.aria}
               style={beatVideoStyle}
             />
-            {/* Beat 2 — composited live chrome mark in the clip's reserved centre */}
-            {k === 1 && (
-              <>
-                <span
-                  aria-hidden="true"
-                  style={{
-                    position: "absolute",
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%,-50%)",
-                    display: "block",
-                    width: "clamp(128px,16vw,222px)",
-                    height: "clamp(104px,13vw,180px)",
-                    background:
-                      "radial-gradient(closest-side,rgba(16,18,22,0.97),rgba(16,18,22,0.93) 38%,rgba(16,18,22,0.55) 70%,rgba(16,18,22,0) 100%)",
-                  }}
-                />
-                <span
-                  aria-hidden="true"
-                  style={{
-                    position: "absolute",
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%,-50%)",
-                    display: "block",
-                    width: "clamp(124px,15.5vw,214px)",
-                  }}
-                >
-                  <MarkSvg svgRef={markSvgRef} beamRef={markBeamRef} />
-                </span>
-              </>
-            )}
-            {showTap && k === beat && <TapBadge bottom={k === 1} />}
+            {/* Beat 2's Everstock mark is now rendered natively inside the clip
+                (segmented at rest → unified chrome loop + electric-blue beam while
+                scanning vendors), so no DOM composite is needed here. */}
+            {showTap && k === beat && <TapBadge />}
           </div>
         ))}
       </div>
@@ -461,83 +371,5 @@ export default function GuardrailShowcase() {
         ))}
       </div>
     </>
-  );
-}
-
-/* The locked chrome mark, ported verbatim (facets never redrawn by hand). Five material
-   passes (broad chrome, matte, grain-mask, sheen, inset lip) all carry data-facet so the
-   unify/resolve cut hits every layer; the beam group is a separate three-pass overlay. */
-function MarkSvg({
-  svgRef,
-  beamRef,
-}: {
-  svgRef: React.RefObject<SVGSVGElement | null>;
-  beamRef: React.RefObject<SVGGElement | null>;
-}) {
-  return (
-    <svg
-      ref={svgRef}
-      viewBox="0 0 64 40"
-      width="100%"
-      fill="none"
-      style={{
-        display: "block",
-        overflow: "visible",
-        filter:
-          "drop-shadow(0 24px 44px rgba(0,0,0,0.72)) drop-shadow(0 8px 18px rgba(0,0,0,0.62)) drop-shadow(0 2px 4px rgba(0,0,0,0.48))",
-      }}
-    >
-      <defs>
-        <linearGradient id="esChromeBroad" x1="0.396" y1="0.011" x2="0.604" y2="0.989">
-          <stop offset="0" stopColor="#787D85" />
-          <stop offset="0.10" stopColor="#A7ACB4" />
-          <stop offset="0.30" stopColor="#4E5158" />
-          <stop offset="0.48" stopColor="#8B9098" />
-          <stop offset="0.64" stopColor="#44464C" />
-          <stop offset="0.80" stopColor="#959AA2" />
-          <stop offset="0.92" stopColor="#53565C" />
-          <stop offset="1" stopColor="#7C818A" />
-        </linearGradient>
-        <linearGradient id="esChromeMatte" x1="0.5" y1="0" x2="0.5" y2="1">
-          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.035" />
-          <stop offset="0.34" stopColor="#FFFFFF" stopOpacity="0.008" />
-          <stop offset="1" stopColor="#000000" stopOpacity="0.10" />
-        </linearGradient>
-        <linearGradient id="esChromeSheen" x1="0.235" y1="0.076" x2="0.765" y2="0.924">
-          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.30" />
-          <stop offset="0.22" stopColor="#FFFFFF" stopOpacity="0.06" />
-          <stop offset="0.44" stopColor="#FFFFFF" stopOpacity="0" />
-          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0.10" />
-        </linearGradient>
-        <linearGradient id="esChromeLip" x1="0.5" y1="0" x2="0.5" y2="1">
-          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.42" />
-          <stop offset="0.45" stopColor="#FFFFFF" stopOpacity="0.06" />
-          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
-        </linearGradient>
-        <pattern id="esChromeGrain" width="18" height="18" patternUnits="userSpaceOnUse">
-          <image
-            width="18"
-            height="18"
-            preserveAspectRatio="none"
-            href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"
-          />
-        </pattern>
-        <mask id="esChromeMask" maskUnits="userSpaceOnUse" x="-6" y="-6" width="76" height="52">
-          <path data-facet="true" d={MARK_PATH} fill="none" stroke="#FFFFFF" strokeWidth="5.6" strokeLinecap="butt" strokeLinejoin="miter" pathLength={100} strokeDasharray="6.63 1.7" />
-        </mask>
-      </defs>
-      <path data-facet="true" d={MARK_PATH} fill="none" stroke="rgba(228,234,240,0.30)" strokeWidth="6.5" strokeLinecap="butt" strokeLinejoin="miter" pathLength={100} strokeDasharray="6.63 1.7" style={{ transition: "stroke-dasharray 220ms cubic-bezier(0.65,0,0.35,1)" }} />
-      <path data-facet="true" d={MARK_PATH} fill="none" strokeWidth="5.6" strokeLinecap="butt" strokeLinejoin="miter" pathLength={100} strokeDasharray="6.63 1.7" stroke="url(#esChromeBroad)" style={{ transition: "stroke-dasharray 220ms cubic-bezier(0.65,0,0.35,1)" }} />
-      <path data-facet="true" d={MARK_PATH} fill="none" stroke="url(#esChromeMatte)" strokeWidth="5.6" strokeLinecap="butt" strokeLinejoin="miter" pathLength={100} strokeDasharray="6.63 1.7" />
-      <rect className="vb-mark-grain" x="-6" y="-6" width="76" height="52" fill="url(#esChromeGrain)" mask="url(#esChromeMask)" opacity="0.075" style={{ mixBlendMode: "overlay" }} />
-      <path data-facet="true" d={MARK_PATH} fill="none" stroke="url(#esChromeSheen)" strokeWidth="5.6" strokeLinecap="butt" strokeLinejoin="miter" pathLength={100} strokeDasharray="6.63 1.7" />
-      <path data-facet="true" d={MARK_PATH} fill="none" stroke="url(#esChromeLip)" strokeWidth="0.9" strokeLinecap="butt" strokeLinejoin="miter" pathLength={100} strokeDasharray="6.63 1.7" transform="translate(0,-0.34)" />
-      <g ref={beamRef} opacity="0" style={{ transition: "opacity 180ms linear" }}>
-        <path d={MARK_PATH} fill="none" stroke="#3E8BFF" strokeWidth="7.5" strokeLinecap="round" pathLength={100} strokeDasharray="38 62" opacity="0.16" style={{ filter: "blur(5.5px)", animation: "esMarkBeam 3s linear infinite" }} />
-        <path d={MARK_PATH} fill="none" stroke="#3E8BFF" strokeWidth="11" strokeLinecap="round" pathLength={100} strokeDasharray="26 74" opacity="0.34" style={{ filter: "blur(3.6px)", animation: "esMarkBeam 3s linear infinite" }} />
-        <path d={MARK_PATH} fill="none" stroke="#2E7BFF" strokeWidth="5.6" strokeLinecap="butt" strokeLinejoin="miter" pathLength={100} strokeDasharray="26 74" opacity="0.92" style={{ animation: "esMarkBeam 3s linear infinite" }} />
-        <path d={MARK_PATH} fill="none" stroke="#DCEAFF" strokeWidth="1.8" strokeLinecap="butt" strokeLinejoin="miter" pathLength={100} strokeDasharray="26 74" opacity="0.95" style={{ filter: "drop-shadow(0 0 2px rgba(220,234,255,0.9))", animation: "esMarkBeam 3s linear infinite" }} />
-      </g>
-    </svg>
   );
 }
