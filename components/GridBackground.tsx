@@ -272,15 +272,34 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
     if (reduced) drawStatic();
     else raf = requestAnimationFrame(frame);
 
+    // Variant B: the field lives only behind the hero. Once scrolled well past it the
+    // canvas is offscreen (absolute, scrolls away) — pausing the RAF there is pure win.
+    let scrolledAway = false;
+    const resume = () => {
+      if (reduced || paused === false) return;
+      if (document.hidden || scrolledAway) return;
+      paused = false;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+    };
     const onResize = () => resize();
     const onVis = () => {
       if (document.hidden) {
         paused = true;
         cancelAnimationFrame(raf);
-      } else if (paused && !reduced) {
-        paused = false;
-        last = performance.now();
-        raf = requestAnimationFrame(frame);
+      } else {
+        resume();
+      }
+    };
+    const onScroll = () => {
+      const away = window.scrollY > window.innerHeight * 1.15;
+      if (away === scrolledAway) return;
+      scrolledAway = away;
+      if (away) {
+        paused = true;
+        cancelAnimationFrame(raf);
+      } else {
+        resume();
       }
     };
     const onTheme = () => {
@@ -288,6 +307,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       if (reduced) drawStatic();
     };
     window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("visibilitychange", onVis);
     // re-read colors whenever the theme attribute flips
     const mo = new MutationObserver(onTheme);
@@ -297,6 +317,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       dead = true;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVis);
       mo.disconnect();
     };
@@ -306,8 +327,20 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="fixed inset-0 block h-full w-full"
-      style={{ zIndex: 0, pointerEvents: "none" }}
+      className="block"
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100vh",
+        zIndex: 0,
+        pointerEvents: "none",
+        // fade the field out toward the hero's lower edge so the first solid
+        // section reads as a clean cut, not a hard canvas seam
+        WebkitMaskImage: "linear-gradient(180deg,#000 68%,transparent 100%)",
+        maskImage: "linear-gradient(180deg,#000 68%,transparent 100%)",
+      }}
     />
   );
 }

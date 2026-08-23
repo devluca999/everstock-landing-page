@@ -9,7 +9,7 @@ export default function Hero() {
       style={{ maxWidth: 1280, margin: "0 auto", padding: "clamp(96px,13vh,120px) 40px 0", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}
     >
       <p style={{ fontFamily: "var(--font-space)", fontSize: 11, fontWeight: 500, letterSpacing: "0.34em", color: "#0B5FFF", textShadow: "0 0 26px rgba(11,95,255,0.55)", margin: "0 0 clamp(22px,3vh,34px)" }}>
-        AGENTIC PROCUREMENT, DETERMINISTIC TRUST
+        DIGITAL INTELLIGENCE, DETERMINISTIC TRUST
       </p>
 
       {/* Fixed-height clearance zone for the title. Its height reserves the WORST-CASE

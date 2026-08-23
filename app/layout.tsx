@@ -47,9 +47,9 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const TITLE = "Everstock — Agentic procurement for mid-market distributors";
+const TITLE = "Everstock — Supply-chain intelligence, at your command";
 const DESCRIPTION =
-  "Everstock watches vendor pricing inside limits you set and queues every purchase for your approval. Deterministic spine, agentic edges — nothing moves a dollar until you sign off.";
+  "Everstock watches vendor pricing inside limits you set and queues every purchase for your approval. Nothing moves a dollar until you sign off.";
 const SITE_URL = "https://tryeverstock.com";
 
 export const metadata: Metadata = {
@@ -94,7 +94,7 @@ const jsonLd = {
       url: SITE_URL,
       logo: `${SITE_URL}/logo/logo-mark-dark.svg`,
       description:
-        "Agentic procurement infrastructure for mid-market distributors.",
+        "Supply-chain intelligence for mid-market distributors.",
     },
     {
       "@type": "WebSite",

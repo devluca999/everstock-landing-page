@@ -24,6 +24,29 @@
   /* signal colors — electric blue is agent-activity only, neon green the beam accent */
   --es-blue: #0B5FFF;
   --es-green: #40FFA8;
+  --es-solid: #101216;
+  --es-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  --es-grain-op: 0.030;
+  --es-grain-blend: overlay;
+  --mq: 44s;
+
+  /* DS spacing scale (2px base, 13 steps) — Variant B section rhythm keys off these */
+  --space-1: 2px;  --space-2: 4px;  --space-3: 6px;  --space-4: 8px;
+  --space-5: 12px; --space-6: 16px; --space-7: 20px; --space-8: 24px;
+  --space-9: 32px; --space-10: 40px; --space-11: 56px; --space-12: 72px; --space-13: 96px;
+  --radius-md: 7px;
+
+  /* material subset (matte + sheen), from the DS material tokens */
+  --matte-dark: linear-gradient(180deg, rgba(255,255,255,.035) 0%, rgba(255,255,255,.008) 34%, rgba(0,0,0,.10) 100%);
+  --sheen: linear-gradient(148deg, rgba(255,255,255,.11) 0%, rgba(255,255,255,.035) 18%, rgba(255,255,255,0) 46%, rgba(255,255,255,.018) 92%);
+  --elev-1: 0 16px 34px -12px rgba(0,0,0,.60), 0 4px 9px -3px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.075);
+
+  /* showcase stage size, expressed once (fixed reservation below the stage) */
+  --vb-stage-h: clamp(230px, min(calc(100dvh - 228px), calc((100vw - 140px) * 0.5625)), 720px);
+  --vb-stage-w: calc(var(--vb-stage-h) * 1.7778);
+  --vb-grid: rgba(226, 222, 214, 0.11);
+  --vb-veil-mid: rgba(16, 18, 22, 0.5);
+  --vb-veil-edge: rgba(16, 18, 22, 1);
 }
 
 :root[data-theme="light"] {
@@ -43,6 +66,15 @@
   --es-pill: rgba(22, 23, 27, 0.05);
   --es-grad-mid: #5F6268;
   --es-grad-end: #9B9EA4;
+  --es-solid: #F2EFE9;
+  --es-grain-op: 0.040;
+  --es-grain-blend: multiply;
+  --matte-dark: linear-gradient(180deg, rgba(255,255,255,.75) 0%, rgba(255,255,255,.25) 40%, rgba(70,66,59,.045) 100%);
+  --sheen: linear-gradient(148deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.30) 20%, rgba(255,255,255,0) 50%);
+  --elev-1: 0 12px 26px -10px rgba(46,43,38,.22), 0 3px 6px -2px rgba(46,43,38,.16), 0 1px 1px rgba(46,43,38,.10), inset 0 1px 0 rgba(255,255,255,.85);
+  --vb-grid: rgba(18, 18, 20, 0.15);
+  --vb-veil-mid: rgba(250, 247, 241, 0.5);
+  --vb-veil-edge: rgba(250, 247, 241, 1);
 }
 
 /* the title's grounded off-white -> asphalt gradient (strictly neutral, no blue/green) */
@@ -264,3 +296,154 @@ a:hover {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ============================================================
+   VARIANT B — solid-block sections. The hero is untouched; every
+   section after it is its own full-bleed solid field (the section IS
+   the zone, no translucent panel inside). The schematic grid becomes
+   an intermittent reveal on section entry instead of a constant bg.
+   Positional nth-of-type selectors from the source are converted to
+   explicit tone classes so the alternation survives a reorder.
+   ============================================================ */
+@keyframes esMarquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+@keyframes esLed { 0%,100% { opacity: .72; transform: scale(.92); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes esMarkBeam { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -100; } }
+
+/* section-level resets: strip the translucent-panel material, keep the hero intact */
+main > section:not(#top),
+main > footer {
+  position: relative;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  --es-glow: none;
+}
+main > section + section { border-top: 0; }
+main > section > *,
+main > footer > * { position: relative; z-index: 1; }
+
+/* band rhythm on the DS spacing scale */
+.es-band { padding: var(--space-13) 0; }
+.es-band-inner { padding: 0 var(--space-11); }
+.es-band--solid { background: var(--es-solid); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.es-band--wide .es-band-inner { max-width: 1420px; }
+@media (max-width: 767.98px) {
+  .es-band { padding: var(--space-12) 0; }
+  .es-band-inner { padding: 0 var(--space-8); }
+}
+
+/* two-zone hologram rows are flattened to a plain vertical stack — the section
+   is the zone; the hologram sits directly on the field at real scale */
+.es-zrow { position: relative; width: 100%; display: block; }
+.es-zglass { position: relative; display: flex; flex-direction: column; justify-content: center; gap: var(--space-8); padding: var(--space-13) var(--space-11) var(--space-9); max-width: 1420px; margin: 0 auto; }
+.es-zglass--b { padding-top: 0; }
+.es-zsolid { position: relative; display: flex; align-items: center; justify-content: center; padding: 0 var(--space-11) var(--space-13); max-width: 1420px; margin: 0 auto; }
+@media (max-width: 767.98px) {
+  .es-zglass { padding: var(--space-12) var(--space-8) var(--space-7); }
+  .es-zsolid { padding: 0 var(--space-8) var(--space-12); }
+}
+.es-holo-surface { width: 100%; max-width: 1180px; margin: 0 auto; }
+.es-holo-surface--pair { max-width: min(calc(var(--vb-stage-w) * 0.94), 88%); }
+[data-holo-wrap] { position: relative; width: 100%; }
+
+/* desk approval-queue card — a real 5-layer DS surface */
+.es-surface { position: relative; isolation: isolate; border-radius: var(--radius-md); border: 1px solid var(--es-edge); background-color: var(--es-card); background-image: var(--matte-dark); box-shadow: var(--elev-1); }
+.es-surface::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0; background-image: var(--es-grain); background-size: 160px 160px; opacity: var(--es-grain-op); mix-blend-mode: var(--es-grain-blend); }
+.es-surface::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0; background-image: var(--sheen); }
+.es-surface > * { position: relative; z-index: 1; }
+.es-z1 { box-shadow: var(--elev-1); }
+.es-desk { display: grid; grid-template-columns: 1fr; gap: var(--space-10); align-items: stretch; }
+.es-desk-card { overflow: hidden; height: 100%; }
+@media (min-width: 1240px) { .es-desk { grid-template-columns: minmax(0,1fr) minmax(0,1.05fr); } }
+
+/* marquee streams */
+.es-marquee-mask { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); }
+.es-marquee { display: flex; width: max-content; animation: esMarquee var(--mq) linear infinite; }
+
+/* tap-to-play badge is mobile-only (desktop autoplays) */
+@media (min-width: 1024px) { [data-tap] { display: none !important; } }
+
+/* ---- section tone system (explicit classes replace nth-of-type) ----
+   Dark theme = mostly dark, light accents. Light theme inverts which TONE
+   is majority vs accent; the alternation POSITION stays fixed. */
+.vb-accent {
+  background-color: #FAF7F1;
+  --es-bg: #FAF7F1;
+  --es-ink: #101115; --es-dim: rgba(22,23,27,0.74); --es-faint: rgba(22,23,27,0.62);
+  --es-line: rgba(22,23,27,0.16); --es-hair: rgba(22,23,27,0.08); --es-edge: rgba(22,40,66,0.14);
+  --es-lip: rgba(255,255,255,0.9); --es-card: rgba(255,255,255,0.62); --es-panel: rgba(255,255,255,0.7);
+  --vb-grid: rgba(18,18,20,0.17);
+  --vb-veil-mid: rgba(250,247,241,0.5); --vb-veil-edge: rgba(250,247,241,1);
+}
+.vb-major {
+  --es-ink: #FAF9F5; --es-dim: rgba(242,241,237,0.74); --es-faint: rgba(242,241,237,0.48);
+  --es-line: rgba(242,241,237,0.16); --es-hair: rgba(242,241,237,0.07); --es-edge: rgba(190,212,240,0.16);
+  --es-lip: rgba(206,226,252,0.1); --es-card: rgba(32,40,50,0.5); --es-panel: rgba(23,29,36,0.78);
+}
+.vb-ink   { background-color: #101216; --es-bg: #101216; --vb-grid: rgba(226,222,214,0.15); --vb-veil-mid: rgba(16,18,22,0.5); --vb-veil-edge: rgba(16,18,22,1); }
+.vb-stage { background-color: #0B0D11; --es-bg: #0B0D11; --vb-grid: rgba(226,222,214,0.17); --vb-veil-mid: rgba(11,13,17,0.5); --vb-veil-edge: rgba(11,13,17,1); }
+.vb-deep  { background-color: #17181D; --es-bg: #17181D; --vb-grid: rgba(226,222,214,0.13); --vb-veil-mid: rgba(23,24,29,0.5); --vb-veil-edge: rgba(23,24,29,1); }
+
+:root[data-theme="light"] .vb-accent {
+  background-color: #101216; --es-bg: #101216;
+  --es-ink: #FAF9F5; --es-dim: rgba(242,241,237,0.74); --es-faint: rgba(242,241,237,0.48);
+  --es-line: rgba(242,241,237,0.16); --es-hair: rgba(242,241,237,0.07); --es-edge: rgba(190,212,240,0.16);
+  --es-lip: rgba(206,226,252,0.1); --es-card: rgba(32,40,50,0.5); --es-panel: rgba(23,29,36,0.78);
+  --vb-grid: rgba(226,222,214,0.15); --vb-veil-mid: rgba(16,18,22,0.5); --vb-veil-edge: rgba(16,18,22,1);
+}
+:root[data-theme="light"] .vb-major {
+  --es-ink: #101115; --es-dim: rgba(22,23,27,0.74); --es-faint: rgba(22,23,27,0.62);
+  --es-line: rgba(22,23,27,0.16); --es-hair: rgba(22,23,27,0.08); --es-edge: rgba(22,40,66,0.14);
+  --es-lip: rgba(255,255,255,0.9); --es-card: rgba(255,255,255,0.62); --es-panel: rgba(255,255,255,0.7);
+}
+:root[data-theme="light"] .vb-ink   { background-color: #FAF7F1; --es-bg: #FAF7F1; --vb-grid: rgba(18,18,20,0.16); --vb-veil-mid: rgba(250,247,241,0.5); --vb-veil-edge: rgba(250,247,241,1); }
+:root[data-theme="light"] .vb-stage { background-color: #FFFDF7; --es-bg: #FFFDF7; --vb-grid: rgba(18,18,20,0.16); --vb-veil-mid: rgba(255,253,247,0.5); --vb-veil-edge: rgba(255,253,247,1); }
+:root[data-theme="light"] .vb-deep  { background-color: #F3F0E9; --es-bg: #F3F0E9; --vb-grid: rgba(18,18,20,0.16); --vb-veil-mid: rgba(243,240,233,0.5); --vb-veil-edge: rgba(243,240,233,1); }
+
+/* logo mark follows tone, not theme: light-toned blocks carry the dark-chrome mark */
+.vb-accent .es-logo-dark { display: none; }
+.vb-accent .es-logo-light { display: block; }
+:root[data-theme="light"] .vb-accent .es-logo-light { display: none; }
+:root[data-theme="light"] .vb-accent .es-logo-dark { display: block; }
+
+/* desk card + status badge follow the block's tone */
+.vb-accent .es-surface {
+  background-color: #FFFFFF !important; border-color: rgba(22,40,66,0.14) !important;
+  box-shadow: 0 12px 26px -10px rgba(46,43,38,.22), 0 3px 6px -2px rgba(46,43,38,.16), 0 1px 1px rgba(46,43,38,.10), inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+.vb-accent .es-surface::before { mix-blend-mode: multiply; opacity: 0.07; }
+.vb-accent .vb-badge-active { color: #0B4FBF !important; border-color: rgba(11,79,191,0.45) !important; background: rgba(11,79,191,0.07) !important; }
+:root[data-theme="light"] .vb-accent .es-surface {
+  background-color: #1C222A !important; border-color: rgba(190,212,240,0.16) !important;
+  box-shadow: 0 16px 34px -12px rgba(0,0,0,.6), 0 4px 9px -3px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.075) !important;
+}
+:root[data-theme="light"] .vb-accent .es-surface::before { mix-blend-mode: overlay; opacity: 0.055; }
+:root[data-theme="light"] .vb-accent .vb-badge-active { color: #8FBAFF !important; border-color: rgba(11,95,255,0.5) !important; background: rgba(11,95,255,0.08) !important; }
+
+/* ---- hologram embedding: dark pool (light theme) + vignette veil (dark theme) ---- */
+.vb-veil { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(farthest-corner at 50% 47%, rgba(0,0,0,0) 41%, var(--vb-veil-mid) 74%, var(--vb-veil-edge) 100%); }
+.vb-veil-edges { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, var(--vb-veil-mid) 0, rgba(0,0,0,0) 7%, rgba(0,0,0,0) 93%, var(--vb-veil-mid) 100%), linear-gradient(90deg, var(--vb-veil-mid) 0, rgba(0,0,0,0) 6%, rgba(0,0,0,0) 94%, var(--vb-veil-mid) 100%); opacity: 0.85; }
+.vb-pool { display: none; position: absolute; left: -14%; top: -14%; width: 128%; height: 128%; pointer-events: none; background: radial-gradient(closest-side, rgba(14,16,20,0.96) 0%, rgba(14,16,20,0.9) 42%, rgba(14,16,20,0.5) 72%, rgba(14,16,20,0) 100%); }
+:root[data-theme="light"] .vb-pool { display: block; }
+/* light-mode veil reads as a shading mistake (Task #9): the dark pool already
+   embeds the wireframe, so drop the light-coloured vignette in light theme. */
+:root[data-theme="light"] .vb-veil { display: none; }
+:root[data-theme="light"] .vb-mark-grain { opacity: 0.09; mix-blend-mode: multiply; }
+
+/* ---- signature accent: blueprint materialises, holds, dissolves on section entry ---- */
+.vb-bp { position: absolute; inset: 0; z-index: 0 !important; pointer-events: none; opacity: 0.004; background-image: linear-gradient(var(--vb-grid) 1px, transparent 1px), linear-gradient(90deg, var(--vb-grid) 1px, transparent 1px); background-size: 56px 56px, 56px 56px; }
+.vb-bp-major { position: absolute; inset: 0; z-index: 0 !important; pointer-events: none; opacity: 0.55; background-image: linear-gradient(var(--vb-grid) 1px, transparent 1px), linear-gradient(90deg, var(--vb-grid) 1px, transparent 1px); background-size: 224px 224px, 224px 224px; }
+.vb-armed { will-change: opacity; }
+.vb-trail { position: absolute; bottom: 0; width: clamp(88px,11vw,180px); height: min(44vh,400px); z-index: 0 !important; pointer-events: none; visibility: hidden; --vb-p: 0; }
+.vb-trail--l { left: 0; }
+.vb-trail--r { right: 0; }
+.vb-trail-spine { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--vb-grid); transform-origin: top center; transform: scaleY(var(--vb-p)); opacity: calc(0.34 + var(--vb-p) * 0.66); }
+.vb-trail--l .vb-trail-spine { left: clamp(20px,2.8vw,48px); }
+.vb-trail--r .vb-trail-spine { right: clamp(20px,2.8vw,48px); }
+.vb-trail-tick { position: absolute; height: 1px; background: var(--vb-grid); opacity: clamp(0, calc((var(--vb-p) - var(--vb-t)) * 7), 1); transform: scaleX(clamp(0.15, calc((var(--vb-p) - var(--vb-t)) * 5), 1)); }
+.vb-trail--l .vb-trail-tick { left: clamp(20px,2.8vw,48px); transform-origin: left center; }
+.vb-trail--r .vb-trail-tick { right: clamp(20px,2.8vw,48px); transform-origin: right center; }
+.vb-in > .vb-bp { animation: vbBlueprint 3200ms cubic-bezier(0.4,0,0.2,1) forwards; }
+@keyframes vbBlueprint { 0% { opacity: 0.004; } 18% { opacity: 1; } 56% { opacity: 1; } 100% { opacity: 0.004; } }
+@media (prefers-reduced-motion: reduce) { .vb-in > .vb-bp { animation: none; opacity: 0.5; } }

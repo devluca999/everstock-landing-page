@@ -108,3 +108,13 @@ Full section-by-section copy and structure (trust bar, problem statement, how it
 - Flag ambiguous decisions rather than guessing silently, especially around mobile behavior for animation-heavy elements
 - Ask before touching real infrastructure (GitHub repo creation/auth, Vercel deploy, domain/DNS config) — code changes are fine to proceed on, infra actions need a check-in first
 - Componentize sensibly (Hero, Nav, GridBackground, BeamField, TitleCycle, Section, etc.) rather than one large file
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

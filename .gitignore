@@ -42,3 +42,6 @@ next-env.d.ts
 
 # gstack browse artifacts
 .gstack/
+
+# large design input archives (kept out of the repo)
+*.zip
