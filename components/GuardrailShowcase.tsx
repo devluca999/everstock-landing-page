@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
-import { HOLO_MASK, TapBadge } from "./PairedHologram";
+import { HOLO_MASK } from "./PairedHologram";
 
 type Beat = {
   src: string;
@@ -15,25 +15,25 @@ const BEATS: Beat[] = [
     src: "/videos/beat1-prefill.mp4",
     aria: "A purchase-order document peels off the stack and its vendor, price and quantity fields autofill",
     capTitle: "Everstock fills the paperwork",
-    desc: "It reads the quote and writes the vendor, price and quantity fields itself — each one annotated, so you can check its work in a single pass.",
+    desc: "It reads the quote and writes the vendor, price and quantity fields itself, each one annotated, so you can check its work in a single pass.",
   },
   {
     src: "/videos/beat2-source.mp4",
     aria: "Vendors are evaluated one at a time around the live Everstock mark",
     capTitle: "It works every vendor, one at a time",
-    desc: "Quotes go out to the vendors you approved. Each is scored against your thresholds and marked — favorable or not — before the next.",
+    desc: "Quotes go out to the vendors you approved. Each is scored against your thresholds and marked, favorable or not, before the next.",
   },
   {
     src: "/videos/beat3-approve.mp4",
     aria: "Packages are inspected, stamped and set aside on a conveyor",
     capTitle: "Everything stops at your queue",
-    desc: "Approved lines move on. Flagged lines are set aside and stay visible — nothing is silently dropped, nothing executes on its own.",
+    desc: "Approved lines move on. Flagged lines are set aside and stay visible. Nothing is silently dropped, nothing executes on its own.",
   },
   {
     src: "/videos/beat4-reconcile.mp4",
     aria: "Scattered documents and cracked spreadsheets resolve into two organized rows",
     capTitle: "The trail reconciles itself",
-    desc: "Unreconciled orders and scattered spreadsheets settle into one uniform timeline — production history you can audit line by line.",
+    desc: "Unreconciled orders and scattered spreadsheets settle into one uniform timeline. Production history you can audit line by line.",
   },
 ];
 
@@ -85,15 +85,13 @@ export default function GuardrailShowcase() {
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const onScreenRef = useRef(false);
-  const mobileRef = useRef(false);
 
-  const [showTap, setShowTap] = useState(false);
-
-  // env + on-screen gating: only the visible stage decodes video
+  // on-screen gating: the active beat plays only while the showcase is in view,
+  // and every beat pauses when it scrolls away. The clips are muted + playsInline,
+  // so this autoplay-in-view works on mobile and desktop, and nothing decodes
+  // off-screen.
   useEffect(() => {
-    mobileRef.current = window.matchMedia("(max-width:1023.98px)").matches;
     setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    if (mobileRef.current) setShowTap(true);
 
     const stage = stageRef.current;
     let io: IntersectionObserver | undefined;
@@ -102,10 +100,8 @@ export default function GuardrailShowcase() {
         (entries) => {
           entries.forEach((e) => {
             onScreenRef.current = e.isIntersecting;
-            const v = videoRefs.current[beatRef.current];
-            if (!v) return;
             if (e.isIntersecting) {
-              if (!mobileRef.current) v.play().catch(() => {});
+              videoRefs.current[beatRef.current]?.play().catch(() => {});
             } else {
               videoRefs.current.forEach((vv) => vv?.pause());
             }
@@ -130,7 +126,7 @@ export default function GuardrailShowcase() {
         try {
           v.currentTime = 0;
         } catch {}
-        if (onScreenRef.current && !mobileRef.current) v.play().catch(() => {});
+        if (onScreenRef.current) v.play().catch(() => {});
       } else {
         v.pause();
       }
@@ -177,20 +173,6 @@ export default function GuardrailShowcase() {
       if (active && onMeta) active.removeEventListener("loadedmetadata", onMeta);
     };
   }, [beat]);
-
-  // mobile tap-to-play on the stage
-  const onStageTap = () => {
-    if (!mobileRef.current) return;
-    const v = videoRefs.current[beat];
-    if (!v) return;
-    if (v.paused) {
-      v.play().catch(() => {});
-      setShowTap(false);
-    } else {
-      v.pause();
-      setShowTap(true);
-    }
-  };
 
   const goBeat = (i: number) => setBeat(Math.max(0, Math.min(BEATS.length - 1, i)));
 
@@ -261,7 +243,6 @@ export default function GuardrailShowcase() {
       {/* --- stage: four cross-fading beat videos --- */}
       <div
         ref={stageRef}
-        onClick={onStageTap}
         style={{
           position: "relative",
           aspectRatio: "16 / 9",
@@ -297,10 +278,9 @@ export default function GuardrailShowcase() {
               aria-label={b.aria}
               style={beatVideoStyle}
             />
-            {/* Beat 2's Everstock mark is now rendered natively inside the clip
-                (segmented at rest → unified chrome loop + electric-blue beam while
-                scanning vendors), so no DOM composite is needed here. */}
-            {showTap && k === beat && <TapBadge />}
+            {/* Beat 2's Everstock mark is rendered natively inside the clip
+                (segmented at rest, then a unified chrome loop with the electric-blue
+                beam while it scans vendors), so no DOM composite is needed here. */}
           </div>
         ))}
       </div>

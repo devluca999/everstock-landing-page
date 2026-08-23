@@ -22,14 +22,14 @@ const queueBadge: CSSProperties = { flex: "none", fontFamily: "var(--font-mono)"
 
 const STEPS = [
   { n: "01", name: "Watch", desc: "Everstock's agent tracks vendor pricing against the thresholds you set.", meta: ["SCAN INTERVAL", "CONTINUOUS"] },
-  { n: "02", name: "Propose", desc: "When a price or reorder trigger fires, a purchase gets queued for approval — never executed automatically.", meta: ["AUTO-EXECUTE", "DISABLED"] },
+  { n: "02", name: "Propose", desc: "When a price or reorder trigger fires, a purchase gets queued for approval, never executed automatically.", meta: ["AUTO-EXECUTE", "DISABLED"] },
   { n: "03", name: "Execute", desc: "Once approved, the deterministic rules engine places the order through your existing vendor relationships.", meta: ["AUDIT TRAIL", "RETAINED"] },
 ];
 const INTEGRATIONS = ["Epicor Vision", "Epicor Eagle", "MAM / Kerridge", "Nexpart", "PartsTech", "SPS Commerce", "TrueCommerce", "Excel / Spreadsheet"];
 const QUEUE = [
   { name: "Michelin Defender T+H", meta: "Qty 24 · $2,140", state: "PROPOSED", active: true },
-  { name: "Wix filters — bulk case", meta: "Qty 60 · $884", state: "APPROVED", active: false },
-  { name: "Brake pads — front set", meta: "Qty 18 · $1,062", state: "EXECUTED", active: false },
+  { name: "Wix filters, bulk case", meta: "Qty 60 · $884", state: "APPROVED", active: false },
+  { name: "Brake pads, front set", meta: "Qty 18 · $1,062", state: "EXECUTED", active: false },
 ];
 
 const TAGLINES = [
@@ -37,8 +37,8 @@ const TAGLINES = [
   "Nothing moves a dollar without approval",
   "Built for auto parts distributors",
   "Works with your existing ERP",
-  "Human-in-the-loop by default",
-  "No rip-and-replace",
+  "Human in the loop by default",
+  "No rip and replace",
 ];
 const OUTCOMES = [
   "Fewer stockouts",
@@ -73,11 +73,11 @@ export default function Home() {
           {/* 3 — The Leak (screw + gear hologram) */}
           <section id="platform" className="es-zrow es-reveal vb-major vb-ink">
             <div className="es-zglass">
-              <Eyebrow>01 — THE LEAK</Eyebrow>
+              <Eyebrow>01 · THE LEAK</Eyebrow>
               <div style={{ display: "flex", flexDirection: "column", gap: 26, maxWidth: 660 }}>
-                <h2 style={stmtLg}>You&rsquo;re already spending thousands a month on tires, filters, brake pads, and fluids — with no visibility into price.</h2>
+                <h2 style={stmtLg}>You&rsquo;re already spending thousands a month on tires, filters, brake pads, and fluids, with no visibility into price.</h2>
                 <p style={{ ...body, fontSize: "clamp(15px,1.4vw,18px)", margin: 0, maxWidth: 600 }}>
-                  In the supply chain, &ldquo;close enough&rdquo; doesn&rsquo;t exist. Thread pitch, finish, coating — Everstock matches the spec you defined, or it stops and asks.
+                  In the supply chain, &ldquo;close enough&rdquo; doesn&rsquo;t exist. Thread pitch, finish, coating: Everstock matches the spec you defined, or it stops and asks.
                 </p>
                 <p style={{ ...body, color: "var(--es-faint)", fontSize: "clamp(14px,1.25vw,16px)", margin: 0, maxWidth: 600 }}>
                   Vendor quotes arrive by email, phone, and PDF. Nobody on your team has time to check whether last week&rsquo;s price still holds.
@@ -94,13 +94,13 @@ export default function Home() {
             <div className="es-band-inner es-reveal">
               <div style={{ display: "flex", flexDirection: "column", gap: "clamp(34px,5vh,56px)" }}>
                 <div className="es-split">
-                  <Eyebrow>02 — THE SYSTEM</Eyebrow>
+                  <Eyebrow>02 · THE SYSTEM</Eyebrow>
                   <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 720 }}>
                     <p style={{ ...body, fontSize: "clamp(17px,1.6vw,22px)", margin: 0 }}>
                       Everstock&rsquo;s agent watches vendor pricing inside limits you set. Nothing moves a dollar until it clears your approval queue.
                     </p>
                     <p style={{ ...body, color: "var(--es-faint)", fontSize: "clamp(14px,1.3vw,16.5px)", margin: 0 }}>
-                      It connects to the systems you already run — your ERP, your EDI feeds, your spreadsheets — and replaces none of them.
+                      It connects to the systems you already run (your ERP, your EDI feeds, your spreadsheets), and replaces none of them.
                     </p>
                   </div>
                 </div>
@@ -126,10 +126,10 @@ export default function Home() {
           {/* 5 — The Guardrail (big showcase, four beats) */}
           <section id="approvals" className="es-band es-band--solid es-band--wide vb-major vb-stage">
             <div className="es-band-inner es-reveal" style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 16 }}>
-              <Eyebrow>03 — THE GUARDRAIL</Eyebrow>
+              <Eyebrow>03 · THE GUARDRAIL</Eyebrow>
               <h2 style={{ ...stmtLg, fontSize: "clamp(26px,3.4vw,48px)", lineHeight: 1.18, letterSpacing: "-0.025em", maxWidth: 840 }}>Nothing moves without your sign-off.</h2>
               <p style={{ ...body, fontSize: "clamp(15px,1.45vw,19px)", margin: 0, maxWidth: 660 }}>
-                Proposed, approved, executed — in that order, every time. Here&rsquo;s what happens in between.
+                Proposed, approved, executed, in that order, every time. Here&rsquo;s what happens in between.
               </p>
               <GuardrailShowcase />
             </div>
@@ -139,14 +139,14 @@ export default function Home() {
           <section id="company" className="es-band vb-major vb-deep">
             <div className="es-band-inner es-reveal">
               <div className="es-split">
-                <Eyebrow>04 — THE CONTRACT</Eyebrow>
+                <Eyebrow>04 · THE CONTRACT</Eyebrow>
                 <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
                   <p style={{ ...stmtLg, fontSize: "clamp(22px,2.6vw,36px)", lineHeight: 1.28, maxWidth: 820 }}>
                     Nothing is automatic by default. Every decision waits for you before it moves.
                   </p>
                   <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
                     <span style={{ display: "block", width: 7, height: 7, borderRadius: "50%", background: "#0B5FFF", boxShadow: "0 0 12px rgba(11,95,255,0.8)", animation: "esPulse 2.6s ease-in-out infinite" }} />
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, fontWeight: 500, letterSpacing: "0.26em", color: "var(--es-dim)" }}>AGENT ACTIVE — 14 QUOTES IN QUEUE</span>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, fontWeight: 500, letterSpacing: "0.26em", color: "var(--es-dim)" }}>AGENT ACTIVE · 14 QUOTES IN QUEUE</span>
                   </div>
                   <div id="request" className="es-cta" style={{ paddingTop: 6 }}>
                     <PrimaryCta href="#request">Request access</PrimaryCta>
@@ -161,7 +161,7 @@ export default function Home() {
           <section className="es-band vb-accent">
             <div className="es-band-inner es-reveal">
               <div className="es-split">
-                <Eyebrow>05 — YOUR DESK</Eyebrow>
+                <Eyebrow>05 · YOUR DESK</Eyebrow>
                 <div className="es-desk">
                   <div style={{ display: "flex", flexDirection: "column", gap: 16, justifyContent: "center" }}>
                     <h2 style={h2Md}>This makes your job easier, not obsolete.</h2>
@@ -192,9 +192,9 @@ export default function Home() {
           {/* 8 — Your Stack (robotic arm + crane hologram, flipped) */}
           <section className="es-zrow es-zrow--flip es-reveal vb-major vb-ink">
             <div className="es-zglass">
-              <Eyebrow id="integrations">06 — YOUR STACK</Eyebrow>
+              <Eyebrow id="integrations">06 · YOUR STACK</Eyebrow>
               <div style={{ display: "flex", flexDirection: "column", gap: 18, maxWidth: 660 }}>
-                <h2 style={h2Md}>Works on top of what you&rsquo;ve already got — no rip-and-replace.</h2>
+                <h2 style={h2Md}>Works on top of what you&rsquo;ve already got. No rip and replace.</h2>
                 <p style={{ ...body, fontSize: "clamp(15px,1.4vw,18px)", margin: 0 }}>
                   Everstock connects to the ERPs, catalogs and EDI networks mid-market distributors already run. Still tracking prices and thresholds in a spreadsheet? It works with that too.
                 </p>
@@ -211,7 +211,7 @@ export default function Home() {
                   ))}
                 </div>
                 <p style={{ fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: 13.5, lineHeight: 1.5, margin: 0, color: "var(--es-faint)" }}>
-                  No lengthy implementation — if you can export a price file, you can get started.
+                  No lengthy implementation. If you can export a price file, you can get started.
                 </p>
               </div>
             </div>

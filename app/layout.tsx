@@ -47,7 +47,7 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const TITLE = "Everstock — Supply-chain intelligence, at your command";
+const TITLE = "Everstock: Supply-chain intelligence, at your command";
 const DESCRIPTION =
   "Everstock watches vendor pricing inside limits you set and queues every purchase for your approval. Nothing moves a dollar until you sign off.";
 const SITE_URL = "https://tryeverstock.com";

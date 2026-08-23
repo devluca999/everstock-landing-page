@@ -1,44 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 export const HOLO_MASK =
   "radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%)";
-
-/** Mobile-only "tap to play" affordance shown over a paused hologram. */
-export function TapBadge({ bottom = false }: { bottom?: boolean }) {
-  return (
-    <span
-      data-tap="true"
-      style={{
-        position: "absolute",
-        left: "50%",
-        top: bottom ? undefined : "50%",
-        bottom: bottom ? "6%" : undefined,
-        transform: bottom ? "translateX(-50%)" : "translate(-50%,-50%)",
-        display: "flex",
-        alignItems: "center",
-        gap: 9,
-        padding: "11px 18px",
-        borderRadius: 999,
-        border: "1px solid var(--es-line)",
-        background: "var(--es-panel)",
-        fontFamily: "var(--font-mono)",
-        fontSize: 10,
-        fontWeight: 500,
-        letterSpacing: "0.24em",
-        color: "var(--es-dim)",
-        zIndex: 3,
-        pointerEvents: "none",
-      }}
-    >
-      <svg width="9" height="11" viewBox="0 0 9 11" fill="none" aria-hidden="true">
-        <path d="M1 1l7 4.5L1 10z" fill="#5B9BFF" />
-      </svg>
-      TAP TO PLAY
-    </span>
-  );
-}
 
 const videoStyle: CSSProperties = {
   display: "block",
@@ -56,63 +21,42 @@ const videoStyle: CSSProperties = {
  * A paired icon-hologram (screw+gear / arm+crane). The video sits directly on the
  * section field — a dark radial pool behind it (light theme, so the navy wireframe
  * reads) and a corner vignette veil above it (dark theme, so its rectangle dissolves
- * into the surface). Autoplays on desktop, gated by an IntersectionObserver so only
- * on-screen video decodes; taps to play/pause on mobile.
+ * into the surface). It plays ONLY while on-screen: an IntersectionObserver starts it
+ * when the section scrolls into view and pauses it when it leaves, on mobile and
+ * desktop alike (the clip is muted + playsInline, so in-view autoplay works
+ * everywhere and nothing decodes off-screen). No tap-to-play.
  */
 export default function PairedHologram({ src, label }: { src: string; label: string }) {
-  const wrapRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [showTap, setShowTap] = useState(false);
 
   useEffect(() => {
     const v = videoRef.current;
-    const wrap = wrapRef.current;
-    if (!v || !wrap) return;
-    const mobile = window.matchMedia("(max-width:1023.98px)").matches;
+    if (!v) return;
     v.muted = true;
     v.loop = true;
     v.playsInline = true;
     v.disablePictureInPicture = true;
-    if (mobile) setShowTap(true);
-    else v.play().catch(() => {});
 
-    let io: IntersectionObserver | undefined;
-    if ("IntersectionObserver" in window) {
-      io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              if (!mobile) v.play().catch(() => {});
-            } else {
-              v.pause();
-            }
-          });
-        },
-        { rootMargin: "15% 0px" }
-      );
-      io.observe(v);
+    if (!("IntersectionObserver" in window)) {
+      v.play().catch(() => {});
+      return;
     }
-
-    const onTap = () => {
-      if (!mobile) return;
-      if (v.paused) {
-        v.play().catch(() => {});
-        setShowTap(false);
-      } else {
-        v.pause();
-        setShowTap(true);
-      }
-    };
-    wrap.addEventListener("click", onTap);
-    return () => {
-      io?.disconnect();
-      wrap.removeEventListener("click", onTap);
-    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) v.play().catch(() => {});
+          else v.pause();
+        });
+      },
+      { rootMargin: "15% 0px" }
+    );
+    io.observe(v);
+    return () => io.disconnect();
   }, []);
 
   return (
     <div className="es-holo-surface es-holo-surface--pair">
-      <div ref={wrapRef} data-holo-wrap="true" style={{ position: "relative", width: "100%" }}>
+      <div data-holo-wrap="true" style={{ position: "relative", width: "100%" }}>
         <span className="vb-pool" aria-hidden="true" />
         <video
           ref={videoRef}
@@ -128,7 +72,6 @@ export default function PairedHologram({ src, label }: { src: string; label: str
         <span className="vb-veil" aria-hidden="true" style={{ zIndex: 2 }}>
           <span className="vb-veil-edges" />
         </span>
-        {showTap && <TapBadge />}
       </div>
     </div>
   );
