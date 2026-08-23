@@ -47,7 +47,8 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const TITLE = "Everstock: Procurement automation for distributors";
+const TITLE =
+  "Everstock: Sourcing, procurement and data management automation for supply-chain distributors";
 const DESCRIPTION =
   "Everstock monitors vendor pricing, flags reorders, and queues every purchase order for your approval. Purchasing automation for auto parts, electronics, and industrial distributors that works with your existing ERP.";
 const SITE_URL = "https://tryeverstock.com";

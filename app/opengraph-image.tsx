@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "Everstock: Procurement automation for distributors";
+  "Everstock: Sourcing, procurement and data management automation for supply-chain distributors";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
