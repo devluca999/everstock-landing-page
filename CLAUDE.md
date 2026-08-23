@@ -90,13 +90,17 @@ Left-aligned body copy and headlines inside a centered max-width container, ever
 
 ## Copy
 
-- Hero eyebrow: "Agentic procurement, deterministic trust" (or evaluate against "Supply-chain intelligence, at your command" — that phrase currently lives in the subheading, worth a gut-check on whether it belongs in both places or just one)
+- Hero eyebrow: "Digital intelligence, deterministic trust" (the buyer-facing, de-agenticized form; the OG image mirrors it)
 - Hero H1: EVERSTOCK
-- Hero subheading: "Supply-chain intelligence, at your command."
-- Nav: Platform · Pricing · Company · Log in
+- Hero subheading: "Supply-chain intelligence, at your command." (kept as the brand line in the hero *only*; the footer, OG image, and metadata deliberately use keyworded procurement-automation lines instead, so the phrase is no longer reused site-wide)
+- Nav (audited 2026-08-23): **How it works** (#platform) · **Approvals** (#approvals) · **Integrations** (#integrations) · **Request access** pill (#request). The old Platform · Pricing · Company · Log in set was dropped because Pricing/Company/Log in had no matching sections (Pricing jumped to the footer, Log in dead-ended). `#platform` now points at *The System* (the real how-it-works), not *The Leak* (which is `#problem`). The Request-access pill uses the primary-CTA pattern (filled ink at rest, blue on hover via `.es-cta-primary`) — never a resting blue fill, blue stays signal-only.
 - Primary CTA: "Request access" — Secondary CTA: "See how it works" (repeated verbatim at the bottom of the page, matching the hero)
 
-Full section-by-section copy and structure (trust bar, problem statement, how it works, trust architecture / approval queue visualization, ops-user reassurance, integrations, footer) is in the project's design brief docs — ask if you need the full site map restated. Integrations section should include Excel/spreadsheet import-export alongside named ERP/EDI systems — many mid-market distributors run on spreadsheets rather than a formal ERP, and that's the lower-friction on-ramp for that segment.
+**Positioning breadth (2026-08-23).** Copy is **auto-parts-led but broadened**: the umbrella is "distributors of physical goods," with auto parts as the primary worked example and **electronics + industrial supply** named alongside it. The demo queue and integrations list visibly span all three verticals. Spec-matching descriptors are cross-industry (SKU, size, model, revision, finish), not auto-only (was "thread pitch, finish, coating"). Keep this breadth; don't narrow back to auto-parts-only.
+
+**Stealth-SaaS voice.** Buyer-facing copy avoids "agent"/"agentic" vocabulary (reserved for investor/category contexts) — the trust-bar thesis reads "Deterministic rules, automated legwork," not "Deterministic spine, agentic edges." The monospace "AGENT ACTIVE" readout chip is product-UI flavor and may stay.
+
+Integrations section should include Excel/spreadsheet import-export alongside named ERP/EDI systems — many mid-market distributors run on spreadsheets rather than a formal ERP, and that's the lower-friction on-ramp for that segment. Every integration cell must be a system the buyer *runs or orders through* (ERP, EDI, supplier catalog), never a competitor distributor (e.g. Grainger is out; Epicor Prophet 21, PartsTech, Mouser/Digi-Key are in), and the framing stays compatibility ("connects to what you run"), not partnership claims.
 
 ## Accessibility & performance (non-negotiable, not nice-to-haves)
 

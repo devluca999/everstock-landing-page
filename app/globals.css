@@ -282,6 +282,9 @@ a:hover {
   }
 }
 
+/* anchored sections clear the fixed nav pill instead of landing under it */
+#es-content [id] { scroll-margin-top: clamp(80px, 12vh, 112px); }
+
 /* ---------- locked logo: theme-inverted chrome mark swap ---------- */
 .es-logo-img { display: block; }
 .es-logo-light { display: none; }
@@ -296,15 +299,17 @@ a:hover {
   transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease;
 }
 .es-cta-primary:hover {
-  background: #0b5fff;
-  color: #ffffff;
+  /* !important beats the components' inline resting `background: var(--es-ink)`,
+     which otherwise wins over this rule and blocks the blue-on-hover state */
+  background: #0b5fff !important;
+  color: #ffffff !important;
   box-shadow: 0 0 34px rgba(11, 95, 255, 0.42);
 }
 .es-cta-secondary {
   transition: border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
 }
 .es-cta-secondary:hover {
-  border-color: #0b5fff;
+  border-color: #0b5fff !important; /* beats the inline resting border-color */
   box-shadow: 0 0 26px rgba(11, 95, 255, 0.22);
 }
 

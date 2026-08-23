@@ -21,21 +21,21 @@ const queueMeta: CSSProperties = { fontFamily: "var(--font-plex)", fontWeight: 3
 const queueBadge: CSSProperties = { flex: "none", fontFamily: "var(--font-mono)", fontSize: 9.5, fontWeight: 500, letterSpacing: "0.16em", padding: "6px 12px", borderRadius: 999, border: "1px solid var(--es-edge)", color: "var(--es-faint)", background: "transparent" };
 
 const STEPS = [
-  { n: "01", name: "Watch", desc: "Everstock's agent tracks vendor pricing against the thresholds you set.", meta: ["SCAN INTERVAL", "CONTINUOUS"] },
-  { n: "02", name: "Propose", desc: "When a price or reorder trigger fires, a purchase gets queued for approval, never executed automatically.", meta: ["AUTO-EXECUTE", "DISABLED"] },
-  { n: "03", name: "Execute", desc: "Once approved, the deterministic rules engine places the order through your existing vendor relationships.", meta: ["AUDIT TRAIL", "RETAINED"] },
+  { n: "01", name: "Watch", desc: "Everstock tracks vendor pricing and stock levels against the thresholds you set, across every SKU you carry.", meta: ["SCAN INTERVAL", "CONTINUOUS"] },
+  { n: "02", name: "Propose", desc: "When a price move or reorder point triggers, it drafts a purchase order and queues it for approval, never buys on its own.", meta: ["AUTO-EXECUTE", "DISABLED"] },
+  { n: "03", name: "Execute", desc: "Once you approve, the rules engine places the order through your existing vendor accounts and logs every step.", meta: ["AUDIT TRAIL", "RETAINED"] },
 ];
-const INTEGRATIONS = ["Epicor Vision", "Epicor Eagle", "MAM / Kerridge", "Nexpart", "PartsTech", "SPS Commerce", "TrueCommerce", "Excel / Spreadsheet"];
+const INTEGRATIONS = ["NetSuite", "Epicor Prophet 21", "SAP Business One", "PartsTech", "Mouser & Digi-Key", "SPS Commerce", "TrueCommerce", "Excel / Spreadsheet"];
 const QUEUE = [
-  { name: "Michelin Defender T+H", meta: "Qty 24 · $2,140", state: "PROPOSED", active: true },
-  { name: "Wix filters, bulk case", meta: "Qty 60 · $884", state: "APPROVED", active: false },
-  { name: "Brake pads, front set", meta: "Qty 18 · $1,062", state: "EXECUTED", active: false },
+  { name: "Michelin Defender T+H", meta: "Qty 24 · $2,140 · auto", state: "PROPOSED", active: true },
+  { name: "USB-C 65W charger, retail", meta: "Qty 500 · $6,900 · electronics", state: "APPROVED", active: false },
+  { name: "Grade 8 hex bolts, 3/8 in", meta: "Qty 5,000 · $410 · industrial", state: "EXECUTED", active: false },
 ];
 
 const TAGLINES = [
-  "Deterministic spine, agentic edges",
-  "Nothing moves a dollar without approval",
-  "Built for auto parts distributors",
+  "Deterministic rules, automated legwork",
+  "Every order waits for your approval",
+  "For parts, electronics & industrial distributors",
   "Works with your existing ERP",
   "Human in the loop by default",
   "No rip and replace",
@@ -71,16 +71,16 @@ export default function Home() {
           </section>
 
           {/* 3 — The Leak (screw + gear hologram) */}
-          <section id="platform" className="es-zrow es-reveal vb-major vb-ink">
+          <section id="problem" className="es-zrow es-reveal vb-major vb-ink">
             <div className="es-zglass">
               <Eyebrow>01 · THE LEAK</Eyebrow>
               <div style={{ display: "flex", flexDirection: "column", gap: 26, maxWidth: 660 }}>
-                <h2 style={stmtLg}>You&rsquo;re already spending thousands a month on tires, filters, brake pads, and fluids, with no visibility into price.</h2>
+                <h2 style={stmtLg}>You spend thousands a month restocking parts, with no clear view of what you&rsquo;re paying or whether the price still holds.</h2>
                 <p style={{ ...body, fontSize: "clamp(15px,1.4vw,18px)", margin: 0, maxWidth: 600 }}>
-                  In the supply chain, &ldquo;close enough&rdquo; doesn&rsquo;t exist. Thread pitch, finish, coating: Everstock matches the spec you defined, or it stops and asks.
+                  In distribution, &ldquo;close enough&rdquo; doesn&rsquo;t exist. SKU, size, model, revision, finish: Everstock matches the exact spec you defined, or it stops and asks. Same discipline whether you move auto parts, electronics, or industrial supply.
                 </p>
                 <p style={{ ...body, color: "var(--es-faint)", fontSize: "clamp(14px,1.25vw,16px)", margin: 0, maxWidth: 600 }}>
-                  Vendor quotes arrive by email, phone, and PDF. Nobody on your team has time to check whether last week&rsquo;s price still holds.
+                  Vendor quotes still land by email, phone, and PDF. No one on your team has time to check whether last week&rsquo;s price is the one you just paid.
                 </p>
               </div>
             </div>
@@ -89,18 +89,18 @@ export default function Home() {
             </div>
           </section>
 
-          {/* 4 — The System (Watch / Propose / Execute) */}
-          <section className="es-band vb-accent">
+          {/* 4 — The System (Watch / Propose / Execute) — the how-it-works anchor */}
+          <section id="platform" className="es-band vb-accent">
             <div className="es-band-inner es-reveal">
               <div style={{ display: "flex", flexDirection: "column", gap: "clamp(34px,5vh,56px)" }}>
                 <div className="es-split">
                   <Eyebrow>02 · THE SYSTEM</Eyebrow>
                   <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 720 }}>
                     <p style={{ ...body, fontSize: "clamp(17px,1.6vw,22px)", margin: 0 }}>
-                      Everstock&rsquo;s agent watches vendor pricing inside limits you set. Nothing moves a dollar until it clears your approval queue.
+                      Everstock watches vendor pricing against the limits you set, chases the quotes, and drafts the purchase order. You stay the one who approves it.
                     </p>
                     <p style={{ ...body, color: "var(--es-faint)", fontSize: "clamp(14px,1.3vw,16.5px)", margin: 0 }}>
-                      It connects to the systems you already run (your ERP, your EDI feeds, your spreadsheets), and replaces none of them.
+                      It runs on top of the systems you already have, your ERP, your EDI feeds, your spreadsheets, and replaces none of them.
                     </p>
                   </div>
                 </div>
@@ -142,7 +142,7 @@ export default function Home() {
                 <Eyebrow>04 · THE CONTRACT</Eyebrow>
                 <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
                   <p style={{ ...stmtLg, fontSize: "clamp(22px,2.6vw,36px)", lineHeight: 1.28, maxWidth: 820 }}>
-                    Nothing is automatic by default. Every decision waits for you before it moves.
+                    Every proposal carries the quote, the spec, and the reason it fired. You approve with the full picture in front of you, or you don&rsquo;t.
                   </p>
                   <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
                     <span style={{ display: "block", width: 7, height: 7, borderRadius: "50%", background: "#0B5FFF", boxShadow: "0 0 12px rgba(11,95,255,0.8)", animation: "esPulse 2.6s ease-in-out infinite" }} />
@@ -194,9 +194,9 @@ export default function Home() {
             <div className="es-zglass">
               <Eyebrow id="integrations">06 · YOUR STACK</Eyebrow>
               <div style={{ display: "flex", flexDirection: "column", gap: 18, maxWidth: 660 }}>
-                <h2 style={h2Md}>Works on top of what you&rsquo;ve already got. No rip and replace.</h2>
+                <h2 style={h2Md}>Sits on top of the stack you already run. Nothing gets ripped out.</h2>
                 <p style={{ ...body, fontSize: "clamp(15px,1.4vw,18px)", margin: 0 }}>
-                  Everstock connects to the ERPs, catalogs and EDI networks mid-market distributors already run. Still tracking prices and thresholds in a spreadsheet? It works with that too.
+                  Everstock connects to the ERPs, supplier catalogs, and EDI networks distributors already run, across auto parts, electronics, and industrial supply. Still tracking prices and thresholds in a spreadsheet? It works with that too.
                 </p>
               </div>
             </div>
@@ -226,10 +226,10 @@ export default function Home() {
           <section className="es-band vb-major vb-deep">
             <div className="es-band-inner es-reveal" style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 22 }}>
               <h2 style={{ fontFamily: "var(--font-space)", fontWeight: 700, fontSize: "clamp(30px,4.4vw,60px)", lineHeight: 1.1, letterSpacing: "-0.03em", margin: 0, color: "var(--es-ink)", textShadow: "var(--es-glow)", textWrap: "pretty" }}>
-                Stop guessing at your parts spend.
+                Stop guessing at what you pay to restock.
               </h2>
               <p style={{ ...body, fontSize: "clamp(15px,1.5vw,19px)", margin: 0, maxWidth: 640 }}>
-                You set the thresholds and the specs. Everstock does the price-watching, the quote-chasing and the paperwork, then puts a proposal in your queue. Nothing executes until you approve it, and nothing you already run gets replaced.
+                You set the thresholds and the specs. Everstock watches prices, chases quotes, and drafts the paperwork, then drops a proposal in your queue for a yes or no.
               </p>
               <p style={{ ...body, color: "var(--es-faint)", fontSize: "clamp(14px,1.35vw,17px)", margin: 0, maxWidth: 560 }}>
                 We&rsquo;re onboarding a small group of mid-market distributors as design partners.

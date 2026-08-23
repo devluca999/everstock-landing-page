@@ -47,9 +47,9 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const TITLE = "Everstock: Supply-chain intelligence, at your command";
+const TITLE = "Everstock: Procurement automation for distributors";
 const DESCRIPTION =
-  "Everstock watches vendor pricing inside limits you set and queues every purchase for your approval. Nothing moves a dollar until you sign off.";
+  "Everstock monitors vendor pricing, flags reorders, and queues every purchase order for your approval. Purchasing automation for auto parts, electronics, and industrial distributors that works with your existing ERP.";
 const SITE_URL = "https://tryeverstock.com";
 
 export const metadata: Metadata = {
@@ -94,7 +94,7 @@ const jsonLd = {
       url: SITE_URL,
       logo: `${SITE_URL}/logo/logo-mark-dark.svg`,
       description:
-        "Supply-chain intelligence for mid-market distributors.",
+        "Procurement automation for mid-market distributors of auto parts, electronics, and industrial supply.",
     },
     {
       "@type": "WebSite",

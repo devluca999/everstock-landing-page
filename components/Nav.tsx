@@ -6,10 +6,9 @@ import Logo from "./Logo";
 import { useTheme } from "@/app/theme";
 
 const LINKS = [
-  { href: "#platform", label: "Platform", pill: "PLATFORM" },
-  { href: "#pricing", label: "Pricing", pill: "PRICING" },
-  { href: "#company", label: "Company", pill: "COMPANY" },
-  { href: "#login", label: "Log in", pill: "LOG IN" },
+  { href: "#platform", label: "How it works", pill: "HOW IT WORKS" },
+  { href: "#approvals", label: "Approvals", pill: "APPROVALS" },
+  { href: "#integrations", label: "Integrations", pill: "INTEGRATIONS" },
 ];
 
 const pillBase: React.CSSProperties = {
@@ -112,6 +111,9 @@ export default function Nav() {
               {l.pill}
             </a>
           ))}
+          <a href="#request" className="es-cta-primary" style={{ ...pillBase, fontFamily: "var(--font-space)", fontSize: 11.5, fontWeight: 600, letterSpacing: "0.14em", background: "var(--es-ink)", color: "var(--es-bg)", padding: "9px 18px" }}>
+            REQUEST ACCESS
+          </a>
           <button onClick={toggle} className="es-navpill" style={{ ...pillBase, fontFamily: "var(--font-space)", fontSize: 11.5, fontWeight: 500, letterSpacing: "0.18em", color: "var(--es-dim)", cursor: "pointer", background: scrolled ? "transparent" : "var(--es-pill)", border: "1px solid", borderColor: scrolled ? "transparent" : "var(--es-pill-border)", boxShadow: scrolled ? "none" : "var(--es-pill-shadow)" }}>
             {themeLabel}
           </button>

@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "Everstock: Supply-chain intelligence, at your command";
+  "Everstock: Procurement automation for distributors";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -49,7 +49,7 @@ export default function Image() {
               maxWidth: 900,
             }}
           >
-            Supply-chain intelligence, at your command.
+            Watches vendor prices and queues every order for your approval.
           </div>
         </div>
         <div
@@ -69,7 +69,7 @@ export default function Image() {
               background: "#0B5FFF",
             }}
           />
-          Supply-chain intelligence for mid-market distributors
+          For distributors of auto parts, electronics &amp; industrial supply
         </div>
       </div>
     ),
