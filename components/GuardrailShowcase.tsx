@@ -6,7 +6,6 @@ import { HOLO_MASK, TapBadge } from "./PairedHologram";
 type Beat = {
   src: string;
   aria: string;
-  capLabel: string;
   capTitle: string;
   desc: string;
 };
@@ -14,29 +13,25 @@ type Beat = {
 const BEATS: Beat[] = [
   {
     src: "/videos/beat1-prefill.mp4",
-    aria: "Beat one — a document peels off the stack and its fields autofill",
-    capLabel: "BEAT 01 — PREFILL",
+    aria: "A purchase-order document peels off the stack and its vendor, price and quantity fields autofill",
     capTitle: "Everstock fills the paperwork",
     desc: "It reads the quote and writes the vendor, price and quantity fields itself — each one annotated, so you can check its work in a single pass.",
   },
   {
     src: "/videos/beat2-source.mp4",
-    aria: "Beat two — vendor storefronts evaluated one at a time around the Everstock mark",
-    capLabel: "BEAT 02 — SOURCE",
+    aria: "Vendors are evaluated one at a time around the live Everstock mark",
     capTitle: "It works every vendor, one at a time",
     desc: "Quotes go out to the vendors you approved. Each is scored against your thresholds and marked — favorable or not — before the next.",
   },
   {
     src: "/videos/beat3-approve.mp4",
-    aria: "Beat three — packages inspected, stamped and set aside on a conveyor",
-    capLabel: "BEAT 03 — APPROVE",
+    aria: "Packages are inspected, stamped and set aside on a conveyor",
     capTitle: "Everything stops at your queue",
     desc: "Approved lines move on. Flagged lines are set aside and stay visible — nothing is silently dropped, nothing executes on its own.",
   },
   {
     src: "/videos/beat4-reconcile.mp4",
-    aria: "Beat four — scattered documents and cracked spreadsheets resolve into two organized rows",
-    capLabel: "BEAT 04 — RECONCILE",
+    aria: "Scattered documents and cracked spreadsheets resolve into two organized rows",
     capTitle: "The trail reconciles itself",
     desc: "Unreconciled orders and scattered spreadsheets settle into one uniform timeline — production history you can audit line by line.",
   },
@@ -62,13 +57,6 @@ const capTitleStyle: CSSProperties = {
   letterSpacing: "-0.018em",
   color: "var(--es-ink)",
   textShadow: "var(--es-glow)",
-};
-const capLabelStyle: CSSProperties = {
-  fontFamily: "var(--font-mono)",
-  fontSize: 10.5,
-  fontWeight: 500,
-  letterSpacing: "0.26em",
-  color: "var(--es-faint)",
 };
 const descStyle: CSSProperties = {
   position: "absolute",
@@ -407,8 +395,10 @@ export default function GuardrailShowcase() {
         ))}
       </div>
 
-      {/* --- beat caption (label + title), fixed height so cross-fades don't reflow --- */}
-      <div style={{ position: "relative", width: "100%", maxWidth: 660, height: 64 }}>
+      {/* --- beat title (the "beat NN" scaffolding stays out of the finished page,
+             like an act label never printed on the footage), fixed height so
+             cross-fades don't reflow --- */}
+      <div style={{ position: "relative", width: "100%", maxWidth: 660, height: 44 }}>
         {BEATS.map((b, k) => (
           <div
             key={k}
@@ -416,14 +406,12 @@ export default function GuardrailShowcase() {
               position: "absolute",
               inset: 0,
               display: "flex",
-              flexDirection: "column",
               alignItems: "center",
-              gap: 12,
+              justifyContent: "center",
               opacity: k === beat ? 1 : 0,
               transition: "opacity 460ms ease",
             }}
           >
-            <span style={capLabelStyle}>{b.capLabel}</span>
             <span style={capTitleStyle}>{b.capTitle}</span>
           </div>
         ))}
@@ -449,7 +437,7 @@ export default function GuardrailShowcase() {
               )}
               <button
                 onClick={() => goBeat(k)}
-                aria-label={`Beat ${k + 1} — ${b.capLabel.split("— ")[1]?.toLowerCase() ?? ""}`}
+                aria-label={`Step ${k + 1} of ${BEATS.length}: ${b.capTitle}`}
                 style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 30, height: 34, padding: 0, border: 0, background: "transparent", cursor: "pointer" }}
               >
                 <span style={dotStyle(k)} />
