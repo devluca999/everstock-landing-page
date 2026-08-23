@@ -15,7 +15,7 @@ const LINKS = [
 const pillBase: React.CSSProperties = {
   padding: "9px 16px",
   borderRadius: 999,
-  transition: "color 200ms ease,background 420ms ease,border-color 420ms ease",
+  transition: "color 200ms ease,background 420ms ease,border-color 420ms ease,box-shadow 420ms ease",
 };
 
 export default function Nav() {
@@ -108,11 +108,11 @@ export default function Nav() {
         {/* desktop pills */}
         <nav className="hidden lg:flex" style={{ alignItems: "center", gap: "clamp(6px,0.9vw,14px)", fontFamily: "var(--font-space)", fontSize: 11.5, fontWeight: 500, letterSpacing: "0.18em", color: "var(--es-dim)" }}>
           {LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="es-navpill" style={{ ...pillBase, background: scrolled ? "transparent" : "var(--es-pill)", border: "1px solid", borderColor: scrolled ? "transparent" : "var(--es-line)" }}>
+            <a key={l.href} href={l.href} className="es-navpill" style={{ ...pillBase, background: scrolled ? "transparent" : "var(--es-pill)", border: "1px solid", borderColor: scrolled ? "transparent" : "var(--es-pill-border)", boxShadow: scrolled ? "none" : "var(--es-pill-shadow)" }}>
               {l.pill}
             </a>
           ))}
-          <button onClick={toggle} className="es-navpill" style={{ ...pillBase, fontFamily: "var(--font-space)", fontSize: 11.5, fontWeight: 500, letterSpacing: "0.18em", color: "var(--es-dim)", cursor: "pointer", background: scrolled ? "transparent" : "var(--es-pill)", border: "1px solid", borderColor: scrolled ? "transparent" : "var(--es-line)" }}>
+          <button onClick={toggle} className="es-navpill" style={{ ...pillBase, fontFamily: "var(--font-space)", fontSize: 11.5, fontWeight: 500, letterSpacing: "0.18em", color: "var(--es-dim)", cursor: "pointer", background: scrolled ? "transparent" : "var(--es-pill)", border: "1px solid", borderColor: scrolled ? "transparent" : "var(--es-pill-border)", boxShadow: scrolled ? "none" : "var(--es-pill-shadow)" }}>
             {themeLabel}
           </button>
         </nav>

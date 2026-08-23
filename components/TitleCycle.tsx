@@ -162,7 +162,10 @@ export default function TitleCycle() {
       el.style.opacity = "1";
       el.style.transform = "";
       el.style.clipPath = "";
-      el.style.textShadow = "";
+      // restore the intended resting glow (chars()/effects set this to "none").
+      // Title-specific token: dark glow on graphite, subtle neutral in light —
+      // the generic white --es-glow washes the clipped title in light mode.
+      el.style.textShadow = "var(--es-title-glow)";
       el.style.background = "";
       el.style.webkitBackgroundClip = "";
       el.style.backgroundClip = "";
@@ -251,6 +254,10 @@ export default function TitleCycle() {
 
     const fxShiny = async () => {
       const el = titleRef.current!;
+      // resting state leaves color:transparent (clipped gradient) — restore the
+      // real ink so this effect's fill/stroke reads a concrete rgb, not
+      // rgba(0,0,0,0) (which renders the title invisible). plain() re-clears it.
+      el.style.color = "var(--es-ink)";
       const ink = getComputedStyle(el).color;
       el.style.background = "linear-gradient(100deg," + ink + " 34%, rgba(255,255,255,0.98) 50%," + ink + " 66%)";
       el.style.backgroundSize = "260% 100%";
@@ -265,6 +272,7 @@ export default function TitleCycle() {
 
     const fxStroke = async () => {
       const el = titleRef.current!;
+      el.style.color = "var(--es-ink)"; // see fxShiny: avoid transparent ink
       const ink = getComputedStyle(el).color;
       await tween(2600, (p) => {
         const s = (Math.sin(p * Math.PI * 4 - Math.PI / 2) + 1) / 2;
@@ -290,6 +298,7 @@ export default function TitleCycle() {
 
     const fxEcho = async () => {
       const el = titleRef.current!;
+      el.style.color = "var(--es-ink)"; // see fxShiny: transparent ink breaks the rgb→rgba surgery below
       const ink = getComputedStyle(el).color;
       const soft = ink.replace("rgb(", "rgba(").replace(")", ", 0.20)");
       await tween(2400, (p) => {
@@ -440,7 +449,14 @@ export default function TitleCycle() {
       busy = true;
       setLayerVis(0);
       if (isMobile) await entranceMobile();
-      else await fxParticle();
+      else {
+        await fxParticle();
+        // settle into the clean whole-title gradient (fxParticle leaves per-char
+        // spans + a neutralized h1; without this the resting title renders as the
+        // fragile span state that intermittently reads flat/washed instead of the
+        // premium clipped gradient).
+        plain();
+      }
       syncLayers();
       setLayerVis(1);
       busy = false;
@@ -542,7 +558,7 @@ export default function TitleCycle() {
           WebkitBackgroundClip: "text",
           backgroundClip: "text",
           WebkitTextFillColor: "transparent",
-          textShadow: "var(--es-glow)",
+          textShadow: "var(--es-title-glow)",
           willChange: "filter,opacity,transform",
         }}
       >
