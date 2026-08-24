@@ -97,7 +97,7 @@ export default function Home() {
                   <Eyebrow>02 · THE SYSTEM</Eyebrow>
                   <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 720 }}>
                     <p style={{ ...body, fontSize: "clamp(17px,1.6vw,22px)", margin: 0 }}>
-                      Everstock watches vendor pricing against the limits you set, chases the quotes, and drafts the purchase order. You stay the one who approves it.
+                      Everstock automates the sourcing and procurement busywork: it watches vendor pricing against the limits you set, chases the quotes, drafts the purchase order, and keeps the record clean. You stay the one who approves it.
                     </p>
                     <p style={{ ...body, color: "var(--es-faint)", fontSize: "clamp(14px,1.3vw,16.5px)", margin: 0 }}>
                       It runs on top of the systems you already have, your ERP, your EDI feeds, your spreadsheets, and replaces none of them.
@@ -196,7 +196,7 @@ export default function Home() {
               <div style={{ display: "flex", flexDirection: "column", gap: 18, maxWidth: 660 }}>
                 <h2 style={h2Md}>Sits on top of the stack you already run. Nothing gets ripped out.</h2>
                 <p style={{ ...body, fontSize: "clamp(15px,1.4vw,18px)", margin: 0 }}>
-                  Everstock connects to the ERPs, supplier catalogs, and EDI networks distributors already run, across auto parts, electronics, and industrial supply. Still tracking prices and thresholds in a spreadsheet? It works with that too.
+                  Everstock connects to the ERPs, supplier catalogs, and EDI networks distributors already run, across auto parts, electronics, and industrial supply, and keeps pricing and product data in sync across them. Still tracking prices and thresholds in a spreadsheet? It works with that too.
                 </p>
               </div>
             </div>

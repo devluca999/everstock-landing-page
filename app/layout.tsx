@@ -50,7 +50,7 @@ const plexMono = IBM_Plex_Mono({
 const TITLE =
   "Everstock: Sourcing, procurement and data management automation for supply-chain distributors";
 const DESCRIPTION =
-  "Everstock monitors vendor pricing, flags reorders, and queues every purchase order for your approval. Purchasing automation for auto parts, electronics, and industrial distributors that works with your existing ERP.";
+  "Everstock automates sourcing, procurement, and product-data management. It monitors vendor pricing, flags reorders, keeps SKU records clean, and queues every purchase order for your approval. For supply-chain distributors of auto parts, electronics, and industrial supply, on top of your existing ERP.";
 const SITE_URL = "https://tryeverstock.com";
 
 export const metadata: Metadata = {
@@ -95,7 +95,7 @@ const jsonLd = {
       url: SITE_URL,
       logo: `${SITE_URL}/logo/logo-mark-dark.svg`,
       description:
-        "Procurement automation for mid-market distributors of auto parts, electronics, and industrial supply.",
+        "Sourcing, procurement, and data management automation for mid-market distributors of auto parts, electronics, and industrial supply.",
     },
     {
       "@type": "WebSite",
