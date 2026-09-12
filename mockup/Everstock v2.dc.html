@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Everstock — Supply-chain intelligence, at your command</title>
+<meta name="description" content="Everstock watches vendor pricing inside limits you set and queues every purchase for your approval. Nothing moves a dollar until you sign off." />
+<meta property="og:title" content="Everstock — Supply-chain intelligence, at your command" />
+<meta property="og:description" content="Everstock watches vendor pricing inside limits you set and queues every purchase for your approval. Nothing moves a dollar until you sign off." />
+<meta name="twitter:title" content="Everstock — Supply-chain intelligence, at your command" />
+<meta name="twitter:description" content="Everstock watches vendor pricing inside limits you set and queues every purchase for your approval. Nothing moves a dollar until you sign off." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;family=Unbounded:wght@400;700&amp;family=Anton&amp;family=Syne:wght@600;800&amp;family=IBM+Plex+Sans:wght@300;400;500&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/tokens/color.css" />
+<link rel="stylesheet" href="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/tokens/space.css" />
+<link rel="stylesheet" href="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/tokens/radius.css" />
+<link rel="stylesheet" href="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/tokens/elevation.css" />
+<link rel="stylesheet" href="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/tokens/material.css" />
+<link rel="stylesheet" href="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/tokens/motion.css" />
+<link rel="stylesheet" href="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/foundations/surface.css" />
+<script src="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/_ds_bundle.js"></script>
+<style>
+:root{
+--font-space:'Space Grotesk',system-ui,sans-serif;
+--font-unbounded:'Unbounded',system-ui,sans-serif;
+--font-anton:'Anton',system-ui,sans-serif;
+--font-syne:'Syne',system-ui,sans-serif;
+--font-plex:'IBM Plex Sans',system-ui,sans-serif;
+--font-mono:'IBM Plex Mono',ui-monospace,monospace;
+--es-bg:#16171B;
+--es-ink:#FAF9F5;
+--es-dim:rgba(242,241,237,0.72);
+--es-faint:rgba(242,241,237,0.44);
+--es-line:rgba(242,241,237,0.16);
+--es-hair:rgba(242,241,237,0.07);
+--es-grid:rgba(226,222,214,0.11);
+--es-glow:0 0 22px rgba(16,17,21,0.98),0 0 58px rgba(16,17,21,0.85);
+--es-logo-glow:0 0 20px rgba(16,17,21,0.9);
+--es-panel:rgba(23,29,36,0.78);
+--es-edge:rgba(190,212,240,0.16);
+--es-lip:rgba(206,226,252,0.1);
+--es-card:rgba(32,40,50,0.5);
+--es-pill:rgba(242,241,237,0.07);
+--es-grad-mid:#7F838B;
+--es-grad-end:#42454C;
+--es-solid:#101216;
+--es-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3Cfe%54urbulence type='fractalNoise' base%46requency='0.9' num%4Fctaves='4' stitch%54iles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+--es-grain-op:0.030;
+--es-grain-blend:overlay;
+--es-blue:#0B5FFF;
+--es-green:#40FFA8;
+--mq:44s;
+/* The showcase stage's size, expressed once. The reservation is the REAL stack below the
+   stage, all fixed heights so it can't drift with viewport: title 64 + rail 34 +
+   description 76 + three 16px gaps + 4px stage margin = 226. */
+--vb-stage-h:clamp(230px,min(calc(100dvh - 228px),calc((100vw - 140px) * 0.5625)),720px);
+--vb-stage-w:calc(var(--vb-stage-h) * 1.7778);
+}
+:root[data-theme="light"]{
+--es-bg:#FFFFFF;
+--es-ink:#101115;
+--es-dim:rgba(22,23,27,0.7);
+--es-faint:rgba(22,23,27,0.46);
+--es-line:rgba(22,23,27,0.18);
+--es-hair:rgba(22,23,27,0.09);
+--es-grid:rgba(18,18,20,0.15);
+--es-glow:0 0 22px rgba(255,255,255,0.98),0 0 58px rgba(255,255,255,0.9);
+--es-logo-glow:0 0 18px rgba(255,255,255,0.95);
+--es-panel:rgba(247,250,253,0.82);
+--es-edge:rgba(22,40,66,0.15);
+--es-lip:rgba(255,255,255,0.85);
+--es-card:rgba(255,255,255,0.55);
+--es-pill:rgba(22,23,27,0.05);
+--es-grad-mid:#5F6268;
+--es-grad-end:#9B9EA4;
+--es-solid:#F2EFE9;
+--es-grain-op:0.040;
+--es-grain-blend:multiply;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--es-bg);}
+body{font-family:var(--font-plex);color:var(--es-ink);-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none;}
+a:hover{color:var(--es-ink);}
+button{font:inherit;}
+::selection{background:#0B5FFF;color:#fff;}
+@keyframes esSheen{0%{background-position:235% 0}100%{background-position:-135% 0}}
+@keyframes esTrace{0%{-webkit-mask-position:-45% 0;mask-position:-45% 0}100%{-webkit-mask-position:145% 0;mask-position:145% 0}}
+@keyframes esTraceTint{0%,86%{-webkit-text-stroke-color:#2E7BFF}90%,97%{-webkit-text-stroke-color:#40FFA8}100%{-webkit-text-stroke-color:#2E7BFF}}
+@keyframes esRailTravel{0%{left:0%;opacity:0}8%{opacity:1}88%{opacity:1}100%{left:100%;opacity:0}}
+@keyframes esScroll{0%{transform:scaleY(0);transform-origin:top center;opacity:0}25%{opacity:1}55%{transform:scaleY(1);transform-origin:top center;opacity:1}56%{transform-origin:bottom center}100%{transform:scaleY(0);transform-origin:bottom center;opacity:0}}
+@keyframes esPulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+@keyframes esMarquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes esLed{0%,100%{opacity:.72;transform:scale(.92)}50%{opacity:1;transform:scale(1)}}
+@keyframes esMarkBeam{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-100}}
+.es-band{position:relative;width:100%;margin:0;padding:var(--space-13) 0;border-top:1px solid var(--es-edge);border-bottom:1px solid var(--es-edge);box-shadow:inset 0 1px 0 var(--es-lip);backdrop-filter:blur(18px) saturate(132%);-webkit-backdrop-filter:blur(18px) saturate(132%);}
+.es-band-inner{max-width:1160px;margin:0 auto;padding:0 var(--space-11);}
+@media (max-width:767.98px){.es-band{padding:var(--space-12) 0;}.es-band-inner{padding:0 var(--space-8);}}
+/* Pattern A — the showcase is its own full-bleed solid-dark section, distinct in tone from
+   its neighbours. The holograms dominate by scale, never boxed into a panel. */
+.es-band--solid{background:var(--es-solid);backdrop-filter:none;-webkit-backdrop-filter:none;}
+.es-band--solid::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:var(--es-grain);background-size:160px;opacity:var(--es-grain-op);mix-blend-mode:var(--es-grain-blend);}
+.es-band--solid > *{position:relative;}
+.es-band--wide .es-band-inner{max-width:1420px;}
+.es-reveal{opacity:0;transform:translateY(22px);transition:opacity 820ms cubic-bezier(0.22,1,0.36,1),transform 820ms cubic-bezier(0.22,1,0.36,1);will-change:opacity,transform;}
+.es-reveal.es-revealed{opacity:1;transform:none;}
+.es-fullvh{min-height:100vh;min-height:100dvh;}
+.es-split{display:grid;grid-template-columns:1fr;gap:20px;align-items:start;}
+/* Two-zone hologram row: translucent copy zone (page grid reads through) beside a
+   solid, grained zone the hologram commands. Grain token + tiers from the design system. */
+.es-zrow{position:relative;width:100%;display:grid;grid-template-columns:1fr;border-top:1px solid var(--es-edge);border-bottom:1px solid var(--es-edge);box-shadow:inset 0 1px 0 var(--es-lip);}
+.es-zglass{position:relative;display:flex;flex-direction:column;justify-content:center;gap:var(--space-8);padding:var(--space-13) var(--space-11);backdrop-filter:blur(18px) saturate(132%);-webkit-backdrop-filter:blur(18px) saturate(132%);}
+.es-zglass--b{padding-top:0;}
+.es-zsolid{position:relative;display:flex;align-items:center;justify-content:center;padding:var(--space-11) var(--space-10);background:var(--es-solid);overflow:hidden;}
+/* The hologram itself is a real design-system Surface — glass (active/ephemeral), Z-2,
+   so it carries the built matte + grain + sheen + dual-stack shadow, not a flat fill. */
+.es-holo-surface{width:100%;max-width:1000px;padding:var(--space-6);}
+.es-holo-surface--pair{max-width:820px;}
+.es-desk{display:grid;grid-template-columns:1fr;gap:var(--space-10);align-items:stretch;}
+.es-desk-card{overflow:hidden;height:100%;}
+@media (min-width:1240px){.es-desk{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);}}
+@media (max-width:767.98px){
+.es-zglass{padding:var(--space-12) var(--space-8);gap:var(--space-7);}
+.es-zsolid{padding:var(--space-9) var(--space-8);}
+.es-holo-surface{padding:var(--space-5);}
+}
+.es-zsolid::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:var(--es-grain);background-size:160px;opacity:var(--es-grain-op);mix-blend-mode:var(--es-grain-blend);}
+.es-zsolid > *{position:relative;z-index:1;}
+@media (min-width:960px){
+.es-zrow{grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);}
+.es-zrow--flip{grid-template-columns:minmax(0,1.06fr) minmax(0,1fr);}
+.es-zrow--flip > .es-zsolid{grid-column:1;grid-row:1 / span 2;}
+.es-zrow--flip > .es-zglass{grid-column:2;}
+.es-zrow--flip > .es-zglass--b{grid-row:2;}
+}
+.es-cta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.es-marquee-mask{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%);}
+.es-marquee{display:flex;width:max-content;animation:esMarquee var(--mq) linear infinite;}
+.es-logo-img{display:block;}
+.es-logo-light{display:none;}
+:root[data-theme="light"] .es-logo-dark{display:none;}
+:root[data-theme="light"] .es-logo-light{display:block;}
+.es-cta-primary{transition:background 180ms ease,color 180ms ease,box-shadow 180ms ease;}
+.es-cta-primary:hover{background:#0b5fff;color:#fff;box-shadow:0 0 34px rgba(11,95,255,0.42);}
+.es-cta-secondary{transition:border-color 180ms ease,box-shadow 180ms ease,color 180ms ease;}
+.es-cta-secondary:hover{border-color:#0b5fff;box-shadow:0 0 26px rgba(11,95,255,0.22);}
+.es-navpill:hover{color:var(--es-ink);}
+@media (min-width:768px){.es-split{grid-template-columns:minmax(0,0.34fr) minmax(0,0.66fr);gap:clamp(32px,6vw,110px);}}
+@media (max-width:745px){.es-rail{display:none;}}
+@media (max-width:767.98px){.es-cta{flex-direction:column;align-items:center;}.es-cta > a{width:100%;max-width:360px;text-align:center;justify-content:center;}}
+@media (min-width:1024px){[data-tap]{display:none !important;}.es-burger{display:none !important;}}
+@media (max-width:1023.98px){.es-navlinks{display:none !important;}}
+@media (prefers-reduced-motion: reduce){.es-reveal{opacity:1;transform:none;transition:none;}*{animation-duration:.001ms !important;animation-iteration-count:1 !important;}}
+
+/* ============================================================
+   VARIANT B — solid-block sections. The hero is untouched; every section
+   after it is its own full-bleed solid field, and the section IS the zone
+   (no translucent panel inside it). The schematic grid becomes an
+   intermittent reveal on section entry instead of a constant background.
+   ============================================================ */
+/* The breathing lattice + beams stay, but only behind the hero. */
+canvas{position:absolute !important;top:0;left:0;height:100vh !important;-webkit-mask-image:linear-gradient(180deg,#000 68%,transparent 100%);mask-image:linear-gradient(180deg,#000 68%,transparent 100%);}
+main > section, main > footer{position:relative;background-image:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;box-shadow:none !important;--es-glow:none;}
+main > section + section{border-top:0;}
+/* --- Section tone system. Explicit tone classes, not positional nth-of-type: the
+   alternation has to survive a section being inserted or reordered. Hologram-bearing
+   blocks stay dark so the navy wireframe assets read. Dark theme = mostly dark with
+   light accents; light theme flips which tone is majority, the POSITIONS stay put. --- */
+.vb-accent{
+background-color:#FAF7F1;
+--es-bg:#FAF7F1;
+--es-ink:#101115;--es-dim:rgba(22,23,27,0.74);--es-faint:rgba(22,23,27,0.62);
+--es-line:rgba(22,23,27,0.16);--es-hair:rgba(22,23,27,0.08);--es-edge:rgba(22,40,66,0.14);
+--es-lip:rgba(255,255,255,0.9);--es-card:rgba(255,255,255,0.62);--es-panel:rgba(255,255,255,0.7);
+--vb-grid:rgba(18,18,20,0.17);
+--vb-veil-mid:rgba(250,247,241,0.5);--vb-veil-edge:rgba(250,247,241,1);
+}
+.vb-major{
+--es-ink:#FAF9F5;--es-dim:rgba(242,241,237,0.74);--es-faint:rgba(242,241,237,0.48);
+--es-line:rgba(242,241,237,0.16);--es-hair:rgba(242,241,237,0.07);--es-edge:rgba(190,212,240,0.16);
+--es-lip:rgba(206,226,252,0.1);--es-card:rgba(32,40,50,0.5);--es-panel:rgba(23,29,36,0.78);
+}
+.vb-ink{background-color:#101216;--es-bg:#101216;--vb-grid:rgba(226,222,214,0.15);--vb-veil-mid:rgba(16,18,22,0.5);--vb-veil-edge:rgba(16,18,22,1);}
+.vb-stage{background-color:#0B0D11;--es-bg:#0B0D11;--vb-grid:rgba(226,222,214,0.17);--vb-veil-mid:rgba(11,13,17,0.5);--vb-veil-edge:rgba(11,13,17,1);}
+.vb-deep{background-color:#17181D;--es-bg:#17181D;--vb-grid:rgba(226,222,214,0.13);--vb-veil-mid:rgba(23,24,29,0.5);--vb-veil-edge:rgba(23,24,29,1);}
+:root[data-theme="light"] .vb-accent{
+background-color:#101216;--es-bg:#101216;
+--es-ink:#FAF9F5;--es-dim:rgba(242,241,237,0.74);--es-faint:rgba(242,241,237,0.48);
+--es-line:rgba(242,241,237,0.16);--es-hair:rgba(242,241,237,0.07);--es-edge:rgba(190,212,240,0.16);
+--es-lip:rgba(206,226,252,0.1);--es-card:rgba(32,40,50,0.5);--es-panel:rgba(23,29,36,0.78);
+--vb-grid:rgba(226,222,214,0.15);--vb-veil-mid:rgba(16,18,22,0.5);--vb-veil-edge:rgba(16,18,22,1);
+}
+:root[data-theme="light"] .vb-major{
+--es-ink:#101115;--es-dim:rgba(22,23,27,0.74);--es-faint:rgba(22,23,27,0.62);
+--es-line:rgba(22,23,27,0.16);--es-hair:rgba(22,23,27,0.08);--es-edge:rgba(22,40,66,0.14);
+--es-lip:rgba(255,255,255,0.9);--es-card:rgba(255,255,255,0.62);--es-panel:rgba(255,255,255,0.7);
+}
+:root[data-theme="light"] .vb-ink{background-color:#FAF7F1;--es-bg:#FAF7F1;--vb-grid:rgba(18,18,20,0.16);--vb-veil-mid:rgba(250,247,241,0.5);--vb-veil-edge:rgba(250,247,241,1);}
+:root[data-theme="light"] .vb-stage{background-color:#FFFDF7;--es-bg:#FFFDF7;--vb-grid:rgba(18,18,20,0.16);--vb-veil-mid:rgba(255,253,247,0.5);--vb-veil-edge:rgba(255,253,247,1);}
+:root[data-theme="light"] .vb-deep{background-color:#F3F0E9;--es-bg:#F3F0E9;--vb-grid:rgba(18,18,20,0.16);--vb-veil-mid:rgba(243,240,233,0.5);--vb-veil-edge:rgba(243,240,233,1);}
+/* Chrome grain follows the design system's light-mode rule: higher opacity, multiply. */
+:root[data-theme="light"] .vb-mark-grain{opacity:0.09;mix-blend-mode:multiply;}
+/* A hologram on a light block gets a dark radial pool to sit in — no card, no edge, just a
+   pool of field the navy wireframe can read against, fading out into the paper. */
+.vb-pool{display:none;position:absolute;left:-14%;top:-14%;width:128%;height:128%;pointer-events:none;
+background:radial-gradient(closest-side,rgba(14,16,20,0.96) 0%,rgba(14,16,20,0.9) 42%,rgba(14,16,20,0.5) 72%,rgba(14,16,20,0) 100%);}
+:root[data-theme="light"] .vb-pool{display:block;}
+:root[data-theme="light"] .vb-veil{display:none;}
+/* Surface + badge overrides follow TONE, not theme. */
+:root[data-theme="light"] .vb-accent .es-surface{background-color:var(--panel-base) !important;border-color:var(--panel-border) !important;box-shadow:var(--elev-1) !important;}
+:root[data-theme="light"] .vb-accent .es-surface::before{mix-blend-mode:overlay;opacity:0.055;}
+:root[data-theme="light"] .vb-accent .vb-badge-active{color:#8FBAFF !important;border-color:rgba(11,95,255,0.5) !important;background:rgba(11,95,255,0.08) !important;}
+/* Light blocks carry the dark-chrome mark and dark link colour. */
+.vb-accent .es-logo-dark{display:none;}
+.vb-accent .es-logo-light{display:block;}
+/* …and in light theme those same positions are the dark blocks, so the mark flips back. */
+:root[data-theme="light"] .vb-accent .es-logo-light{display:none;}
+:root[data-theme="light"] .vb-accent .es-logo-dark{display:block;}
+/* The section is the zone: flatten the two-zone rows and drop the panel material. */
+.es-zrow{display:block;border:0;}
+.es-zglass{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;background:none !important;padding:var(--space-13) var(--space-11) var(--space-9);max-width:1420px;margin:0 auto;}
+.es-zglass--b{padding-top:0;}
+.es-zsolid{background:none !important;padding:0 var(--space-11) var(--space-13);max-width:1420px;margin:0 auto;}
+.es-zsolid::before{display:none;}
+.es-band--solid::before{display:none;}
+/* A panel Surface on a light block flips to paper — the dark --panel-base would swallow
+   the (now dark) type. */
+.vb-accent .es-surface{background-color:#FFFFFF !important;border-color:rgba(22,40,66,0.14) !important;box-shadow:0 12px 26px -10px rgba(46,43,38,.22),0 3px 6px -2px rgba(46,43,38,.16),0 1px 1px rgba(46,43,38,.10),inset 0 1px 0 rgba(255,255,255,.85) !important;}
+.vb-accent .es-surface::before{mix-blend-mode:multiply;opacity:0.07;}
+/* The active badge's dark-field blue is 1.85:1 on a paper card — light blocks get the
+   deepened signal blue instead. */
+.vb-accent .vb-badge-active{color:#0B4FBF !important;border-color:rgba(11,79,191,0.45) !important;background:rgba(11,79,191,0.07) !important;}
+/* The hologram sits directly on the field at real scale — no card, no grain, no sheen. */
+.es-holo-surface{background:none !important;border:0 !important;box-shadow:none !important;padding:0 !important;max-width:1180px;margin:0 auto;}
+.es-holo-surface::before,.es-holo-surface::after{display:none !important;}
+/* Pattern A must always out-scale Pattern B. The pairings (4:3) run on the same
+   viewport-height ladder as the stage, one step down, with a selector that actually beats
+   the rule above — a bare .es-holo-surface--pair ties on specificity and loses. */
+/* One ladder for both patterns: the stage's own width is the reference, so the pairing is
+   always a step below it, and a percentage of its zone keeps it filling the space it has. */
+.es-holo-surface.es-holo-surface--pair{max-width:min(calc(var(--vb-stage-w) * 0.94),88%);}
+
+/* --- The signature accent: blueprint materialises, holds, dissolves ------- */
+/* A real element, not a pseudo: it rasterises with the section, animates predictably, and
+   stays inspectable. Pre-warmed a hair above zero so the four gradient layers are already
+   painted when the run starts — from a cold 0 the opening frames never appear. */
+.vb-bp{position:absolute;inset:0;z-index:0 !important;pointer-events:none;opacity:0.004;
+background-image:linear-gradient(var(--vb-grid) 1px,transparent 1px),linear-gradient(90deg,var(--vb-grid) 1px,transparent 1px);
+background-size:56px 56px,56px 56px;
+}
+/* Majors as their own cheap layer, only alive during a run. */
+.vb-bp-major{position:absolute;inset:0;z-index:0 !important;pointer-events:none;opacity:0.55;
+background-image:linear-gradient(var(--vb-grid) 1px,transparent 1px),linear-gradient(90deg,var(--vb-grid) 1px,transparent 1px);
+background-size:224px 224px,224px 224px;
+}
+.vb-armed{will-change:opacity;}
+/* --- Trailing measurement lines: the connective accent DURING the scroll, between one
+   section's grid settling and the next one's firing. Sides alternate down the page. --- */
+.vb-trail{position:absolute;bottom:0;width:clamp(88px,11vw,180px);height:min(44vh,400px);z-index:0 !important;pointer-events:none;visibility:hidden;--vb-p:0;}
+.vb-trail--l{left:0;}
+.vb-trail--r{right:0;}
+.vb-trail-spine{position:absolute;top:0;bottom:0;width:1px;background:var(--vb-grid);transform-origin:top center;transform:scaleY(var(--vb-p));opacity:calc(0.34 + var(--vb-p) * 0.66);}
+.vb-trail--l .vb-trail-spine{left:clamp(20px,2.8vw,48px);}
+.vb-trail--r .vb-trail-spine{right:clamp(20px,2.8vw,48px);}
+.vb-trail-tick{position:absolute;height:1px;background:var(--vb-grid);opacity:clamp(0,calc((var(--vb-p) - var(--vb-t)) * 7),1);transform:scaleX(clamp(0.15,calc((var(--vb-p) - var(--vb-t)) * 5),1));}
+.vb-trail--l .vb-trail-tick{left:clamp(20px,2.8vw,48px);transform-origin:left center;}
+.vb-trail--r .vb-trail-tick{right:clamp(20px,2.8vw,48px);transform-origin:right center;}
+/* --- Vignette: each hologram reads as embedded in the section surface, not laid on it.
+   The falloff is the section's own colour (never black), darkest into the corners. --- */
+.vb-veil{position:absolute;inset:0;z-index:2;pointer-events:none;
+background:radial-gradient(farthest-corner at 50% 47%,rgba(0,0,0,0) 41%,var(--vb-veil-mid) 74%,var(--vb-veil-edge) 100%);}
+.vb-veil-edges{position:absolute;inset:0;pointer-events:none;
+background:linear-gradient(180deg,var(--vb-veil-mid) 0,rgba(0,0,0,0) 7%,rgba(0,0,0,0) 93%,var(--vb-veil-mid) 100%),linear-gradient(90deg,var(--vb-veil-mid) 0,rgba(0,0,0,0) 6%,rgba(0,0,0,0) 94%,var(--vb-veil-mid) 100%);
+opacity:0.85;}
+main > section > *,main > footer > *{position:relative;z-index:1;}
+.vb-in > .vb-bp{animation:vbBlueprint 3200ms cubic-bezier(0.4,0,0.2,1) forwards;}
+/* Opacity only — a blur on a full-section layer costs a re-blur every frame and eats the
+   fade's opening frames. Fade in 0.58s · hold 1.2s · dissolve 1.4s, identical every run. */
+@keyframes vbBlueprint{
+0%{opacity:0.004;}
+18%{opacity:1;}
+56%{opacity:1;}
+100%{opacity:0.004;}
+}
+@media (prefers-reduced-motion: reduce){
+.vb-in > .vb-bp{animation:none;opacity:0.5;}
+}
+</style>
+<style>
+/* v2 hero field: floor canvases sit under the (now transparent) lattice; the blurred copy is
+   radially masked so the conveyor zone is sharpest and focus falls off outward. */
+.v2-floor{position:absolute;top:0;left:0;width:100%;height:100vh;z-index:0;pointer-events:none;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 22%,rgba(0,0,0,.55) 46%,#000 68%),linear-gradient(180deg,#000 72%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0%,transparent 22%,rgba(0,0,0,.55) 46%,#000 68%),linear-gradient(180deg,#000 72%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect;}
+/* the solid field: fully opaque across the left third, dissolving through the middle, gone by the right edge */
+.v2-solid{position:absolute;top:0;left:0;width:100%;height:100vh;z-index:0;pointer-events:none;background:linear-gradient(90deg,var(--es-bg) 0%,var(--es-bg) 28%,rgba(22,23,27,0) 72%);}
+:root[data-theme="light"] .v2-solid{background:linear-gradient(90deg,var(--es-bg) 0%,var(--es-bg) 28%,rgba(255,255,255,0) 72%);}
+.v2-floor canvas{position:absolute !important;inset:0;width:100% !important;height:100% !important;-webkit-mask-image:none;mask-image:none;will-change:transform;}
+.v2-floor .v2-floor-blur{-webkit-mask-image:radial-gradient(ellipse 44% 42% at 70% 60%,transparent 0%,rgba(0,0,0,.55) 55%,#000 100%);mask-image:radial-gradient(ellipse 44% 42% at 70% 60%,transparent 0%,rgba(0,0,0,.55) 55%,#000 100%);}
+.v2-lattice{-webkit-mask-image:linear-gradient(180deg,#000 68%,transparent 100%);mask-image:linear-gradient(180deg,#000 68%,transparent 100%);}
+.v2-grain{position:absolute;inset:-60px;pointer-events:none;opacity:.15;mix-blend-mode:overlay;background-image:var(--es-grain);background-size:180px 180px;animation:v2Grain 2.4s steps(1) infinite;}
+.v2-scrim{position:absolute;top:0;left:0;width:100%;height:100vh;z-index:0;pointer-events:none;background:radial-gradient(ellipse 28% 46% at 50% 44%,rgba(22,23,27,.86) 0%,rgba(22,23,27,.5) 42%,rgba(22,23,27,0) 100%);}
+:root[data-theme="light"] .v2-scrim{background:radial-gradient(ellipse 28% 46% at 50% 44%,rgba(255,255,255,.9) 0%,rgba(255,255,255,.58) 42%,rgba(255,255,255,0) 100%);}
+:root[data-theme="light"] .v2-floor{opacity:.9;}
+@keyframes v2Grain{0%{background-position:0 0}20%{background-position:-37px 21px}40%{background-position:19px -44px}60%{background-position:-52px -9px}80%{background-position:33px 47px}100%{background-position:0 0}}
+/* display-type line breaks: set per breakpoint; below 768 the measure is too narrow for the
+   intended stacks, so the brs drop out and balance is the fallback */
+.v2-br-d,.v2-br-t{display:none;}
+@media (min-width:1024px){.v2-br-d{display:inline;}}
+@media (min-width:768px) and (max-width:1023.98px){.v2-br-t{display:inline;}}
+@media (max-width:767.98px){.v2-hl{text-wrap:pretty;}}
+.v2-model{display:grid;grid-template-columns:minmax(220px,1fr) 96px minmax(280px,1.3fr);gap:0 12px;}
+.v2-graph{display:grid;grid-template-columns:1fr 1fr 1fr;column-gap:12%;row-gap:44px;}
+@media (max-width:767.98px){.v2-graph{grid-template-columns:1fr;row-gap:12px;}.v2-graph > [aria-hidden]{display:none;}.v2-graph > div{height:auto !important;min-height:72px;padding:14px !important;}.v2-graph-lines{display:none !important;}}
+@media (max-width:767.98px){.v2-model{grid-template-columns:1fr !important;}.v2-model-lines{display:none !important;}.v2-model-docs{align-content:start !important;}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="position:relative;min-height:100vh;background:var(--es-bg);font-family:var(--font-plex);color:var(--es-ink);">
+<div class="v2-floor" aria-hidden="true">
+  <canvas ref="{{ floorARef }}"></canvas>
+  <canvas ref="{{ floorBRef }}" class="v2-floor-blur"></canvas>
+  <div class="v2-grain"></div>
+</div>
+<div class="v2-solid" aria-hidden="true"></div>
+<div class="v2-scrim" aria-hidden="true"></div>
+<canvas ref="{{ gridRef }}" class="v2-lattice" aria-hidden="true" style="position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;"></canvas>
+
+<div id="es-content" style="position:relative;z-index:1;overflow-x:clip;">
+
+<header style="position:fixed;top:0;left:0;right:0;z-index:20;padding:clamp(12px,1.8vh,20px) clamp(16px,3vw,40px);pointer-events:none;">
+  <div ref="{{ navRef }}" style="max-width:1280px;margin:0 auto;padding:8px 10px 8px 12px;display:flex;align-items:center;justify-content:space-between;gap:24px;border-radius:999px;border:1px solid transparent;background:transparent;pointer-events:auto;transition:max-width 560ms cubic-bezier(0.4,0,0.2,1),padding 420ms ease,background 420ms ease,border-color 420ms ease,box-shadow 420ms ease;">
+    <a href="#top" ref="{{ navLogoRef }}" style="display:flex;align-items:center;gap:15px;transform-origin:left center;transition:transform 460ms cubic-bezier(0.4,0,0.2,1);">
+      <span aria-hidden="true" style="display:inline-flex;line-height:0;filter:drop-shadow(var(--es-logo-glow));">
+        <img src="assets/logo-mark-dark.svg" alt="" width="64" height="40" class="es-logo-img es-logo-dark" />
+        <img src="assets/logo-mark-light.svg" alt="" width="64" height="40" class="es-logo-img es-logo-light" />
+      </span>
+      <span style="font-family:var(--font-space);font-weight:700;font-size:16.5px;letter-spacing:0.2em;color:var(--es-ink);text-shadow:var(--es-glow);">EVERSTOCK</span>
+    </a>
+    <nav class="es-navlinks" style="display:flex;align-items:center;gap:clamp(6px,0.9vw,14px);font-family:var(--font-space);font-size:11.5px;font-weight:500;letter-spacing:0.18em;color:var(--es-dim);">
+      <a href="#platform" class="es-navpill" data-navpill="true" style="padding:9px 16px;border-radius:999px;background:var(--es-pill);border:1px solid var(--es-line);transition:color 200ms ease,background 420ms ease,border-color 420ms ease;">PLATFORM</a>
+      <a href="#pricing" class="es-navpill" data-navpill="true" style="padding:9px 16px;border-radius:999px;background:var(--es-pill);border:1px solid var(--es-line);transition:color 200ms ease,background 420ms ease,border-color 420ms ease;">PRICING</a>
+      <a href="#company" class="es-navpill" data-navpill="true" style="padding:9px 16px;border-radius:999px;background:var(--es-pill);border:1px solid var(--es-line);transition:color 200ms ease,background 420ms ease,border-color 420ms ease;">COMPANY</a>
+      <a href="#login" class="es-navpill" data-navpill="true" style="padding:9px 16px;border-radius:999px;background:var(--es-pill);border:1px solid var(--es-line);transition:color 200ms ease,background 420ms ease,border-color 420ms ease;">LOG IN</a>
+      <button onClick="{{ toggleTheme }}" class="es-navpill" data-navpill="true" style="font-family:var(--font-space);font-size:11.5px;font-weight:500;letter-spacing:0.18em;color:var(--es-dim);background:var(--es-pill);border:1px solid var(--es-line);border-radius:999px;padding:9px 16px;cursor:pointer;transition:color 200ms ease,background 420ms ease,border-color 420ms ease;">{{ themeLabel }}</button>
+    </nav>
+    <button class="es-burger" onClick="{{ openMenu }}" aria-label="Open menu" style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border-radius:999px;background:var(--es-pill);border:1px solid var(--es-line);color:var(--es-ink);cursor:pointer;">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true"><path d="M1 1h16M1 6h16M1 11h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg>
+    </button>
+  </div>
+</header>
+
+<div ref="{{ sheetRef }}" role="dialog" aria-modal="true" aria-label="Navigation menu" style="position:fixed;inset:0;z-index:40;display:none;background:var(--es-bg);">
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:clamp(20px,5vw,36px);">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <a href="#top" onClick="{{ closeMenu }}" style="display:flex;align-items:center;gap:12px;">
+        <span aria-hidden="true" style="display:inline-flex;line-height:0;">
+          <img src="assets/logo-mark-dark.svg" alt="" width="51" height="32" class="es-logo-img es-logo-dark" />
+          <img src="assets/logo-mark-light.svg" alt="" width="51" height="32" class="es-logo-img es-logo-light" />
+        </span>
+        <span style="font-family:var(--font-space);font-weight:700;font-size:15px;letter-spacing:0.2em;color:var(--es-ink);">EVERSTOCK</span>
+      </a>
+      <button onClick="{{ closeMenu }}" aria-label="Close menu" style="display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border-radius:999px;background:var(--es-pill);border:1px solid var(--es-line);color:var(--es-ink);cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg>
+      </button>
+    </div>
+    <nav style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;">
+      <a href="#platform" onClick="{{ closeMenu }}" style="font-family:var(--font-space);font-size:clamp(26px,7vw,40px);font-weight:700;letter-spacing:-0.01em;color:var(--es-ink);padding:10px 0;">Platform</a>
+      <a href="#pricing" onClick="{{ closeMenu }}" style="font-family:var(--font-space);font-size:clamp(26px,7vw,40px);font-weight:700;letter-spacing:-0.01em;color:var(--es-ink);padding:10px 0;">Pricing</a>
+      <a href="#company" onClick="{{ closeMenu }}" style="font-family:var(--font-space);font-size:clamp(26px,7vw,40px);font-weight:700;letter-spacing:-0.01em;color:var(--es-ink);padding:10px 0;">Company</a>
+      <a href="#login" onClick="{{ closeMenu }}" style="font-family:var(--font-space);font-size:clamp(26px,7vw,40px);font-weight:700;letter-spacing:-0.01em;color:var(--es-ink);padding:10px 0;">Log in</a>
+    </nav>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--es-line);padding-top:24px;">
+      <a href="#request" onClick="{{ closeMenu }}" style="font-family:var(--font-space);font-size:13px;font-weight:500;letter-spacing:0.08em;background:var(--es-ink);color:var(--es-bg);border-radius:999px;padding:14px 28px;">Request access</a>
+      <button onClick="{{ toggleTheme }}" style="font-family:var(--font-space);font-size:11.5px;font-weight:500;letter-spacing:0.18em;color:var(--es-dim);background:var(--es-pill);border:1px solid var(--es-line);border-radius:999px;padding:11px 20px;cursor:pointer;">{{ themeLabel }}</button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<section id="top" class="es-fullvh" style="max-width:1280px;margin:0 auto;padding:clamp(96px,13vh,120px) 40px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+  <p style="font-family:var(--font-space);font-size:11px;font-weight:500;letter-spacing:0.34em;color:#0B5FFF;text-shadow:0 0 26px rgba(11,95,255,0.55);margin:0 0 clamp(22px,3vh,34px);">PROCUREMENT FOR PARTS DISTRIBUTORS</p>
+  <div style="width:100%;height:clamp(120px,20.5vw,300px);display:flex;align-items:center;justify-content:center;overflow:visible;">
+    <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center;min-height:clamp(90px,17vw,240px);">
+      <div aria-hidden="true" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2;">
+        <span ref="{{ sheenRef }}" style="font-family:var(--font-space);font-weight:700;font-size:clamp(56px,13.2vw,208px);line-height:0.92;letter-spacing:-0.03em;white-space:nowrap;color:transparent;background-image:linear-gradient(102deg,rgba(255,255,255,0) 41%,rgba(255,255,255,0.5) 47%,rgba(255,255,255,0.95) 50%,rgba(255,255,255,0.5) 53%,rgba(255,255,255,0) 59%);background-size:300% 100%;background-repeat:no-repeat;-webkit-background-clip:text;background-clip:text;opacity:0;animation:esSheen 7.4s linear infinite;">EVERSTOCK</span>
+      </div>
+      <div aria-hidden="true" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:3;">
+        <span ref="{{ traceRef }}" style="font-family:var(--font-space);font-weight:700;font-size:clamp(56px,13.2vw,208px);line-height:0.92;letter-spacing:-0.03em;white-space:nowrap;color:transparent;-webkit-text-stroke:1.1px #2E7BFF;filter:drop-shadow(0 0 6px rgba(11,95,255,0.75));-webkit-mask-image:linear-gradient(96deg,transparent 38%,#000 46%,#000 54%,transparent 62%);mask-image:linear-gradient(96deg,transparent 38%,#000 46%,#000 54%,transparent 62%);-webkit-mask-size:300% 100%;mask-size:300% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;opacity:0;animation:esTrace 11.5s cubic-bezier(0.5,0,0.5,1) infinite,esTraceTint 47s linear infinite;">EVERSTOCK</span>
+      </div>
+      <h1 ref="{{ titleRef }}" style="font-family:var(--font-space);font-weight:700;font-size:clamp(56px,13.2vw,208px);line-height:0.92;letter-spacing:-0.03em;white-space:nowrap;margin:0;color:transparent;background-image:linear-gradient(180deg,var(--es-ink) 0%,var(--es-ink) 22%,var(--es-grad-mid) 60%,var(--es-grad-end) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:var(--es-glow);will-change:filter,opacity,transform;">EVERSTOCK</h1>
+    </div>
+  </div>
+  <p class="v2-hl" style="font-family:var(--font-space);font-weight:600;font-size:clamp(1.3rem,2.4vw,2.05rem);line-height:1.18;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);margin:clamp(24px,3vh,40px) 0 0;max-width:36ch;">Everstock learns your operation.<br><span style="color:var(--es-dim);">Then it buys the way you would.</span></p>
+  <p style="font-family:var(--font-plex);font-weight:500;font-size:clamp(15px,1.3vw,18px);line-height:1.55;color:var(--es-ink);margin:14px 0 0;max-width:640px;text-wrap:pretty;">Nothing gets ordered until you say so.</p>
+  <div class="es-cta" style="margin-top:44px;justify-content:center;">
+    <a href="#request" class="es-cta-primary" style="font-family:var(--font-space);font-size:13px;font-weight:500;letter-spacing:0.08em;background:var(--es-ink);color:var(--es-bg);border-radius:999px;padding:15px 32px;display:inline-block;">Request access</a>
+    <a href="#platform" class="es-cta-secondary" style="font-family:var(--font-space);font-size:13px;font-weight:500;letter-spacing:0.08em;color:var(--es-ink);border:1px solid var(--es-line);border-radius:999px;padding:15px 32px;display:inline-block;">See how it works</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:9px;margin-top:22px;">
+    <span aria-hidden="true" style="display:block;width:6px;height:6px;border-radius:50%;background:#5B9BFF;box-shadow:0 0 8px rgba(11,95,255,.9);animation:esPulse 2.6s ease-in-out infinite;"></span>
+    <span style="font-family:var(--font-plex);font-weight:300;font-size:12.5px;color:var(--es-faint);">Currently onboarding design partners</span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:clamp(48px,7vh,96px);">
+    <span style="font-family:var(--font-space);font-size:10px;font-weight:500;letter-spacing:0.3em;color:var(--es-faint);">SCROLL</span>
+    <span style="display:block;width:1px;height:46px;background:var(--es-line);animation:esScroll 3.4s cubic-bezier(0.65,0,0.35,1) infinite;"></span>
+  </div>
+</section>
+
+<section id="partners" class="es-band vb-accent" style="padding:clamp(30px,4.6vh,52px) 0;">
+  <div class="es-marquee-mask es-reveal">
+    <div class="es-marquee">
+      <div style="display:flex;align-items:center;gap:clamp(26px,3vw,52px);padding-right:clamp(26px,3vw,52px);">
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">You set the rules. We do the legwork.</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">Every order waits for your yes</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">For parts, electronics and industrial distributors</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">Runs on the ERP you already have</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">Nothing buys itself</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">Nothing gets ripped out</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+      </div>
+      <div aria-hidden="true" style="display:flex;align-items:center;gap:clamp(26px,3vw,52px);padding-right:clamp(26px,3vw,52px);">
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">You set the rules. We do the legwork.</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">Every order waits for your yes</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">For parts, electronics and industrial distributors</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">Runs on the ERP you already have</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">Nothing buys itself</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+        <span style="font-family:var(--font-space);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--es-dim);white-space:nowrap;">Nothing gets ripped out</span>
+        <span style="font-family:var(--font-space);font-size:12px;color:var(--es-faint);">·</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="problem" class="es-zrow es-reveal vb-major vb-ink">
+  <div class="es-zglass">
+    <p style="font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:0.3em;color:var(--es-ink);text-shadow:var(--es-glow);margin:0;">01 — THE LEAK</p>
+    <div style="display:flex;flex-direction:column;gap:26px;max-width:1120px;">
+        <h2 class="v2-hl" style="font-family:var(--font-space);font-weight:600;font-size:clamp(24px,3.1vw,44px);line-height:1.22;letter-spacing:-0.02em;margin:0;color:var(--es-ink);text-shadow:var(--es-glow);max-width:24ch;">The price changed.<br class="v2-br-d v2-br-t"> Your system didn&rsquo;t.</h2>
+        <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-dim);text-wrap:pretty;font-size:clamp(15px,1.4vw,18px);margin:0;max-width:600px;">A quote comes in by email. Another by phone. A third as a PDF someone photographs off a screen. Checking every new number against the last one is a full time job, and nobody has a spare one. So the old number keeps getting paid.</p>
+        <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-faint);text-wrap:pretty;font-size:clamp(14px,1.25vw,16px);margin:0;max-width:600px;">You already know &ldquo;close enough&rdquo; doesn&rsquo;t exist here. Wrong revision, wrong finish, wrong thread pitch, and a line goes down. The problem was never that you didn&rsquo;t care. It&rsquo;s that nothing you&rsquo;ve been given actually keeps track.</p>
+      </div>
+  </div>
+  <div class="es-zsolid">
+    <div class="es-surface es-glass es-z2 es-state-active es-holo-surface es-holo-surface--pair">
+      <div data-holo-wrap="true" style="position:relative;width:100%;">
+        <video data-holo="true" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FMfW2x8TD9jPPPVdRryKluSeEm/hf_20260823_062652_30ad984f-c21b-4fed-b2bf-009ad6be990e.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" preload="metadata" aria-label="Holographic screw and gear, alternating technical-spec focus" style="display:block;width:100%;aspect-ratio:1112/834;object-fit:contain;background:transparent;-webkit-mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);"></video>
+        <span data-tap="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:9px;padding:11px 18px;border-radius:999px;border:1px solid var(--es-line);background:var(--es-panel);font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.24em;color:var(--es-dim);">
+          <svg width="9" height="11" viewBox="0 0 9 11" fill="none" aria-hidden="true"><path d="M1 1l7 4.5L1 10z" fill="#5B9BFF"></path></svg>TAP TO PLAY
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="platform" class="es-band vb-accent">
+  <div class="es-band-inner es-reveal">
+    <div style="display:flex;flex-direction:column;gap:clamp(34px,5vh,56px);">
+      <div class="es-split">
+        <p style="font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:0.3em;color:var(--es-ink);text-shadow:var(--es-glow);margin:0;">02 — THE SYSTEM</p>
+        <div style="display:flex;flex-direction:column;gap:18px;max-width:720px;">
+          <h2 class="v2-hl" style="font-family:var(--font-space);font-weight:600;font-size:clamp(22px,2.6vw,36px);line-height:1.24;letter-spacing:-0.02em;margin:0;color:var(--es-ink);text-shadow:var(--es-glow);max-width:26ch;">You set the rules.<br class="v2-br-d v2-br-t"> We handle the legwork.</h2>
+          <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-dim);text-wrap:pretty;font-size:clamp(16px,1.5vw,20px);margin:0;">You set the price limits and the reorder points. Everstock watches every SKU against them, chases the quotes, checks the spec down to the revision and the finish, and drafts the purchase order. Then it stops and waits for you.</p>
+          <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-faint);text-wrap:pretty;font-size:clamp(14px,1.3vw,16.5px);margin:0;">It runs on top of what you already have. Your ERP, your EDI feeds, your spreadsheets. Nothing gets replaced.</p>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="es-rail" style="position:relative;height:1px;background:linear-gradient(90deg,rgba(11,95,255,0) 0%,rgba(11,95,255,0.42) 12%,rgba(11,95,255,0.42) 88%,rgba(11,95,255,0) 100%);">
+          <span style="position:absolute;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#5B9BFF;box-shadow:0 0 6px 1px rgba(11,95,255,0.9),0 0 18px 3px rgba(11,95,255,0.55),0 0 40px 8px rgba(11,95,255,0.25);animation:esRailTravel 7.5s cubic-bezier(0.55,0,0.45,1) infinite;"></span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(210px,(670px - 100%) * 999,100%),1fr));gap:20px;">
+          <div style="border:1px solid var(--es-edge);border-radius:6px;background:var(--es-card);box-shadow:inset 0 1px 0 var(--es-lip);padding:22px 22px 0;display:flex;flex-direction:column;gap:10px;">
+            <span style="font-family:var(--font-mono);font-size:11.5px;font-weight:500;letter-spacing:0.26em;color:var(--es-faint);">01</span>
+            <span style="font-family:var(--font-space);font-size:19px;font-weight:600;letter-spacing:-0.01em;color:var(--es-ink);text-shadow:var(--es-glow);">Watch</span>
+            <span style="font-family:var(--font-plex);font-weight:300;font-size:14.5px;line-height:1.55;color:var(--es-dim);">Every SKU you carry, checked against the price and stock thresholds you set.</span>
+            <div style="margin-top:auto;padding:14px 0 15px;border-top:1px solid var(--es-edge);display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:0.16em;color:var(--es-faint);">
+              <span>SCAN INTERVAL</span><span style="color:var(--es-dim);">CONTINUOUS</span>
+            </div>
+          </div>
+          <div style="border:1px solid var(--es-edge);border-radius:6px;background:var(--es-card);box-shadow:inset 0 1px 0 var(--es-lip);padding:22px 22px 0;display:flex;flex-direction:column;gap:10px;">
+            <span style="font-family:var(--font-mono);font-size:11.5px;font-weight:500;letter-spacing:0.26em;color:var(--es-faint);">02</span>
+            <span style="font-family:var(--font-space);font-size:19px;font-weight:600;letter-spacing:-0.01em;color:var(--es-ink);text-shadow:var(--es-glow);">Propose</span>
+            <span style="font-family:var(--font-plex);font-weight:300;font-size:14.5px;line-height:1.55;color:var(--es-dim);">When a price moves or stock hits your reorder point, a drafted purchase order lands in your queue. Nothing gets bought without you.</span>
+            <div style="margin-top:auto;padding:14px 0 15px;border-top:1px solid var(--es-edge);display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:0.16em;color:var(--es-faint);">
+              <span>AUTO-EXECUTE</span><span style="color:var(--es-dim);">DISABLED</span>
+            </div>
+          </div>
+          <div style="border:1px solid var(--es-edge);border-radius:6px;background:var(--es-card);box-shadow:inset 0 1px 0 var(--es-lip);padding:22px 22px 0;display:flex;flex-direction:column;gap:10px;">
+            <span style="font-family:var(--font-mono);font-size:11.5px;font-weight:500;letter-spacing:0.26em;color:var(--es-faint);">03</span>
+            <span style="font-family:var(--font-space);font-size:19px;font-weight:600;letter-spacing:-0.01em;color:var(--es-ink);text-shadow:var(--es-glow);">Execute</span>
+            <span style="font-family:var(--font-plex);font-weight:300;font-size:14.5px;line-height:1.55;color:var(--es-dim);">You approve. The order goes out through your own vendor accounts, and every step is logged.</span>
+            <div style="margin-top:auto;padding:14px 0 15px;border-top:1px solid var(--es-edge);display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:0.16em;color:var(--es-faint);">
+              <span>AUDIT TRAIL</span><span style="color:var(--es-dim);">RETAINED</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="model" class="es-band vb-major vb-ink">
+  <div class="es-band-inner es-reveal">
+    <div style="display:flex;flex-direction:column;gap:clamp(34px,5vh,56px);">
+      <div class="es-split">
+        <p style="font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:0.3em;color:var(--es-ink);text-shadow:var(--es-glow);margin:0;">03 — THE MODEL</p>
+        <div style="display:flex;flex-direction:column;gap:16px;max-width:720px;">
+          <h2 style="font-family:var(--font-space);font-weight:600;font-size:clamp(22px,2.6vw,36px);line-height:1.24;letter-spacing:-0.02em;margin:0;color:var(--es-ink);text-shadow:var(--es-glow);text-wrap:pretty;max-width:30ch;">You already have the data.<br class="v2-br-d v2-br-t"> It just isn&rsquo;t in one place.</h2>
+          <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-dim);text-wrap:pretty;font-size:clamp(15px,1.4vw,18px);margin:0;">Point Everstock at an invoice, a pricing spreadsheet, a purchase order. It reads them and builds a working model of how your operation buys. Which vendors carry which parts, what you paid, how often, on what terms.</p>
+        <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-faint);text-wrap:pretty;font-size:clamp(14px,1.3vw,16.5px);margin:12px 0 0;">That model is what everything else runs on. Nothing gets sourced, priced or ordered until it exists.</p>
+        </div>
+      </div>
+      <div class="v2-model">
+        <div class="v2-model-docs" style="display:grid;grid-template-rows:repeat(3,108px);gap:12px;align-content:center;">
+          <sc-for list="{{ docs }}" as="d" hint-placeholder-count="3">
+            <button onClick="{{ d.toggle }}" aria-pressed="{{ d.read }}" style="text-align:left;display:flex;flex-direction:column;justify-content:space-between;padding:14px 16px;border-radius:var(--radius-md);border:1px solid {{ d.border }};background:{{ d.bg }};color:var(--es-ink);cursor:pointer;font-family:inherit;transition:border-color 160ms ease,background-color 160ms ease;" style-hover="border-color:var(--es-dim);">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <span style="font-family:var(--font-space);font-weight:600;font-size:14px;letter-spacing:-0.01em;">{{ d.title }}</span>
+                <span style="display:flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:10px;letter-spacing:0.18em;color:{{ d.stateColor }};">
+                  <span aria-hidden="true" style="display:block;width:7px;height:7px;border-radius:50%;background:{{ d.dot }};box-shadow:{{ d.dotGlow }};"></span>{{ d.stateLabel }}
+                </span>
+              </div>
+              <span style="font-family:var(--font-plex);font-weight:300;font-size:12.5px;line-height:1.45;color:var(--es-faint);">{{ d.sub }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <svg class="v2-model-lines" viewBox="0 0 100 468" preserveAspectRatio="none" aria-hidden="true" style="display:block;width:100%;height:468px;overflow:visible;">
+          <sc-for list="{{ links }}" as="l" hint-placeholder-count="8">
+            <path d="{{ l.d }}" fill="none" stroke="{{ l.stroke }}" stroke-width="1" vector-effect="non-scaling-stroke" style="transition:stroke 420ms ease;"></path>
+          </sc-for>
+        </svg>
+        <div style="display:grid;grid-template-rows:repeat(4,108px);gap:12px;">
+          <sc-for list="{{ entities }}" as="e" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:8px;padding:12px 16px;border-radius:var(--radius-md);border:1px solid {{ e.border }};background:var(--es-card);transition:border-color 420ms ease;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-family:var(--font-space);font-weight:600;font-size:14px;letter-spacing:-0.01em;color:var(--es-ink);">{{ e.name }}</span>
+                <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.16em;color:var(--es-faint);">{{ e.count }}</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                <sc-for list="{{ e.fields }}" as="f" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;line-height:1.3;">
+                    <span style="font-family:var(--font-plex);font-weight:300;color:{{ f.labelColor }};transition:color 320ms ease;">{{ f.label }}</span>
+                    <span style="font-family:var(--font-mono);font-size:12px;color:{{ f.valueColor }};transition:color 320ms ease;white-space:nowrap;">{{ f.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <p style="font-family:var(--font-plex);font-weight:300;font-size:13.5px;line-height:1.55;color:var(--es-faint);margin:22px 0 0;">Open a source to watch it fill in.</p>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:0.18em;color:var(--es-faint);">
+        <span>{{ modelStatus }}</span>
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span>CATEGORIES</span>
+          <span style="display:flex;gap:4px;" aria-label="{{ catLabel }}">
+            <sc-for list="{{ catDots }}" as="c" hint-placeholder-count="10">
+              <span aria-hidden="true" style="display:block;width:7px;height:7px;border-radius:50%;background:{{ c.bg }};box-shadow:{{ c.glow }};transition:background-color 320ms ease;"></span>
+            </sc-for>
+          </span>
+          <span>{{ catLabel }}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="approvals" class="es-band es-band--solid es-band--wide vb-major vb-stage">
+  <div class="es-band-inner es-reveal" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;">
+    <p style="font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:0.3em;color:var(--es-ink);text-shadow:var(--es-glow);margin:0;">04 — THE GUARDRAIL</p>
+    <h2 style="font-family:var(--font-space);font-weight:600;font-size:clamp(26px,3.4vw,48px);line-height:1.18;letter-spacing:-0.025em;margin:0;color:var(--es-ink);text-shadow:var(--es-glow);text-wrap:pretty;max-width:840px;">Nothing moves without your sign-off.</h2>
+    <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-dim);text-wrap:pretty;font-size:clamp(15px,1.45vw,19px);margin:0;max-width:780px;" class="v2-hl">Proposed, then approved, then executed.<br class="v2-br-d v2-br-t"> Always in that order. Here&rsquo;s what happens in between.</p>
+
+    <div style="position:relative;aspect-ratio:16/9;height:var(--vb-stage-h);width:auto;max-width:100%;margin:var(--space-2) auto 0;">
+      <div ref="{{ beat0Ref }}" data-holo-wrap="true" style="position:absolute;inset:0;opacity:1;transition:opacity 560ms cubic-bezier(0.22,1,0.36,1);">
+        <video data-holo="true" data-beat="true" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FMfW2x8TD9jPPPVdRryKluSeEm/hf_20260823_044129_df5c7c84-21ca-45c9-89ba-2969cca48cb4.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" preload="metadata" aria-label="A purchase-order document peels off the stack and its vendor, price and quantity fields autofill" style="display:block;width:100%;height:100%;object-fit:contain;-webkit-mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);"></video>
+        <span data-tap="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:9px;padding:11px 18px;border-radius:999px;border:1px solid var(--es-line);background:var(--es-panel);font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.24em;color:var(--es-dim);">
+          <svg width="9" height="11" viewBox="0 0 9 11" fill="none" aria-hidden="true"><path d="M1 1l7 4.5L1 10z" fill="#5B9BFF"></path></svg>TAP TO PLAY
+        </span>
+      </div>
+      <div ref="{{ beat1Ref }}" data-holo-wrap="true" style="position:absolute;inset:0;opacity:0;transition:opacity 560ms cubic-bezier(0.22,1,0.36,1);">
+        <video data-holo="true" data-beat="true" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FMfW2x8TD9jPPPVdRryKluSeEm/hf_20260823_050644_7df87958-7671-429e-babe-93acdeeef922.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" preload="metadata" aria-label="Vendors are evaluated one at a time around the live Everstock mark" style="display:block;width:100%;height:100%;object-fit:contain;-webkit-mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);"></video>
+        <span aria-hidden="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;width:clamp(128px,16vw,222px);height:clamp(104px,13vw,180px);background:radial-gradient(closest-side,rgba(16,18,22,0.97),rgba(16,18,22,0.93) 38%,rgba(16,18,22,0.55) 70%,rgba(16,18,22,0) 100%);"></span>
+        <span aria-hidden="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;width:clamp(124px,15.5vw,214px);">
+          <svg ref="{{ markSvgRef }}" viewBox="0 0 64 40" width="100%" fill="none" style="display:block;overflow:visible;filter:drop-shadow(0 24px 44px rgba(0,0,0,0.72)) drop-shadow(0 8px 18px rgba(0,0,0,0.62)) drop-shadow(0 2px 4px rgba(0,0,0,0.48));">
+            <defs>
+              <linearGradient id="esChromeBroad" x1="0.396" y1="0.011" x2="0.604" y2="0.989">
+                <stop offset="0" stop-color="#787D85"></stop><stop offset="0.10" stop-color="#A7ACB4"></stop><stop offset="0.30" stop-color="#4E5158"></stop><stop offset="0.48" stop-color="#8B9098"></stop><stop offset="0.64" stop-color="#44464C"></stop><stop offset="0.80" stop-color="#959AA2"></stop><stop offset="0.92" stop-color="#53565C"></stop><stop offset="1" stop-color="#7C818A"></stop>
+              </linearGradient>
+              <linearGradient id="esChromeMatte" x1="0.5" y1="0" x2="0.5" y2="1">
+                <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.035"></stop><stop offset="0.34" stop-color="#FFFFFF" stop-opacity="0.008"></stop><stop offset="1" stop-color="#000000" stop-opacity="0.10"></stop>
+              </linearGradient>
+              <linearGradient id="esChromeSheen" x1="0.235" y1="0.076" x2="0.765" y2="0.924">
+                <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.30"></stop><stop offset="0.22" stop-color="#FFFFFF" stop-opacity="0.06"></stop><stop offset="0.44" stop-color="#FFFFFF" stop-opacity="0"></stop><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.10"></stop>
+              </linearGradient>
+              <linearGradient id="esChromeLip" x1="0.5" y1="0" x2="0.5" y2="1">
+                <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.42"></stop><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.06"></stop><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"></stop>
+              </linearGradient>
+              <pattern id="esChromeGrain" width="18" height="18" patternUnits="userSpaceOnUse">
+                <image width="18" height="18" preserveAspectRatio="none" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3Cfe%54urbulence type='fractalNoise' base%46requency='0.9' num%4Fctaves='4' stitch%54iles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"></image>
+              </pattern>
+              <mask id="esChromeMask" maskUnits="userSpaceOnUse" x="-6" y="-6" width="76" height="52">
+                <path data-facet="true" d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="#FFFFFF" stroke-width="5.6" stroke-linecap="butt" stroke-linejoin="miter" pathLength="100" stroke-dasharray="6.63 1.7"></path>
+              </mask>
+            </defs>
+            <path data-facet="true" d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="rgba(228,234,240,0.30)" stroke-width="6.5" stroke-linecap="butt" stroke-linejoin="miter" pathLength="100" stroke-dasharray="6.63 1.7" style="transition:stroke-dasharray 220ms cubic-bezier(0.65,0,0.35,1);"></path>
+            <path ref="{{ markFacetRef }}" d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke-width="5.6" stroke-linecap="butt" stroke-linejoin="miter" pathLength="100" stroke-dasharray="6.63 1.7" stroke="url(#esChromeBroad)" data-facet="true" style="transition:stroke-dasharray 220ms cubic-bezier(0.65,0,0.35,1);"></path>
+            <path data-facet="true" d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="url(#esChromeMatte)" stroke-width="5.6" stroke-linecap="butt" stroke-linejoin="miter" pathLength="100" stroke-dasharray="6.63 1.7"></path>
+            <rect class="vb-mark-grain" x="-6" y="-6" width="76" height="52" fill="url(#esChromeGrain)" mask="url(#esChromeMask)" opacity="0.075" style="mix-blend-mode:overlay;"></rect>
+            <path data-facet="true" d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="url(#esChromeSheen)" stroke-width="5.6" stroke-linecap="butt" stroke-linejoin="miter" pathLength="100" stroke-dasharray="6.63 1.7"></path>
+            <path data-facet="true" d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="url(#esChromeLip)" stroke-width="0.9" stroke-linecap="butt" stroke-linejoin="miter" pathLength="100" stroke-dasharray="6.63 1.7" transform="translate(0,-0.34)"></path>
+            <g ref="{{ markBeamRef }}" opacity="0" style="transition:opacity 180ms linear;">
+              <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="#3E8BFF" stroke-width="7.5" stroke-linecap="round" pathLength="100" stroke-dasharray="38 62" opacity="0.16" style="filter:blur(5.5px);animation:esMarkBeam 3s linear infinite;"></path>
+              <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="#3E8BFF" stroke-width="11" stroke-linecap="round" pathLength="100" stroke-dasharray="26 74" opacity="0.34" style="filter:blur(3.6px);animation:esMarkBeam 3s linear infinite;"></path>
+              <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="#2E7BFF" stroke-width="5.6" stroke-linecap="butt" stroke-linejoin="miter" pathLength="100" stroke-dasharray="26 74" opacity="0.92" style="animation:esMarkBeam 3s linear infinite;"></path>
+              <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="#DCEAFF" stroke-width="1.8" stroke-linecap="butt" stroke-linejoin="miter" pathLength="100" stroke-dasharray="26 74" opacity="0.95" style="filter:drop-shadow(0 0 2px rgba(220,234,255,0.9));animation:esMarkBeam 3s linear infinite;"></path>
+            </g>
+          </svg>
+        </span>
+        <span data-tap="true" style="position:absolute;left:50%;bottom:6%;transform:translateX(-50%);display:flex;align-items:center;gap:9px;padding:11px 18px;border-radius:999px;border:1px solid var(--es-line);background:var(--es-panel);font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.24em;color:var(--es-dim);">
+          <svg width="9" height="11" viewBox="0 0 9 11" fill="none" aria-hidden="true"><path d="M1 1l7 4.5L1 10z" fill="#5B9BFF"></path></svg>TAP TO PLAY
+        </span>
+      </div>
+      <div ref="{{ beat2Ref }}" data-holo-wrap="true" style="position:absolute;inset:0;opacity:0;transition:opacity 560ms cubic-bezier(0.22,1,0.36,1);">
+        <video data-holo="true" data-beat="true" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FMfW2x8TD9jPPPVdRryKluSeEm/hf_20260823_052642_1d43c521-6909-47da-af26-1642ff625320.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" preload="metadata" aria-label="Packages are inspected, stamped and set aside on a conveyor" style="display:block;width:100%;height:100%;object-fit:contain;-webkit-mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);"></video>
+        <span data-tap="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:9px;padding:11px 18px;border-radius:999px;border:1px solid var(--es-line);background:var(--es-panel);font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.24em;color:var(--es-dim);">
+          <svg width="9" height="11" viewBox="0 0 9 11" fill="none" aria-hidden="true"><path d="M1 1l7 4.5L1 10z" fill="#5B9BFF"></path></svg>TAP TO PLAY
+        </span>
+      </div>
+      <div ref="{{ beat3Ref }}" data-holo-wrap="true" style="position:absolute;inset:0;opacity:0;transition:opacity 560ms cubic-bezier(0.22,1,0.36,1);">
+        <video data-holo="true" data-beat="true" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FMfW2x8TD9jPPPVdRryKluSeEm/hf_20260823_060719_0059b8f8-07d7-4d7b-b6fa-0fec8004f1bf.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" preload="metadata" aria-label="Scattered documents and cracked spreadsheets resolve into two organized rows" style="display:block;width:100%;height:100%;object-fit:contain;-webkit-mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);"></video>
+        <span data-tap="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:9px;padding:11px 18px;border-radius:999px;border:1px solid var(--es-line);background:var(--es-panel);font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.24em;color:var(--es-dim);">
+          <svg width="9" height="11" viewBox="0 0 9 11" fill="none" aria-hidden="true"><path d="M1 1l7 4.5L1 10z" fill="#5B9BFF"></path></svg>TAP TO PLAY
+        </span>
+      </div>
+    </div>
+
+    <!-- The "beat NN" scaffolding stays out of the finished page, like an act label
+         never printed on the footage. Fixed height so cross-fades don't reflow. -->
+    <div style="position:relative;width:100%;max-width:660px;height:44px;">
+      <div ref="{{ cap0Ref }}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity 460ms ease;">
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2vw,27px);font-weight:600;letter-spacing:-0.018em;color:var(--es-ink);text-shadow:var(--es-glow);">Everstock fills the paperwork</span>
+      </div>
+      <div ref="{{ cap1Ref }}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 460ms ease;">
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2vw,27px);font-weight:600;letter-spacing:-0.018em;color:var(--es-ink);text-shadow:var(--es-glow);">It works every vendor, one at a time</span>
+      </div>
+      <div ref="{{ cap2Ref }}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 460ms ease;">
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2vw,27px);font-weight:600;letter-spacing:-0.018em;color:var(--es-ink);text-shadow:var(--es-glow);">Everything stops at your queue</span>
+      </div>
+      <div ref="{{ cap3Ref }}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 460ms ease;">
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2vw,27px);font-weight:600;letter-spacing:-0.018em;color:var(--es-ink);text-shadow:var(--es-glow);">The trail reconciles itself</span>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button onClick="{{ prevBeat }}" aria-label="Previous beat" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border-radius:999px;border:1px solid var(--es-line);background:transparent;color:var(--es-faint);cursor:pointer;">
+        <svg width="7" height="11" viewBox="0 0 7 11" fill="none" aria-hidden="true"><path d="M6 1L1.5 5.5L6 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+      <div ref="{{ railRef }}" onPointerDown="{{ scrubStart }}" role="group" aria-label="Showcase beats" style="display:flex;align-items:center;padding:0 4px;cursor:grab;touch-action:pan-y;">
+        <button ref="{{ dot0Ref }}" onClick="{{ goBeat0 }}" aria-label="Step 1 of 4: Everstock fills the paperwork" style="display:flex;align-items:center;justify-content:center;width:30px;height:34px;padding:0;border:0;background:transparent;cursor:pointer;">
+          <span style="display:block;width:9px;height:9px;border-radius:50%;background-color:rgba(242,241,237,0.14);box-shadow:inset 0 1px 1.5px rgba(0,0,0,0.55);transition:background-color 300ms ease,box-shadow 300ms ease,transform 300ms ease;"></span>
+        </button>
+        <span aria-hidden="true" style="display:block;width:clamp(26px,4vw,54px);border-top:1px dashed var(--es-line);"></span>
+        <button ref="{{ dot1Ref }}" onClick="{{ goBeat1 }}" aria-label="Step 2 of 4: It works every vendor, one at a time" style="display:flex;align-items:center;justify-content:center;width:30px;height:34px;padding:0;border:0;background:transparent;cursor:pointer;">
+          <span style="display:block;width:9px;height:9px;border-radius:50%;background-color:rgba(242,241,237,0.14);box-shadow:inset 0 1px 1.5px rgba(0,0,0,0.55);transition:background-color 300ms ease,box-shadow 300ms ease,transform 300ms ease;"></span>
+        </button>
+        <span aria-hidden="true" style="display:block;width:clamp(26px,4vw,54px);border-top:1px dashed var(--es-line);"></span>
+        <button ref="{{ dot2Ref }}" onClick="{{ goBeat2 }}" aria-label="Step 3 of 4: Everything stops at your queue" style="display:flex;align-items:center;justify-content:center;width:30px;height:34px;padding:0;border:0;background:transparent;cursor:pointer;">
+          <span style="display:block;width:9px;height:9px;border-radius:50%;background-color:rgba(242,241,237,0.14);box-shadow:inset 0 1px 1.5px rgba(0,0,0,0.55);transition:background-color 300ms ease,box-shadow 300ms ease,transform 300ms ease;"></span>
+        </button>
+        <span aria-hidden="true" style="display:block;width:clamp(26px,4vw,54px);border-top:1px dashed var(--es-line);"></span>
+        <button ref="{{ dot3Ref }}" onClick="{{ goBeat3 }}" aria-label="Step 4 of 4: The trail reconciles itself" style="display:flex;align-items:center;justify-content:center;width:30px;height:34px;padding:0;border:0;background:transparent;cursor:pointer;">
+          <span style="display:block;width:9px;height:9px;border-radius:50%;background-color:rgba(242,241,237,0.14);box-shadow:inset 0 1px 1.5px rgba(0,0,0,0.55);transition:background-color 300ms ease,box-shadow 300ms ease,transform 300ms ease;"></span>
+        </button>
+      </div>
+      <button onClick="{{ nextBeat }}" aria-label="Next beat" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border-radius:999px;border:1px solid var(--es-line);background:transparent;color:var(--es-faint);cursor:pointer;">
+        <svg width="7" height="11" viewBox="0 0 7 11" fill="none" aria-hidden="true"><path d="M1 1l4.5 4.5L1 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </div>
+
+    <div style="position:relative;width:100%;max-width:620px;height:76px;">
+      <span ref="{{ desc0Ref }}" style="position:absolute;inset:0;display:block;font-family:var(--font-plex);font-weight:300;font-size:clamp(14px,1.3vw,16px);line-height:1.55;color:var(--es-dim);opacity:1;transition:opacity 460ms ease;">It reads the quote and writes the vendor, price and quantity fields itself, each one annotated, so you can check its work in a single pass.</span>
+      <span ref="{{ desc1Ref }}" style="position:absolute;inset:0;display:block;font-family:var(--font-plex);font-weight:300;font-size:clamp(14px,1.3vw,16px);line-height:1.55;color:var(--es-dim);opacity:0;transition:opacity 460ms ease;">Quotes go out to the vendors you approved. Each is scored against your thresholds and marked, favorable or not, before the next.</span>
+      <span ref="{{ desc2Ref }}" style="position:absolute;inset:0;display:block;font-family:var(--font-plex);font-weight:300;font-size:clamp(14px,1.3vw,16px);line-height:1.55;color:var(--es-dim);opacity:0;transition:opacity 460ms ease;">Approved lines move on. Flagged lines are set aside and stay visible. Nothing is silently dropped, nothing executes on its own.</span>
+      <span ref="{{ desc3Ref }}" style="position:absolute;inset:0;display:block;font-family:var(--font-plex);font-weight:300;font-size:clamp(14px,1.3vw,16px);line-height:1.55;color:var(--es-dim);opacity:0;transition:opacity 460ms ease;">Unreconciled orders and scattered spreadsheets settle into one uniform timeline. Production history you can audit line by line.</span>
+    </div>
+  </div>
+</section>
+
+<section id="company" class="es-band vb-major vb-deep">
+  <div class="es-band-inner es-reveal">
+    <div class="es-split">
+      <p style="font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:0.3em;color:var(--es-ink);text-shadow:var(--es-glow);margin:0;">05 — THE CONTRACT</p>
+      <p style="font-family:var(--font-space);font-weight:600;font-size:clamp(22px,2.6vw,36px);line-height:1.28;letter-spacing:-0.02em;margin:0;color:var(--es-ink);text-shadow:var(--es-glow);max-width:41ch;" class="v2-hl">Every proposal shows you the quote,<br class="v2-br-d v2-br-t"> the spec, and the rule that fired it.<br class="v2-br-d v2-br-t"> You approve with the whole picture<br class="v2-br-d v2-br-t"> in front of you, or you don&rsquo;t.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:30px;margin-top:clamp(34px,5vh,56px);">
+        <div class="v2-graph-wrap" style="position:relative;max-width:900px;padding-top:8px;">
+          <svg class="v2-graph-lines" viewBox="0 0 100 212" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:0;top:8px;width:100%;height:212px;overflow:visible;pointer-events:none;">
+            <path d="M25.33 42 H37.33" fill="none" stroke="#5B9BFF" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+            <path d="M62.67 42 H74.67" fill="none" stroke="var(--es-dim)" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+            <path d="M50 84 V128" fill="none" stroke="var(--es-dim)" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+            <path d="M37.33 170 H12.67 V84" fill="none" stroke="var(--es-line)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></path>
+            <path d="M36.2 40.6 L37.33 42 L36.2 43.4" fill="none" stroke="#5B9BFF" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+            <path d="M73.5 40.6 L74.67 42 L73.5 43.4" fill="none" stroke="var(--es-dim)" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+            <path d="M49.2 126.6 L50 128 L50.8 126.6" fill="none" stroke="var(--es-dim)" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+            <path d="M11.9 85.6 L12.67 84 L13.45 85.6" fill="none" stroke="var(--es-faint)" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+          </svg>
+          <div class="v2-graph" style="position:relative;">
+            <div style="height:84px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:0 14px;border-radius:var(--radius-md);border:1px solid rgba(11,95,255,.75);background:var(--es-bg);">
+              <span style="display:flex;align-items:center;gap:7px;font-family:var(--font-space);font-weight:600;font-size:14px;color:var(--es-ink);"><span aria-hidden="true" style="display:block;width:7px;height:7px;border-radius:50%;background:#5B9BFF;box-shadow:0 0 7px rgba(11,95,255,.85);"></span>Proposed</span>
+              <span style="font-family:var(--font-plex);font-weight:300;font-size:12px;line-height:1.4;color:var(--es-faint);">Drafted by Everstock, quote and rule attached</span>
+            </div>
+            <div style="height:84px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:0 14px;border-radius:var(--radius-md);background:var(--es-ink);color:var(--es-bg);">
+              <span style="font-family:var(--font-space);font-weight:600;font-size:14px;">Approved</span>
+              <span style="font-family:var(--font-plex);font-weight:400;font-size:12px;line-height:1.4;opacity:.78;">You, and only you. Never a setting</span>
+            </div>
+            <div style="height:84px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:0 14px;border-radius:var(--radius-md);border:1px solid rgba(11,95,255,.75);background:var(--es-bg);">
+              <span style="display:flex;align-items:center;gap:7px;font-family:var(--font-space);font-weight:600;font-size:14px;color:var(--es-ink);"><span aria-hidden="true" style="display:block;width:7px;height:7px;border-radius:50%;background:#5B9BFF;box-shadow:0 0 7px rgba(11,95,255,.85);"></span>Executed</span>
+              <span style="font-family:var(--font-plex);font-weight:300;font-size:12px;line-height:1.4;color:var(--es-faint);">Placed via your vendor account, fully logged</span>
+            </div>
+            <div aria-hidden="true"></div>
+            <div style="height:84px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:0 14px;border-radius:var(--radius-md);border:1px solid var(--es-line);background:var(--es-bg);">
+              <span style="font-family:var(--font-space);font-weight:600;font-size:14px;color:var(--es-ink);">Returned</span>
+              <span style="font-family:var(--font-plex);font-weight:300;font-size:12px;line-height:1.4;color:var(--es-faint);">Sent back with a note. It re-proposes, never retries</span>
+            </div>
+            <div aria-hidden="true"></div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px 24px;padding-top:20px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:0.18em;color:var(--es-faint);">
+            <span style="display:flex;align-items:center;gap:8px;"><span aria-hidden="true" style="display:block;width:14px;height:10px;border-radius:3px;border:1px solid rgba(11,95,255,.75);"></span>EVERSTOCK RUNS IT</span>
+            <span style="display:flex;align-items:center;gap:8px;"><span aria-hidden="true" style="display:block;width:14px;height:10px;border-radius:3px;background:var(--es-ink);"></span>YOU OWN IT</span>
+          </div>
+        </div>
+        <div id="request" class="es-cta" style="padding-top:6px;">
+          <a href="#request" class="es-cta-primary" style="font-family:var(--font-space);font-size:13px;font-weight:500;letter-spacing:0.08em;background:var(--es-ink);color:var(--es-bg);border-radius:999px;padding:15px 32px;display:inline-block;">Request access</a>
+          <span style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-faint);">Mid-market distributors · Design partners only</span>
+        </div>
+    </div>
+  </div>
+</section>
+
+<section class="es-band vb-accent">
+  <div class="es-band-inner es-reveal">
+    <div class="es-split">
+    <p style="font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:0.3em;color:var(--es-ink);text-shadow:var(--es-glow);margin:0;">06 — YOUR DESK</p>
+    <div class="es-desk">
+      <div style="display:flex;flex-direction:column;gap:var(--space-6);justify-content:center;">
+        <h2 style="font-family:var(--font-space);font-weight:600;font-size:clamp(22px,2.6vw,36px);line-height:1.24;letter-spacing:-0.02em;margin:0;color:var(--es-ink);text-shadow:var(--es-glow);max-width:30ch;" class="v2-hl">Your judgment goes further.<br class="v2-br-d v2-br-t"> Your job stays yours.</h2>
+        <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-dim);text-wrap:pretty;font-size:clamp(15px,1.4vw,18px);margin:0;">You still see every quote it gathered, approve every order, and stay the one who knows the vendors. What goes away is the part where you chase all of it by hand.</p>
+      </div>
+      <div class="es-surface es-z1 es-desk-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-5);padding:13px 18px;border-bottom:1px solid var(--es-edge);">
+          <span style="font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.24em;color:var(--es-dim);">APPROVAL QUEUE</span>
+          <span style="font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.16em;color:var(--es-faint);">3</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 18px;border-bottom:1px solid var(--es-hair);">
+          <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
+            <span style="font-family:var(--font-space);font-size:13.5px;font-weight:600;color:var(--es-ink);">Michelin Defender T+H</span>
+            <span style="font-family:var(--font-plex);font-weight:300;font-size:12px;color:var(--es-faint);">Qty 24 · $2,140</span>
+          </div>
+          <span class="vb-badge-active" style="flex:none;font-family:var(--font-mono);font-size:9.5px;font-weight:500;letter-spacing:0.16em;padding:6px 12px;border-radius:999px;border:1px solid rgba(11,95,255,0.5);color:#8FBAFF;background:rgba(11,95,255,0.08);">PROPOSED</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 18px;border-bottom:1px solid var(--es-hair);">
+          <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
+            <span style="font-family:var(--font-space);font-size:13.5px;font-weight:600;color:var(--es-ink);">Wix filters, bulk case</span>
+            <span style="font-family:var(--font-plex);font-weight:300;font-size:12px;color:var(--es-faint);">Qty 60 · $884</span>
+          </div>
+          <span style="flex:none;font-family:var(--font-mono);font-size:9.5px;font-weight:500;letter-spacing:0.16em;padding:6px 12px;border-radius:999px;border:1px solid var(--es-edge);color:var(--es-faint);background:transparent;">APPROVED</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 18px;">
+          <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
+            <span style="font-family:var(--font-space);font-size:13.5px;font-weight:600;color:var(--es-ink);">Brake pads, front set</span>
+            <span style="font-family:var(--font-plex);font-weight:300;font-size:12px;color:var(--es-faint);">Qty 18 · $1,062</span>
+          </div>
+          <span style="flex:none;font-family:var(--font-mono);font-size:9.5px;font-weight:500;letter-spacing:0.16em;padding:6px 12px;border-radius:999px;border:1px solid var(--es-edge);color:var(--es-faint);background:transparent;">EXECUTED</span>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section class="es-zrow es-zrow--flip es-reveal vb-major vb-ink">
+  <div class="es-zglass">
+      <p id="integrations" style="font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:0.3em;color:var(--es-ink);text-shadow:var(--es-glow);margin:0;">07 — YOUR STACK</p>
+      <div style="display:flex;flex-direction:column;gap:18px;max-width:820px;">
+          <h2 class="v2-hl" style="font-family:var(--font-space);font-weight:600;font-size:clamp(22px,2.6vw,36px);line-height:1.24;letter-spacing:-0.02em;margin:0;color:var(--es-ink);text-shadow:var(--es-glow);max-width:28ch;">Keep the systems you have.<br class="v2-br-d v2-br-t"> Nothing gets ripped out.</h2>
+          <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-dim);text-wrap:pretty;font-size:clamp(15px,1.4vw,18px);margin:0;">Everstock connects to the ERP, the supplier catalogs and the EDI feeds you already run, and keeps pricing and product data in sync across them. Still tracking prices in a spreadsheet? That works too.</p>
+        </div>
+  </div>
+  <div class="es-zsolid">
+    <div class="es-surface es-glass es-z2 es-state-active es-holo-surface es-holo-surface--pair">
+        <div data-holo-wrap="true" style="position:relative;width:100%;">
+          <video data-holo="true" src="https://d8j0ntlcm91z4.cloudfront.net/user_3FMfW2x8TD9jPPPVdRryKluSeEm/hf_20260823_062700_d5c6c6b7-e767-4508-be39-29cfa4c67af8.mp4" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" preload="metadata" aria-label="Holographic robotic arm and crane running independent idle actions" style="display:block;width:100%;aspect-ratio:1112/834;object-fit:contain;-webkit-mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);mask-image:radial-gradient(132% 122% at 50% 48%,#000 64%,transparent 100%);"></video>
+          <span data-tap="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:9px;padding:11px 18px;border-radius:999px;border:1px solid var(--es-line);background:var(--es-panel);font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.24em;color:var(--es-dim);">
+            <svg width="9" height="11" viewBox="0 0 9 11" fill="none" aria-hidden="true"><path d="M1 1l7 4.5L1 10z" fill="#5B9BFF"></path></svg>TAP TO PLAY
+          </span>
+        </div>
+    </div>
+  </div>
+  <div class="es-zglass es-zglass--b">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(160px,(640px - 100%) * 999,100%),1fr));gap:1px;background:var(--es-line);border-top:1px solid var(--es-line);border-bottom:1px solid var(--es-line);opacity:0.62;">
+          <div style="background:var(--es-bg);padding:18px 4px;font-family:var(--font-space);font-size:12.5px;font-weight:500;letter-spacing:0.06em;color:var(--es-dim);text-align:center;">Epicor Vision</div>
+          <div style="background:var(--es-bg);padding:18px 4px;font-family:var(--font-space);font-size:12.5px;font-weight:500;letter-spacing:0.06em;color:var(--es-dim);text-align:center;">Epicor Eagle</div>
+          <div style="background:var(--es-bg);padding:18px 4px;font-family:var(--font-space);font-size:12.5px;font-weight:500;letter-spacing:0.06em;color:var(--es-dim);text-align:center;">MAM / Kerridge</div>
+          <div style="background:var(--es-bg);padding:18px 4px;font-family:var(--font-space);font-size:12.5px;font-weight:500;letter-spacing:0.06em;color:var(--es-dim);text-align:center;">Nexpart</div>
+          <div style="background:var(--es-bg);padding:18px 4px;font-family:var(--font-space);font-size:12.5px;font-weight:500;letter-spacing:0.06em;color:var(--es-dim);text-align:center;">PartsTech</div>
+          <div style="background:var(--es-bg);padding:18px 4px;font-family:var(--font-space);font-size:12.5px;font-weight:500;letter-spacing:0.06em;color:var(--es-dim);text-align:center;">SPS Commerce</div>
+          <div style="background:var(--es-bg);padding:18px 4px;font-family:var(--font-space);font-size:12.5px;font-weight:500;letter-spacing:0.06em;color:var(--es-dim);text-align:center;">TrueCommerce</div>
+          <div style="background:var(--es-bg);padding:18px 4px;font-family:var(--font-space);font-size:12.5px;font-weight:500;letter-spacing:0.06em;color:var(--es-dim);text-align:center;">Excel / Spreadsheet</div>
+        </div>
+        <p style="font-family:var(--font-plex);font-weight:300;font-size:13.5px;line-height:1.5;margin:0;color:var(--es-faint);">If you can export a price file, you can start.</p>
+      </div>
+  </div>
+</section>
+
+<section class="es-band vb-accent" style="padding:clamp(44px,6.4vh,78px) 0;">
+  <div class="es-marquee-mask es-reveal">
+    <div class="es-marquee" style="animation-direction:reverse;">
+      <div style="display:flex;align-items:center;gap:clamp(22px,2.6vw,44px);padding-right:clamp(22px,2.6vw,44px);">
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">Fewer stockouts</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">Vendors answer faster</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">An audit trail that already exists</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">Prices you can actually compare</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">Your ops team gets its afternoon back</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">No more reconciling spreadsheets</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+      </div>
+      <div aria-hidden="true" style="display:flex;align-items:center;gap:clamp(22px,2.6vw,44px);padding-right:clamp(22px,2.6vw,44px);">
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">Fewer stockouts</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">Vendors answer faster</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">An audit trail that already exists</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">Prices you can actually compare</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">Your ops team gets its afternoon back</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+        <span style="font-family:var(--font-space);font-size:clamp(19px,2.3vw,32px);font-weight:600;letter-spacing:-0.02em;color:var(--es-ink);text-shadow:var(--es-glow);white-space:nowrap;">No more reconciling spreadsheets</span>
+        <span style="display:block;width:6px;height:6px;border-radius:50%;flex:none;background:#5B9BFF;box-shadow:0 0 7px 1px rgba(11,95,255,0.75);"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="es-band vb-major vb-deep">
+  <div class="es-band-inner es-reveal" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;">
+    <h2 style="font-family:var(--font-space);font-weight:700;font-size:clamp(30px,4.4vw,54px);line-height:1.1;letter-spacing:-0.03em;margin:0;color:var(--es-ink);text-shadow:var(--es-glow);max-width:30ch;" class="v2-hl">You shouldn&rsquo;t have to guess<br class="v2-br-d v2-br-t"> what you pay to restock.</h2>
+    <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-dim);text-wrap:pretty;font-size:clamp(15px,1.5vw,19px);margin:0;max-width:640px;">You set the thresholds and the specs. Everstock watches the prices, chases the quotes, and drafts the paperwork, then puts a proposal in your queue for a yes or a no.</p>
+    <p style="font-family:var(--font-plex);font-weight:300;line-height:1.6;color:var(--es-faint);font-size:clamp(14px,1.35vw,17px);margin:0;max-width:560px;">We&rsquo;re onboarding a small group of mid-market distributors as design partners.</p>
+    <div class="es-cta" style="margin-top:16px;justify-content:center;">
+      <a href="#request" class="es-cta-primary" style="font-family:var(--font-space);font-size:13px;font-weight:500;letter-spacing:0.08em;background:var(--es-ink);color:var(--es-bg);border-radius:999px;padding:15px 32px;display:inline-block;">Request access</a>
+      <a href="#platform" class="es-cta-secondary" style="font-family:var(--font-space);font-size:13px;font-weight:500;letter-spacing:0.08em;color:var(--es-ink);border:1px solid var(--es-line);border-radius:999px;padding:15px 32px;display:inline-block;">See how it works</a>
+    </div>
+  </div>
+</section>
+
+<footer class="vb-accent" style="position:relative;width:100%;margin:0;padding:clamp(56px,7.5vh,94px) 0;border-top:1px solid var(--es-edge);">
+  <div class="es-reveal" style="max-width:1160px;margin:0 auto;padding:0 clamp(24px,5vw,68px);display:flex;flex-direction:column;gap:clamp(44px,6vh,72px);">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span aria-hidden="true" style="display:inline-flex;line-height:0;">
+          <img src="assets/logo-mark-dark.svg" alt="" width="45" height="28" class="es-logo-img es-logo-dark" />
+          <img src="assets/logo-mark-light.svg" alt="" width="45" height="28" class="es-logo-img es-logo-light" />
+        </span>
+        <span style="font-family:var(--font-space);font-weight:700;font-size:13px;letter-spacing:0.2em;color:var(--es-dim);">EVERSTOCK</span>
+      </div>
+      <p style="font-family:var(--font-plex);font-weight:300;font-size:13px;line-height:1.55;margin:0;max-width:250px;color:var(--es-faint);">Supply-chain intelligence for mid-market distributors.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(136px,(600px - 100%) * 999,100%),1fr));gap:clamp(26px,3vw,48px);">
+      <div style="display:flex;flex-direction:column;gap:13px;">
+        <span style="font-family:var(--font-space);font-size:10px;font-weight:600;letter-spacing:0.24em;color:var(--es-faint);">PLATFORM</span>
+        <a href="#platform" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">How it works</a>
+        <a href="#approvals" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">Approval flow</a>
+        <a href="#integrations" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">Integrations</a>
+      </div>
+      <div id="pricing" style="display:flex;flex-direction:column;gap:13px;">
+        <span style="font-family:var(--font-space);font-size:10px;font-weight:600;letter-spacing:0.24em;color:var(--es-faint);">PRICING</span>
+        <a href="#request" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">Design partner program</a>
+        <a href="#request" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">Request a quote</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:13px;">
+        <span style="font-family:var(--font-space);font-size:10px;font-weight:600;letter-spacing:0.24em;color:var(--es-faint);">COMPANY</span>
+        <a href="#company" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">About</a>
+        <a href="#request" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">Contact</a>
+        <a id="login" href="#login" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">Log in</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:13px;">
+        <span style="font-family:var(--font-space);font-size:10px;font-weight:600;letter-spacing:0.24em;color:var(--es-faint);">INDUSTRIES</span>
+        <a href="#problem" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">Auto parts</a>
+        <a href="#problem" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">Electronics</a>
+        <a href="#problem" style="font-family:var(--font-plex);font-weight:300;font-size:14px;color:var(--es-dim);transition:color 160ms ease;">Industrial supply</a>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-top:26px;border-top:1px solid var(--es-hair);font-family:var(--font-space);font-size:10.5px;font-weight:500;letter-spacing:0.2em;color:var(--es-faint);">
+      <span>EVERSTOCK © 2026</span>
+      <span>SUPPLY-CHAIN INTELLIGENCE</span>
+    </div>
+  </div>
+</footer>
+
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;beamDensity&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;calm&quot;,&quot;standard&quot;,&quot;dense&quot;],&quot;default&quot;:&quot;standard&quot;,&quot;tsType&quot;:&quot;'calm'|'standard'|'dense'&quot;,&quot;section&quot;:&quot;Hero motion&quot;},&quot;conveyor&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero motion&quot;},&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero motion&quot;},&quot;beatHoldSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:6,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Guardrail showcase&quot;},&quot;showHolograms&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Guardrail showcase&quot;},&quot;marqueeSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:44,&quot;min&quot;:20,&quot;max&quot;:90,&quot;step&quot;:2,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Tagline streams&quot;}}">
+class Component extends DCLogic {
+  state = { theme: 'graphite', beat: 0, read: { invoice: false, sheet: false, po: false } };
+  floorARef = React.createRef();
+  floorBRef = React.createRef();
+
+  rootRef = React.createRef();
+  gridRef = React.createRef();
+  titleRef = React.createRef();
+  sheenRef = React.createRef();
+  traceRef = React.createRef();
+  navRef = React.createRef();
+  navLogoRef = React.createRef();
+  sheetRef = React.createRef();
+  railRef = React.createRef();
+  railWrapRef = React.createRef();
+  railLineRef = React.createRef();
+  railDotRef = React.createRef();
+  markFacetRef = React.createRef();
+  markSvgRef = React.createRef();
+  markBeamRef = React.createRef();
+  beat0Ref = React.createRef();
+  beat1Ref = React.createRef();
+  beat2Ref = React.createRef();
+  beat3Ref = React.createRef();
+  cap0Ref = React.createRef();
+  cap1Ref = React.createRef();
+  cap2Ref = React.createRef();
+  cap3Ref = React.createRef();
+  desc0Ref = React.createRef();
+  desc1Ref = React.createRef();
+  desc2Ref = React.createRef();
+  desc3Ref = React.createRef();
+  dot0Ref = React.createRef();
+  dot1Ref = React.createRef();
+  dot2Ref = React.createRef();
+  dot3Ref = React.createRef();
+
+  timers = [];
+  dead = false;
+  onScreen = new Set();
+
+  /* ---------------- lifecycle ---------------- */
+  componentDidMount() {
+    this.reduced = (this.props.reducedMotion ?? false) || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.mobile = window.matchMedia('(max-width:1023.98px)').matches;
+    const t = document.documentElement.dataset.theme;
+    if (t !== 'light' && t !== 'graphite') document.documentElement.dataset.theme = 'graphite';
+    else if (t !== this.state.theme) this.setState({ theme: t });
+    this.applyProps();
+    this.initGrid();
+    this.initFloor();
+    this.initTitle();
+    this.initReveal();
+    this.initBlueprint();
+    this.initScrollPass();
+    this.initNav();
+    this.initVideos();
+    this.applyBeat();
+    this.scheduleBeat();
+  }
+
+  componentDidUpdate() { this.applyProps(); }
+
+  componentWillUnmount() {
+    this.dead = true;
+    this.timers.forEach(clearTimeout);
+    clearTimeout(this.beatTimer);
+    clearTimeout(this.markTimer);
+    cancelAnimationFrame(this.markRaf);
+    cancelAnimationFrame(this.raf);
+    cancelAnimationFrame(this.raf2);
+    cancelAnimationFrame(this.rafF);
+    if (this.offScroll) this.offScroll();
+    if (this.offRail) this.offRail();
+    if (this.offGrid) this.offGrid();
+    if (this.offFloor) this.offFloor();
+    if (this.io) this.io.disconnect();
+    if (this.mo) this.mo.disconnect();
+    if (this.bio) this.bio.disconnect();
+    if (this.vio) this.vio.disconnect();
+  }
+
+  applyProps() {
+    const root = this.rootRef.current;
+    if (!root) return;
+    root.style.setProperty('--mq', (this.props.marqueeSeconds ?? 44) + 's');
+    const floor = root.querySelector('.v2-floor');
+    if (floor) floor.style.display = (this.props.conveyor ?? true) === false ? 'none' : '';
+    this.beamFactor = ({ calm: 0.55, standard: 1, dense: 1.4 })[this.props.beamDensity ?? 'standard'] ?? 1;
+    const show = this.props.showHolograms ?? true;
+    root.querySelectorAll('[data-holo-wrap]').forEach((w) => {
+      w.style.visibility = show ? '' : 'hidden';
+    });
+  }
+
+  /* ---------------- theme + nav + menu ---------------- */
+  toggleTheme = () => {
+    const next = this.state.theme === 'light' ? 'graphite' : 'light';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('es-theme', next); } catch (e) {}
+    this.setState({ theme: next });
+    if (this.readGridColors) this.readGridColors();
+  };
+
+  openMenu = () => { const s = this.sheetRef.current; if (s) s.style.display = 'block'; };
+  closeMenu = () => { const s = this.sheetRef.current; if (s) s.style.display = 'none'; };
+
+  initNav() {
+    const bar = this.navRef.current, logo = this.navLogoRef.current;
+    if (!bar) return;
+    let on = null;
+    const apply = (scrolled) => {
+      if (scrolled === on) return;
+      on = scrolled;
+      bar.style.maxWidth = scrolled ? 'min(880px, 100%)' : '1280px';
+      bar.style.padding = scrolled ? '7px 8px 7px 14px' : '8px 10px 8px 12px';
+      bar.style.borderColor = scrolled ? 'var(--es-edge)' : 'transparent';
+      bar.style.background = scrolled ? 'var(--es-panel)' : 'transparent';
+      bar.style.backdropFilter = scrolled ? 'blur(18px) saturate(132%)' : 'blur(0px)';
+      bar.style.webkitBackdropFilter = bar.style.backdropFilter;
+      bar.style.boxShadow = scrolled ? 'inset 0 1px 0 var(--es-lip)' : 'none';
+      if (logo) logo.style.transform = scrolled ? 'scale(0.8)' : 'scale(1)';
+      bar.querySelectorAll('[data-navpill]').forEach((p) => {
+        p.style.background = scrolled ? 'transparent' : 'var(--es-pill)';
+        p.style.borderColor = scrolled ? 'transparent' : 'var(--es-line)';
+      });
+    };
+    const onScroll = () => apply(window.scrollY > window.innerHeight * 0.66);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    this.offScroll = () => window.removeEventListener('scroll', onScroll);
+  }
+
+  /* Scroll reveal, fail-safe by construction. The template streams, so a one-shot
+     querySelectorAll at mount misses nodes that arrive later — it re-scans as the DOM
+     settles, and an unconditional sweep guarantees content can never stay invisible
+     because an observer was missed. */
+  /* One rAF-throttled scroll pass drives everything scroll-dependent: gating the hero
+     canvas (it only exists behind the hero here, so past it the RAF is pure contention)
+     and the alternating-side trailing blueprint lines between sections. */
+  initScrollPass() {
+    const blocks = Array.from(document.querySelectorAll('main > section, main > footer'));
+    const apply = () => {
+      const vh = window.innerHeight;
+      if (this.setGridPaused) this.setGridPaused(window.scrollY > vh * 1.15);
+      blocks.forEach((b) => {
+        const trail = b.querySelector(':scope > .vb-trail');
+        if (!trail) return;
+        const r = b.getBoundingClientRect();
+        // The accent lives in the gap: it draws as this section's bottom edge rises through
+        // the lower half of the viewport, i.e. after its grid has settled and before the
+        // next section's grid fires.
+        const p = Math.max(0, Math.min(1, (vh * 0.96 - r.bottom) / (vh * 0.62)));
+        trail.style.setProperty('--vb-p', p.toFixed(3));
+        trail.style.visibility = p > 0.001 && p < 0.999 ? 'visible' : 'hidden';
+      });
+    };
+    apply();
+    const onScroll = () => {
+      if (this.passQueued) return;
+      this.passQueued = true;
+      requestAnimationFrame(() => { this.passQueued = false; apply(); });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    this.offRail = () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
+  }
+
+  /* Variant B accent: on section entry the blueprint grid fades in, holds, and dissolves —
+     one deterministic run per entry, identical timing every time, never a loop. */
+  initBlueprint() {
+    if (!('IntersectionObserver' in window)) return;
+    const run = (el) => {
+      if (el.dataset.vbBusy) return;
+      el.dataset.vbBusy = '1';
+      const layers = el.querySelectorAll(':scope > .vb-bp');
+      layers.forEach((l) => l.classList.add('vb-armed'));
+      el.classList.remove('vb-in');
+      void el.offsetWidth;
+      // Start on a double rAF so the run doesn't share a frame with the IO callback (and
+      // whatever the canvas/video are doing in it) — that shared frame is what swallowed
+      // the opening of the fade.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (!this.dead) el.classList.add('vb-in');
+      }));
+      this.timers.push(setTimeout(() => layers.forEach((l) => l.classList.remove('vb-armed')), 3800));
+      // Cleanup must land AFTER the keyframes have already returned the layer to 0,
+      // otherwise stripping the class cuts a fully-opaque grid straight to nothing.
+      this.timers.push(setTimeout(() => { el.classList.remove('vb-in'); delete el.dataset.vbBusy; }, 3600));
+    };
+    this.bio = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) run(e.target); });
+    }, { threshold: 0.22 });
+    const blocks = Array.from(document.querySelectorAll('main > section, main > footer')).slice(1);
+    blocks.forEach((b) => {
+      if (!b.querySelector(':scope > .vb-bp')) {
+        const layer = document.createElement('span');
+        layer.className = 'vb-bp';
+        layer.setAttribute('aria-hidden', 'true');
+        const major = document.createElement('span');
+        major.className = 'vb-bp-major';
+        layer.appendChild(major);
+        b.insertBefore(layer, b.firstChild);
+      }
+      // Trailing measurement lines, alternating side per boundary. Not on the last block.
+      if (!b.querySelector(':scope > .vb-trail') && b !== blocks[blocks.length - 1]) {
+        const side = blocks.indexOf(b) % 2 === 0 ? 'l' : 'r';
+        const trail = document.createElement('span');
+        trail.className = 'vb-trail vb-trail--' + side;
+        trail.setAttribute('aria-hidden', 'true');
+        const spine = document.createElement('span');
+        spine.className = 'vb-trail-spine';
+        trail.appendChild(spine);
+        [[0.17, 46], [0.39, 26], [0.61, 38], [0.83, 22]].forEach(([y, w]) => {
+          const tick = document.createElement('span');
+          tick.className = 'vb-trail-tick';
+          tick.style.top = (y * 100).toFixed(0) + '%';
+          tick.style.width = w + 'px';
+          tick.style.setProperty('--vb-t', String(y * 0.9));
+          trail.appendChild(tick);
+        });
+        b.appendChild(trail);
+      }
+      this.bio.observe(b);
+    });
+  }
+
+  initReveal() {
+    const revealAll = () => document.querySelectorAll('.es-reveal').forEach((n) => n.classList.add('es-revealed'));
+    if (this.reduced || !('IntersectionObserver' in window)) { revealAll(); return; }
+    this.io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('es-revealed');
+        this.io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.04 });
+    const seen = new WeakSet();
+    const scan = () => {
+      document.querySelectorAll('.es-reveal').forEach((n) => {
+        if (seen.has(n) || n.classList.contains('es-revealed')) return;
+        seen.add(n);
+        this.io.observe(n);
+      });
+    };
+    scan();
+    this.mo = new MutationObserver(scan);
+    this.mo.observe(document.body, { childList: true, subtree: true });
+    [120, 400, 900].forEach((ms) => this.timers.push(setTimeout(scan, ms)));
+    this.timers.push(setTimeout(() => { revealAll(); if (this.mo) this.mo.disconnect(); }, 1600));
+  }
+
+  /* ---------------- holograms ---------------- */
+  initVideos() {
+    const root = this.rootRef.current;
+    if (!root) return;
+    // Vignette: two passes per hologram — a corner-weighted radial in the section's own
+    // colour, plus a light edge pass — so the video's rectangle dissolves into the surface.
+    root.querySelectorAll('[data-holo-wrap]').forEach((w) => {
+      if (w.querySelector(':scope > .vb-veil')) return;
+      const v = w.querySelector('video');
+      const pool = document.createElement('span');
+      pool.className = 'vb-pool';
+      pool.setAttribute('aria-hidden', 'true');
+      w.insertBefore(pool, w.firstChild);
+      const veil = document.createElement('span');
+      veil.className = 'vb-veil';
+      veil.setAttribute('aria-hidden', 'true');
+      const edges = document.createElement('span');
+      edges.className = 'vb-veil-edges';
+      veil.appendChild(edges);
+      w.insertBefore(veil, v ? v.nextSibling : null);
+    });
+    let beatSeen = 0;
+    root.querySelectorAll('video[data-holo]').forEach((v) => {
+      v.muted = true; v.loop = true; v.playsInline = true;
+      v.disablePictureInPicture = true;
+      // Only the first beat is worth fetching up front; the other three load on demand.
+      const defer = v.dataset.beat && beatSeen++ > 0;
+      v.setAttribute('preload', defer ? 'none' : 'metadata');
+      if (v.dataset.beat) v.loop = false; // the beat rail owns the cycle, not the element
+      if (!this.mobile && !v.dataset.beat) v.play().catch(() => {});
+    });
+    root.querySelectorAll('[data-tap]').forEach((el) => { if (!this.mobile) el.style.display = 'none'; });
+    // Decode only what is on screen: an offscreen <video> that keeps playing costs a full
+    // decode + composite per frame, which is what makes the visible one stutter.
+    if ('IntersectionObserver' in window) {
+      this.vio = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          const v = e.target;
+          if (e.isIntersecting) {
+            this.onScreen.add(v);
+            if (!this.mobile && (!v.dataset.beat || v.closest('[data-holo-wrap]').style.opacity !== '0')) v.play().catch(() => {});
+          } else {
+            this.onScreen.delete(v);
+            v.pause();
+          }
+        });
+      }, { rootMargin: '15% 0px' });
+      root.querySelectorAll('video[data-holo]').forEach((v) => this.vio.observe(v));
+    }
+    if (!this.mobile) return;
+    root.querySelectorAll('[data-holo-wrap]').forEach((w) => {
+      w.addEventListener('click', () => {
+        const v = w.querySelector('video');
+        const tap = w.querySelector('[data-tap]');
+        if (!v) return;
+        if (v.paused) { v.play().catch(() => {}); if (tap) tap.style.display = 'none'; }
+        else { v.pause(); if (tap) tap.style.display = 'flex'; }
+      });
+    });
+  }
+
+  /* ---------------- showcase beats ---------------- */
+  beatEls() {
+    return {
+      stages: [this.beat0Ref.current, this.beat1Ref.current, this.beat2Ref.current, this.beat3Ref.current],
+      caps: [this.cap0Ref.current, this.cap1Ref.current, this.cap2Ref.current, this.cap3Ref.current],
+      descs: [this.desc0Ref.current, this.desc1Ref.current, this.desc2Ref.current, this.desc3Ref.current],
+      dots: [this.dot0Ref.current, this.dot1Ref.current, this.dot2Ref.current, this.dot3Ref.current],
+    };
+  }
+
+  applyBeat() {
+    const i = this.state.beat;
+    const { stages, caps, dots, descs } = this.beatEls();
+    stages.forEach((el, k) => {
+      if (!el) return;
+      el.style.opacity = k === i ? '1' : '0';
+      el.style.pointerEvents = k === i ? 'auto' : 'none';
+      // Let the browser skip render work for the three beats that aren't on stage.
+      el.style.contentVisibility = k === i ? 'visible' : 'auto';
+      const v = el.querySelector('video');
+      if (!v) return;
+      if (k === i) {
+        if (v.getAttribute('preload') === 'none') v.setAttribute('preload', 'metadata');
+        // One clean cycle from the top each time this beat takes the stage.
+        try { v.currentTime = 0; } catch (e) {}
+        if (!this.mobile && this.onScreen.has(v)) v.play().catch(() => {});
+      }
+      else { v.pause(); }
+    });
+    caps.forEach((el, k) => { if (el) el.style.opacity = k === i ? '1' : '0'; });
+    descs.forEach((el, k) => { if (el) el.style.opacity = k === i ? '1' : '0'; });
+    dots.forEach((btn, k) => {
+      if (!btn) return;
+      const d = btn.firstElementChild;
+      if (!d) return;
+      if (k === i) {
+        d.style.backgroundColor = '#5B9BFF';
+        d.style.boxShadow = '0 0 6px 1px rgba(11,95,255,0.95),0 0 17px 4px rgba(11,95,255,0.45)';
+        d.style.transform = 'scale(1.18)';
+        d.style.animation = this.reduced ? 'none' : 'esLed 2.8s ease-in-out infinite';
+      } else if (k < i) {
+        d.style.backgroundColor = '#40FFA8';
+        d.style.boxShadow = '0 0 5px 1px rgba(64,255,168,0.8),0 0 14px 3px rgba(64,255,168,0.3)';
+        d.style.transform = 'scale(1)';
+        d.style.animation = 'none';
+      } else {
+        d.style.backgroundColor = 'rgba(242,241,237,0.14)';
+        d.style.boxShadow = 'inset 0 1px 1.5px rgba(0,0,0,0.55)';
+        d.style.transform = 'scale(1)';
+        d.style.animation = 'none';
+      }
+    });
+    this.startMarkCycle();
+  }
+
+  /* The composited Beat 2 mark runs its own four states — rest (12 facets) → unify →
+     beam loop → resolve — never anything lifted out of the generated video. */
+  startMarkCycle() {
+    clearTimeout(this.markTimer);
+    cancelAnimationFrame(this.markRaf);
+    const svg = this.markSvgRef.current, beam = this.markBeamRef.current;
+    if (!svg || !beam) return;
+    // Every material pass (base, matte, grain mask, sheen, inset lip) facets together.
+    const facets = svg.querySelectorAll('[data-facet]');
+    const cut = (v) => facets.forEach((p) => p.setAttribute('stroke-dasharray', v));
+    const rest = () => { cut('6.63 1.7'); beam.style.opacity = '0'; };
+    if (this.state.beat !== 1) { rest(); return; }
+    if (this.reduced) { cut('100 0'); beam.style.opacity = '1'; return; }
+    // Sync to the vendor-scanning cycle instead of an independent timer: the mark unifies and
+    // beams for exactly as long as the clip is evaluating vendors, ticks once per vendor, and
+    // resolves back to 12 facets at the head and tail of every loop.
+    const video = this.beat1Ref.current && this.beat1Ref.current.querySelector('video');
+    if (!video) { cut('100 0'); beam.style.opacity = '1'; return; }
+    const HEAD = 0.45, TAIL = 0.35, VENDORS = 3;
+    let unified = null;
+    const tick = () => {
+      if (this.dead || this.state.beat !== 1) { rest(); return; }
+      const d = video.duration || 5.1;
+      const t = video.currentTime;
+      const scanning = video.readyState > 1 && t > HEAD && t < d - TAIL;
+      if (scanning !== unified) { unified = scanning; cut(scanning ? '100 0' : '6.63 1.7'); }
+      if (scanning) {
+        const span = Math.max(0.2, (d - TAIL - HEAD) / VENDORS);
+        const local = ((t - HEAD) % span) / span;
+        beam.style.opacity = local < 0.16 ? '1' : '0.86';
+      } else {
+        beam.style.opacity = '0';
+      }
+      this.markRaf = requestAnimationFrame(tick);
+    };
+    tick();
+  }
+
+  setBeat(i, fromUser) {
+    const n = Math.max(0, Math.min(3, i));
+    if (n === this.state.beat) { if (fromUser) this.scheduleBeat(); return; }
+    this.setState({ beat: n }, () => { this.applyBeat(); this.scheduleBeat(); });
+  }
+
+  /* Advance on the video's own clock: play exactly one cycle, settle on the final frame for
+     the hold, then move on. A fixed timer cut clips mid-loop. */
+  scheduleBeat() {
+    clearTimeout(this.beatTimer);
+    if (this.dead) return;
+    const hold = Math.max(0, (this.props.beatHoldSeconds ?? 2)) * 1000;
+    const i = this.state.beat;
+    const stage = this.beatEls().stages[i];
+    const v = stage && stage.querySelector('video');
+    const next = () => this.setBeat((i + 1) % 4);
+    if (!v) { this.beatTimer = setTimeout(next, 5100 + hold); return; }
+    v.loop = false;
+    const dur = (isFinite(v.duration) && v.duration) || 5.1;
+    const onEnded = () => { v.removeEventListener('ended', onEnded); clearTimeout(this.beatTimer); this.beatTimer = setTimeout(next, hold); };
+    v.addEventListener('ended', onEnded);
+    this.beatEnded = () => v.removeEventListener('ended', onEnded);
+    // Watchdog ONLY recovers a stalled clip that will never emit 'ended' (a failed decode,
+    // or a paused mobile beat). Deliberately generous (~2x the real duration) so it can
+    // never preempt a normally-playing cycle — that early preemption is exactly the
+    // "half cycle then skip" symptom.
+    this.beatTimer = setTimeout(next, dur * 2000 + hold + 2000);
+  }
+
+  goBeat0 = () => this.setBeat(0, true);
+  goBeat1 = () => this.setBeat(1, true);
+  goBeat2 = () => this.setBeat(2, true);
+  goBeat3 = () => this.setBeat(3, true);
+  prevBeat = () => this.setBeat((this.state.beat + 3) % 4, true);
+  nextBeat = () => this.setBeat((this.state.beat + 1) % 4, true);
+
+  scrubStart = (e) => {
+    const rail = this.railRef.current;
+    if (!rail) return;
+    rail.style.cursor = 'grabbing';
+    clearTimeout(this.beatTimer);
+    const pick = (clientX) => {
+      const r = rail.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, (clientX - r.left) / Math.max(1, r.width)));
+      this.setBeat(Math.round(p * 3));
+    };
+    const move = (ev) => pick(ev.clientX);
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      rail.style.cursor = 'grab';
+      this.scheduleBeat();
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+    pick(e.clientX);
+  };
+
+  /* ---------------- breathing grid + agent beams ---------------- */
+  responsive(vw) {
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const t = clamp((vw - 480) / 800, 0, 1);
+    return { isMobile: vw < 1024, beamCount: Math.max(1, Math.round(lerp(10, 26, t) * (this.beamFactor ?? 1))), warpScale: lerp(0.12, 1, t), dprCap: 1.5 };
+  }
+
+  initGrid() {
+    const canvas = this.gridRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const SPACING = 84, TRAIL = 34, STEP = 0.084;
+    const reduced = this.reduced;
+    let w = 0, h = 0, cols = 0, rows = 0, dpr = 1, beamCount = 26, warpScale = 1, prevCount = -1;
+    let beams = [], last = 0, paused = false, cut = null;
+    const colors = { bg: '#16171B', grid: 'rgba(226,222,214,0.11)', additive: true };
+    const readColors = () => {
+      const cs = getComputedStyle(document.documentElement);
+      colors.bg = cs.getPropertyValue('--es-bg').trim() || colors.bg;
+      colors.grid = cs.getPropertyValue('--es-grid').trim() || colors.grid;
+      colors.additive = (document.documentElement.dataset.theme || 'graphite') !== 'light';
+      if (reduced) drawStatic();
+    };
+    this.readGridColors = readColors;
+
+    const spawn = (seed, slot) => {
+      const n = Math.max(2, beamCount);
+      const s = slot === undefined ? Math.floor(Math.random() * n) : slot;
+      const horizontal = s % 2 === 0;
+      const BANDS = 4;
+      const band = Math.floor(s / 2) % BANDS;
+      const lines = Math.max(BANDS + 2, horizontal ? rows : Math.floor(cols * 0.58));
+      const per = Math.max(1, Math.floor(lines / BANDS));
+      const line = Math.min(lines - 1, band * per + 1 + Math.floor(Math.random() * Math.max(1, per - 1)));
+      const span = horizontal ? cols : rows;
+      return {
+        slot: s, h: horizontal, dir: s % 4 < 2 ? 1 : -1, line,
+        u: seed ? Math.random() * span : 0,
+        speed: 0.5 + Math.random() * 0.6,
+        green: Math.random() < 0.4,
+        bright: 0.74 + Math.random() * 0.34,
+        wait: seed ? (s / n) * 3800 + Math.random() * 700 : 400 + Math.random() * 3600,
+      };
+    };
+    const warpX = (x, t) => {
+      const cx = w / 2, ws = warpScale;
+      const pulse = 1 + Math.sin(t * 0.45) * 0.04 * ws;
+      const d = (Math.sin(x * 0.0062 + t * 0.37) * 16 + Math.sin(x * 0.0131 - t * 0.23) * 10 + Math.sin(x * 0.0037 + t * 0.61) * 7) * ws;
+      return cx + (x + d - cx) * pulse;
+    };
+    const warpY = (y, t) => {
+      const cy = h / 2, ws = warpScale;
+      const pulse = 1 + Math.sin(t * 0.45 + 1.9) * 0.04 * ws;
+      const d = (Math.cos(y * 0.0074 - t * 0.31) * 15 + Math.sin(y * 0.0148 + t * 0.27) * 9 + Math.sin(y * 0.0041 - t * 0.53) * 7) * ws;
+      return cy + (y + d - cy) * pulse;
+    };
+    const lattice = (t) => {
+      const S = SPACING, ox = -S * 2, oy = -S * 2;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      const xs = [], ys = [];
+      for (let i = 0; i <= cols; i++) xs.push(warpX(ox + i * S, t));
+      for (let j = 0; j <= rows; j++) ys.push(warpY(oy + j * S, t));
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = colors.grid;
+      ctx.beginPath();
+      for (let j = 0; j <= rows; j++) { ctx.moveTo(xs[0], ys[j]); ctx.lineTo(xs[cols], ys[j]); }
+      for (let i = 0; i <= cols; i++) { ctx.moveTo(xs[i], ys[0]); ctx.lineTo(xs[i], ys[rows]); }
+      ctx.stroke();
+      return { xs, ys };
+    };
+    const drawStatic = () => { if (!(w && h)) return; lattice(0); if (cut) { ctx.globalCompositeOperation = 'destination-out'; ctx.drawImage(cut, 0, 0, w, h); ctx.globalCompositeOperation = 'source-over'; } };
+    const resize = () => {
+      const r = this.responsive(window.innerWidth);
+      beamCount = r.beamCount;
+      warpScale = r.warpScale;
+      dpr = Math.min(window.devicePixelRatio || 1, r.dprCap);
+      w = window.innerWidth; h = window.innerHeight;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      cols = Math.ceil(w / SPACING) + 4;
+      rows = Math.ceil(h / SPACING) + 4;
+      // soft-edged cutout over the conveyor's footprint, limited to where the conveyor is actually
+      // visible (the solid field hides it on the left), so beams stay crisp on the solid ground
+      cut = document.createElement('canvas'); cut.width = Math.round(w * dpr); cut.height = Math.round(h * dpr);
+      const cg = cut.getContext('2d'); cg.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const fp = this.deckFootprint(w, h);
+      cg.filter = 'blur(' + Math.round(Math.min(w, h) * 0.09) + 'px)';
+      cg.fillStyle = '#000'; cg.beginPath(); cg.moveTo(fp[0].x, fp[0].y); for (let i = 1; i < fp.length; i++) cg.lineTo(fp[i].x, fp[i].y); cg.closePath(); cg.fill();
+      cg.filter = 'none';
+      cg.globalCompositeOperation = 'destination-in';
+      const hg = cg.createLinearGradient(0, 0, w, 0); hg.addColorStop(0, 'rgba(0,0,0,0)'); hg.addColorStop(0.26, 'rgba(0,0,0,0)'); hg.addColorStop(0.48, 'rgba(0,0,0,0.95)'); hg.addColorStop(1, 'rgba(0,0,0,0.95)');
+      cg.fillStyle = hg; cg.fillRect(0, 0, w, h);
+      cg.globalCompositeOperation = 'source-over';
+      if (!reduced && beams.length && beamCount !== prevCount) {
+        beams = [];
+        for (let i = 0; i < beamCount; i++) beams.push(spawn(true, i));
+        prevCount = beamCount;
+      }
+      if (reduced) drawStatic();
+    };
+    const lerpArr = (arr, u) => {
+      const c = Math.max(0, Math.min(arr.length - 1.0001, u));
+      const i0 = Math.floor(c), f = c - i0;
+      return arr[i0] + (arr[i0 + 1] - arr[i0]) * f;
+    };
+    const frame = (now) => {
+      if (this.dead || paused) return;
+      const dt = Math.min(64, now - last) / 1000;
+      last = now;
+      const { xs, ys } = lattice(now * 0.001 * 0.55);
+      const add = colors.additive;
+      ctx.globalCompositeOperation = add ? 'lighter' : 'source-over';
+      ctx.lineCap = 'round';
+      for (const b of beams) {
+        if (b.wait > 0) { b.wait -= dt * 1000; continue; }
+        b.u += b.speed * dt;
+        const span = b.h ? cols : rows;
+        if (b.u > span + TRAIL * STEP + 2) { Object.assign(b, spawn(false, b.slot)); continue; }
+        const C = b.green ? [64, 255, 168] : [56, 122, 255];
+        const HOT = b.green ? [214, 255, 234] : [222, 236, 255];
+        const li = Math.min(b.line, b.h ? rows : cols);
+        const P = (u) => (b.dir < 0 ? span - u : u);
+        const pt = (u) => (b.h ? [lerpArr(xs, P(u)), ys[li]] : [xs[li], lerpArr(ys, P(u))]);
+        let prev = null;
+        for (let k = TRAIL; k >= 0; k--) {
+          const u = b.u - k * STEP;
+          if (u < 0) { prev = null; continue; }
+          const p = pt(Math.min(u, span));
+          if (prev) {
+            const f = 1 - k / TRAIL;
+            const a = Math.pow(f, 1.9) * (add ? 0.9 : 0.62) * b.bright;
+            ctx.strokeStyle = 'rgba(' + C[0] + ',' + C[1] + ',' + C[2] + ',' + a.toFixed(3) + ')';
+            ctx.lineWidth = 1 + f * 2.1;
+            ctx.beginPath();
+            ctx.moveTo(prev[0], prev[1]);
+            ctx.lineTo(p[0], p[1]);
+            ctx.stroke();
+          }
+          prev = p;
+        }
+        const head = pt(Math.min(b.u, span));
+        if (b.u >= 0 && b.u <= span + 0.4 && head[0] > -80 && head[0] < w + 80 && head[1] > -80 && head[1] < h + 80) {
+          const R = 34 * b.bright;
+          const g = ctx.createRadialGradient(head[0], head[1], 0, head[0], head[1], R);
+          g.addColorStop(0, 'rgba(' + HOT[0] + ',' + HOT[1] + ',' + HOT[2] + ',' + (add ? 0.98 : 0.6) + ')');
+          g.addColorStop(0.18, 'rgba(' + C[0] + ',' + C[1] + ',' + C[2] + ',' + (add ? 0.62 : 0.3) + ')');
+          g.addColorStop(0.5, 'rgba(' + C[0] + ',' + C[1] + ',' + C[2] + ',' + (add ? 0.22 : 0.1) + ')');
+          g.addColorStop(1, 'rgba(' + C[0] + ',' + C[1] + ',' + C[2] + ',0)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(head[0], head[1], R, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = add ? 'rgba(255,255,255,0.98)' : 'rgba(' + C[0] + ',' + C[1] + ',' + C[2] + ',0.95)';
+          ctx.beginPath();
+          ctx.arc(head[0], head[1], 2.1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      if (cut) { ctx.globalCompositeOperation = 'destination-out'; ctx.drawImage(cut, 0, 0, w, h); }
+      ctx.globalCompositeOperation = 'source-over';
+      this.raf = requestAnimationFrame(frame);
+    };
+
+    readColors();
+    resize();
+    beams = [];
+    if (!reduced) for (let i = 0; i < beamCount; i++) beams.push(spawn(true, i));
+    prevCount = beamCount;
+    last = performance.now();
+    if (reduced) drawStatic();
+    else this.raf = requestAnimationFrame(frame);
+
+    // Variant B confines the lattice to the hero, so once the hero is off-screen the RAF is
+    // pure contention — it was eating the opening frames of every blueprint reveal.
+    this.setGridPaused = (v) => {
+      if (v && !paused) { paused = true; cancelAnimationFrame(this.raf); }
+      else if (!v && paused && !reduced && !document.hidden) { paused = false; last = performance.now(); this.raf = requestAnimationFrame(frame); }
+    };
+    const onResize = () => resize();
+    const onVis = () => {
+      if (document.hidden) { paused = true; cancelAnimationFrame(this.raf); }
+      else if (paused && !reduced) { paused = false; last = performance.now(); this.raf = requestAnimationFrame(frame); }
+    };
+    window.addEventListener('resize', onResize);
+    document.addEventListener('visibilitychange', onVis);
+    this.offGrid = () => {
+      window.removeEventListener('resize', onResize);
+      document.removeEventListener('visibilitychange', onVis);
+    };
+  }
+
+  /* ---------------- hero title: base cycle + effect layer ---------------- */
+  initTitle() {
+    const title = this.titleRef.current;
+    if (!title) return;
+    const TEXT = 'EVERSTOCK';
+    const BASE = 'clamp(56px, 13.2vw, 208px)';
+    const GRAD = 'linear-gradient(180deg,var(--es-ink,#FAF9F5) 0%,var(--es-ink,#FAF9F5) 22%,var(--es-grad-mid,#7F838B) 60%,var(--es-grad-end,#42454C) 100%)';
+    const FONTS = [
+      { name: "var(--font-space), 'Space Grotesk', sans-serif", weight: 700, ls: '-0.03em', scale: 1, pick: 0.46, hold: [6000, 8500] },
+      { name: "var(--font-unbounded), 'Unbounded', sans-serif", weight: 700, ls: '-0.012em', scale: 0.68, pick: 0.18, hold: [3400, 5000] },
+      { name: "var(--font-anton), 'Anton', sans-serif", weight: 400, ls: '0.005em', scale: 1.16, pick: 0.18, hold: [3600, 5200] },
+      { name: "var(--font-syne), 'Syne', sans-serif", weight: 800, ls: '-0.02em', scale: 0.62, pick: 0.18, hold: [3400, 5200] },
+    ];
+    const reduced = this.reduced;
+    const timers = this.timers;
+    let fontIdx = 0, busy = false, lastRare = 0;
+    let isMobile = this.responsive(window.innerWidth).isMobile;
+    const layers = (fn) => [this.sheenRef.current, this.traceRef.current].forEach((l) => l && fn(l));
+
+    const fillGradient = (el) => {
+      el.style.backgroundImage = GRAD;
+      el.style.backgroundSize = '100% 100%';
+      el.style.webkitBackgroundClip = 'text';
+      el.style.backgroundClip = 'text';
+      el.style.webkitTextFillColor = 'transparent';
+      el.style.color = 'transparent';
+    };
+    const pickFont = () => {
+      const pool = FONTS.map((f, i) => ({ f, i })).filter((x) => x.i !== fontIdx);
+      let total = 0;
+      pool.forEach((x) => (total += x.f.pick));
+      let r = Math.random() * total;
+      for (const x of pool) { r -= x.f.pick; if (r <= 0) return x.i; }
+      return pool[0].i;
+    };
+    const fitTitle = () => {
+      const el = this.titleRef.current;
+      if (!el || !el.parentElement) return;
+      const avail = el.parentElement.clientWidth;
+      if (!avail) return;
+      const wsc = el.scrollWidth;
+      if (wsc > avail) {
+        const base = parseFloat(getComputedStyle(el).fontSize);
+        el.style.fontSize = (base * (avail / wsc) * 0.985).toFixed(2) + 'px';
+      }
+    };
+    const syncLayers = () => {
+      const el = this.titleRef.current;
+      if (!el) return;
+      const cs = getComputedStyle(el);
+      layers((l) => {
+        l.style.fontFamily = cs.fontFamily;
+        l.style.fontWeight = cs.fontWeight;
+        l.style.letterSpacing = cs.letterSpacing;
+        l.style.fontSize = cs.fontSize;
+      });
+    };
+    const applyFont = (idx) => {
+      const el = this.titleRef.current;
+      if (!el) return;
+      const f = FONTS[idx];
+      el.style.fontFamily = f.name;
+      el.style.fontWeight = String(f.weight);
+      el.style.letterSpacing = f.ls;
+      el.style.fontSize = 'calc(' + BASE + ' * ' + f.scale + ')';
+      fontIdx = idx;
+      fitTitle();
+      syncLayers();
+    };
+    const setLayerVis = (v) => layers((l) => { l.style.transition = 'opacity 300ms ease'; l.style.opacity = String(v); });
+    const wait = (ms) => new Promise((r) => timers.push(setTimeout(r, ms)));
+    const tween = (dur, fn) => new Promise((res) => {
+      const s = performance.now();
+      const step = (n) => {
+        if (this.dead) return res();
+        const p = Math.min(1, (n - s) / dur);
+        fn(p);
+        if (p < 1) this.raf2 = requestAnimationFrame(step);
+        else res();
+      };
+      this.raf2 = requestAnimationFrame(step);
+    });
+    const chars = () => {
+      const el = this.titleRef.current;
+      el.textContent = '';
+      el.style.textShadow = 'none';
+      el.style.backgroundImage = 'none';
+      el.style.webkitBackgroundClip = 'border-box';
+      el.style.backgroundClip = 'border-box';
+      el.style.webkitTextFillColor = 'currentColor';
+      el.style.color = 'var(--es-ink)';
+      return [...TEXT].map((ch) => {
+        const s = document.createElement('span');
+        s.textContent = ch;
+        s.style.display = 'inline-block';
+        fillGradient(s);
+        el.appendChild(s);
+        return s;
+      });
+    };
+    const settleChars = (cs) => cs.forEach((s) => { s.style.willChange = 'auto'; s.style.transform = ''; s.style.filter = ''; s.style.opacity = '1'; });
+    const plain = () => {
+      const el = this.titleRef.current;
+      if (!el) return;
+      el.textContent = TEXT;
+      el.style.filter = '';
+      el.style.opacity = '1';
+      el.style.transform = '';
+      el.style.clipPath = '';
+      el.style.textShadow = '';
+      el.style.background = '';
+      el.style.webkitBackgroundClip = '';
+      el.style.backgroundClip = '';
+      el.style.webkitTextFillColor = '';
+      el.style.webkitTextStroke = '';
+      fillGradient(el);
+    };
+
+    const fxShuffle = async () => {
+      const G = 'ACDEFHKMNORSTVXZ0248#/';
+      const cs = chars();
+      const target = [...TEXT];
+      const start = performance.now();
+      await tween(1000, () => {
+        const n = performance.now();
+        cs.forEach((s, i) => {
+          const lockAt = 0.12 + (i / cs.length) * 0.72;
+          const p = Math.min(1, (n - start) / 1000);
+          if (p >= lockAt) { s.textContent = target[i]; s.style.opacity = '1'; }
+          else {
+            const tick = Math.floor((n - start) / 52);
+            if (tick !== s._tick) { s._tick = tick; s.textContent = G[Math.floor(Math.random() * G.length)]; s.style.opacity = '0.72'; }
+          }
+        });
+      });
+      cs.forEach((s, i) => { s.textContent = target[i]; s.style.opacity = '1'; });
+      await wait(500);
+    };
+    const fxType = async () => {
+      const cs = chars();
+      cs.forEach((s) => (s.style.opacity = '0'));
+      for (let i = 0; i < cs.length; i++) { cs[i].style.opacity = '1'; await wait(72); }
+      await wait(700);
+    };
+    const fxSplitFlap = async () => {
+      const G = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const cs = chars();
+      const target = [...TEXT];
+      cs.forEach((s) => (s.style.transformStyle = 'preserve-3d'));
+      await Promise.all(cs.map(async (s, i) => {
+        await wait(i * 58);
+        for (let f = 0; f < 4; f++) {
+          s.style.transition = 'transform 70ms linear';
+          s.style.transform = 'rotateX(-88deg)';
+          await wait(72);
+          s.textContent = f === 3 ? target[i] : G[Math.floor(Math.random() * G.length)];
+          s.style.transition = 'none';
+          s.style.transform = 'rotateX(88deg)';
+          await wait(16);
+          s.style.transition = 'transform 70ms linear';
+          s.style.transform = 'rotateX(0deg)';
+          await wait(74);
+        }
+      }));
+      await wait(500);
+    };
+    const fxMask = async () => {
+      const el = this.titleRef.current;
+      el.style.transition = 'none';
+      el.style.clipPath = 'inset(0 100% 0 0)';
+      await wait(30);
+      await tween(760, (p) => {
+        const e = 1 - Math.pow(1 - p, 3);
+        el.style.clipPath = 'inset(0 ' + (100 - e * 100).toFixed(2) + '% 0 0)';
+      });
+      await wait(600);
+    };
+    const fxShiny = async () => {
+      const el = this.titleRef.current;
+      const ink = getComputedStyle(el).color;
+      el.style.background = 'linear-gradient(100deg,' + ink + ' 34%, rgba(255,255,255,0.98) 50%,' + ink + ' 66%)';
+      el.style.backgroundSize = '260% 100%';
+      el.style.webkitBackgroundClip = 'text';
+      el.style.backgroundClip = 'text';
+      el.style.webkitTextFillColor = 'transparent';
+      await tween(2400, (p) => {
+        const c = (p * 2) % 1;
+        el.style.backgroundPosition = (140 - c * 280).toFixed(1) + '% 0';
+      });
+    };
+    const fxStroke = async () => {
+      const el = this.titleRef.current;
+      const ink = getComputedStyle(el).color;
+      await tween(2600, (p) => {
+        const s = (Math.sin(p * Math.PI * 4 - Math.PI / 2) + 1) / 2;
+        el.style.webkitTextStroke = (0.6 + s * 1.6).toFixed(2) + 'px ' + ink;
+        el.style.webkitTextFillColor = 'rgba(0,0,0,0)';
+        el.style.opacity = (0.72 + (1 - s) * 0.28).toFixed(2);
+      });
+      el.style.webkitTextFillColor = '';
+      el.style.webkitTextStroke = '';
+    };
+    const fxWarp = async () => {
+      const el = this.titleRef.current;
+      el.style.transition = 'none';
+      await tween(2600, (p) => {
+        const a = Math.sin(p * Math.PI * 3);
+        const fade = Math.sin(Math.min(1, p * 6)) * Math.sin(Math.min(1, (1 - p) * 6));
+        el.style.transform = 'skewX(' + (a * 4.5 * fade).toFixed(2) + 'deg) scaleY(' + (1 + a * 0.05 * fade).toFixed(3) + ') scaleX(' + (1 - a * 0.02 * fade).toFixed(3) + ')';
+      });
+      el.style.transform = '';
+    };
+    const fxEcho = async () => {
+      const el = this.titleRef.current;
+      const ink = getComputedStyle(el).color;
+      const soft = ink.replace('rgb(', 'rgba(').replace(')', ', 0.20)');
+      await tween(2400, (p) => {
+        const a = Math.sin(p * Math.PI * 2) * Math.sin(Math.min(1, p * 5)) * Math.sin(Math.min(1, (1 - p) * 5));
+        const d = a * 16;
+        el.style.textShadow = [1, 2, 3].map((k) => (d * k).toFixed(1) + 'px 0 0 ' + soft.replace('0.20', (0.2 / k).toFixed(2))).join(',');
+      });
+      el.style.textShadow = '';
+    };
+    const fxDepth = async () => {
+      const el = this.titleRef.current;
+      await tween(2500, (p) => {
+        const a = Math.sin(p * Math.PI * 2) * Math.sin(Math.min(1, p * 5)) * Math.sin(Math.min(1, (1 - p) * 5));
+        const out = [];
+        for (let k = 1; k <= 7; k++) out.push((a * k * 1.7).toFixed(1) + 'px ' + (a * k * 1.1).toFixed(1) + 'px 0 rgba(128,128,132,' + (0.19 - k * 0.022).toFixed(3) + ')');
+        el.style.textShadow = out.join(',');
+      });
+      el.style.textShadow = '';
+    };
+    const fxFuzzy = async () => {
+      const cs = chars();
+      await tween(1700, (p) => {
+        const amp = Math.sin(Math.min(1, p * 4)) * Math.sin(Math.min(1, (1 - p) * 4));
+        cs.forEach((s) => {
+          s.style.transform = 'translate(' + ((Math.random() - 0.5) * 5 * amp).toFixed(2) + 'px,' + ((Math.random() - 0.5) * 5 * amp).toFixed(2) + 'px)';
+          s.style.filter = 'blur(' + (Math.random() * 1.1 * amp).toFixed(2) + 'px)';
+          s.style.opacity = (1 - Math.random() * 0.2 * amp).toFixed(2);
+        });
+      });
+    };
+    const fxParticle = async () => {
+      const cs = chars();
+      const seeds = cs.map(() => ({ x: (Math.random() - 0.5) * 46, y: (Math.random() - 0.5) * 34, r: (Math.random() - 0.5) * 14 }));
+      await tween(1500, (p) => {
+        const e = Math.pow(1 - p, 2.6);
+        cs.forEach((s, i) => {
+          s.style.transform = 'translate(' + (seeds[i].x * e).toFixed(2) + 'px,' + (seeds[i].y * e).toFixed(2) + 'px) rotate(' + (seeds[i].r * e).toFixed(2) + 'deg)';
+          s.style.opacity = (1 - e * 0.55).toFixed(3);
+          s.style.filter = 'blur(' + (e * 2.2).toFixed(2) + 'px)';
+        });
+      });
+      settleChars(cs);
+      await wait(320);
+    };
+    const EFFECTS = { shuffle: fxShuffle, type: fxType, splitflap: fxSplitFlap, mask: fxMask, shiny: fxShiny, stroke: fxStroke, warp: fxWarp, echo: fxEcho, depth: fxDepth, fuzzy: fxFuzzy, particle: fxParticle };
+
+    const scheduleEffect = () => { timers.push(setTimeout(() => fireEffect(), 40000 + Math.random() * 30000)); };
+    const fireEffect = async () => {
+      if (this.dead) return;
+      if (isMobile) { busy = false; return; }
+      if (busy) { timers.push(setTimeout(() => fireEffect(), 1500)); return; }
+      const now = performance.now();
+      const reveal = ['shuffle', 'type', 'splitflap', 'mask'];
+      const ambient = ['shiny', 'stroke', 'warp', 'echo', 'depth'];
+      const rare = ['fuzzy', 'particle'];
+      const r = Math.random();
+      let pool = reveal;
+      if (r > 0.9 && now - lastRare > 60000) { pool = rare; lastRare = now; }
+      else if (r > 0.6) pool = ambient;
+      const name = pool[Math.floor(Math.random() * pool.length)];
+      busy = true;
+      setLayerVis(0);
+      try { await EFFECTS[name](); } catch (e) {}
+      plain();
+      syncLayers();
+      setLayerVis(1);
+      busy = false;
+      scheduleEffect();
+    };
+    const startBaseCycle = () => {
+      const step = () => {
+        if (this.dead) return;
+        if (busy) { timers.push(setTimeout(step, 600)); return; }
+        const next = pickFont();
+        const el = this.titleRef.current;
+        if (!el) return;
+        el.style.transition = 'filter 210ms ease, opacity 210ms ease, transform 210ms ease';
+        el.style.filter = 'blur(5px)';
+        el.style.opacity = '0.42';
+        el.style.transform = 'scale(0.968)';
+        layers((l) => { l.style.transition = 'filter 210ms ease, opacity 210ms ease, transform 210ms ease'; l.style.filter = 'blur(5px)'; l.style.opacity = '0'; l.style.transform = 'scale(0.968)'; });
+        timers.push(setTimeout(() => {
+          applyFont(next);
+          el.style.filter = 'blur(0px)';
+          el.style.opacity = '1';
+          el.style.transform = 'scale(1)';
+          layers((l) => { l.style.filter = 'blur(0px)'; l.style.opacity = '1'; l.style.transform = 'scale(1)'; });
+          const hold = FONTS[next].hold;
+          timers.push(setTimeout(step, hold[0] + Math.random() * (hold[1] - hold[0])));
+        }, 220));
+      };
+      const h = FONTS[fontIdx].hold;
+      timers.push(setTimeout(step, h[0] + Math.random() * (h[1] - h[0])));
+    };
+    const entranceMobile = async () => {
+      const el = this.titleRef.current;
+      if (!el) return;
+      el.style.transition = 'none';
+      el.style.filter = 'blur(9px)';
+      el.style.opacity = '0';
+      el.style.transform = 'scale(0.985)';
+      await wait(30);
+      el.style.transition = 'filter 620ms ease, opacity 620ms ease, transform 620ms ease';
+      el.style.filter = 'blur(0px)';
+      el.style.opacity = '1';
+      el.style.transform = 'scale(1)';
+      await wait(660);
+    };
+    const entrance = async () => {
+      busy = true;
+      setLayerVis(0);
+      if (isMobile) await entranceMobile();
+      else await fxParticle();
+      syncLayers();
+      setLayerVis(1);
+      busy = false;
+      startBaseCycle();
+      if (!isMobile) scheduleEffect();
+    };
+
+    fillGradient(title);
+    timers.push(setTimeout(() => applyFont(fontIdx), 400));
+    timers.push(setTimeout(() => setLayerVis(1), 700));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => applyFont(fontIdx));
+    if (!reduced) timers.push(setTimeout(() => entrance(), 900));
+    const onResize = () => { isMobile = this.responsive(window.innerWidth).isMobile; applyFont(fontIdx); };
+    window.addEventListener('resize', onResize);
+    this.offTitle = () => window.removeEventListener('resize', onResize);
+  }
+
+
+  /* ---------------- hero floor: blurred perspective conveyor + the human beat ----------------
+     Real projection, not eyeballed: near plane z=1.05, far z=14, scale 1.05/z, position along the
+     centreline by normalised 1/z so evenly z-spaced things bunch toward the vanishing point.
+     Drawn at quarter resolution into an offscreen scene, then composited twice: a near-sharp copy
+     and a heavier-blur copy that a radial mask keeps off the conveyor zone. */
+  initFloor() {
+    const a = this.floorARef.current, b = this.floorBRef.current;
+    if (!a || !b) return;
+    this.scene = document.createElement('canvas');
+    // world units ≈ metres. t along the belt (away from camera), u across it (toward camera).
+    this.crates = []; this.crane = { state: 'rest', tm: 0, y: 0, jaw: 0, target: null, ys: 0, js: 0, bs: 0, dHold: 0.6, dDown: 1.7, dGrip: 0.5, dSet: 0.5, dUp: 1.8, dMin: 2.8 }; this.beltK = 1; this.restDur = 6.4; this.cluster = 2;
+    this.nextSpawn = 0; this.nextFlag = 5; this.lastF = 0; this.beltPhase = 0; this.crateN = 0;
+    for (let t = 2.5, gap = 0; t < 27; t += (gap = gap ? 0 : 1) ? 2.2 + Math.random() * 0.6 : 4.8 + Math.random() * 2.4) this.crates.push({ t, u: -0.9 + Math.random() * 1.8, flag: null, ft: 0, glow: 0, alpha: 1, scanned: t < 3.6, sz: 0.74 + Math.random() * 0.58 });
+    const size = () => {
+      const W = Math.max(96, Math.round(window.innerWidth / 5)), H = Math.max(64, Math.round(window.innerHeight / 5));
+      a.width = b.width = this.scene.width = W; a.height = b.height = this.scene.height = H;
+    };
+    size();
+    this.offFloor = () => window.removeEventListener('resize', size);
+    window.addEventListener('resize', size);
+    if (this.reduced) { this.drawFloor(0); return; }
+    const loop = (now) => {
+      if (this.dead) return;
+      if (!document.hidden && window.scrollY < window.innerHeight * 1.15 && now - (this.lastFloorDraw || 0) >= 31) { this.lastFloorDraw = now; this.drawFloor(now); }
+      this.rafF = requestAnimationFrame(loop);
+    };
+    this.rafF = requestAnimationFrame(loop);
+  }
+  /* Two-point ground-plane perspective: the camera stands beside the belt at chest height, yawed
+     26° off its axis. Belt direction and roller direction each vanish to their own point on ONE
+     horizontal horizon. Every vertical (legs, crate edges, the worker) is drawn straight up the
+     screen from its projected base — nothing in the scene carries a rotation transform. */
+  /* deck footprint in screen space for a W×H target, same camera as drawFloor */
+  deckFootprint(W, H) {
+    const TH = 26 * Math.PI / 180, AX = -Math.sin(TH), AY = Math.cos(TH), CX = -Math.cos(TH), CY = -Math.sin(TH);
+    const P0 = { x: 2.2, y: 3.2 }, HW = 1.8, CAMH = 1.05, F = 430 * (W / 640), HY = 0.24 * H;
+    const P = (t, u) => { const wx = P0.x + t * AX + u * CX, wy = Math.max(0.4, P0.y + t * AY + u * CY); return { x: W / 2 + F * wx / wy, y: HY + F * CAMH / wy }; };
+    return [P(-2.1, HW + 0.9), P(-2.1, -HW - 0.4), P(30, -HW - 0.4), P(30, HW + 0.9)];
+  }
+  drawFloor(now) {
+    const a = this.floorARef.current, b = this.floorBRef.current, s = this.scene;
+    if (!a || !b || !s) return;
+    const g = s.getContext('2d'), W = s.width, H = s.height;
+    const dt = this.reduced ? 0 : Math.min(0.06, (now - (this.lastF || now)) / 1000); this.lastF = now;
+    const TH = 26 * Math.PI / 180, AX = -Math.sin(TH), AY = Math.cos(TH), CX = -Math.cos(TH), CY = -Math.sin(TH);
+    const P0 = { x: 2.2, y: 3.2 }, HW = 1.8, CAMH = 1.05, F = 430 * (W / 640), HY = 0.24 * H;
+    const P = (t, u, h) => { const wx = P0.x + t * AX + u * CX, wy = Math.max(0.4, P0.y + t * AY + u * CY); return { x: W / 2 + F * wx / wy, y: HY + F * (CAMH - (h || 0)) / wy, s: F / wy }; };
+    const poly = (pts, fill) => { g.fillStyle = fill; g.beginPath(); g.moveTo(pts[0].x, pts[0].y); for (let i = 1; i < pts.length; i++) g.lineTo(pts[i].x, pts[i].y); g.closePath(); g.fill(); };
+    const line = (p, q, stroke, w) => { g.strokeStyle = stroke; g.lineWidth = w; g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(q.x, q.y); g.stroke(); };
+    const TF = 30, TN = -2.1, FLOOR = -0.8, SK = -0.2, GATE = 3.2;
+    g.globalCompositeOperation = 'source-over';
+    g.clearRect(0, 0, W, H);
+    // --- simulation ---
+    const belt = 0.55, HIGH = 3.4, PICK_T = 1.6, cr = this.crane;
+    if (dt > 0) {
+      const bs = this.beltK;
+      this.nextSpawn -= dt * bs;
+      if (this.nextSpawn <= 0) {
+        this.crates.push({ t: 28, u: -0.9 + Math.random() * 1.8, flag: null, ft: 0, glow: 0, alpha: 1, scanned: false, sz: 0.74 + Math.random() * 0.58 });
+        // rhythm with irregularity inside it: two or three close together, then a gap
+        if (this.cluster > 0) { this.cluster--; this.nextSpawn = 2.05 + Math.random() * 0.6; }
+        else { this.cluster = Math.random() < 0.6 ? 1 + Math.round(Math.random()) : 0; this.nextSpawn = 4.6 + Math.random() * 2.8; }
+      }
+      this.beltPhase = (this.beltPhase + belt * bs * dt) % 0.45; this.beltAngle = ((this.beltAngle || 0) + belt * bs * dt / 0.09) % (Math.PI * 2);
+      const heldOut = this.crates.some((o) => o.flag === 'deny');
+      for (const c of this.crates) {
+        if (c.held) continue;
+        c.t -= belt * bs * dt; if (c.flag) c.ft += dt;
+        // every crate is read as it crosses the gate: blue is transient ("being checked")
+        // the gate's own light is always blue — it looks the same way at everything
+        if (!c.scanned && c.t < GATE + 0.4) { c.scanned = true; c.flag = 'blue'; c.ft = 0; c.glow = 1; }
+        if (c.flag === 'blue' && c.ft > 0.7) {
+          // the outcome colours the CRATE, not the scan: green passes, deep orange is denied
+          if (cr.state === 'armed' && !heldOut) { c.flag = 'deny'; c.ft = 0; c.glow = 1; cr.state = 'travel'; cr.tm = 0; cr.target = c; }
+          else { c.flag = 'pass'; c.ft = 0; c.glow = 1; }
+        }
+        // both outcomes dissipate to exactly zero; the denial lingers about twice as long
+        if (c.flag === 'pass' || c.flag === 'deny') { const dur = c.flag === 'deny' ? 2 : 1; c.glow = Math.max(0, 1 - c.ft / dur); if (c.ft >= dur) { c.flag = null; c.glow = 0; } }
+      }
+      this.crates = this.crates.filter((c) => c.t > TN + 0.3 && c.alpha > 0.02);
+      if (cr.target && !this.crates.includes(cr.target)) { cr.target = null; if (cr.state === 'travel') { cr.state = 'rest'; cr.tm = 0; } }
+      /* --- the overhead crane. One deliberate beat: the belt eases to a stop, the grab comes
+         straight down the mast, closes on the amber crate and takes it up out of frame. --- */
+      cr.tm += dt;
+      const eio = (k) => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
+      if (cr.state === 'rest') { this.beltK = 1; cr.y = 0; cr.jaw = 0; if (cr.tm >= this.restDur) { cr.state = 'armed'; cr.tm = 0; this.restDur = 5.4 + Math.random() * 4.2; cr.dHold = 0.45 + Math.random() * 0.45; cr.dDown = 1.5 + Math.random() * 0.55; cr.dGrip = 0.42 + Math.random() * 0.16; cr.dSet = 0.34 + Math.random() * 0.32; cr.dUp = 1.55 + Math.random() * 0.5; cr.dMin = 2.2 + Math.random() * 1.6; } }
+      else if (cr.state === 'travel') { if (cr.target.t <= PICK_T && cr.tm >= (cr.dMin || 2.6)) { cr.state = 'stop'; cr.tm = 0; } }
+      else if (cr.state === 'stop') { const k = Math.min(1, cr.tm / 0.5); this.beltK = (1 - k) * (1 - k); if (k >= 1) { this.beltK = 0; cr.state = 'hold'; cr.tm = 0; } }
+      else if (cr.state === 'hold') { if (cr.tm >= (cr.dHold || 0.6)) { cr.state = 'descend'; cr.tm = 0; } }
+      else if (cr.state === 'descend') { const k = Math.min(1, cr.tm / (cr.dDown || 1.7)); cr.y = eio(k); if (k >= 1 && cr.ys > 0.96) { cr.state = 'grip'; cr.tm = 0; } }
+      else if (cr.state === 'grip') { cr.jaw = Math.min(1, cr.tm / (cr.dGrip || 0.5)); if (cr.tm >= (cr.dGrip || 0.5)) { if (cr.target) cr.target.held = true; cr.state = 'settle'; cr.tm = 0; } }
+      else if (cr.state === 'settle') { if (cr.tm >= (cr.dSet || 0.5)) { cr.state = 'lift'; cr.tm = 0; } }
+      else if (cr.state === 'lift') { const k = Math.min(1, cr.tm / (cr.dUp || 1.8)); cr.y = 1 - 2.9 * k * k; if (k >= 1) { if (cr.target) cr.target.alpha = 0; cr.target = null; cr.jaw = 0; cr.y = 0; cr.state = 'resume'; cr.tm = 0; } }
+      else if (cr.state === 'resume') { const k = Math.min(1, cr.tm / 0.7); this.beltK = k * k * (3 - 2 * k); if (k >= 1) { this.beltK = 1; cr.state = 'rest'; cr.tm = 0; } }
+      // fluid follow: a lightly damped spring on the descent and the grip, and a laggier boom so
+      // the shoulder leads and the gripper trails it through every direction change
+      // fluid follow: frame-rate-independent exponential smoothing (a stiff spring blows up at the
+      // floor canvas's 30fps), plus a laggier boom so the shoulder leads and the gripper trails
+      cr.ys += (cr.y - cr.ys) * (1 - Math.exp(-dt * 13));
+      cr.js += (cr.jaw - cr.js) * (1 - Math.exp(-dt * 17));
+      cr.bs += (cr.ys - cr.bs) * (1 - Math.exp(-dt * 6.5));
+      // the gripped crate rides with the jaws, straight up the screen
+      if (cr.target && cr.target.held) { const c = cr.target; c.pos = { t: c.t, u: c.u, h: HIGH + (0.12 * c.sz - HIGH) * cr.ys - 0.12 * c.sz }; }
+    }
+    const scanning = this.crates.some((c) => c.flag === 'blue' && c.ft < 0.6);
+    // floor plane: everything below the horizon that is not deck
+    const fg = g.createLinearGradient(0, HY, 0, H);
+    fg.addColorStop(0, 'rgba(34,29,24,0)'); fg.addColorStop(0.12, '#221D18'); fg.addColorStop(1, '#2A2420');
+    g.fillStyle = fg; g.fillRect(0, HY, W, H - HY);
+    // contact shadow under the near rail
+    const s0 = P(1, HW, FLOOR), s1 = P(1, HW + 0.7, FLOOR);
+    const sh = g.createLinearGradient(s0.x, s0.y, s1.x, s1.y); sh.addColorStop(0, 'rgba(0,0,0,0.65)'); sh.addColorStop(1, 'rgba(0,0,0,0)');
+    poly([P(TF, HW, FLOOR), P(TN, HW, FLOOR), P(TN, HW + 0.7, FLOOR), P(TF, HW + 0.7, FLOOR)], sh);
+    // legs with feet + cross braces, straight up in screen space
+    let prev = null;
+    for (let t = TN + 0.5; t < TF; t += 2.2) {
+      const base = P(t, HW, FLOOR), top = P(t, HW, SK), w = Math.max(0.6, 0.07 * base.s);
+      line(base, top, 'rgba(58,60,66,0.95)', w);
+      line({ x: base.x - w * 1.4, y: base.y }, { x: base.x + w * 1.4, y: base.y }, 'rgba(58,60,66,0.95)', Math.max(0.6, w * 0.7));
+      if (prev) { line(prev.top, base, 'rgba(58,60,66,0.55)', w * 0.45); line(prev.base, top, 'rgba(58,60,66,0.55)', w * 0.45); }
+      prev = { base, top };
+    }
+    // skirt + deck
+    poly([P(TF, HW, 0), P(TN, HW, 0), P(TN, HW, SK), P(TF, HW, SK)], '#2B2E34');
+    const d0 = P(2, HW), d1 = P(2, -HW);
+    const dg = g.createLinearGradient(d0.x, d0.y, d1.x, d1.y);
+    dg.addColorStop(0, '#5B5148'); dg.addColorStop(0.3, '#3D414A'); dg.addColorStop(1, '#262A31');
+    poly([P(TN, HW), P(TN, -HW), P(TF, -HW), P(TF, HW)], dg);
+    // sodium pools: tight pools under each lamp, radius clamped so a near-camera lamp does not
+    // wash the whole frame amber when there is nothing on that stretch of belt
+    for (const t of [-1, 2.4, 6, 11, 18]) {
+      const p = P(t, 0.2), r = Math.min(1.05 * p.s, W * 0.17);
+      const lg = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+      lg.addColorStop(0, 'rgba(232,168,86,0.34)'); lg.addColorStop(0.5, 'rgba(232,168,86,0.1)'); lg.addColorStop(1, 'rgba(232,168,86,0)');
+      g.fillStyle = lg; g.beginPath(); g.arc(p.x, p.y, r, 0, Math.PI * 2); g.fill();
+    }
+    // cross-rollers: constant t, even in t, converging to their own vanishing point
+    for (let t = TN + 0.2; t < TF; t += 0.9) { const p = P(t, -HW), q = P(t, HW); line(p, q, 'rgba(168,182,200,0.4)', Math.max(0.5, 0.05 * q.s)); }
+    for (let t = TN + 0.45 - (this.beltPhase || 0); t < TF; t += 0.45) { const p = P(t, -HW), q = P(t, HW); line(p, q, 'rgba(0,0,0,0.22)', Math.max(0.4, 0.018 * q.s)); }
+    line(P(TF, HW), P(TN, HW), 'rgba(232,168,86,0.6)', Math.max(0.6, 0.02 * P(2, HW).s));
+    // roller end-caps on the near rail, spinning with the belt
+    const ang = (this.beltAngle || 0);
+    for (let t = TN + 0.2; t < 16; t += 0.9) {
+      const c = P(t, HW + 0.04, -0.09), r = 0.09 * c.s; if (r < 1.1) continue;
+      g.fillStyle = '#3A3D44'; g.beginPath(); g.arc(c.x, c.y, r, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = 'rgba(232,168,86,0.7)'; g.lineWidth = Math.max(0.5, r * 0.22); g.beginPath(); g.moveTo(c.x - Math.cos(ang) * r * 0.8, c.y - Math.sin(ang) * r * 0.8); g.lineTo(c.x + Math.cos(ang) * r * 0.8, c.y + Math.sin(ang) * r * 0.8); g.stroke();
+    }
+    // scanner gate: two uprights + crossbar over the belt, glowing blue while a package is under it
+    const gp0 = P(GATE, -HW - 0.15, 0), gp1 = P(GATE, HW + 0.15, 0), gt0 = P(GATE, -HW - 0.15, 1.6), gt1 = P(GATE, HW + 0.15, 1.6);
+    line(gp0, gt0, 'rgba(138,144,154,0.95)', Math.max(0.8, 0.07 * gp0.s)); line(gp1, gt1, 'rgba(138,144,154,0.95)', Math.max(0.8, 0.07 * gp1.s)); line(gt0, gt1, 'rgba(138,144,154,0.95)', Math.max(0.8, 0.07 * gp1.s));
+    const bc = P(GATE, 0, 1.66), br = Math.max(1, 0.05 * bc.s);
+    g.fillStyle = scanning ? '#5B9BFF' : 'rgba(62,125,255,0.45)'; g.beginPath(); g.arc(bc.x, bc.y, br, 0, Math.PI * 2); g.fill();
+    if (scanning) { const gg = g.createLinearGradient(gt0.x, gt0.y, gp0.x, gp0.y); gg.addColorStop(0, 'rgba(62,125,255,0.5)'); gg.addColorStop(1, 'rgba(62,125,255,0)'); poly([gt0, gt1, gp1, gp0], gg); }
+    // --- packages, far to near, after the deck so nothing clips them ---
+    const drawCrate = (c) => {
+      const HS = 0.4 * c.sz, CH = 0.8 * c.sz, ct = c.pos ? c.pos.t : c.t, u = c.pos ? c.pos.u : c.u, h0 = c.pos ? c.pos.h : 0, gl = c.glow || 0;
+      g.globalAlpha = c.alpha;
+      if (gl > 0.01) {
+        const col = c.flag === 'deny' ? '196,102,32' : c.flag === 'pass' ? '62,170,132' : '62,125,255';
+        const pc = P(ct, u, h0 + CH * 0.5), r = Math.min(1.25 * pc.s * c.sz, W * 0.26);
+        const fgl = g.createRadialGradient(pc.x, pc.y, 0, pc.x, pc.y, r);
+        fgl.addColorStop(0, 'rgba(' + col + ',' + (0.72 * gl).toFixed(3) + ')'); fgl.addColorStop(0.45, 'rgba(' + col + ',' + (0.22 * gl).toFixed(3) + ')'); fgl.addColorStop(1, 'rgba(' + col + ',0)');
+        g.fillStyle = fgl; g.beginPath(); g.arc(pc.x, pc.y, r, 0, Math.PI * 2); g.fill();
+      }
+      const END = [P(ct - HS, u - HS, h0), P(ct - HS, u + HS, h0), P(ct - HS, u + HS, h0 + CH), P(ct - HS, u - HS, h0 + CH)];
+      const FRONT = [P(ct - HS, u + HS, h0), P(ct + HS, u + HS, h0), P(ct + HS, u + HS, h0 + CH), P(ct - HS, u + HS, h0 + CH)];
+      const TOP = [P(ct - HS, u - HS, h0 + CH), P(ct - HS, u + HS, h0 + CH), P(ct + HS, u + HS, h0 + CH), P(ct + HS, u - HS, h0 + CH)];
+      poly(END, '#6E5238'); poly(FRONT, '#845F41'); poly(TOP, '#A8845C');
+      poly([P(ct - HS, u - 0.06, h0 + CH), P(ct - HS, u + 0.06, h0 + CH), P(ct + HS, u + 0.06, h0 + CH), P(ct + HS, u - 0.06, h0 + CH)], 'rgba(214,200,172,0.85)');
+      poly([P(ct - HS, u - 0.06, h0 + CH), P(ct - HS, u + 0.06, h0 + CH), P(ct - HS, u + 0.06, h0 + CH * 0.62), P(ct - HS, u - 0.06, h0 + CH * 0.62)], 'rgba(214,200,172,0.85)');
+      poly([P(ct - HS * 0.7, u + HS, h0 + CH * 0.22), P(ct + HS * 0.1, u + HS, h0 + CH * 0.22), P(ct + HS * 0.1, u + HS, h0 + CH * 0.5), P(ct - HS * 0.7, u + HS, h0 + CH * 0.5)], 'rgba(232,228,218,0.9)');
+      line(P(ct - HS, u, h0 + CH), P(ct + HS, u, h0 + CH), 'rgba(70,50,32,0.5)', Math.max(0.4, 0.012 * P(ct, u).s));
+      if (gl > 0.01) { const t2 = c.flag === 'deny' ? '196,102,32,' + (0.4 * gl).toFixed(3) : c.flag === 'pass' ? '62,170,132,' + (0.34 * gl).toFixed(3) : '62,125,255,' + (0.38 * gl).toFixed(3), tint = 'rgba(' + t2 + ')'; poly(END, tint); poly(FRONT, tint); poly(TOP, tint); }
+      const e0 = P(ct - HS, u + HS, h0), e1 = P(ct - HS, u + HS, h0 + CH);
+      line(e0, e1, 'rgba(232,168,86,0.6)', Math.max(0.5, 0.03 * e0.s));
+      g.globalAlpha = 1;
+    };
+    const armLive = cr.state !== 'rest' && cr.state !== 'armed' && cr.state !== 'travel';
+    const sorted = this.crates.slice().sort((p, q) => (q.pos ? q.pos.t : q.t) - (p.pos ? p.pos.t : p.t));
+    // the arm occupies the target crate's depth: anything in front of that crate must occlude it
+    const cutT = armLive && cr.target ? (cr.target.pos ? cr.target.pos.t : cr.target.t) : -Infinity;
+    const nearer = [];
+    for (const c of sorted) { const ct2 = c.pos ? c.pos.t : c.t; if (ct2 < cutT - 0.01 && c !== cr.target) nearer.push(c); else drawCrate(c); }
+    /* --- the pick-and-place arm, drawn last. It reaches in from the top of the frame (mounted
+       off-screen, no floor base): a short swinging boom, then two rigid segments, so three joints
+       move through the reach — boom pivot, shoulder and elbow — plus the wrist. A two-finger
+       gripper, each finger jointed in two parts, curls inward to enclose the crate. Kept lean so
+       it reads as a machine at a glance without taking the frame. --- */
+    if (armLive) {
+      const tgt = cr.target, pt = tgt ? tgt.t : PICK_T, pu = tgt ? tgt.u : 0, sz = tgt ? tgt.sz : 1;
+      const an = P(pt, pu, 0), ax = an.x, sc = an.s, Y = (h) => P(pt, pu, h).y;
+      const gripH = HIGH + (0.12 * sz - HIGH) * cr.ys; // world height of the fingertips
+      const tipY = Y(gripH);
+      if (tipY > -4) {
+        /* 2.5D: every part is a stack of strokes rather than one flat bar — an offset back plate
+           for thickness, the body, a shaded underside, a cool specular band on the lit side and the
+           warm rim. Read as a cylinder, not a line. */
+        const BACK = '#07080A', STEEL = '#181B21', SHADE = '#0C0E12', LIT = 'rgba(158,174,196,0.4)', RIM = 'rgba(232,168,86,0.6)';
+        const PX = 0.055 * sc, PY = 0.07 * sc; // parallax of the far side plate
+        const str = (p, q, wpx, col) => { g.strokeStyle = col; g.lineWidth = Math.max(0.4, wpx); g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(q.x, q.y); g.stroke(); };
+        const sh = (p, nx, ny, d) => ({ x: p.x + nx * d, y: p.y + ny * d });
+        const seg = (p, q, wpx) => {
+          g.lineCap = 'round'; g.lineJoin = 'round';
+          const dx = q.x - p.x, dy = q.y - p.y, L = Math.hypot(dx, dy) || 1; let nx = dy / L, ny = -dx / L;
+          if (nx > 0) { nx = -nx; ny = -ny; } // n points to the lamp-facing (screen-left) side
+          str({ x: p.x + PX, y: p.y + PY }, { x: q.x + PX, y: q.y + PY }, wpx * 0.96, BACK);
+          str(p, q, wpx, STEEL);
+          str(sh(p, -nx, -ny, wpx * 0.26), sh(q, -nx, -ny, wpx * 0.26), wpx * 0.34, SHADE);
+          str(sh(p, nx, ny, wpx * 0.25), sh(q, nx, ny, wpx * 0.25), wpx * 0.16, LIT);
+          str(sh(p, nx, ny, wpx * 0.42), sh(q, nx, ny, wpx * 0.42), wpx * 0.12, RIM);
+          // panel lines: two cross-ribs give the casting some texture at rest
+          if (L > wpx * 2.4) {
+            g.strokeStyle = 'rgba(0,0,0,0.5)'; g.lineWidth = Math.max(0.4, wpx * 0.09);
+            for (const k of [0.36, 0.64]) {
+              const c1 = { x: p.x + dx * k, y: p.y + dy * k };
+              g.beginPath(); g.moveTo(c1.x + nx * wpx * 0.44, c1.y + ny * wpx * 0.44); g.lineTo(c1.x - nx * wpx * 0.44, c1.y - ny * wpx * 0.44); g.stroke();
+            }
+          }
+        };
+        const hub = (p, r) => {
+          g.fillStyle = BACK; g.beginPath(); g.arc(p.x + PX * 1.5, p.y + PY * 1.5, r * 0.98, 0, Math.PI * 2); g.fill();
+          g.fillStyle = STEEL; g.beginPath(); g.arc(p.x, p.y, r, 0, Math.PI * 2); g.fill();
+          g.fillStyle = SHADE; g.beginPath(); g.arc(p.x + r * 0.16, p.y + r * 0.2, r * 0.62, 0, Math.PI * 2); g.fill();
+          g.strokeStyle = LIT; g.lineWidth = Math.max(0.4, r * 0.16);
+          g.beginPath(); g.arc(p.x, p.y, r * 0.74, Math.PI * 0.75, Math.PI * 1.5); g.stroke();
+          g.strokeStyle = RIM; g.lineWidth = Math.max(0.5, r * 0.2);
+          g.beginPath(); g.arc(p.x, p.y, r * 0.92, Math.PI * 0.62, Math.PI * 1.32); g.stroke();
+        };
+        // crate footprint in screen space: what the fingers have to clear, then close on
+        const cxs = [P(pt + 0.4 * sz, pu + 0.4 * sz, 0).x, P(pt + 0.4 * sz, pu - 0.4 * sz, 0).x, P(pt - 0.4 * sz, pu + 0.4 * sz, 0).x, P(pt - 0.4 * sz, pu - 0.4 * sz, 0).x];
+        const hwS = (Math.max.apply(null, cxs) - Math.min.apply(null, cxs)) / 2;
+        const chS = Math.abs(Y(0) - Y(0.8 * sz));
+        const bw = hwS * 1.42, Lf1 = chS * 0.58, Lf2 = hwS * 0.82;
+        const curl = 0.07 + Math.asin(Math.min(0.96, (bw - hwS) / Lf2)) * Math.max(0, Math.min(1.06, cr.js));
+        // build the gripper upward from the fingertips
+        const p1y = tipY - Lf2 * Math.cos(curl), wristBotY = p1y - Lf1;
+        const wristLen = 0.24 * sc, Wr = { x: ax, y: wristBotY - wristLen };
+        // joint 1: a short boom swings out of the off-screen mount as the arm extends
+        const M = { x: ax + 1.55 * sc, y: -2.15 * sc }, Lb = 1.15 * sc;
+        const th = 1.6 + 0.52 * Math.max(0, Math.min(1, cr.bs));
+        const S = { x: M.x + Math.cos(th) * Lb, y: M.y + Math.sin(th) * Lb };
+        // joints 2 + 3: shoulder and elbow, solved as a 2-link chain onto the wrist
+        const L1 = 1.75 * sc, L2 = 1.5 * sc;
+        const dx = Wr.x - S.x, dy = Wr.y - S.y, dr = Math.hypot(dx, dy) || 1;
+        const d = Math.min(Math.max(dr, Math.abs(L1 - L2) + 0.01), L1 + L2 - 0.01);
+        const ux = dx / dr, uy = dy / dr;
+        const ca = Math.max(-1, Math.min(1, (L1 * L1 + d * d - L2 * L2) / (2 * L1 * d))), A = Math.acos(ca);
+        const el = (s2) => ({ x: S.x + (ux * Math.cos(s2 * A) - uy * Math.sin(s2 * A)) * L1, y: S.y + (ux * Math.sin(s2 * A) + uy * Math.cos(s2 * A)) * L1 });
+        const eA = el(1), eB = el(-1), E = eA.x >= eB.x ? eA : eB; // elbow breaks outward, away from frame centre
+        // hydraulic ram across the elbow: its length changes with the articulation
+        const rmA = { x: S.x + (E.x - S.x) * 0.28, y: S.y + (E.y - S.y) * 0.28 };
+        const rmB = { x: E.x + (Wr.x - E.x) * 0.34, y: E.y + (Wr.y - E.y) * 0.34 };
+        seg(M, S, 0.3 * sc);
+        seg(S, E, 0.27 * sc);
+        seg(rmA, rmB, 0.085 * sc);
+        seg(E, Wr, 0.22 * sc);
+        hub(rmA, 0.055 * sc);
+        hub(S, 0.2 * sc);
+        hub(E, 0.21 * sc);
+        hub(Wr, 0.15 * sc);
+        seg({ x: Wr.x, y: Wr.y }, { x: Wr.x, y: wristBotY }, 0.32 * sc);
+        // yoke: a horizontal block off the wrist that both fingers hang from
+        seg({ x: ax - bw - 0.06 * sc, y: wristBotY }, { x: ax + bw + 0.06 * sc, y: wristBotY }, 0.19 * sc);
+        for (const s of [-1, 1]) {
+          const b = { x: ax + s * bw, y: wristBotY };
+          const p1 = { x: b.x, y: b.y + Lf1 };
+          const tp = { x: p1.x - s * Math.sin(curl) * Lf2, y: p1.y + Math.cos(curl) * Lf2 };
+          hub(b, 0.085 * sc);
+          seg(b, p1, 0.13 * sc);
+          seg(p1, tp, 0.115 * sc);
+          hub(p1, 0.075 * sc);
+        }
+      }
+    }
+    for (const c of nearer) drawCrate(c);
+    // --- composite: near-sharp + heavy blur (radially masked in CSS) ---
+    const A = a.getContext('2d'), B = b.getContext('2d');
+    A.clearRect(0, 0, W, H); A.filter = 'blur(0.6px)'; A.drawImage(s, 0, 0); A.filter = 'none';
+    B.clearRect(0, 0, W, H); B.filter = 'blur(2.6px)'; B.drawImage(s, 0, 0); B.filter = 'none';
+  }
+
+  /* ---------------- 03 · the model ---------------- */
+  toggleRead(key) { this.setState((st) => ({ read: { ...st.read, [key]: !st.read[key] } })); }
+  toggleInvoice = () => this.toggleRead('invoice');
+  toggleSheet = () => this.toggleRead('sheet');
+  togglePo = () => this.toggleRead('po');
+  modelVals() {
+    const R = this.state.read, BLUE = '#5B9BFF', GLOW = '0 0 7px rgba(11,95,255,.85)', WELL = 'inset 0 1px 1.5px rgba(0,0,0,.55)';
+    const docs = [
+      { key: 'invoice', title: 'Invoice', sub: 'Northline Parts · INV-88412 · 14 lines', toggle: this.toggleInvoice },
+      { key: 'sheet', title: 'Spreadsheet', sub: 'pricing_v3.xlsx · 1,204 rows · last saved March', toggle: this.toggleSheet },
+      { key: 'po', title: 'Purchase order', sub: 'PO-2280 · Meridian Supply · issued by you', toggle: this.togglePo },
+    ].map((d) => { const on = R[d.key]; return { ...d, read: on, border: on ? 'rgba(11,95,255,.75)' : 'var(--es-edge)', bg: on ? 'rgba(11,95,255,.07)' : 'var(--es-card)', stateLabel: on ? 'READ' : 'READ THIS', stateColor: on ? 'var(--es-ink)' : 'var(--es-faint)', dot: on ? BLUE : 'rgba(242,241,237,.14)', dotGlow: on ? GLOW : WELL }; });
+    const ENT = [
+      { name: 'Vendor', fields: [{ label: 'Name', value: 'Northline Parts', src: ['invoice', 'po'] }, { label: 'Payment terms', value: 'Net 30', src: ['invoice'] }, { label: 'Contact', value: 'orders@northline…', src: ['po'] }] },
+      { name: 'Part', fields: [{ label: 'Part number', value: 'BR-320-VC', src: ['invoice', 'sheet', 'po'] }, { label: 'Spec', value: '320 mm vented, coated', src: ['sheet'] }, { label: 'Category', value: 'Brakes · learning', src: ['sheet'] }] },
+      { name: 'Price', fields: [{ label: 'Unit price', value: '$41.20', src: ['invoice', 'sheet'] }, { label: 'Last paid', value: '12 Aug', src: ['invoice'] }, { label: '90-day median', value: '$41.05', src: ['invoice', 'sheet'] }] },
+      { name: 'Order', fields: [{ label: 'PO number', value: 'PO-2280', src: ['po'] }, { label: 'Quantity', value: '480', src: ['po'] }, { label: 'Delivery', value: '12 Mar', src: ['po'] }] },
+    ];
+    let resolved = 0, total = 0;
+    const entities = ENT.map((e) => {
+      let n = 0;
+      const fields = e.fields.map((f) => { const on = f.src.some((x) => R[x]); total++; if (on) { n++; resolved++; } return { label: f.label, value: on ? f.value : '—', labelColor: on ? 'var(--es-dim)' : 'var(--es-faint)', valueColor: on ? 'var(--es-ink)' : 'var(--es-faint)' }; });
+      return { name: e.name, fields, count: n + ' OF ' + e.fields.length, border: n === e.fields.length ? 'rgba(11,95,255,.75)' : n > 0 ? 'var(--es-line)' : 'var(--es-edge)' };
+    });
+    const idx = { invoice: 0, sheet: 1, po: 2 }, xj = [28, 50, 72];
+    const links = [['invoice', 0], ['invoice', 1], ['invoice', 2], ['sheet', 1], ['sheet', 2], ['po', 0], ['po', 1], ['po', 3]].map(([src, i]) => {
+      const j = idx[src], yj = 60 + j * 120 + 54, yi = i * 120 + 54;
+      return { d: 'M0 ' + yj + ' H' + xj[j] + ' V' + yi + ' H100', stroke: R[src] ? 'rgba(11,95,255,.8)' : 'var(--es-hair)' };
+    });
+    const readN = Object.values(R).filter(Boolean).length, catOn = R.sheet;
+    const catDots = Array.from({ length: 10 }, (_, q) => ({ bg: catOn && q < 4 ? BLUE : 'rgba(242,241,237,.14)', glow: catOn && q < 4 ? GLOW : WELL }));
+    return { docs, entities, links, catDots, modelStatus: readN + ' OF 3 SOURCES READ · ' + resolved + ' OF ' + total + ' FIELDS RESOLVED', catLabel: catOn ? '4 OF 10 MAPPED · STILL LEARNING' : 'NOT YET READ' };
+  }
+
+  renderVals() {
+    return {
+      ...this.modelVals(),
+      floorARef: this.floorARef,
+      floorBRef: this.floorBRef,
+      themeLabel: this.state.theme === 'light' ? 'Dark' : 'Light',
+      toggleTheme: this.toggleTheme,
+      openMenu: this.openMenu,
+      closeMenu: this.closeMenu,
+      prevBeat: this.prevBeat,
+      nextBeat: this.nextBeat,
+      goBeat0: this.goBeat0,
+      goBeat1: this.goBeat1,
+      goBeat2: this.goBeat2,
+      goBeat3: this.goBeat3,
+      scrubStart: this.scrubStart,
+      rootRef: this.rootRef,
+      gridRef: this.gridRef,
+      titleRef: this.titleRef,
+      sheenRef: this.sheenRef,
+      traceRef: this.traceRef,
+      navRef: this.navRef,
+      navLogoRef: this.navLogoRef,
+      sheetRef: this.sheetRef,
+      railRef: this.railRef,
+      railWrapRef: this.railWrapRef,
+      railLineRef: this.railLineRef,
+      railDotRef: this.railDotRef,
+      markFacetRef: this.markFacetRef,
+      markSvgRef: this.markSvgRef,
+      markBeamRef: this.markBeamRef,
+      beat0Ref: this.beat0Ref,
+      beat1Ref: this.beat1Ref,
+      beat2Ref: this.beat2Ref,
+      beat3Ref: this.beat3Ref,
+      cap0Ref: this.cap0Ref,
+      cap1Ref: this.cap1Ref,
+      cap2Ref: this.cap2Ref,
+      cap3Ref: this.cap3Ref,
+      desc0Ref: this.desc0Ref,
+      desc1Ref: this.desc1Ref,
+      desc2Ref: this.desc2Ref,
+      desc3Ref: this.desc3Ref,
+      dot0Ref: this.dot0Ref,
+      dot1Ref: this.dot1Ref,
+      dot2Ref: this.dot2Ref,
+      dot3Ref: this.dot3Ref,
+    };
+  }
+}
+</script>
+</body>
+</html>
