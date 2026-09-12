@@ -376,9 +376,11 @@ main > footer > * { position: relative; z-index: 1; }
 .es-surface::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0; background-image: var(--sheen); }
 .es-surface > * { position: relative; z-index: 1; }
 .es-z1 { box-shadow: var(--elev-1); }
-.es-desk { display: grid; grid-template-columns: 1fr; gap: var(--space-10); align-items: stretch; }
+/* stacked, never side-by-side: inside the split's 0.66 column a two-up grid left the
+   headline ~290px, which broke both hand-set lines (the measure rule says widen the
+   column, not accept the break). The queue card fills the column below the copy. */
+.es-desk { display: grid; grid-template-columns: 1fr; gap: var(--space-9); align-items: stretch; }
 .es-desk-card { overflow: hidden; height: 100%; }
-@media (min-width: 1240px) { .es-desk { grid-template-columns: minmax(0,1fr) minmax(0,1.05fr); } }
 
 /* marquee streams */
 .es-marquee-mask { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); }
@@ -470,3 +472,65 @@ main > footer > * { position: relative; z-index: 1; }
 .vb-in > .vb-bp { animation: vbBlueprint 3200ms cubic-bezier(0.4,0,0.2,1) forwards; }
 @keyframes vbBlueprint { 0% { opacity: 0.004; } 18% { opacity: 1; } 56% { opacity: 1; } 100% { opacity: 0.004; } }
 @media (prefers-reduced-motion: reduce) { .vb-in > .vb-bp { animation: none; opacity: 0.5; } }
+
+/* ============================================================
+   V2 — hero field (blurred conveyor under the lattice), display-type
+   line breaks, 03 · The Model interactive, 05 · The Contract graph.
+   ============================================================ */
+/* display-type line breaks (the measure rule): each intended line is a block span so
+   the break survives; below 768 the measure is too narrow for the intended stacks, so
+   the spans go inline and `pretty` is the fallback. Body copy never uses this. */
+.es-line { display: block; }
+@media (max-width: 767.98px) {
+  .es-line { display: inline; }
+  .es-hl { text-wrap: pretty; }
+}
+
+/* hero floor: two 1/5-res canvases (near-sharp + heavy blur) sit under the transparent
+   lattice; the floor is masked so the conveyor emerges through the middle and is fully
+   visible on the right, and the blur copy is radially masked off the conveyor zone so
+   focus falls off outward. */
+.v2-floor { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 22%, rgba(0,0,0,.55) 46%, #000 68%), linear-gradient(180deg, #000 72%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, transparent 22%, rgba(0,0,0,.55) 46%, #000 68%), linear-gradient(180deg, #000 72%, transparent 100%);
+  -webkit-mask-composite: source-in; mask-composite: intersect; }
+.v2-floor canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; will-change: transform; }
+.v2-floor .v2-floor-blur { -webkit-mask-image: radial-gradient(ellipse 44% 42% at 70% 60%, transparent 0%, rgba(0,0,0,.55) 55%, #000 100%); mask-image: radial-gradient(ellipse 44% 42% at 70% 60%, transparent 0%, rgba(0,0,0,.55) 55%, #000 100%); }
+/* fine grain on a slow step animation: what makes the blur read photographic, not like a CSS filter */
+.v2-grain { position: absolute; inset: -60px; pointer-events: none; opacity: .15; mix-blend-mode: overlay; background-image: var(--es-grain); background-size: 180px 180px; animation: v2Grain 2.4s steps(1) infinite; }
+@keyframes v2Grain { 0% { background-position: 0 0; } 20% { background-position: -37px 21px; } 40% { background-position: 19px -44px; } 60% { background-position: -52px -9px; } 80% { background-position: 33px 47px; } 100% { background-position: 0 0; } }
+/* the solid field: fully opaque across the left third, dissolving through the middle, gone by the right edge */
+.v2-solid { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; background: linear-gradient(90deg, var(--es-bg) 0%, var(--es-bg) 28%, rgba(22,23,27,0) 72%); }
+:root[data-theme="light"] .v2-solid { background: linear-gradient(90deg, var(--es-bg) 0%, var(--es-bg) 28%, rgba(255,255,255,0) 72%); }
+/* soft radial legibility scrim under the wordmark, which sits over the crossover region */
+.v2-scrim { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; background: radial-gradient(ellipse 28% 46% at 50% 44%, rgba(22,23,27,.86) 0%, rgba(22,23,27,.5) 42%, rgba(22,23,27,0) 100%); }
+:root[data-theme="light"] .v2-scrim { background: radial-gradient(ellipse 28% 46% at 50% 44%, rgba(255,255,255,.9) 0%, rgba(255,255,255,.58) 42%, rgba(255,255,255,0) 100%); }
+:root[data-theme="light"] .v2-floor { opacity: .9; }
+
+/* 03 · The Model: sources | connectors | entities */
+.v2-model { display: grid; grid-template-columns: minmax(220px, 1fr) 96px minmax(280px, 1.3fr); gap: 0 12px; }
+.v2-model-docs { display: grid; grid-template-rows: repeat(3, 108px); gap: 12px; align-content: center; }
+.v2-model-ents { display: grid; grid-template-rows: repeat(4, 108px); gap: 12px; }
+.v2-model-lines { display: block; width: 100%; height: 468px; overflow: visible; }
+.v2-doc { appearance: none; width: 100%; text-align: left; display: flex; flex-direction: column; justify-content: space-between; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--doc-border, var(--es-edge)); color: var(--es-ink); cursor: pointer; font: inherit; transition: border-color 160ms ease, background-color 160ms ease; }
+.v2-doc:hover { border-color: var(--es-dim); }
+.v2-doc:focus-visible { outline: 2px solid var(--es-blue); outline-offset: 2px; }
+.v2-slot { display: inline-block; width: 14px; height: 1px; background: var(--es-line); vertical-align: middle; }
+@keyframes v2Resolve { 0% { opacity: 0; transform: translateY(4px); } 100% { opacity: 1; transform: none; } }
+@media (max-width: 767.98px) {
+  .v2-model { grid-template-columns: 1fr; }
+  .v2-model-lines { display: none; }
+  .v2-model-docs { align-content: start; }
+}
+
+/* 05 · The Contract: state graph with orthogonal routing */
+.v2-graph-wrap { position: relative; max-width: 900px; padding-top: 8px; }
+.v2-graph-overlay { position: absolute; left: 0; top: 8px; width: 100%; height: 212px; pointer-events: none; }
+.v2-arrow { position: absolute; display: block; overflow: visible; }
+.v2-graph { position: relative; display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 12%; row-gap: 44px; }
+@media (max-width: 767.98px) {
+  .v2-graph { grid-template-columns: 1fr; row-gap: 12px; }
+  .v2-graph > [aria-hidden] { display: none; }
+  .v2-graph > div { height: auto !important; min-height: 72px; padding: 14px !important; }
+  .v2-graph-overlay { display: none; }
+}

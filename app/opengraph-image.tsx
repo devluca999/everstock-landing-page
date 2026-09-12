@@ -28,7 +28,7 @@ export default function Image() {
             textTransform: "uppercase",
           }}
         >
-          Digital intelligence, deterministic trust
+          Procurement for parts distributors
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div

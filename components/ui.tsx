@@ -1,4 +1,23 @@
-import type { CSSProperties, ReactNode } from "react";
+import { Fragment, type CSSProperties, type ReactNode } from "react";
+
+/**
+ * Display-type line breaks (the measure rule). Each intended line is a block span
+ * at >=640px so the break survives; below that the spans go inline and the
+ * headline wraps naturally, since no fixed break survives that narrow. Pair with a
+ * `maxWidth` in `ch` sized off the longest line (+~10% slack) on the parent.
+ */
+export function Lines({ lines }: { lines: string[] }) {
+  return (
+    <>
+      {lines.map((l, i) => (
+        <Fragment key={i}>
+          {i > 0 ? " " : null}
+          <span className="es-line">{l}</span>
+        </Fragment>
+      ))}
+    </>
+  );
+}
 
 /** Full-width industrial band. Content sits in a centered max-1160 inner that reveals on scroll. */
 export function Band({

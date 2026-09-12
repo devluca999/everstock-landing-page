@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { computeResponsive } from "@/lib/responsive";
-import { useTheme } from "@/app/theme";
+import { deckFootprint } from "@/lib/heroFloor";
 
 const SPACING = 84;
 const TRAIL = 34;
@@ -21,15 +21,14 @@ type Beam = {
 };
 
 /**
- * Full-page breathing lattice + agent beams. Ported from the mockup canvas:
+ * Hero breathing lattice + agent beams. Ported from the mockup canvas:
  * 2D-only warp (never depth), viewport-interpolated beam count + warp amplitude,
- * capped DPR, reduced-motion static frame, and RAF paused while the tab is hidden.
+ * capped DPR, reduced-motion static frame, and RAF paused while the tab is hidden
+ * or the hero has scrolled away. Frames are transparent (the hero floor shows
+ * through) and a soft cutout over the conveyor's footprint quietens the field there.
  */
 export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { theme } = useTheme();
-  const themeRef = useRef(theme);
-  themeRef.current = theme;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -51,7 +50,8 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       raf = 0,
       last = 0,
       paused = false,
-      dead = false;
+      dead = false,
+      cut: HTMLCanvasElement | null = null;
 
     const colors = { bg: "#16171B", grid: "rgba(226,222,214,0.11)", additive: true };
     const readColors = () => {
@@ -108,6 +108,48 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       return cy + (y + d - cy) * pulse;
     };
 
+    /* Soft-edged cutout over the conveyor's footprint, limited to where the floor is
+       actually visible (the solid field hides it on the left), so the lattice + beams stay
+       crisp on solid ground and sit back over the busy blurred deck without vanishing.
+       Built without ctx.filter (no Safari support): the footprint is drawn off-canvas and
+       only its blurred shadow lands, in device pixels so the offset isn't scaled by dpr. */
+    const buildCut = (): HTMLCanvasElement | null => {
+      const c = document.createElement("canvas");
+      c.width = Math.round(w * dpr);
+      c.height = Math.round(h * dpr);
+      const cg = c.getContext("2d");
+      if (!cg) return null;
+      const fp = deckFootprint(w, h);
+      const R = Math.min(w, h) * 0.09 * dpr;
+      const OFF = 1e4;
+      cg.save();
+      cg.shadowColor = "#000";
+      cg.shadowBlur = R * 2; // canvas shadowBlur is roughly twice a CSS blur radius
+      cg.shadowOffsetX = OFF;
+      cg.fillStyle = "#000";
+      cg.beginPath();
+      cg.moveTo(fp[0].x * dpr - OFF, fp[0].y * dpr);
+      for (let i = 1; i < fp.length; i++) cg.lineTo(fp[i].x * dpr - OFF, fp[i].y * dpr);
+      cg.closePath();
+      cg.fill();
+      cg.restore();
+      cg.globalCompositeOperation = "destination-in";
+      const hg = cg.createLinearGradient(0, 0, c.width, 0);
+      hg.addColorStop(0, "rgba(0,0,0,0)");
+      hg.addColorStop(0.26, "rgba(0,0,0,0)");
+      hg.addColorStop(0.48, "rgba(0,0,0,0.88)");
+      hg.addColorStop(1, "rgba(0,0,0,0.88)");
+      cg.fillStyle = hg;
+      cg.fillRect(0, 0, c.width, c.height);
+      return c;
+    };
+    const applyCut = () => {
+      if (!cut) return;
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.drawImage(cut, 0, 0, w, h);
+      ctx.globalCompositeOperation = "source-over";
+    };
+
     const resize = () => {
       const r = computeResponsive(window.innerWidth, beamMax);
       beamCount = r.beamCount;
@@ -119,6 +161,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       canvas.height = Math.round(h * dpr);
       cols = Math.ceil(w / SPACING) + 4;
       rows = Math.ceil(h / SPACING) + 4;
+      cut = buildCut();
       if (!reduced && beams.length && beamCount !== prevBeamCount) {
         beams = [];
         for (let i = 0; i < beamCount; i++) beams.push(spawnBeam(true, i));
@@ -133,8 +176,8 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
         ox = -S * 2,
         oy = -S * 2;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.fillStyle = colors.bg;
-      ctx.fillRect(0, 0, w, h);
+      // transparent frames: the page ground + the hero floor (conveyor) show through
+      ctx.clearRect(0, 0, w, h);
       const xs: number[] = [],
         ys: number[] = [];
       for (let i = 0; i <= cols; i++) xs.push(warpX(ox + i * S, 0));
@@ -151,6 +194,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
         ctx.lineTo(xs[i], ys[rows]);
       }
       ctx.stroke();
+      applyCut();
     };
 
     const lerpArr = (arr: number[], u: number) => {
@@ -170,8 +214,8 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
         oy = -S * 2;
 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.fillStyle = colors.bg;
-      ctx.fillRect(0, 0, w, h);
+      // transparent frames: the page ground + the hero floor (conveyor) show through
+      ctx.clearRect(0, 0, w, h);
 
       const tw = t * 0.55;
       const xs: number[] = [],
@@ -259,7 +303,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
           ctx.fill();
         }
       }
-      ctx.globalCompositeOperation = "source-over";
+      applyCut();
       raf = requestAnimationFrame(frame);
     };
 
