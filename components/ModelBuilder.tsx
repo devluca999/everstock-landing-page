@@ -92,7 +92,9 @@ export default function ModelBuilder() {
         })
       );
     }
-    setDelays(d);
+    // merge: fields from an earlier click may still be mid-stagger, and resetting their
+    // delay to 0 would snap a running animation
+    setDelays((prev) => ({ ...prev, ...d }));
     setRead(next);
   };
 
@@ -129,7 +131,7 @@ export default function ModelBuilder() {
                 <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
                   <span style={cardName}>{d.title}</span>
                   <span style={{ ...mono, display: "flex", alignItems: "center", gap: 7, color: on ? "var(--es-ink)" : "var(--es-faint)" }}>
-                    <span aria-hidden="true" style={{ display: "block", width: 7, height: 7, borderRadius: "50%", background: on ? BLUE : "rgba(242,241,237,.14)", boxShadow: on ? GLOW : WELL, transition: "background-color 320ms ease" }} />
+                    <span aria-hidden="true" style={{ display: "block", width: 7, height: 7, borderRadius: "50%", background: on ? BLUE : "var(--es-line)", boxShadow: on ? GLOW : WELL, transition: "background-color 320ms ease" }} />
                     {on ? "READ" : "READ THIS"}
                   </span>
                 </span>
@@ -190,7 +192,7 @@ export default function ModelBuilder() {
           <span style={{ display: "flex", gap: 4 }} aria-hidden="true">
             {Array.from({ length: 10 }, (_, q) => {
               const lit = catOn && q < 4;
-              return <span key={q} style={{ display: "block", width: 7, height: 7, borderRadius: "50%", background: lit ? BLUE : "rgba(242,241,237,.14)", boxShadow: lit ? GLOW : WELL, transition: "background-color 320ms ease", transitionDelay: lit ? `${q * 70}ms` : "0ms" }} />;
+              return <span key={q} style={{ display: "block", width: 7, height: 7, borderRadius: "50%", background: lit ? BLUE : "var(--es-line)", boxShadow: lit ? GLOW : WELL, transition: "background-color 320ms ease", transitionDelay: lit ? `${q * 70}ms` : "0ms" }} />;
             })}
           </span>
           <span>{catLabel}</span>

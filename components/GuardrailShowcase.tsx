@@ -219,7 +219,7 @@ export default function GuardrailShowcase() {
       };
     return {
       ...base,
-      backgroundColor: "rgba(242,241,237,0.14)",
+      backgroundColor: "var(--es-line)", // theme-inverting: the dark-only literal vanished on the light stage
       boxShadow: "inset 0 1px 1.5px rgba(0,0,0,0.55)",
     };
   };

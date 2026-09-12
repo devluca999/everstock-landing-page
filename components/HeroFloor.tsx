@@ -92,7 +92,12 @@ export default function HeroFloor() {
     for (let t = 2.5, gap = 0; t < 27; t += (gap = gap ? 0 : 1) ? 2.2 + Math.random() * 0.6 : 4.8 + Math.random() * 2.4) crates.push(newCrate(t));
 
     const size = () => {
-      const W = Math.max(96, Math.round(window.innerWidth / 5)), H = Math.max(64, Math.round(window.innerHeight / 5));
+      // one shared scale (1/5, floored so tiny viewports keep a usable buffer) so the buffer
+      // keeps the viewport's aspect: the lattice cutout is computed at viewport size and the
+      // two have to line up
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const k = Math.max(1 / 5, 96 / vw, 64 / vh);
+      const W = Math.round(vw * k), H = Math.round(vh * k);
       a.width = b.width = scene.width = W;
       a.height = b.height = scene.height = H;
       if (reduced) draw(performance.now());
@@ -402,6 +407,10 @@ export default function HeroFloor() {
 
     size();
     window.addEventListener("resize", size);
+    // the emissive scale follows the theme; under reduced motion the single static frame
+    // has to be redrawn when the theme flips, since no loop will do it
+    const mo = new MutationObserver(() => { if (reduced) draw(performance.now()); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     if (!reduced) {
       const loop = (now: number) => {
         if (dead) return;
@@ -414,6 +423,7 @@ export default function HeroFloor() {
     return () => {
       dead = true;
       cancelAnimationFrame(raf);
+      mo.disconnect();
       window.removeEventListener("resize", size);
     };
   }, []);

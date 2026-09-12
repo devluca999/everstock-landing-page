@@ -152,9 +152,13 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
 
     const resize = () => {
       const r = computeResponsive(window.innerWidth, beamMax);
+      const nextDpr = Math.min(window.devicePixelRatio || 1, r.dprCap);
+      // nothing to do unless the buffer actually changes (resize fires on every URL-bar
+      // tick on mobile, and each rebuild allocates a full-viewport cutout canvas)
+      if (w === window.innerWidth && h === window.innerHeight && dpr === nextDpr) return;
       beamCount = r.beamCount;
       warpScale = r.warpScale;
-      dpr = Math.min(window.devicePixelRatio || 1, r.dprCap);
+      dpr = nextDpr;
       w = window.innerWidth;
       h = window.innerHeight;
       canvas.width = Math.round(w * dpr);
@@ -326,7 +330,11 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       last = performance.now();
       raf = requestAnimationFrame(frame);
     };
-    const onResize = () => resize();
+    let resizeRaf = 0;
+    const onResize = () => {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(resize);
+    };
     const onVis = () => {
       if (document.hidden) {
         paused = true;
@@ -360,6 +368,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
     return () => {
       dead = true;
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(resizeRaf);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVis);
@@ -371,13 +380,12 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="block"
+      className="block es-hero-layer"
       style={{
         position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
-        height: "100vh",
         zIndex: 0,
         pointerEvents: "none",
         // fade the field out toward the hero's lower edge so the first solid

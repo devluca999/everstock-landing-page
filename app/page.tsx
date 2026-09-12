@@ -165,7 +165,7 @@ export default function Home() {
           <section id="approvals" className="es-band es-band--solid es-band--wide vb-major vb-stage">
             <div className="es-band-inner es-reveal" style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 16 }}>
               <Eyebrow>04 · THE GUARDRAIL</Eyebrow>
-              <h2 className="es-hl" style={{ ...stmtLg, fontSize: "clamp(26px,3.4vw,48px)", lineHeight: 1.18, letterSpacing: "-0.025em", maxWidth: 840 }}>Nothing moves without your sign-off.</h2>
+              <h2 className="es-hl" style={{ ...stmtLg, fontSize: "clamp(26px,3.4vw,48px)", lineHeight: 1.18, letterSpacing: "-0.025em", maxWidth: 1000 }}>Nothing moves without your sign-off.</h2>
               <p className="es-hl" style={{ ...body, textWrap: undefined, fontSize: "clamp(15px,1.45vw,19px)", margin: 0, maxWidth: 780 }}>
                 <Lines lines={["Proposed, then approved, then executed.", "Always in that order. Here’s what happens in between."]} />
               </p>
@@ -176,7 +176,7 @@ export default function Home() {
           {/* 05 — The Contract: the statement, then the precise state graph (the readable twin of Beat 3) */}
           <section id="company" className="es-band vb-major vb-deep">
             <div className="es-band-inner es-reveal">
-              <div className="es-split">
+              <div className="es-split es-split--stmt">
                 <Eyebrow>05 · THE CONTRACT</Eyebrow>
                 <p className="es-hl" style={{ ...stmtLg, fontSize: "clamp(22px,2.6vw,36px)", lineHeight: 1.28, maxWidth: "41ch" }}>
                   <Lines lines={["Every proposal shows you the quote,", "the spec, and the rule that fired it.", "You approve with the whole picture", "in front of you, or you don’t."]} />
