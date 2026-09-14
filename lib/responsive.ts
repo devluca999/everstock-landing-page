@@ -29,6 +29,6 @@ export function computeResponsive(vw: number, beamMax = 26): Responsive {
   const beamLo = Math.min(10, beamMax);
   const beamCount = Math.max(1, Math.round(lerp(beamLo, beamMax, t)));
   const warpScale = lerp(0.12, 1.0, t);
-  const dprCap = vw < BP.lg ? 1.5 : 2;
+  const dprCap = 1.5; // hairlines + soft glows: 1.5x reads the same as 2x at 44% fewer pixels
   return { vw, isPhone, isTablet, isMobile, t, beamCount, warpScale, dprCap };
 }

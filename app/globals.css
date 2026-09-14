@@ -225,6 +225,7 @@ a:hover {
 .es-reveal.es-revealed {
   opacity: 1;
   transform: none;
+  will-change: auto; /* a dozen standing layers cost memory on phones for nothing once revealed */
 }
 @media (prefers-reduced-motion: reduce) {
   .es-reveal {
@@ -486,18 +487,16 @@ main > footer > * { position: relative; z-index: 1; }
   .es-hl { text-wrap: pretty; }
 }
 
-/* hero floor: two 1/5-res canvases (near-sharp + heavy blur) sit under the transparent
-   lattice; the floor is masked so the conveyor emerges through the middle and is fully
-   visible on the right, and the blur copy is radially masked off the conveyor zone so
-   focus falls off outward. */
-.v2-floor { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 22%, rgba(0,0,0,.55) 46%, #000 68%), linear-gradient(180deg, #000 72%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, transparent 22%, rgba(0,0,0,.55) 46%, #000 68%), linear-gradient(180deg, #000 72%, transparent 100%);
-  -webkit-mask-composite: source-in; mask-composite: intersect; }
-.v2-floor canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; will-change: transform; }
-.v2-floor .v2-floor-blur { -webkit-mask-image: radial-gradient(ellipse 44% 42% at 70% 60%, transparent 0%, rgba(0,0,0,.55) 55%, #000 100%); mask-image: radial-gradient(ellipse 44% 42% at 70% 60%, transparent 0%, rgba(0,0,0,.55) 55%, #000 100%); }
-/* fine grain on a slow step animation: what makes the blur read photographic, not like a CSS filter */
-.v2-grain { position: absolute; inset: -60px; pointer-events: none; opacity: .15; mix-blend-mode: overlay; background-image: var(--es-grain); background-size: 180px 180px; animation: v2Grain 2.4s steps(1) infinite; }
+/* hero floor: ONE 1/5-res canvas under the transparent lattice. The conveyor emerging
+   through the middle, the blur falling off outward and the fade into the section below
+   are all baked into the buffer by HeroFloor, so this element carries no CSS mask or
+   filter (masked full-viewport canvases refreshing at 30fps were the hero's main cost). */
+.v2-floor { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; overflow: hidden; }
+.v2-floor canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* fine grain on a slow step animation: what makes the blur read photographic, not like a
+   CSS filter. Normal blend at low opacity: a blend mode would force the whole hero to be
+   re-composited on every canvas update. The opaque solid field already covers it on the left. */
+.v2-grain { position: absolute; inset: -60px; pointer-events: none; opacity: .07; background-image: var(--es-grain); background-size: 180px 180px; animation: v2Grain 2.4s steps(1) infinite; }
 @keyframes v2Grain { 0% { background-position: 0 0; } 20% { background-position: -37px 21px; } 40% { background-position: 19px -44px; } 60% { background-position: -52px -9px; } 80% { background-position: 33px 47px; } 100% { background-position: 0 0; } }
 /* the solid field: fully opaque across the left third, dissolving through the middle, gone by the right edge */
 .v2-solid { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; background: linear-gradient(90deg, var(--es-bg) 0%, var(--es-bg) 28%, rgba(22,23,27,0) 72%); }

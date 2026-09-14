@@ -50,8 +50,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       raf = 0,
       last = 0,
       paused = false,
-      dead = false,
-      cut: HTMLCanvasElement | null = null;
+      dead = false;
 
     const colors = { bg: "#16171B", grid: "rgba(226,222,214,0.11)", additive: true };
     const readColors = () => {
@@ -59,6 +58,30 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       colors.bg = cs.getPropertyValue("--es-bg").trim() || colors.bg;
       colors.grid = cs.getPropertyValue("--es-grid").trim() || colors.grid;
       colors.additive = (document.documentElement.dataset.theme ?? "graphite") !== "light";
+    };
+
+    /* Beam-head glow as a pre-rendered sprite per colour + blend mode instead of a fresh
+       radial gradient every frame for every beam: same stops, one drawImage each. */
+    const SPRITE = 128; // px, drawn for R = SPRITE/2 and scaled to the live radius
+    const makeGlow = (C: number[], HOT: number[], add: boolean) => {
+      const c = document.createElement("canvas");
+      c.width = c.height = SPRITE;
+      const g2 = c.getContext("2d");
+      if (!g2) return c;
+      const R = SPRITE / 2;
+      const g = g2.createRadialGradient(R, R, 0, R, R, R);
+      g.addColorStop(0, `rgba(${HOT[0]},${HOT[1]},${HOT[2]},${add ? 0.98 : 0.6})`);
+      g.addColorStop(0.18, `rgba(${C[0]},${C[1]},${C[2]},${add ? 0.62 : 0.3})`);
+      g.addColorStop(0.5, `rgba(${C[0]},${C[1]},${C[2]},${add ? 0.22 : 0.1})`);
+      g.addColorStop(1, `rgba(${C[0]},${C[1]},${C[2]},0)`);
+      g2.fillStyle = g;
+      g2.fillRect(0, 0, SPRITE, SPRITE);
+      return c;
+    };
+    const BLUE = [56, 122, 255], GREEN = [64, 255, 168], HOT_B = [222, 236, 255], HOT_G = [214, 255, 234];
+    const glows = {
+      add: { blue: makeGlow(BLUE, HOT_B, true), green: makeGlow(GREEN, HOT_G, true) },
+      flat: { blue: makeGlow(BLUE, HOT_B, false), green: makeGlow(GREEN, HOT_G, false) },
     };
 
     const spawnBeam = (seed: boolean, slot?: number): Beam => {
@@ -111,16 +134,25 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
     /* Soft-edged cutout over the conveyor's footprint, limited to where the floor is
        actually visible (the solid field hides it on the left), so the lattice + beams stay
        crisp on solid ground and sit back over the busy blurred deck without vanishing.
-       Built without ctx.filter (no Safari support): the footprint is drawn off-canvas and
-       only its blurred shadow lands, in device pixels so the offset isn't scaled by dpr. */
-    const buildCut = (): HTMLCanvasElement | null => {
-      const c = document.createElement("canvas");
-      c.width = Math.round(w * dpr);
-      c.height = Math.round(h * dpr);
-      const cg = c.getContext("2d");
-      if (!cg) return null;
-      const fp = deckFootprint(w, h);
-      const R = Math.min(w, h) * 0.09 * dpr;
+       It is applied as a CSS mask on the element (rebuilt only on resize), not composited
+       into every frame: the per-frame full-viewport destination-out was the single most
+       expensive thing in the hero. Drawn at quarter resolution (it is a blurred blob, so
+       the stretch is invisible) and without ctx.filter (no Safari support): the footprint
+       is drawn off-canvas and only its blurred shadow lands. */
+    const applyMask = () => {
+      const k = 0.25;
+      const mw = Math.max(8, Math.round(w * k)), mh = Math.max(8, Math.round(h * k));
+      const cutC = document.createElement("canvas");
+      cutC.width = mw;
+      cutC.height = mh;
+      const cg = cutC.getContext("2d");
+      const maskC = document.createElement("canvas");
+      maskC.width = mw;
+      maskC.height = mh;
+      const mg = maskC.getContext("2d");
+      if (!cg || !mg) return;
+      const fp = deckFootprint(mw, mh);
+      const R = Math.min(mw, mh) * 0.09;
       const OFF = 1e4;
       cg.save();
       cg.shadowColor = "#000";
@@ -128,26 +160,33 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       cg.shadowOffsetX = OFF;
       cg.fillStyle = "#000";
       cg.beginPath();
-      cg.moveTo(fp[0].x * dpr - OFF, fp[0].y * dpr);
-      for (let i = 1; i < fp.length; i++) cg.lineTo(fp[i].x * dpr - OFF, fp[i].y * dpr);
+      cg.moveTo(fp[0].x - OFF, fp[0].y);
+      for (let i = 1; i < fp.length; i++) cg.lineTo(fp[i].x - OFF, fp[i].y);
       cg.closePath();
       cg.fill();
       cg.restore();
       cg.globalCompositeOperation = "destination-in";
-      const hg = cg.createLinearGradient(0, 0, c.width, 0);
+      const hg = cg.createLinearGradient(0, 0, mw, 0);
       hg.addColorStop(0, "rgba(0,0,0,0)");
       hg.addColorStop(0.26, "rgba(0,0,0,0)");
       hg.addColorStop(0.48, "rgba(0,0,0,0.88)");
       hg.addColorStop(1, "rgba(0,0,0,0.88)");
       cg.fillStyle = hg;
-      cg.fillRect(0, 0, c.width, c.height);
-      return c;
-    };
-    const applyCut = () => {
-      if (!cut) return;
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.drawImage(cut, 0, 0, w, h);
-      ctx.globalCompositeOperation = "source-over";
+      cg.fillRect(0, 0, mw, mh);
+      // mask alpha = 1 - cut alpha
+      mg.fillStyle = "#000";
+      mg.fillRect(0, 0, mw, mh);
+      mg.globalCompositeOperation = "destination-out";
+      mg.drawImage(cutC, 0, 0);
+      const url = `url(${maskC.toDataURL("image/png")})`;
+      const fade = "linear-gradient(180deg,#000 68%,transparent 100%)";
+      const st = canvas.style as CSSStyleDeclaration & { webkitMaskImage?: string; webkitMaskSize?: string; webkitMaskComposite?: string };
+      st.webkitMaskImage = `${url}, ${fade}`;
+      st.maskImage = `${url}, ${fade}`;
+      st.webkitMaskSize = "100% 100%, 100% 100%";
+      st.maskSize = "100% 100%, 100% 100%";
+      st.webkitMaskComposite = "source-in";
+      st.maskComposite = "intersect";
     };
 
     const resize = () => {
@@ -165,7 +204,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       canvas.height = Math.round(h * dpr);
       cols = Math.ceil(w / SPACING) + 4;
       rows = Math.ceil(h / SPACING) + 4;
-      cut = buildCut();
+      applyMask();
       if (!reduced && beams.length && beamCount !== prevBeamCount) {
         beams = [];
         for (let i = 0; i < beamCount; i++) beams.push(spawnBeam(true, i));
@@ -198,7 +237,6 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
         ctx.lineTo(xs[i], ys[rows]);
       }
       ctx.stroke();
-      applyCut();
     };
 
     const lerpArr = (arr: number[], u: number) => {
@@ -255,7 +293,6 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
           continue;
         }
         const C = b.green ? [64, 255, 168] : [56, 122, 255];
-        const HOT = b.green ? [214, 255, 234] : [222, 236, 255];
         const li = Math.min(b.line, b.h ? rows : cols);
         const P = (u: number) => (b.dir < 0 ? span - u : u);
         const pt = (u: number): [number, number] =>
@@ -290,15 +327,8 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
           head[1] < h + 80
         ) {
           const R = 34 * b.bright;
-          const g = ctx.createRadialGradient(head[0], head[1], 0, head[0], head[1], R);
-          g.addColorStop(0, `rgba(${HOT[0]},${HOT[1]},${HOT[2]},${add ? 0.98 : 0.6})`);
-          g.addColorStop(0.18, `rgba(${C[0]},${C[1]},${C[2]},${add ? 0.62 : 0.3})`);
-          g.addColorStop(0.5, `rgba(${C[0]},${C[1]},${C[2]},${add ? 0.22 : 0.1})`);
-          g.addColorStop(1, `rgba(${C[0]},${C[1]},${C[2]},0)`);
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(head[0], head[1], R, 0, Math.PI * 2);
-          ctx.fill();
+          const sprite = (add ? glows.add : glows.flat)[b.green ? "green" : "blue"];
+          ctx.drawImage(sprite, head[0] - R, head[1] - R, R * 2, R * 2);
           ctx.fillStyle = add
             ? "rgba(255,255,255,0.98)"
             : `rgba(${C[0]},${C[1]},${C[2]},0.95)`;
@@ -307,7 +337,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
           ctx.fill();
         }
       }
-      applyCut();
+      ctx.globalCompositeOperation = "source-over";
       raf = requestAnimationFrame(frame);
     };
 

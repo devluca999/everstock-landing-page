@@ -16,23 +16,29 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space",
   display: "swap",
 });
+// the three cycle faces + the mono are never in the first paint (the title starts in
+// Space Grotesk; mono appears from section 01 down), so they stay off the preload list
+// and stop competing with the LCP fonts on slow connections
 const unbounded = Unbounded({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-unbounded",
   display: "swap",
+  preload: false,
 });
 const anton = Anton({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-anton",
   display: "swap",
+  preload: false,
 });
 const syne = Syne({
   subsets: ["latin"],
   weight: ["600", "800"],
   variable: "--font-syne",
   display: "swap",
+  preload: false,
 });
 const plex = IBM_Plex_Sans({
   subsets: ["latin"],
@@ -45,6 +51,7 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
   variable: "--font-mono",
   display: "swap",
+  preload: false,
 });
 
 const TITLE =

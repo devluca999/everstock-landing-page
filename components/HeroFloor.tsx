@@ -55,34 +55,34 @@ const newCrate = (t: number): Crate => ({
  * that pick up a transient green (pass) or deep-orange (deny) glow that dissipates to
  * exactly zero, and an articulated pick-and-place arm that stops the belt and lifts
  * the denied crate out of frame. Drawn at 1/5 resolution into an offscreen scene, then
- * composited twice: a near-sharp copy and a heavier-blur copy that a radial CSS mask
- * keeps off the conveyor zone. The solid field / scrim layers are plain CSS.
+ * composited into ONE plain canvas: a near-sharp pass, a heavier-blur pass confined to
+ * the outer zone by a radial weight, and the horizontal/vertical fades that hand the
+ * field off to the solid graphite on the left. All of that is baked into the small
+ * buffer, so the element itself carries no CSS mask, filter or blend: two masked
+ * full-viewport canvases refreshing 30 times a second were the hero's dominant cost.
+ * The solid field / scrim layers are plain CSS.
  *
  * Runtime rules: ~30fps cap, paused while the tab is hidden or the hero is scrolled
  * away, one static frame under prefers-reduced-motion. Browsers without canvas
- * `ctx.filter` (Safari) get the two blur passes as CSS filters on the canvases instead.
+ * `ctx.filter` (Safari) skip the blur passes; the 5x upscale is already soft.
  */
 export default function HeroFloor() {
   const aRef = useRef<HTMLCanvasElement>(null);
-  const bRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const a = aRef.current, b = bRef.current;
-    if (!a || !b) return;
-    const A = a.getContext("2d"), B = b.getContext("2d");
-    if (!A || !B) return;
+    const a = aRef.current;
+    if (!a) return;
+    const A = a.getContext("2d");
+    if (!A) return;
     const scene = document.createElement("canvas");
     const g = scene.getContext("2d");
-    if (!g) return;
+    const soft = document.createElement("canvas"); // the blur pass, radially weighted
+    const T = soft.getContext("2d");
+    if (!g || !T) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // feature-detect canvas filters without letting TS narrow the context to `never`
     const canvasFilter = typeof (A as unknown as { filter?: unknown }).filter === "string";
-    if (!canvasFilter) {
-      // no ctx.filter → blur the 5×-upscaled elements in CSS instead (same visual radii)
-      a.style.filter = "blur(3px)";
-      b.style.filter = "blur(13px)";
-    }
 
     let crates: Crate[] = [];
     const cr: Crane = { state: "rest", tm: 0, y: 0, jaw: 0, target: null, ys: 0, js: 0, bs: 0, dHold: 0.6, dDown: 1.7, dGrip: 0.5, dSet: 0.5, dUp: 1.8, dMin: 2.8 };
@@ -98,8 +98,8 @@ export default function HeroFloor() {
       const vw = window.innerWidth, vh = window.innerHeight;
       const k = Math.max(1 / 5, 96 / vw, 64 / vh);
       const W = Math.round(vw * k), H = Math.round(vh * k);
-      a.width = b.width = scene.width = W;
-      a.height = b.height = scene.height = H;
+      a.width = scene.width = soft.width = W;
+      a.height = scene.height = soft.height = H;
       if (reduced) draw(performance.now());
     };
 
@@ -393,16 +393,37 @@ export default function HeroFloor() {
       }
       for (const c of nearer) drawCrate(c);
 
-      /* --- composite: near-sharp + heavy blur (the blur copy is radially masked in CSS) --- */
+      /* --- composite, all in the small buffer so the element needs no CSS mask/filter ---
+         1. near-sharp pass  2. heavier blur, weighted toward the outer zone by a radial
+         gradient (sharpest over the conveyor at ~70%/60%)  3. horizontal + vertical fades
+         that dissolve the field into the solid graphite on the left and the section below. */
       A.clearRect(0, 0, W, H);
-      B.clearRect(0, 0, W, H);
+      if (canvasFilter) { A.filter = "blur(0.6px)"; A.drawImage(scene, 0, 0); A.filter = "none"; }
+      else A.drawImage(scene, 0, 0);
       if (canvasFilter) {
-        A.filter = "blur(0.6px)"; A.drawImage(scene, 0, 0); A.filter = "none";
-        B.filter = "blur(2.6px)"; B.drawImage(scene, 0, 0); B.filter = "none";
-      } else {
-        A.drawImage(scene, 0, 0);
-        B.drawImage(scene, 0, 0);
+        T.globalCompositeOperation = "source-over";
+        T.clearRect(0, 0, W, H);
+        T.filter = "blur(2.6px)"; T.drawImage(scene, 0, 0); T.filter = "none";
+        T.globalCompositeOperation = "destination-in";
+        const cx = 0.7 * W, cy = 0.6 * H, rx = 0.44 * W, ry = 0.42 * H;
+        T.save();
+        T.translate(cx, cy);
+        T.scale(rx, ry);
+        const rg = T.createRadialGradient(0, 0, 0, 0, 0, 1);
+        rg.addColorStop(0, "rgba(0,0,0,0)"); rg.addColorStop(0.55, "rgba(0,0,0,0.55)"); rg.addColorStop(1, "rgba(0,0,0,1)");
+        T.fillStyle = rg;
+        T.fillRect(-cx / rx, -cy / ry, W / rx, H / ry);
+        T.restore();
+        A.drawImage(soft, 0, 0);
       }
+      A.globalCompositeOperation = "destination-in";
+      const hz = A.createLinearGradient(0, 0, W, 0);
+      hz.addColorStop(0, "rgba(0,0,0,0)"); hz.addColorStop(0.22, "rgba(0,0,0,0)"); hz.addColorStop(0.46, "rgba(0,0,0,0.55)"); hz.addColorStop(0.68, "rgba(0,0,0,1)");
+      A.fillStyle = hz; A.fillRect(0, 0, W, H);
+      const vt = A.createLinearGradient(0, 0, 0, H);
+      vt.addColorStop(0, "rgba(0,0,0,1)"); vt.addColorStop(0.72, "rgba(0,0,0,1)"); vt.addColorStop(1, "rgba(0,0,0,0)");
+      A.fillStyle = vt; A.fillRect(0, 0, W, H);
+      A.globalCompositeOperation = "source-over";
     };
 
     size();
@@ -418,7 +439,11 @@ export default function HeroFloor() {
         if (!document.hidden && window.scrollY < window.innerHeight * 1.15 && now - lastDraw >= FRAME_MS) { lastDraw = now; draw(now); }
         raf = requestAnimationFrame(loop);
       };
-      raf = requestAnimationFrame(loop);
+      // atmosphere can wait for the main thread to go quiet after hydration
+      const start = () => { if (!dead) raf = requestAnimationFrame(loop); };
+      const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+      if (w.requestIdleCallback) w.requestIdleCallback(start, { timeout: 1500 });
+      else setTimeout(start, 600);
     }
     return () => {
       dead = true;
@@ -432,7 +457,6 @@ export default function HeroFloor() {
     <>
       <div className="v2-floor" aria-hidden="true">
         <canvas ref={aRef} />
-        <canvas ref={bRef} className="v2-floor-blur" />
         <div className="v2-grain" />
       </div>
       <div className="v2-solid" aria-hidden="true" />

@@ -101,13 +101,15 @@ export default function GuardrailShowcase() {
           entries.forEach((e) => {
             onScreenRef.current = e.isIntersecting;
             if (e.isIntersecting) {
-              videoRefs.current[beatRef.current]?.play().catch(() => {});
+              const v = videoRefs.current[beatRef.current];
+              if (v && v.preload === "none") v.preload = "auto";
+              v?.play().catch(() => {});
             } else {
               videoRefs.current.forEach((vv) => vv?.pause());
             }
           });
         },
-        { rootMargin: "15% 0px" }
+        { rootMargin: "35% 0px" }
       );
       io.observe(stage);
     }
@@ -121,7 +123,7 @@ export default function GuardrailShowcase() {
     videos.forEach((v, k) => {
       if (!v) return;
       if (k === beat) {
-        if (v.getAttribute("preload") === "none") v.setAttribute("preload", "metadata");
+        if (onScreenRef.current && v.preload === "none") v.preload = "auto"; // fetch only once the stage is near
         v.loop = false;
         try {
           v.currentTime = 0;
@@ -274,7 +276,7 @@ export default function GuardrailShowcase() {
               src={b.src}
               muted
               playsInline
-              preload={k === 0 ? "metadata" : "none"}
+              preload="none"
               aria-label={b.aria}
               style={beatVideoStyle}
             />

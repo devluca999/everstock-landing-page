@@ -44,11 +44,14 @@ export default function PairedHologram({ src, label }: { src: string; label: str
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting) v.play().catch(() => {});
+          if (e.isIntersecting) {
+            if (v.preload === "none") v.preload = "auto";
+            v.play().catch(() => {});
+          }
           else v.pause();
         });
       },
-      { rootMargin: "15% 0px" }
+      { rootMargin: "30% 0px" }
     );
     io.observe(v);
     return () => io.disconnect();
@@ -65,7 +68,7 @@ export default function PairedHologram({ src, label }: { src: string; label: str
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           aria-label={label}
           style={videoStyle}
         />
