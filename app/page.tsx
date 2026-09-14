@@ -6,10 +6,14 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
 import Marquee from "@/components/Marquee";
-import PairedHologram from "@/components/PairedHologram";
-import GuardrailShowcase from "@/components/GuardrailShowcase";
-import ModelBuilder from "@/components/ModelBuilder";
 import ContractGraph from "@/components/ContractGraph";
+import dynamic from "next/dynamic";
+
+// below-the-fold client components ship as their own chunks so the hero hydrates
+// first; they still server-render, only their JS arrives after the main bundle
+const PairedHologram = dynamic(() => import("@/components/PairedHologram"));
+const GuardrailShowcase = dynamic(() => import("@/components/GuardrailShowcase"));
+const ModelBuilder = dynamic(() => import("@/components/ModelBuilder"));
 import { Eyebrow, Lines, PrimaryCta, SecondaryCta, CardMeta } from "@/components/ui";
 import type { CSSProperties, ReactNode } from "react";
 

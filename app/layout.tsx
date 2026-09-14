@@ -10,9 +10,11 @@ import {
 import "./globals.css";
 import { ThemeProvider, themeScript, scrollScript } from "./theme";
 
+// only weights the page actually sets: every font file preloaded here sits on the
+// mobile LCP path (the hero statement re-paints when its face arrives)
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["500", "700"],
   variable: "--font-space",
   display: "swap",
 });
@@ -42,7 +44,7 @@ const syne = Syne({
 });
 const plex = IBM_Plex_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["300", "500"],
   variable: "--font-plex",
   display: "swap",
 });

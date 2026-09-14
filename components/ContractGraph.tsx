@@ -56,7 +56,7 @@ export default function ContractGraph() {
         </div>
         <div style={human}>
           <span style={{ ...title, color: "var(--es-bg)" }}>Approved</span>
-          <span style={{ ...sub, fontWeight: 400, color: "inherit", opacity: 0.78 }}>You, and only you. Never a setting</span>
+          <span style={{ ...sub, fontWeight: 500, color: "inherit", opacity: 0.78 }}>You, and only you. Never a setting</span>
         </div>
         <div style={agent}>
           <span style={title}><span aria-hidden="true" style={led} />Executed</span>
