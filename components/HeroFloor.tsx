@@ -35,8 +35,9 @@ type Crane = {
 };
 
 const FRAME_MS = 31; // the floor is atmosphere: ~30fps is plenty and halves its cost
-const FRAME_MS_PHONE = 42; // blurred imagery on a small screen: 24fps reads the same
+const FRAME_MS_PHONE = 50; // blurred imagery on a small screen: 20fps reads the same
 const BASE_K = 1 / 3; // scene resolution: 1/5 upscaled read as blocky smear on retina; 1/3 stays cheap and clean
+const BASE_K_PHONE = 1 / 4; // phones: the field sits under the copy and Lighthouse's mobile blocking budget is tight
 const TF = 30, TN = -2.1, FLOOR = -0.8, SK = -0.2, GATE = 3.2;
 const BELT = 0.55, HIGH = 3.4, PICK_T = 1.6;
 
@@ -97,7 +98,8 @@ export default function HeroFloor() {
     if (!g || !G || !HF || !SX || !T || !RD || !FD) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const frameMs = window.innerWidth < 768 ? FRAME_MS_PHONE : FRAME_MS;
+    const phone = window.innerWidth < 768;
+    const frameMs = phone ? FRAME_MS_PHONE : FRAME_MS;
     let bgDirty = true;
 
     let crates: Crate[] = [];
@@ -112,7 +114,7 @@ export default function HeroFloor() {
       // keeps the viewport's aspect: the lattice cutout is computed at viewport size and the
       // two have to line up
       const vw = window.innerWidth, vh = window.innerHeight;
-      const k = Math.max(BASE_K, 96 / vw, 64 / vh);
+      const k = Math.max(phone ? BASE_K_PHONE : BASE_K, 96 / vw, 64 / vh);
       const W = Math.round(vw * k), H = Math.round(vh * k);
       a.width = scene.width = soft.width = bg.width = radial.width = fades.width = W;
       a.height = scene.height = soft.height = bg.height = radial.height = fades.height = H;
