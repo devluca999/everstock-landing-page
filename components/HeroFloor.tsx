@@ -100,7 +100,9 @@ export default function HeroFloor() {
       const W = Math.round(vw * k), H = Math.round(vh * k);
       a.width = scene.width = soft.width = W;
       a.height = scene.height = soft.height = H;
-      if (reduced) draw(performance.now());
+      // paint one frame right away so the field is part of the first visual state
+      // (a late-appearing conveyor reads as a late-finishing page to Speed Index)
+      draw(performance.now());
     };
 
     const draw = (now: number) => {
@@ -439,11 +441,7 @@ export default function HeroFloor() {
         if (!document.hidden && window.scrollY < window.innerHeight * 1.15 && now - lastDraw >= FRAME_MS) { lastDraw = now; draw(now); }
         raf = requestAnimationFrame(loop);
       };
-      // atmosphere can wait for the main thread to go quiet after hydration
-      const start = () => { if (!dead) raf = requestAnimationFrame(loop); };
-      const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
-      if (w.requestIdleCallback) w.requestIdleCallback(start, { timeout: 1500 });
-      else setTimeout(start, 600);
+      raf = requestAnimationFrame(loop);
     }
     return () => {
       dead = true;
