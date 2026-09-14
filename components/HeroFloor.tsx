@@ -35,6 +35,8 @@ type Crane = {
 };
 
 const FRAME_MS = 31; // the floor is atmosphere: ~30fps is plenty and halves its cost
+const FRAME_MS_PHONE = 42; // blurred imagery on a small screen: 24fps reads the same
+const SOFT_K = 4; // soft pass = scene downsampled by this, then upscaled (a cheap blur)
 const TF = 30, TN = -2.1, FLOOR = -0.8, SK = -0.2, GATE = 3.2;
 const BELT = 0.55, HIGH = 3.4, PICK_T = 1.6;
 
@@ -55,16 +57,20 @@ const newCrate = (t: number): Crate => ({
  * that pick up a transient green (pass) or deep-orange (deny) glow that dissipates to
  * exactly zero, and an articulated pick-and-place arm that stops the belt and lifts
  * the denied crate out of frame. Drawn at 1/5 resolution into an offscreen scene, then
- * composited into ONE plain canvas: a near-sharp pass, a heavier-blur pass confined to
- * the outer zone by a radial weight, and the horizontal/vertical fades that hand the
- * field off to the solid graphite on the left. All of that is baked into the small
- * buffer, so the element itself carries no CSS mask, filter or blend: two masked
- * full-viewport canvases refreshing 30 times a second were the hero's dominant cost.
- * The solid field / scrim layers are plain CSS.
+ * composited into ONE plain canvas: the scene, a soft pass confined to the outer zone
+ * by a radial weight, and the horizontal/vertical fades that hand the field off to the
+ * solid graphite on the left. All of that is baked into the small buffer, so the
+ * element itself carries no CSS mask, filter or blend: two masked full-viewport
+ * canvases refreshing 30 times a second were the hero's dominant cost.
  *
- * Runtime rules: ~30fps cap, paused while the tab is hidden or the hero is scrolled
- * away, one static frame under prefers-reduced-motion. Browsers without canvas
- * `ctx.filter` (Safari) skip the blur passes; the 5x upscale is already soft.
+ * Per-frame cost is kept to what actually moves: everything static about the scene
+ * (floor plane, deck, skirt, legs, lamps, fixed rollers, gate frame) is rendered once
+ * per resize into a cached canvas; the soft pass is a downsample + upscale, not a
+ * blur filter (canvas blur filters were most of the frame). The solid field / scrim
+ * layers are plain CSS.
+ *
+ * Runtime rules: ~30fps cap (24 on phones), paused while the tab is hidden or the hero
+ * is scrolled away, one static frame under prefers-reduced-motion.
  */
 export default function HeroFloor() {
   const aRef = useRef<HTMLCanvasElement>(null);
@@ -76,13 +82,21 @@ export default function HeroFloor() {
     if (!A) return;
     const scene = document.createElement("canvas");
     const g = scene.getContext("2d");
-    const soft = document.createElement("canvas"); // the blur pass, radially weighted
+    const bg = document.createElement("canvas"); // the static set, rendered once per size
+    const G = bg.getContext("2d");
+    const small = document.createElement("canvas"); // downsampled scene (the soft pass)
+    const SM = small.getContext("2d");
+    const soft = document.createElement("canvas"); // soft pass upscaled + radially weighted
     const T = soft.getContext("2d");
-    if (!g || !T) return;
+    const radial = document.createElement("canvas"); // alpha weight of the soft pass
+    const RD = radial.getContext("2d");
+    const fades = document.createElement("canvas"); // horizontal x vertical hand-off alpha
+    const FD = fades.getContext("2d");
+    if (!g || !G || !SM || !T || !RD || !FD) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // feature-detect canvas filters without letting TS narrow the context to `never`
-    const canvasFilter = typeof (A as unknown as { filter?: unknown }).filter === "string";
+    const frameMs = window.innerWidth < 768 ? FRAME_MS_PHONE : FRAME_MS;
+    let bgDirty = true;
 
     let crates: Crate[] = [];
     const cr: Crane = { state: "rest", tm: 0, y: 0, jaw: 0, target: null, ys: 0, js: 0, bs: 0, dHold: 0.6, dDown: 1.7, dGrip: 0.5, dSet: 0.5, dUp: 1.8, dMin: 2.8 };
@@ -98,8 +112,34 @@ export default function HeroFloor() {
       const vw = window.innerWidth, vh = window.innerHeight;
       const k = Math.max(1 / 5, 96 / vw, 64 / vh);
       const W = Math.round(vw * k), H = Math.round(vh * k);
-      a.width = scene.width = soft.width = W;
-      a.height = scene.height = soft.height = H;
+      a.width = scene.width = soft.width = bg.width = radial.width = fades.width = W;
+      a.height = scene.height = soft.height = bg.height = radial.height = fades.height = H;
+      // radial weight: sharpest over the conveyor (~70%/60%), soft toward the edges
+      {
+        const cx = 0.7 * W, cy = 0.6 * H, rx = 0.44 * W, ry = 0.42 * H;
+        RD.clearRect(0, 0, W, H);
+        RD.save();
+        RD.translate(cx, cy);
+        RD.scale(rx, ry);
+        const rg = RD.createRadialGradient(0, 0, 0, 0, 0, 1);
+        rg.addColorStop(0, "rgba(0,0,0,0)"); rg.addColorStop(0.55, "rgba(0,0,0,0.55)"); rg.addColorStop(1, "rgba(0,0,0,1)");
+        RD.fillStyle = rg;
+        RD.fillRect(-cx / rx, -cy / ry, W / rx, H / ry);
+        RD.restore();
+        FD.globalCompositeOperation = "source-over";
+        FD.clearRect(0, 0, W, H);
+        const hz = FD.createLinearGradient(0, 0, W, 0);
+        hz.addColorStop(0, "rgba(0,0,0,0)"); hz.addColorStop(0.22, "rgba(0,0,0,0)"); hz.addColorStop(0.46, "rgba(0,0,0,0.55)"); hz.addColorStop(0.68, "rgba(0,0,0,1)");
+        FD.fillStyle = hz; FD.fillRect(0, 0, W, H);
+        FD.globalCompositeOperation = "destination-in";
+        const vt = FD.createLinearGradient(0, 0, 0, H);
+        vt.addColorStop(0, "rgba(0,0,0,1)"); vt.addColorStop(0.72, "rgba(0,0,0,1)"); vt.addColorStop(1, "rgba(0,0,0,0)");
+        FD.fillStyle = vt; FD.fillRect(0, 0, W, H);
+        FD.globalCompositeOperation = "source-over";
+      }
+      small.width = Math.max(4, Math.round(W / SOFT_K));
+      small.height = Math.max(4, Math.round(H / SOFT_K));
+      bgDirty = true;
       // paint one frame right away so the field is part of the first visual state
       // (a late-appearing conveyor reads as a late-finishing page to Speed Index)
       draw(performance.now());
@@ -112,22 +152,23 @@ export default function HeroFloor() {
       const { HW, HORIZON } = CAM;
       const HY = HORIZON * H;
       const P = projector(W, H);
-      const poly = (pts: Pt[], fill: string | CanvasGradient) => {
-        g.fillStyle = fill;
-        g.beginPath();
-        g.moveTo(pts[0].x, pts[0].y);
-        for (let i = 1; i < pts.length; i++) g.lineTo(pts[i].x, pts[i].y);
-        g.closePath();
-        g.fill();
+      const polyOn = (c: CanvasRenderingContext2D) => (pts: Pt[], fill: string | CanvasGradient) => {
+        c.fillStyle = fill;
+        c.beginPath();
+        c.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) c.lineTo(pts[i].x, pts[i].y);
+        c.closePath();
+        c.fill();
       };
-      const line = (p: { x: number; y: number }, q: { x: number; y: number }, stroke: string, w: number) => {
-        g.strokeStyle = stroke;
-        g.lineWidth = w;
-        g.beginPath();
-        g.moveTo(p.x, p.y);
-        g.lineTo(q.x, q.y);
-        g.stroke();
+      const lineOn = (c: CanvasRenderingContext2D) => (p: { x: number; y: number }, q: { x: number; y: number }, stroke: string, w: number) => {
+        c.strokeStyle = stroke;
+        c.lineWidth = w;
+        c.beginPath();
+        c.moveTo(p.x, p.y);
+        c.lineTo(q.x, q.y);
+        c.stroke();
       };
+      const poly = polyOn(g), line = lineOn(g);
       g.globalCompositeOperation = "source-over";
       g.clearRect(0, 0, W, H);
 
@@ -214,41 +255,54 @@ export default function HeroFloor() {
       const light = document.documentElement.dataset.theme === "light";
       const EM = light ? 0.55 : 1;
 
-      /* --- floor plane: everything below the horizon that is not deck --- */
-      const fg = g.createLinearGradient(0, HY, 0, H);
-      fg.addColorStop(0, "rgba(34,29,24,0)"); fg.addColorStop(0.12, "#221D18"); fg.addColorStop(1, "#2A2420");
-      g.fillStyle = fg; g.fillRect(0, HY, W, H - HY);
-      // contact shadow under the near rail
-      const s0 = P(1, HW, FLOOR), s1 = P(1, HW + 0.7, FLOOR);
-      const sh = g.createLinearGradient(s0.x, s0.y, s1.x, s1.y); sh.addColorStop(0, "rgba(0,0,0,0.65)"); sh.addColorStop(1, "rgba(0,0,0,0)");
-      poly([P(TF, HW, FLOOR), P(TN, HW, FLOOR), P(TN, HW + 0.7, FLOOR), P(TF, HW + 0.7, FLOOR)], sh);
-      // legs with feet + cross braces, straight up in screen space
-      let prev: { base: Pt; top: Pt } | null = null;
-      for (let t = TN + 0.5; t < TF; t += 2.2) {
-        const base = P(t, HW, FLOOR), top = P(t, HW, SK), w = Math.max(0.6, 0.07 * base.s);
-        line(base, top, "rgba(58,60,66,0.95)", w);
-        line({ x: base.x - w * 1.4, y: base.y }, { x: base.x + w * 1.4, y: base.y }, "rgba(58,60,66,0.95)", Math.max(0.6, w * 0.7));
-        if (prev) { line(prev.top, base, "rgba(58,60,66,0.55)", w * 0.45); line(prev.base, top, "rgba(58,60,66,0.55)", w * 0.45); }
-        prev = { base, top };
+      /* --- the static set, rendered once per size: floor plane, contact shadow, legs, skirt,
+         deck, sodium pools, fixed rollers, near rail, gate frame. Blitted every frame. --- */
+      if (bgDirty) {
+        bgDirty = false;
+        const bp = polyOn(G), bl = lineOn(G);
+        G.globalCompositeOperation = "source-over";
+        G.clearRect(0, 0, W, H);
+        // floor plane: everything below the horizon that is not deck
+        const fg = G.createLinearGradient(0, HY, 0, H);
+        fg.addColorStop(0, "rgba(34,29,24,0)"); fg.addColorStop(0.12, "#221D18"); fg.addColorStop(1, "#2A2420");
+        G.fillStyle = fg; G.fillRect(0, HY, W, H - HY);
+        // contact shadow under the near rail
+        const s0 = P(1, HW, FLOOR), s1 = P(1, HW + 0.7, FLOOR);
+        const sh = G.createLinearGradient(s0.x, s0.y, s1.x, s1.y); sh.addColorStop(0, "rgba(0,0,0,0.65)"); sh.addColorStop(1, "rgba(0,0,0,0)");
+        bp([P(TF, HW, FLOOR), P(TN, HW, FLOOR), P(TN, HW + 0.7, FLOOR), P(TF, HW + 0.7, FLOOR)], sh);
+        // legs with feet + cross braces, straight up in screen space
+        let prev: { base: Pt; top: Pt } | null = null;
+        for (let t = TN + 0.5; t < TF; t += 2.2) {
+          const base = P(t, HW, FLOOR), top = P(t, HW, SK), w = Math.max(0.6, 0.07 * base.s);
+          bl(base, top, "rgba(58,60,66,0.95)", w);
+          bl({ x: base.x - w * 1.4, y: base.y }, { x: base.x + w * 1.4, y: base.y }, "rgba(58,60,66,0.95)", Math.max(0.6, w * 0.7));
+          if (prev) { bl(prev.top, base, "rgba(58,60,66,0.55)", w * 0.45); bl(prev.base, top, "rgba(58,60,66,0.55)", w * 0.45); }
+          prev = { base, top };
+        }
+        // skirt + deck
+        bp([P(TF, HW, 0), P(TN, HW, 0), P(TN, HW, SK), P(TF, HW, SK)], "#2B2E34");
+        const d0 = P(2, HW), d1 = P(2, -HW);
+        const dg = G.createLinearGradient(d0.x, d0.y, d1.x, d1.y);
+        dg.addColorStop(0, "#5B5148"); dg.addColorStop(0.3, "#3D414A"); dg.addColorStop(1, "#262A31");
+        bp([P(TN, HW), P(TN, -HW), P(TF, -HW), P(TF, HW)], dg);
+        // sodium pools: tight pools under each lamp, radius clamped so a near-camera lamp does
+        // not wash the whole frame amber when there is nothing on that stretch of belt
+        for (const t of [-1, 2.4, 6, 11, 18]) {
+          const p = P(t, 0.2), r = Math.min(1.05 * p.s, W * 0.17);
+          const lg = G.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+          lg.addColorStop(0, "rgba(232,168,86,0.34)"); lg.addColorStop(0.5, "rgba(232,168,86,0.1)"); lg.addColorStop(1, "rgba(232,168,86,0)");
+          G.fillStyle = lg; G.beginPath(); G.arc(p.x, p.y, r, 0, Math.PI * 2); G.fill();
+        }
+        // cross-rollers: constant t, even in t, converging to their own vanishing point
+        for (let t = TN + 0.2; t < TF; t += 0.9) { const p = P(t, -HW), q = P(t, HW); bl(p, q, "rgba(168,182,200,0.4)", Math.max(0.5, 0.05 * q.s)); }
+        bl(P(TF, HW), P(TN, HW), "rgba(232,168,86,0.6)", Math.max(0.6, 0.02 * P(2, HW).s));
+        // scanner gate frame: two uprights + crossbar over the belt
+        const gp0 = P(GATE, -HW - 0.15, 0), gp1 = P(GATE, HW + 0.15, 0), gt0 = P(GATE, -HW - 0.15, 1.6), gt1 = P(GATE, HW + 0.15, 1.6);
+        bl(gp0, gt0, "rgba(138,144,154,0.95)", Math.max(0.8, 0.07 * gp0.s)); bl(gp1, gt1, "rgba(138,144,154,0.95)", Math.max(0.8, 0.07 * gp1.s)); bl(gt0, gt1, "rgba(138,144,154,0.95)", Math.max(0.8, 0.07 * gp1.s));
       }
-      // skirt + deck
-      poly([P(TF, HW, 0), P(TN, HW, 0), P(TN, HW, SK), P(TF, HW, SK)], "#2B2E34");
-      const d0 = P(2, HW), d1 = P(2, -HW);
-      const dg = g.createLinearGradient(d0.x, d0.y, d1.x, d1.y);
-      dg.addColorStop(0, "#5B5148"); dg.addColorStop(0.3, "#3D414A"); dg.addColorStop(1, "#262A31");
-      poly([P(TN, HW), P(TN, -HW), P(TF, -HW), P(TF, HW)], dg);
-      // sodium pools: tight pools under each lamp, radius clamped so a near-camera lamp does not
-      // wash the whole frame amber when there is nothing on that stretch of belt
-      for (const t of [-1, 2.4, 6, 11, 18]) {
-        const p = P(t, 0.2), r = Math.min(1.05 * p.s, W * 0.17);
-        const lg = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
-        lg.addColorStop(0, "rgba(232,168,86,0.34)"); lg.addColorStop(0.5, "rgba(232,168,86,0.1)"); lg.addColorStop(1, "rgba(232,168,86,0)");
-        g.fillStyle = lg; g.beginPath(); g.arc(p.x, p.y, r, 0, Math.PI * 2); g.fill();
-      }
-      // cross-rollers: constant t, even in t, converging to their own vanishing point
-      for (let t = TN + 0.2; t < TF; t += 0.9) { const p = P(t, -HW), q = P(t, HW); line(p, q, "rgba(168,182,200,0.4)", Math.max(0.5, 0.05 * q.s)); }
+      g.drawImage(bg, 0, 0);
+      // the belt's dark bands move with the belt phase
       for (let t = TN + 0.45 - beltPhase; t < TF; t += 0.45) { const p = P(t, -HW), q = P(t, HW); line(p, q, "rgba(0,0,0,0.22)", Math.max(0.4, 0.018 * q.s)); }
-      line(P(TF, HW), P(TN, HW), "rgba(232,168,86,0.6)", Math.max(0.6, 0.02 * P(2, HW).s));
       // roller end-caps on the near rail, spinning with the belt
       for (let t = TN + 0.2; t < 16; t += 0.9) {
         const c = P(t, HW + 0.04, -0.09), r = 0.09 * c.s;
@@ -257,9 +311,8 @@ export default function HeroFloor() {
         g.strokeStyle = "rgba(232,168,86,0.7)"; g.lineWidth = Math.max(0.5, r * 0.22);
         g.beginPath(); g.moveTo(c.x - Math.cos(beltAngle) * r * 0.8, c.y - Math.sin(beltAngle) * r * 0.8); g.lineTo(c.x + Math.cos(beltAngle) * r * 0.8, c.y + Math.sin(beltAngle) * r * 0.8); g.stroke();
       }
-      // scanner gate: two uprights + crossbar over the belt; its light is always blue
+      // scanner gate light: always blue (the frame itself is in the static set)
       const gp0 = P(GATE, -HW - 0.15, 0), gp1 = P(GATE, HW + 0.15, 0), gt0 = P(GATE, -HW - 0.15, 1.6), gt1 = P(GATE, HW + 0.15, 1.6);
-      line(gp0, gt0, "rgba(138,144,154,0.95)", Math.max(0.8, 0.07 * gp0.s)); line(gp1, gt1, "rgba(138,144,154,0.95)", Math.max(0.8, 0.07 * gp1.s)); line(gt0, gt1, "rgba(138,144,154,0.95)", Math.max(0.8, 0.07 * gp1.s));
       const bc = P(GATE, 0, 1.66), br = Math.max(1, 0.05 * bc.s);
       g.fillStyle = scanning ? "#5B9BFF" : "rgba(62,125,255,0.45)"; g.beginPath(); g.arc(bc.x, bc.y, br, 0, Math.PI * 2); g.fill();
       if (scanning) { const gg = g.createLinearGradient(gt0.x, gt0.y, gp0.x, gp0.y); gg.addColorStop(0, `rgba(62,125,255,${(0.5 * EM).toFixed(3)})`); gg.addColorStop(1, "rgba(62,125,255,0)"); poly([gt0, gt1, gp1, gp0], gg); }
@@ -400,31 +453,20 @@ export default function HeroFloor() {
          gradient (sharpest over the conveyor at ~70%/60%)  3. horizontal + vertical fades
          that dissolve the field into the solid graphite on the left and the section below. */
       A.clearRect(0, 0, W, H);
-      if (canvasFilter) { A.filter = "blur(0.6px)"; A.drawImage(scene, 0, 0); A.filter = "none"; }
-      else A.drawImage(scene, 0, 0);
-      if (canvasFilter) {
-        T.globalCompositeOperation = "source-over";
-        T.clearRect(0, 0, W, H);
-        T.filter = "blur(2.6px)"; T.drawImage(scene, 0, 0); T.filter = "none";
-        T.globalCompositeOperation = "destination-in";
-        const cx = 0.7 * W, cy = 0.6 * H, rx = 0.44 * W, ry = 0.42 * H;
-        T.save();
-        T.translate(cx, cy);
-        T.scale(rx, ry);
-        const rg = T.createRadialGradient(0, 0, 0, 0, 0, 1);
-        rg.addColorStop(0, "rgba(0,0,0,0)"); rg.addColorStop(0.55, "rgba(0,0,0,0.55)"); rg.addColorStop(1, "rgba(0,0,0,1)");
-        T.fillStyle = rg;
-        T.fillRect(-cx / rx, -cy / ry, W / rx, H / ry);
-        T.restore();
-        A.drawImage(soft, 0, 0);
-      }
+      A.drawImage(scene, 0, 0);
+      // soft pass: downsample then upscale (bilinear both ways) instead of a blur filter,
+      // weighted toward the outer zone by the cached radial alpha
+      SM.clearRect(0, 0, small.width, small.height);
+      SM.drawImage(scene, 0, 0, small.width, small.height);
+      T.globalCompositeOperation = "source-over";
+      T.clearRect(0, 0, W, H);
+      T.drawImage(small, 0, 0, W, H);
+      T.globalCompositeOperation = "destination-in";
+      T.drawImage(radial, 0, 0);
+      A.drawImage(soft, 0, 0);
+      // the hand-off fades (solid graphite on the left, section below), cached per size
       A.globalCompositeOperation = "destination-in";
-      const hz = A.createLinearGradient(0, 0, W, 0);
-      hz.addColorStop(0, "rgba(0,0,0,0)"); hz.addColorStop(0.22, "rgba(0,0,0,0)"); hz.addColorStop(0.46, "rgba(0,0,0,0.55)"); hz.addColorStop(0.68, "rgba(0,0,0,1)");
-      A.fillStyle = hz; A.fillRect(0, 0, W, H);
-      const vt = A.createLinearGradient(0, 0, 0, H);
-      vt.addColorStop(0, "rgba(0,0,0,1)"); vt.addColorStop(0.72, "rgba(0,0,0,1)"); vt.addColorStop(1, "rgba(0,0,0,0)");
-      A.fillStyle = vt; A.fillRect(0, 0, W, H);
+      A.drawImage(fades, 0, 0);
       A.globalCompositeOperation = "source-over";
     };
 
@@ -438,7 +480,7 @@ export default function HeroFloor() {
       const loop = (now: number) => {
         if (dead) return;
         // atmosphere only: skip while hidden or once the hero has scrolled away
-        if (!document.hidden && window.scrollY < window.innerHeight * 1.15 && now - lastDraw >= FRAME_MS) { lastDraw = now; draw(now); }
+        if (!document.hidden && window.scrollY < window.innerHeight * 1.15 && now - lastDraw >= frameMs) { lastDraw = now; draw(now); }
         raf = requestAnimationFrame(loop);
       };
       raf = requestAnimationFrame(loop);

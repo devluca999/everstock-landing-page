@@ -50,7 +50,8 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       raf = 0,
       last = 0,
       paused = false,
-      dead = false;
+      dead = false,
+      mask: HTMLCanvasElement | null = null;
 
     const colors = { bg: "#16171B", grid: "rgba(226,222,214,0.11)", additive: true };
     const readColors = () => {
@@ -131,15 +132,17 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       return cy + (y + d - cy) * pulse;
     };
 
-    /* Soft-edged cutout over the conveyor's footprint, limited to where the floor is
+    /* The canvas's alpha mask, built once per resize at quarter resolution: the fade toward
+       the hero's lower edge (so the first solid section reads as a clean cut) times a
+       soft-edged cutout over the conveyor's footprint, limited to where the floor is
        actually visible (the solid field hides it on the left), so the lattice + beams stay
        crisp on solid ground and sit back over the busy blurred deck without vanishing.
-       It is applied as a CSS mask on the element (rebuilt only on resize), not composited
-       into every frame: the per-frame full-viewport destination-out was the single most
-       expensive thing in the hero. Drawn at quarter resolution (it is a blurred blob, so
-       the stretch is invisible) and without ctx.filter (no Safari support): the footprint
-       is drawn off-canvas and only its blurred shadow lands. */
-    const applyMask = () => {
+       Applied with ONE destination-in blit per frame. Never as a CSS mask-image: any mask
+       on the element, even the old plain gradient, takes the canvas off the compositor's
+       fast path and turns every frame into a long main-thread task. Built without
+       ctx.filter (no Safari support): the footprint is drawn off-canvas and only its
+       blurred shadow lands. */
+    const buildMask = (): HTMLCanvasElement | null => {
       const k = 0.25;
       const mw = Math.max(8, Math.round(w * k)), mh = Math.max(8, Math.round(h * k));
       const cutC = document.createElement("canvas");
@@ -150,7 +153,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       maskC.width = mw;
       maskC.height = mh;
       const mg = maskC.getContext("2d");
-      if (!cg || !mg) return;
+      if (!cg || !mg) return null;
       const fp = deckFootprint(mw, mh);
       const R = Math.min(mw, mh) * 0.09;
       const OFF = 1e4;
@@ -173,20 +176,22 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       hg.addColorStop(1, "rgba(0,0,0,0.88)");
       cg.fillStyle = hg;
       cg.fillRect(0, 0, mw, mh);
-      // mask alpha = 1 - cut alpha
-      mg.fillStyle = "#000";
+      // mask alpha = fade(y) * (1 - cut alpha)
+      const fade = mg.createLinearGradient(0, 0, 0, mh);
+      fade.addColorStop(0, "rgba(0,0,0,1)");
+      fade.addColorStop(0.68, "rgba(0,0,0,1)");
+      fade.addColorStop(1, "rgba(0,0,0,0)");
+      mg.fillStyle = fade;
       mg.fillRect(0, 0, mw, mh);
       mg.globalCompositeOperation = "destination-out";
       mg.drawImage(cutC, 0, 0);
-      const url = `url(${maskC.toDataURL("image/png")})`;
-      const fade = "linear-gradient(180deg,#000 68%,transparent 100%)";
-      const st = canvas.style as CSSStyleDeclaration & { webkitMaskImage?: string; webkitMaskSize?: string; webkitMaskComposite?: string };
-      st.webkitMaskImage = `${url}, ${fade}`;
-      st.maskImage = `${url}, ${fade}`;
-      st.webkitMaskSize = "100% 100%, 100% 100%";
-      st.maskSize = "100% 100%, 100% 100%";
-      st.webkitMaskComposite = "source-in";
-      st.maskComposite = "intersect";
+      return maskC;
+    };
+    const applyMask = () => {
+      if (!mask) return;
+      ctx.globalCompositeOperation = "destination-in";
+      ctx.drawImage(mask, 0, 0, w, h);
+      ctx.globalCompositeOperation = "source-over";
     };
 
     const resize = () => {
@@ -204,7 +209,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       canvas.height = Math.round(h * dpr);
       cols = Math.ceil(w / SPACING) + 4;
       rows = Math.ceil(h / SPACING) + 4;
-      applyMask();
+      mask = buildMask();
       if (!reduced && beams.length && beamCount !== prevBeamCount) {
         beams = [];
         for (let i = 0; i < beamCount; i++) beams.push(spawnBeam(true, i));
@@ -237,6 +242,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
         ctx.lineTo(xs[i], ys[rows]);
       }
       ctx.stroke();
+      applyMask();
     };
 
     const lerpArr = (arr: number[], u: number) => {
@@ -246,8 +252,14 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
       return arr[i0] + (arr[i0 + 1] - arr[i0]) * f;
     };
 
+    // phones: 30fps is plenty for ambient beams, and it halves the per-frame blit + strokes
+    // that dominate the throttled main thread there
+    const frameMs = window.innerWidth < 1024 ? 31 : 0;
+    let lastDraw = 0;
     const frame = (now: number) => {
       if (dead || paused) return;
+      if (frameMs && now - lastDraw < frameMs) { raf = requestAnimationFrame(frame); return; }
+      lastDraw = now;
       const dt = Math.min(64, now - last) / 1000;
       last = now;
       const t = now * 0.001;
@@ -337,7 +349,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
           ctx.fill();
         }
       }
-      ctx.globalCompositeOperation = "source-over";
+      applyMask();
       raf = requestAnimationFrame(frame);
     };
 
@@ -418,10 +430,8 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
         width: "100%",
         zIndex: 0,
         pointerEvents: "none",
-        // fade the field out toward the hero's lower edge so the first solid
-        // section reads as a clean cut, not a hard canvas seam
-        WebkitMaskImage: "linear-gradient(180deg,#000 68%,transparent 100%)",
-        maskImage: "linear-gradient(180deg,#000 68%,transparent 100%)",
+        // no CSS mask here: the lower-edge fade + conveyor cutout are baked into the
+        // frames (see buildMask). A mask-image on this element forces main-thread paint.
       }}
     />
   );
