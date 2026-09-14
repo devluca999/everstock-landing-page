@@ -36,7 +36,7 @@ type Crane = {
 
 const FRAME_MS = 31; // the floor is atmosphere: ~30fps is plenty and halves its cost
 const FRAME_MS_PHONE = 42; // blurred imagery on a small screen: 24fps reads the same
-const SOFT_K = 4; // soft pass = scene downsampled by this, then upscaled (a cheap blur)
+const BASE_K = 1 / 3; // scene resolution: 1/5 upscaled read as blocky smear on retina; 1/3 stays cheap and clean
 const TF = 30, TN = -2.1, FLOOR = -0.8, SK = -0.2, GATE = 3.2;
 const BELT = 0.55, HIGH = 3.4, PICK_T = 1.6;
 
@@ -84,15 +84,17 @@ export default function HeroFloor() {
     const g = scene.getContext("2d");
     const bg = document.createElement("canvas"); // the static set, rendered once per size
     const G = bg.getContext("2d");
-    const small = document.createElement("canvas"); // downsampled scene (the soft pass)
-    const SM = small.getContext("2d");
+    const half = document.createElement("canvas"); // scene at 1/2: smooths the sharp pass's upscale
+    const HF = half.getContext("2d");
+    const sixth = document.createElement("canvas"); // scene at 1/6: the soft pass (two-step = smooth, gaussian-like)
+    const SX = sixth.getContext("2d");
     const soft = document.createElement("canvas"); // soft pass upscaled + radially weighted
     const T = soft.getContext("2d");
     const radial = document.createElement("canvas"); // alpha weight of the soft pass
     const RD = radial.getContext("2d");
     const fades = document.createElement("canvas"); // horizontal x vertical hand-off alpha
     const FD = fades.getContext("2d");
-    if (!g || !G || !SM || !T || !RD || !FD) return;
+    if (!g || !G || !HF || !SX || !T || !RD || !FD) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const frameMs = window.innerWidth < 768 ? FRAME_MS_PHONE : FRAME_MS;
@@ -110,7 +112,7 @@ export default function HeroFloor() {
       // keeps the viewport's aspect: the lattice cutout is computed at viewport size and the
       // two have to line up
       const vw = window.innerWidth, vh = window.innerHeight;
-      const k = Math.max(1 / 5, 96 / vw, 64 / vh);
+      const k = Math.max(BASE_K, 96 / vw, 64 / vh);
       const W = Math.round(vw * k), H = Math.round(vh * k);
       a.width = scene.width = soft.width = bg.width = radial.width = fades.width = W;
       a.height = scene.height = soft.height = bg.height = radial.height = fades.height = H;
@@ -137,8 +139,10 @@ export default function HeroFloor() {
         FD.fillStyle = vt; FD.fillRect(0, 0, W, H);
         FD.globalCompositeOperation = "source-over";
       }
-      small.width = Math.max(4, Math.round(W / SOFT_K));
-      small.height = Math.max(4, Math.round(H / SOFT_K));
+      half.width = Math.max(4, Math.round(W / 2));
+      half.height = Math.max(4, Math.round(H / 2));
+      sixth.width = Math.max(4, Math.round(W / 6));
+      sixth.height = Math.max(4, Math.round(H / 6));
       bgDirty = true;
       // paint one frame right away so the field is part of the first visual state
       // (a late-appearing conveyor reads as a late-finishing page to Speed Index)
@@ -452,15 +456,19 @@ export default function HeroFloor() {
          1. near-sharp pass  2. heavier blur, weighted toward the outer zone by a radial
          gradient (sharpest over the conveyor at ~70%/60%)  3. horizontal + vertical fades
          that dissolve the field into the solid graphite on the left and the section below. */
+      // sharp pass through a half-res round trip: a ~1px softening that anti-aliases the
+      // polygon edges before the 3x upscale (the old blur(0.6px) did this job)
+      HF.clearRect(0, 0, half.width, half.height);
+      HF.drawImage(scene, 0, 0, half.width, half.height);
       A.clearRect(0, 0, W, H);
-      A.drawImage(scene, 0, 0);
-      // soft pass: downsample then upscale (bilinear both ways) instead of a blur filter,
-      // weighted toward the outer zone by the cached radial alpha
-      SM.clearRect(0, 0, small.width, small.height);
-      SM.drawImage(scene, 0, 0, small.width, small.height);
+      A.drawImage(half, 0, 0, W, H);
+      // soft pass: a second downsample step (half -> sixth) then upscale. Two bilinear steps
+      // approximate a gaussian; one big step read as a streaky smear.
+      SX.clearRect(0, 0, sixth.width, sixth.height);
+      SX.drawImage(half, 0, 0, sixth.width, sixth.height);
       T.globalCompositeOperation = "source-over";
       T.clearRect(0, 0, W, H);
-      T.drawImage(small, 0, 0, W, H);
+      T.drawImage(sixth, 0, 0, W, H);
       T.globalCompositeOperation = "destination-in";
       T.drawImage(radial, 0, 0);
       A.drawImage(soft, 0, 0);
