@@ -367,7 +367,7 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
     let scrolledAway = false;
     const resume = () => {
       if (reduced || paused === false) return;
-      if (document.hidden || scrolledAway) return;
+      if (document.hidden || scrolledAway || document.documentElement.dataset.modalOpen) return;
       paused = false;
       last = performance.now();
       raf = requestAnimationFrame(frame);
@@ -396,16 +396,21 @@ export default function GridBackground({ beamMax = 26 }: { beamMax?: number }) {
         resume();
       }
     };
-    const onTheme = () => {
+    const onAttr = () => {
       readColors();
       if (reduced) drawStatic();
+      // the request modal pauses the loop (see RequestAccess): a blurred backdrop over a
+      // moving canvas would be re-composited every frame
+      if (document.documentElement.dataset.modalOpen) {
+        if (!paused) { paused = true; cancelAnimationFrame(raf); }
+      } else resume();
     };
     window.addEventListener("resize", onResize);
     window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("visibilitychange", onVis);
     // re-read colors whenever the theme attribute flips
-    const mo = new MutationObserver(onTheme);
-    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    const mo = new MutationObserver(onAttr);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-modal-open"] });
 
     return () => {
       dead = true;

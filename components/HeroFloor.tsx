@@ -490,7 +490,9 @@ export default function HeroFloor() {
       const loop = (now: number) => {
         if (dead) return;
         // atmosphere only: skip while hidden or once the hero has scrolled away
-        if (!document.hidden && window.scrollY < window.innerHeight * 1.15 && now - lastDraw >= frameMs) { lastDraw = now; draw(now); }
+        // skip while hidden, once the hero has scrolled away, or while the request modal
+        // sits over it (its blurred backdrop would re-composite a moving field every frame)
+        if (!document.hidden && !document.documentElement.dataset.modalOpen && window.scrollY < window.innerHeight * 1.15 && now - lastDraw >= frameMs) { lastDraw = now; draw(now); }
         raf = requestAnimationFrame(loop);
       };
       raf = requestAnimationFrame(loop);

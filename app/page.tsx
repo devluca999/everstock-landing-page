@@ -7,6 +7,7 @@ import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
 import Marquee from "@/components/Marquee";
 import ContractGraph from "@/components/ContractGraph";
+import RequestAccess from "@/components/RequestAccess";
 import dynamic from "next/dynamic";
 
 // below-the-fold client components ship as their own chunks so the hero hydrates
@@ -74,6 +75,7 @@ export default function Home() {
       <RevealController />
       <div id="es-content" style={{ position: "relative", zIndex: 1, overflowX: "clip" }}>
         <Nav />
+        <RequestAccess />
         <main>
           <Hero />
 

@@ -128,6 +128,19 @@ The site now mirrors `mockup/Everstock v2.dc.html` (the Claude Design export; th
 - **Copy pass 2 is the voice.** The reader is the subject, verbs over nominalizations, the fault sits with the tooling, never with the reader. No em dashes anywhere in copy. Words that stay off the page: seamless, leverage, unlock, streamline, robust, empower, supercharge, solution, visibility, discipline, deterministic (investor-deck only). No invented numbers, percentages or time-saved claims until a design partner supplies a verified one.
 - **The measure rule (display type only).** Headline line breaks are hand-set with `<Lines>` (`components/ui.tsx`): block spans at ≥768px, inline with `text-wrap: pretty` below. Each headline's column is sized in `ch` off its longest line (+~10% slack), and if a column cannot hold a line the column gets widened, never the break moved (that is why Your Desk stacks its copy above the queue card). Never `text-wrap: balance` on display type. Body copy wraps naturally. The wrap audit used during the port checks every `.es-line` renders as one visual line at 1440 / 1024 / 800.
 
+## Request access pipeline (2026-09-14)
+
+Every `a[href="#request"]` on the page (nav pill, hero, Contract CTA, final CTA, mobile sheet) opens the **Request access modal** (`components/RequestAccess.tsx`, a real `<dialog>`; `/#request` opens it on arrival; Escape / backdrop / Done close it; hero loops pause while it is open via `data-modal-open` on `<html>`). The anchor still works without JS.
+
+- **Form:** Name, Work email, Company, "What you run today" (NetSuite / Epicor Prophet 21 / SAP Business One / Excel / spreadsheets / Something else), plus an optional phone + note behind "Add a phone or a note". Silent context: which trigger (`source`), referrer, `utm_*` params, user agent. No role / company-size questions by decision (they cost submissions; you learn them on the first call).
+- **Bot checks live in the route handler** (`app/api/request-access/route.ts`): a hidden honeypot field and a minimum fill time (2.5s) both return a *fake* success and never reach the database. Validation errors come back as plain copy.
+- **Storage is Convex** (`convex/`): table `accessRequests`, one row per email (a repeat submission updates the row and bumps `submissions`), `status` field (`new` → contacted / qualified / declined, edited by hand in the dashboard). Project `everstock-landing` on team `luca-macie`: dashboard https://dashboard.convex.dev/t/luca-macie/everstock-landing. Production deployment `tremendous-panda-630`, dev deployment `grateful-gnat-66`. **This is the list you reach out from**: Data tab → `accessRequests`, filter/export from there.
+- **Env:** `NEXT_PUBLIC_CONVEX_URL` (inlined at build time). Vercel has it set for production (prod deployment) and preview/development (dev deployment); locally `.env.local` is written by `npx convex dev` (gitignored). `convex/_generated` is committed so Vercel builds without running Convex codegen.
+- **Deploying function changes:** Vercel does **not** run `convex deploy`. After editing anything in `convex/`, run `npx convex dev --once` (pushes to dev) and `npx convex deploy -y` (pushes to prod) from this repo; the CLI uses the saved Convex login on this machine.
+- **Notifications** are best-effort and off until configured: set `SLACK_WEBHOOK_URL` and/or `NOTIFY_EMAIL_TO` + `RESEND_API_KEY` (+ optional `NOTIFY_EMAIL_FROM`) in the **Convex production deployment's** environment variables (dashboard → Settings). `convex/notify.ts` fires on new rows only.
+- **Housekeeping:** `npx convex run admin:removeByEmail '{"email":"…"}'` (add `--prod` for production) removes a row; QA submissions are cleaned up this way.
+- **Copy rules:** the confirmation never promises a timeline ("We'll be in touch."); the sender address is not named until one exists.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

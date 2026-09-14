@@ -541,3 +541,52 @@ main > footer > * { position: relative; z-index: 1; }
   .v2-graph > div { height: auto !important; min-height: 72px; padding: 14px !important; }
   .v2-graph-overlay { display: none; }
 }
+
+/* ============================================================
+   Request-access modal (a real <dialog>). Opens in place over a dimmed,
+   lightly blurred backdrop; hero loops pause while it is open.
+   ============================================================ */
+.es-modal { position: fixed; inset: 0; width: 100vw; width: 100dvw; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 16px; border: 0; background: transparent; color: var(--es-ink); }
+.es-modal[open] { display: grid; place-items: center; }
+.es-modal::backdrop { background: rgba(10, 11, 14, 0.66); backdrop-filter: blur(8px) saturate(110%); -webkit-backdrop-filter: blur(8px) saturate(110%); }
+:root[data-theme="light"] .es-modal::backdrop { background: rgba(236, 234, 229, 0.7); }
+.es-modal-panel { position: relative; width: min(560px, 100%); max-height: calc(100dvh - 32px); overflow: auto; background: var(--es-bg); border: 1px solid var(--es-edge); border-radius: 12px; box-shadow: inset 0 1px 0 var(--es-lip); padding: clamp(24px, 4vw, 36px); }
+.es-modal[open] .es-modal-panel { animation: esModalIn 260ms cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes esModalIn { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: none; } }
+.es-modal-x { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--es-line); background: transparent; color: var(--es-dim); cursor: pointer; display: grid; place-items: center; transition: color 160ms ease, border-color 160ms ease; }
+.es-modal-x:hover { color: var(--es-ink); border-color: var(--es-ink); }
+.es-modal-x:focus-visible { outline: 2px solid var(--es-blue); outline-offset: 2px; }
+.es-modal-kicker { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--es-faint); margin: 0 0 10px; }
+.es-modal-title { font-family: var(--font-space); font-weight: 600; font-size: clamp(22px, 2.4vw, 28px); letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 10px; color: var(--es-ink); padding-right: 40px; }
+.es-modal-body { font-family: var(--font-plex); font-weight: 300; font-size: 15px; line-height: 1.55; color: var(--es-dim); margin: 0 0 22px; max-width: 46ch; }
+.es-modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; margin-bottom: 14px; }
+.es-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.es-field--wide { grid-column: 1 / -1; }
+.es-field > span { font-family: var(--font-plex); font-weight: 500; font-size: 13px; color: var(--es-dim); }
+.es-field > span em { font-style: normal; font-weight: 300; color: var(--es-faint); margin-left: 6px; }
+.es-field input, .es-field select, .es-field textarea { width: 100%; font-family: var(--font-plex); font-weight: 300; font-size: 15px; line-height: 1.4; color: var(--es-ink); background: var(--es-card); border: 1px solid var(--es-line); border-radius: 6px; padding: 11px 13px; outline: none; appearance: none; -webkit-appearance: none; transition: border-color 160ms ease, box-shadow 160ms ease; }
+.es-field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%23A7A9AF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 36px; cursor: pointer; }
+.es-field select:invalid { color: var(--es-faint); }
+.es-field textarea { resize: vertical; min-height: 84px; }
+.es-field :is(input, select, textarea):focus-visible { border-color: var(--es-blue); box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.18); }
+.es-field :is(input, select, textarea):disabled { opacity: 0.6; }
+.es-modal-more { font-family: var(--font-plex); font-weight: 400; font-size: 13.5px; color: var(--es-dim); background: none; border: 0; padding: 4px 0; margin: 0 0 8px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--es-line); }
+.es-modal-more:hover { color: var(--es-ink); }
+.es-modal-more:focus-visible { outline: 2px solid var(--es-blue); outline-offset: 3px; border-radius: 3px; }
+.es-modal-hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+.es-modal-error { font-family: var(--font-plex); font-size: 13.5px; line-height: 1.45; color: #FF8A7A; margin: 4px 0 12px; }
+:root[data-theme="light"] .es-modal-error { color: #B83A2A; }
+.es-modal-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 18px; }
+.es-modal-submit { font-family: var(--font-space); font-size: 13px; font-weight: 500; letter-spacing: 0.08em; background: var(--es-ink); color: var(--es-bg); border: 0; border-radius: 999px; padding: 14px 28px; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease; }
+.es-modal-submit:hover:not(:disabled) { background: var(--es-blue); color: #fff; box-shadow: 0 0 34px rgba(11, 95, 255, 0.42); }
+.es-modal-submit:focus-visible { outline: 2px solid var(--es-blue); outline-offset: 3px; }
+.es-modal-submit:disabled { cursor: default; opacity: 0.75; }
+.es-modal-dot { width: 7px; height: 7px; border-radius: 50%; background: #5B9BFF; box-shadow: 0 0 8px rgba(11, 95, 255, 0.9); animation: esPulse 1.2s ease-in-out infinite; }
+.es-modal-fine { font-family: var(--font-plex); font-weight: 300; font-size: 12.5px; color: var(--es-faint); }
+.es-modal-done { display: flex; flex-direction: column; align-items: flex-start; }
+.es-modal-done .es-modal-body { margin-bottom: 24px; }
+@media (max-width: 559.98px) {
+  .es-modal { padding: 12px; }
+  .es-modal-grid { grid-template-columns: 1fr; }
+  .es-modal-panel { max-height: calc(100dvh - 24px); }
+}
