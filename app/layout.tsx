@@ -8,7 +8,7 @@ import {
   IBM_Plex_Mono,
 } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider, themeScript } from "./theme";
+import { ThemeProvider, themeScript, scrollScript } from "./theme";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -115,6 +115,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: scrollScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
