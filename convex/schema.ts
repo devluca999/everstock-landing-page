@@ -2,7 +2,7 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 /**
- * Design-partner intake. One row per request; a repeat submission from the same
+ * Founding-partner intake. One row per request; a repeat submission from the same
  * email updates the existing row (and bumps `submissions`) instead of duplicating it,
  * so the list you reach out from stays one-line-per-person.
  */

@@ -31,7 +31,7 @@ export default function Footer() {
           <div style={col}>
             <span style={head}>GET STARTED</span>
             <a href="#request" style={link}>Request access</a>
-            <a href="#request" style={link}>Design partner program</a>
+            <a href="#request" style={link}>Founding partner program</a>
           </div>
           <div style={col}>
             <span style={head}>COMPANY</span>

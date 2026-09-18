@@ -192,7 +192,7 @@ export default function Home() {
                 <ContractGraph />
                 <div id="request" className="es-cta" style={{ paddingTop: 6 }}>
                   <PrimaryCta href="#request">Request access</PrimaryCta>
-                  <span style={{ fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: 14, color: "var(--es-faint)" }}>Mid-market distributors · Design partners only</span>
+                  <span style={{ fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: 14, color: "var(--es-faint)" }}>Mid-market distributors · Founding partners only</span>
                 </div>
               </div>
             </div>
@@ -277,7 +277,7 @@ export default function Home() {
                 You set the thresholds and the specs. Everstock watches the prices, chases the quotes, and drafts the paperwork, then puts a proposal in your queue for a yes or a no.
               </p>
               <p style={{ ...body, color: "var(--es-faint)", fontSize: "clamp(14px,1.35vw,17px)", margin: 0, maxWidth: 560 }}>
-                We&rsquo;re onboarding a small group of mid-market distributors as design partners.
+                We&rsquo;re onboarding a small group of mid-market distributors as founding partners.
               </p>
               <div className="es-cta" style={{ marginTop: 16, justifyContent: "center" }}>
                 <PrimaryCta href="#request">Request access</PrimaryCta>

@@ -40,7 +40,7 @@ export default function Hero() {
 
       <div style={{ display: "flex", alignItems: "center", gap: 9, marginTop: 22 }}>
         <span aria-hidden="true" style={{ display: "block", width: 6, height: 6, borderRadius: "50%", background: "#5B9BFF", boxShadow: "0 0 8px rgba(11,95,255,.9)", animation: "esPulse 2.6s ease-in-out infinite" }} />
-        <span style={{ fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: 12.5, color: "var(--es-faint)" }}>Currently onboarding design partners</span>
+        <span style={{ fontFamily: "var(--font-plex)", fontWeight: 300, fontSize: 12.5, color: "var(--es-faint)" }}>Currently onboarding founding partners</span>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginTop: "clamp(48px,7vh,96px)" }}>

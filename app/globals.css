@@ -567,6 +567,13 @@ main > footer > * { position: relative; z-index: 1; }
 .es-field input, .es-field select, .es-field textarea { width: 100%; font-family: var(--font-plex); font-weight: 300; font-size: 15px; line-height: 1.4; color: var(--es-ink); background: var(--es-card); border: 1px solid var(--es-line); border-radius: 6px; padding: 11px 13px; outline: none; appearance: none; -webkit-appearance: none; transition: border-color 160ms ease, box-shadow 160ms ease; }
 .es-field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%23A7A9AF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 36px; cursor: pointer; }
 .es-field select:invalid { color: var(--es-faint); }
+/* The native option list is drawn by the UA in its own colour scheme, not from the
+   page's tokens: without a matching color-scheme it paints light text on a white
+   popup in dark mode (invisible). Declare the scheme per theme and paint the options. */
+.es-field select { color-scheme: dark; }
+:root[data-theme="light"] .es-field select { color-scheme: light; }
+.es-field select option { background: var(--es-bg); color: var(--es-ink); font-weight: 400; }
+.es-field select option:disabled { color: var(--es-faint); }
 .es-field textarea { resize: vertical; min-height: 84px; }
 .es-field :is(input, select, textarea):focus-visible { border-color: var(--es-blue); box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.18); }
 .es-field :is(input, select, textarea):disabled { opacity: 0.6; }

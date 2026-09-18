@@ -147,12 +147,12 @@ export default function RequestAccess() {
           <div className="es-modal-done" role="status">
             <p className="es-modal-kicker">Request received</p>
             <h2 id="ra-title" className="es-modal-title">{repeat ? "You're already on the list." : "You're on the list."}</h2>
-            <p className="es-modal-body">{repeat ? "We've noted the update and will be in touch." : "We're onboarding a small group of mid-market distributors as design partners. We'll be in touch."}</p>
+            <p className="es-modal-body">{repeat ? "We've noted the update and will be in touch." : "We're onboarding a small group of mid-market distributors as founding partners. We'll be in touch."}</p>
             <button type="button" className="es-modal-submit" onClick={close}>Done</button>
           </div>
         ) : (
           <form onSubmit={onSubmit} noValidate>
-            <p className="es-modal-kicker">Design partner access</p>
+            <p className="es-modal-kicker">Founding partner access</p>
             <h2 id="ra-title" className="es-modal-title">Request access</h2>
             <p className="es-modal-body">Tell us who you are and what you run. We&rsquo;ll reach out to set up a first conversation.</p>
 
@@ -170,7 +170,7 @@ export default function RequestAccess() {
                 <input name="company" type="text" autoComplete="organization" required minLength={2} maxLength={160} disabled={busy} />
               </label>
               <label className="es-field">
-                <span>What you run today</span>
+                <span>What do you use today?</span>
                 <select name="stack" required defaultValue="" disabled={busy}>
                   {STACKS.map((s) => <option key={s.value} value={s.value} disabled={s.value === ""}>{s.label}</option>)}
                 </select>

@@ -10,8 +10,10 @@
 
 import type * as accessRequests from "../accessRequests.js";
 import type * as admin from "../admin.js";
+import type * as brain from "../brain.js";
 import type * as notify from "../notify.js";
 import type * as notifyData from "../notifyData.js";
+import type * as stacks from "../stacks.js";
 
 import type {
   ApiFromModules,
@@ -22,8 +24,10 @@ import type {
 declare const fullApi: ApiFromModules<{
   accessRequests: typeof accessRequests;
   admin: typeof admin;
+  brain: typeof brain;
   notify: typeof notify;
   notifyData: typeof notifyData;
+  stacks: typeof stacks;
 }>;
 
 /**

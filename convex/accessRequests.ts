@@ -1,8 +1,8 @@
 import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { ConvexError, v } from "convex/values";
+import { STACKS } from "./stacks";
 
-export const STACKS = ["netsuite", "epicor-p21", "sap-b1", "spreadsheets", "other"] as const;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const clip = (s: string, n: number) => s.trim().slice(0, n);
 
@@ -53,6 +53,8 @@ export const submit = mutation({
         submissions: existing.submissions + 1,
         updatedAt: now,
       });
+      // refresh the brain page with the latest submission
+      await ctx.scheduler.runAfter(0, internal.brain.syncRequest, { id: existing._id });
       return { id: existing._id, repeat: true };
     }
 
@@ -72,8 +74,9 @@ export const submit = mutation({
       createdAt: now,
       updatedAt: now,
     });
-    // the ping is best-effort and never blocks the submission
+    // the ping and the brain mirror are best-effort and never block the submission
     await ctx.scheduler.runAfter(0, internal.notify.newRequest, { id });
+    await ctx.scheduler.runAfter(0, internal.brain.syncRequest, { id });
     return { id, repeat: false };
   },
 });

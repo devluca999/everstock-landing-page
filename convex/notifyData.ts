@@ -24,3 +24,9 @@ export const get = internalQuery({
     return { name, email, company, stack, phone, note, source, referrer };
   },
 });
+
+/** The whole row, for the brain mirror (it records status, counts and timestamps too). */
+export const getRow = internalQuery({
+  args: { id: v.id("accessRequests") },
+  handler: async (ctx, { id }) => ctx.db.get(id),
+});

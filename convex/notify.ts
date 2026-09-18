@@ -3,6 +3,7 @@
 import { internalAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { v } from "convex/values";
+import { stackLabel } from "./stacks";
 
 /**
  * Best-effort ping when a new request lands. Two optional channels, both read from the
@@ -17,11 +18,10 @@ export const newRequest = internalAction({
   handler: async (ctx, { id }) => {
     const r = await ctx.runQuery(internal.notifyData.get, { id });
     if (!r) return null;
-    const stack: Record<string, string> = { netsuite: "NetSuite", "epicor-p21": "Epicor Prophet 21", "sap-b1": "SAP Business One", spreadsheets: "Excel / spreadsheets", other: "Other" };
     const lines = [
       `${r.name} · ${r.company}`,
       r.email,
-      `Runs: ${stack[r.stack] ?? r.stack}`,
+      `Uses: ${stackLabel(r.stack)}`,
       r.phone ? `Phone: ${r.phone}` : null,
       r.note ? `Note: ${r.note}` : null,
       r.source ? `From: ${r.source}${r.referrer ? ` · ref ${r.referrer}` : ""}` : null,
