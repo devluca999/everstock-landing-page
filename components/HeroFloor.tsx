@@ -37,7 +37,14 @@ type Crane = {
 const FRAME_MS = 31; // the floor is atmosphere: ~30fps is plenty and halves its cost
 const FRAME_MS_PHONE = 50; // blurred imagery on a small screen: 20fps reads the same
 const BASE_K = 1 / 3; // scene resolution: 1/5 upscaled read as blocky smear on retina; 1/3 stays cheap and clean
-const BASE_K_PHONE = 1 / 4; // phones: the field sits under the copy and Lighthouse's mobile blocking budget is tight
+// Phones size the buffer by a pixel budget, not a fraction of the viewport. The camera's
+// focal length scales with buffer WIDTH, so a fraction that reads as "16-bit with detail"
+// on a 1440px desktop (480px buffer) gave a ~100px buffer on a 390px phone: a crate was
+// six pixels wide before the blur passes and nothing was legible. A fixed budget keeps
+// the per-frame blit cost about where the desktop's is (≈480×300) while the buffer grows
+// to ~280×600 on a phone; 20fps there keeps the per-second cost below desktop's.
+const PHONE_PIXELS = 170_000;
+const K_PHONE_MIN = 1 / 4, K_PHONE_MAX = 1;
 const TF = 30, TN = -2.1, FLOOR = -0.8, SK = -0.2, GATE = 3.2;
 const BELT = 0.55, HIGH = 3.4, PICK_T = 1.6;
 
@@ -57,7 +64,8 @@ const newCrate = (t: number): Crate => ({
  * lattice — deck, rollers, sodium pools, a scanner gate that always looks blue, crates
  * that pick up a transient green (pass) or deep-orange (deny) glow that dissipates to
  * exactly zero, and an articulated pick-and-place arm that stops the belt and lifts
- * the denied crate out of frame. Drawn at 1/5 resolution into an offscreen scene, then
+ * the denied crate out of frame. Drawn at 1/3 resolution on desktop (a fixed pixel
+ * budget on phones, see PHONE_PIXELS) into an offscreen scene, then
  * composited into ONE plain canvas: the scene, a soft pass confined to the outer zone
  * by a radial weight, and the horizontal/vertical fades that hand the field off to the
  * solid graphite on the left. All of that is baked into the small buffer, so the
@@ -70,7 +78,7 @@ const newCrate = (t: number): Crate => ({
  * blur filter (canvas blur filters were most of the frame). The solid field / scrim
  * layers are plain CSS.
  *
- * Runtime rules: ~30fps cap (24 on phones), paused while the tab is hidden or the hero
+ * Runtime rules: ~30fps cap (20 on phones), paused while the tab is hidden or the hero
  * is scrolled away, one static frame under prefers-reduced-motion.
  */
 export default function HeroFloor() {
@@ -114,7 +122,8 @@ export default function HeroFloor() {
       // keeps the viewport's aspect: the lattice cutout is computed at viewport size and the
       // two have to line up
       const vw = window.innerWidth, vh = window.innerHeight;
-      const k = Math.max(phone ? BASE_K_PHONE : BASE_K, 96 / vw, 64 / vh);
+      const base = phone ? Math.min(K_PHONE_MAX, Math.max(K_PHONE_MIN, Math.sqrt(PHONE_PIXELS / (vw * vh)))) : BASE_K;
+      const k = Math.max(base, 96 / vw, 64 / vh);
       const W = Math.round(vw * k), H = Math.round(vh * k);
       a.width = scene.width = soft.width = bg.width = radial.width = fades.width = W;
       a.height = scene.height = soft.height = bg.height = radial.height = fades.height = H;
