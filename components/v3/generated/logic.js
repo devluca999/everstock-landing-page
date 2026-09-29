@@ -2200,7 +2200,8 @@ class Component extends DCLogic {
       grid(84, 0.09);
       // fitment scene, left of the box: every callout matches what is drawn (8 grooves, 16 teeth)
       if (side > 230) {
-        const ks = Math.max(0.6, Math.min(1, side / 420)), L0 = side * 0.14, sy2 = cy + 62 * ks, T6 = red ? 3.2 : t % 6;
+        const ks = Math.max(0.6, Math.min(1, side / 420)), sy2 = cy + 62 * ks, T6 = red ? 3.2 : t % 6;
+        const L0 = (() => { g.font = '500 10px "Geist Mono", ui-monospace, monospace'; const mw = (s) => g.measureText(s).width; const reach = Math.max(130 * ks, 140 * ks + 22 + mw('MODULE: 1.5'), 125 * ks + 6 + mw('FITS: M12 × 2.0')); return Math.max(12, side - Math.max(30, side * 0.16) - reach); })();
         const eio = (x) => (x < 0.5 ? 2 * x * x : 1 - 2 * (1 - x) * (1 - x));
         const headW = 18 * ks, shL = 70 * ks, nutW = 22 * ks, gapN = 20 * ks, maxT = shL * 0.58;
         const trav = T6 < 0.6 ? 0 : T6 < 2.6 ? eio((T6 - 0.6) / 2) * maxT : T6 < 4.4 ? maxT : T6 < 5.6 ? maxT * (1 - eio((T6 - 4.4) / 1.2)) : 0;
