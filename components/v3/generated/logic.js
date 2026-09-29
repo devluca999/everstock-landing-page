@@ -414,10 +414,13 @@ class Component extends DCLogic {
       gx[i] = Math.cos(th) * r; gy[i] = y; gz[i] = Math.sin(th) * r;
       const x = gx[i], z = gz[i];
       const f = Math.sin(2.3 * x + 0.4) * Math.cos(1.9 * y - 0.5) + 0.62 * Math.sin(3.1 * z + 1.4 * x + 0.8) + 0.34 * Math.sin(5.3 * y + 2.6 * z) + 0.22 * Math.cos(7.1 * x - 3.3 * y);
-      land[i] = Math.abs(y) < 0.9 && f > 0.42 ? 1 : 0;
+      land[i] = Math.abs(y) < 0.9 && f > 0.3 ? 1 : 0;
     }
     const ct = Math.cos(this.CG.TILT), st = Math.sin(this.CG.TILT), F = [];
-    for (let i = 0; i < NG; i++) { const y2 = gy[i] * ct - gz[i] * st, z2 = gy[i] * st + gz[i] * ct; if (z2 > 0.08 && land[i]) F.push({ i, u: gx[i], v: -y2 }); }
+    // face the globe's densest continent side toward the viewer
+    let yaw0 = 0, bestN = -1;
+    for (let q = 0; q < 48; q++) { const a = (q / 48) * Math.PI * 2, ca = Math.cos(a), sa = Math.sin(a); let n = 0; for (let i = 0; i < NG; i++) { if (!land[i]) continue; const z1 = -gx[i] * sa + gz[i] * ca, z2 = gy[i] * st + z1 * ct; if (z2 > 0.2) n++; } if (n > bestN) { bestN = n; yaw0 = a; } }
+    { const ca = Math.cos(yaw0), sa = Math.sin(yaw0); for (let i = 0; i < NG; i++) { const x1 = gx[i] * ca + gz[i] * sa, z1 = -gx[i] * sa + gz[i] * ca, y2 = gy[i] * ct - z1 * st, z2 = gy[i] * st + z1 * ct; if (z2 > 0.08 && land[i]) F.push({ i, u: x1, v: -y2 }); } }
     const { HOLD, SPREAD } = this.CG;
     const P = pts.map((p) => {
       const u = (p.x - 320) / 330, v = (p.y - 215) / 200;
@@ -425,7 +428,7 @@ class Component extends DCLogic {
       hit[best.i] = 1;
       return { x: p.x, y: p.y, tr: p.tr, tg: best.i, dl: HOLD + (p.x / 640) * SPREAD * 0.78 + rnd() * SPREAD * 0.22, amp: 14 + rnd() * 44, ph: rnd() * 6.283 };
     });
-    this.cg = { C, P, gx, gy, gz, land, hit, NG };
+    this.cg = { C, P, gx, gy, gz, land, hit, NG, yaw0 };
     if ('IntersectionObserver' in window) {
       this.ioC = new IntersectionObserver((es) => es.forEach((en) => { this.cgVis = en.isIntersecting; if (en.isIntersecting && en.intersectionRatio >= 0.4 && !this.cgStart) this.cgStart = performance.now() / 1000; }), { threshold: [0, 0.4] });
       this.ioC.observe(cv);
@@ -453,7 +456,7 @@ class Component extends DCLogic {
       const T0 = t - this.cgStart; cyc = Math.floor(T0 / PER); tau = T0 - cyc * PER;
       if (tau < HC) T = 0; else if (tau < HC + MO) T = HOLD + (tau - HC); else if (tau < HC + MO + HG) T = END + (tau - HC - MO); else { rev = true; Tr = tau - HC - MO - HG; T = END + HG; }
     }
-    const angEnd = rev ? HG * 0.12 : 0, pca = Math.cos(angEnd), psa = Math.sin(angEnd);
+    const sway = (s2) => Math.sin(s2 * 0.55) * 0.28, angEnd = (this.cg ? this.cg.yaw0 : 0) + (rev ? sway(HG) : 0), pca = Math.cos(angEnd), psa = Math.sin(angEnd);
     const k = Math.min(w / 640, hh / 400) * 0.96, ox = (w - 640 * k) / 2, oy = (hh - 400 * k) / 2;
     const cx = w / 2, cy = hh / 2, Rg = Math.min(hh * 0.34, w / 3.4), ds = Math.max(1.4, cg.C * k * 0.72);
     const cgDK = this.effDark('light'), INK = (a) => (cgDK ? 'rgba(236,234,228,' : 'rgba(22,23,27,') + Math.max(0, Math.min(1, a)).toFixed(3) + ')';
@@ -475,13 +478,13 @@ class Component extends DCLogic {
       ORB.forEach((o) => { if (o.depth < 0 && Math.hypot(o.x - cx, o.y - cy) > Rg * 1.04) this.cgIcon(g, o, Rg, 0.45 * oa); });
     }
     if (T > HOLD + SPREAD * 0.5) {
-      const ga = rev ? clamp(1 - Tr / (MO * 0.6)) : T >= END ? 1 : clamp((T - (HOLD + SPREAD * 0.5)) / (END - HOLD - SPREAD * 0.5)), ang = T > END && !red ? (T - END) * 0.12 : 0, ca = Math.cos(ang), sa = Math.sin(ang);
+      const ga = rev ? clamp(1 - Tr / (MO * 0.6)) : T >= END ? 1 : clamp((T - (HOLD + SPREAD * 0.5)) / (END - HOLD - SPREAD * 0.5)), ang = cg.yaw0 + (T > END && !red ? sway(Math.min(T - END, HG)) : 0), ca = Math.cos(ang), sa = Math.sin(ang);
       for (let i = 0; i < cg.NG; i++) {
         if ((T < END || rev) && cg.hit[i]) continue;
         const p = proj(i, ca, sa); if (p[2] <= 0) continue;
         const sh = 0.3 + 0.7 * p[2];
         if (cg.land[i]) { g.fillStyle = INK(0.84 * sh * (T >= END && !rev ? 1 : ga)); g.fillRect(Math.round(p[0] - ds / 2), Math.round(p[1] - ds / 2), ds, ds); }
-        else { const s2 = ds * 0.6; g.fillStyle = INK(0.2 * sh * ga); g.fillRect(Math.round(p[0] - s2 / 2), Math.round(p[1] - s2 / 2), s2, s2); }
+        else { const s2 = ds * 0.62; g.fillStyle = INK(0.3 * sh * ga); g.fillRect(Math.round(p[0] - s2 / 2), Math.round(p[1] - s2 / 2), s2, s2); }
       }
     }
     if (T < END || rev) {
@@ -1259,25 +1262,40 @@ class Component extends DCLogic {
     if (!this.jBirdEl || !this.jBirdEl.isConnected) this.jBirdEl = cont && cont.querySelector('[data-jbird]');
     const bird = this.jBirdEl;
     if (bird && !red && ctx) {
+      // the bird flies on its own clock; the scroll only chooses which beat it patrols
       const A6 = this.jArts, cr = ctx.cr, bs = this.state.wide ? 1 : 0.72, c01 = (v) => Math.max(0, Math.min(1, v)), ez = (x) => (x < 0.5 ? 2 * x * x : 1 - 2 * (1 - x) * (1 - x));
       const rc2 = (i) => { const r = A6[i].el.getBoundingClientRect(); return { x: r.left - cr.left, y: r.top - cr.top, w: r.width, h: r.height }; };
-      const fly = (i, u) => { const R = rc2(i); return [R.x + R.w * (0.98 - 1.02 * c01(u)) - 30 * bs, R.y + R.h * 0.1]; };
+      const lane = (i, u) => { const R = rc2(i), span = Math.max(40, R.w - 150 * bs); return [R.x + 10 + c01(u) * span, R.y + R.h * 0.1]; };
       const nest = () => { const R = rc2(5); return [R.x + this.nestAt[0] * R.w - 18 * bs, R.y + this.nestAt[1] * R.h - 34 * bs]; };
-      const { stage, k, F } = ctx; let T = null, mode = 'fly', op = 1;
-      if (stage >= 0 && stage < 5) T = fly(stage, U[stage]);
-      else if (stage === 5) { const u = U[5]; if (u < 0.5) { const a = fly(5, 0), b = nest(), e = ez(u / 0.5); T = [a[0] + (b[0] - a[0]) * e, a[1] + (b[1] - a[1]) * e - Math.sin(Math.PI * e) * 30]; } else { T = nest(); mode = 'nest'; } }
-      else if (k === 0) { T = fly(0, 0); op = c01(F[0] * 1.6 - 0.3); }
-      else if (k >= 6) { T = nest(); mode = 'nest'; }
-      else { const a = fly(k - 1, 1), b = fly(k, 0), e = ez(F[k]), R = rc2(k); T = [a[0] + (b[0] - a[0]) * e, a[1] + (b[1] - a[1]) * e + Math.sin(Math.PI * e) * R.h * 0.3]; }
-      const B = this.bS2 || (this.bS2 = { x: T[0], y: T[1], t });
+      const { stage, k, F } = ctx;
+      const beat = stage >= 0 ? stage : k === 0 ? 0 : k >= 6 ? 5 : F[k] > 0.5 ? k : k - 1;
+      const op = stage < 0 && k === 0 ? c01(F[0] * 1.6 - 0.3) : 1;
+      const B = this.bS3 || (this.bS3 = { beat, mode: beat === 5 ? 'nest' : 'patrol', u: 0.9, dir: -1, v: 1, t, x: 0, y: 0, init: false });
       const dt = Math.min(0.05, Math.max(0, t - B.t)); B.t = t;
-      const rate = this.birdHover ? 0.02 : 0.2; B.x += (T[0] - B.x) * rate; B.y += (T[1] - B.y) * rate;
-      const moving = Math.hypot(T[0] - B.x, T[1] - B.y) > 2, bob = mode === 'nest' ? Math.sin(t * 1.2) * 1 : Math.sin(t * 2.2) * 4 + (this.birdHover ? Math.sin(t * 5) * 1.5 : 0);
-      bird.style.transform = 'translate(' + B.x.toFixed(1) + 'px,' + (B.y + bob).toFixed(1) + 'px) scale(' + bs + ')';
+      if (!B.init) { const p = beat === 5 ? nest() : lane(beat, B.u); B.x = p[0]; B.y = p[1]; B.init = true; }
+      if (beat !== B.beat) { B.beat = beat; B.mode = 'transit'; B.fx = B.x; B.fy = B.y; B.t0 = t; B.entryU = beat === 5 ? null : 0.85; }
+      B.v += ((this.birdHover ? 0 : 1) - B.v) * Math.min(1, dt * 6);
+      let X = B.x, Y = B.y, mode = B.mode;
+      if (B.mode === 'transit') {
+        const dest = B.entryU == null ? nest() : lane(B.beat, B.entryU), f = c01((t - B.t0) / 1.3), e2 = ez(f);
+        B.dir = dest[0] >= B.fx ? 1 : -1;
+        X = B.fx + (dest[0] - B.fx) * e2; Y = B.fy + (dest[1] - B.fy) * e2 - Math.sin(Math.PI * e2) * 46 * bs;
+        if (f >= 1) { if (B.entryU == null) B.mode = 'nest'; else { B.mode = 'patrol'; B.u = B.entryU; B.dir = -1; } }
+      } else if (B.mode === 'patrol') {
+        const R = rc2(B.beat), span = Math.max(40, R.w - 150 * bs);
+        B.u += (dt * B.dir * B.v * 64) / span;
+        if (B.u <= 0) { B.u = 0; B.dir = 1; } else if (B.u >= 1) { B.u = 1; B.dir = -1; }
+        const p = lane(B.beat, B.u); X = p[0]; Y = p[1] + Math.sin(t * 2.2) * 4 + (this.birdHover ? Math.sin(t * 5) * 1.5 : 0);
+      } else { const p = nest(); X = p[0]; Y = p[1] + Math.sin(t * 1.2); B.dir = -1; }
+      B.x = X; B.y = Y; mode = B.mode;
+      bird.style.transform = 'translate(' + X.toFixed(1) + 'px,' + Y.toFixed(1) + 'px) scale(' + bs + ')';
       bird.style.opacity = String(op); bird.style.pointerEvents = op > 0.5 ? 'auto' : 'none';
-      bird.style.flexDirection = mode === 'nest' ? 'column' : 'row';
-      const str = bird.querySelector('[data-jstring]'); if (str) { if (mode === 'nest') { str.style.width = '1px'; str.style.height = '14px'; str.style.marginTop = '0px'; } else { str.style.width = '14px'; str.style.height = '1px'; str.style.marginTop = '10px'; } }
-      const im = bird.querySelector('img'), fr = mode === 'nest' && !moving && !this.birdHover ? 0 : Math.floor(t * (this.birdHover ? 11 : 7)) % 2, src = this.birdSrc[fr];
+      const nestM = mode === 'nest';
+      bird.style.flexDirection = nestM ? 'column' : B.dir > 0 ? 'row-reverse' : 'row';
+      const im = bird.querySelector('img'), str = bird.querySelector('[data-jstring]');
+      if (im) { im.style.transition = 'transform 200ms cubic-bezier(.2,.8,.25,1)'; im.style.transform = B.dir > 0 && !nestM ? 'scaleX(-1)' : 'scaleX(1)'; }
+      if (str) { if (nestM) { str.style.width = '1px'; str.style.height = '14px'; str.style.marginTop = '0px'; } else { str.style.width = '14px'; str.style.height = '1px'; str.style.marginTop = '10px'; } }
+      const fr = nestM && !this.birdHover ? 0 : Math.floor(t * (this.birdHover ? 11 : B.mode === 'transit' ? 10 : 7)) % 2, src = this.birdSrc[fr];
       if (im && im.getAttribute('src') !== src) im.setAttribute('src', src);
     } else if (bird) { bird.style.opacity = '0'; bird.style.pointerEvents = 'none'; }
     if (!this.jRcEl || !this.jRcEl.isConnected) this.jRcEl = A5.el.querySelector('[data-jreceipt]');
@@ -1957,6 +1975,56 @@ class Component extends DCLogic {
           }
           g.fill();
         }
+      }
+      // dithered fill helper: base colour, ordered-dither shade toward the lower right, dark object edge
+      const dfill = (path, bx, by, bw2, bh2, base, shade, k0, k1) => {
+        path(); g.fillStyle = base; g.fill();
+        g.save(); path(); g.clip(); g.fillStyle = shade;
+        for (let yy = Math.floor(by); yy < by + bh2; yy += 2) for (let xx = Math.floor(bx); xx < bx + bw2; xx += 2) { const d = k0 + k1 * (0.45 * ((xx - bx) / bw2) + 0.55 * ((yy - by) / bh2)); if (d > B8[(yy >> 1) & 7][(xx >> 1) & 7]) g.fillRect(xx, yy, 2, 2); }
+        g.restore(); path(); g.strokeStyle = '#2E3035'; g.lineWidth = 1; g.stroke();
+      };
+      const rrP = (x, y, w2, h2, r) => () => { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w2, h2, r); else g.rect(x, y, w2, h2); };
+      // drone, top-left, hovering (mirrors the engine block)
+      if (side > 200 && esF >= 0.42) {
+        const es = esF, bob = red ? 0 : Math.sin(t * 2.1) * 2.5 * es, dx0 = 44 + 80 * es, dy0 = 34 + 34 * es + bob;
+        const GR1 = '#6A6D74', GR2 = '#43464C', GR3 = '#8E9198';
+        const prop = (x, y) => {
+          const r = 27 * es, ph = red ? 0.6 : 0.5 + 0.5 * Math.sin(t * 31 + x);
+          g.fillStyle = 'rgba(70,73,80,0.9)';
+          for (let xx = Math.floor((x - r) / 2) * 2; xx < x + r; xx += 2) for (let yy = Math.floor((y - 4 * es) / 2) * 2; yy < y + 4 * es; yy += 2) { const nx = (xx - x) / r, ny = (yy - y) / (3.6 * es), dd = nx * nx + ny * ny; if (dd > 1) continue; const d = (0.18 + 0.3 * ph) * (1 - dd * 0.6) + (Math.abs(nx) > 0.82 ? 0.25 : 0); if (d > B8[(yy >> 1) & 7][(xx >> 1) & 7]) g.fillRect(xx, yy, 2, 2); }
+          dfill(rrP(x - 2.5 * es, y - 1.5 * es, 5 * es, 3 * es, 1), x - 3 * es, y - 2 * es, 6 * es, 4 * es, GR2, '#26282C', 0.2, 0.5);
+        };
+        [-1, 1].forEach((sg) => {
+          const mx = dx0 + sg * 50 * es, my = dy0 - 4 * es;
+          g.save(); g.lineCap = 'round'; g.strokeStyle = '#2E3035'; g.lineWidth = 5 * es; g.beginPath(); g.moveTo(dx0 + sg * 18 * es, dy0 + 2 * es); g.lineTo(mx, my + 6 * es); g.stroke(); g.strokeStyle = GR1; g.lineWidth = 3 * es; g.stroke(); g.restore();
+          dfill(rrP(mx - 5 * es, my, 10 * es, 10 * es, 2), mx - 5 * es, my, 10 * es, 10 * es, GR1, GR2, 0.15, 0.6);
+          g.fillStyle = '#2E3035'; g.fillRect(mx - 0.8, my - 5 * es, 1.6, 5 * es);
+          prop(mx, my - 6 * es);
+        });
+        dfill(rrP(dx0 - 22 * es, dy0 - 6 * es, 44 * es, 16 * es, 6 * es), dx0 - 22 * es, dy0 - 6 * es, 44 * es, 16 * es, GR1, GR2, 0.1, 0.75);
+        g.fillStyle = GR3; for (let xx = Math.floor(dx0 - 16 * es); xx < dx0 + 16 * es; xx += 2) if (B8[0][(xx >> 1) & 7] < 0.5) g.fillRect(xx, Math.round(dy0 - 4 * es), 2, 1);
+        g.fillStyle = '#08745A'; g.fillRect(Math.round(dx0 + 14 * es), Math.round(dy0 - 2 * es), 2, 2);
+        dfill(() => { g.beginPath(); g.arc(dx0, dy0 + 15 * es, 5.5 * es, 0, 7); }, dx0 - 6 * es, dy0 + 9 * es, 12 * es, 12 * es, GR2, '#26282C', 0.2, 0.6);
+        g.fillStyle = '#1B2A44'; g.beginPath(); g.arc(dx0 - 1, dy0 + 15 * es, 2.2 * es, 0, 7); g.fill(); g.fillStyle = 'rgba(210,225,255,0.9)'; g.fillRect(Math.round(dx0 - 2 * es), Math.round(dy0 + 13.5 * es), 1, 1);
+        g.save(); g.lineCap = 'round'; g.strokeStyle = GR2; g.lineWidth = 2; [-1, 1].forEach((sg) => { g.beginPath(); g.moveTo(dx0 + sg * 12 * es, dy0 + 10 * es); g.lineTo(dx0 + sg * 18 * es, dy0 + 26 * es); g.stroke(); }); g.lineWidth = 2.4; g.beginPath(); g.moveTo(dx0 - 26 * es, dy0 + 26 * es); g.lineTo(dx0 + 26 * es, dy0 + 26 * es); g.stroke(); g.restore();
+        g.fillStyle = DK ? 'rgba(0,0,0,0.5)' : 'rgba(22,23,27,0.22)'; const shY = dy0 - bob + 50 * es; for (let xx = Math.floor(dx0 - 26 * es); xx < dx0 + 26 * es; xx += 2) for (let yy = Math.floor(shY - 2); yy < shY + 3; yy += 2) { const nx = (xx - dx0) / (26 * es); if (1 - nx * nx > B8[(yy >> 1) & 7][(xx >> 1) & 7] + 0.2) g.fillRect(xx, yy, 2, 2); }
+        ln(dx0 + 30 * es, dy0 + 26 * es, dx0 + 40 * es, dy0 + 40 * es, 0.4); bubble(6, dx0 + 40 * es + 9, dy0 + 46 * es); txt('DRONE · HOVER', dx0 + 40 * es + 24, dy0 + 46 * es, 0.6);
+      }
+      // dithered chequered flag where the car is headed
+      {
+        const kc2 = Math.max(0.6, Math.min(1.05, W / 1300)), yR2 = Math.min(H - 34, cy + bh / 2 + 10), fx2 = W - Math.max(48, 64 * kc2), pole = 76 * kc2, cells = 2, fw = 44 * kc2, fh = 26 * kc2;
+        g.save(); g.lineCap = 'round'; g.strokeStyle = '#2E3035'; g.lineWidth = 3.4; g.beginPath(); g.moveTo(fx2, yR2); g.lineTo(fx2, yR2 - pole); g.stroke(); g.strokeStyle = '#8E9198'; g.lineWidth = 1.6; g.stroke(); g.restore();
+        disc(fx2, yR2 - pole - 2, 2.6, '#C9A64A');
+        for (let xx = 0; xx < fw; xx += cells) {
+          const c = Math.floor((xx / fw) * 6), fr = xx / fw, wv = red ? 0 : Math.sin(t * 6 - fr * 5) * 3 * kc2 * fr, fold = red ? 0 : Math.cos(t * 6 - fr * 5) * fr;
+          for (let yy = 0; yy < fh; yy += cells) {
+            const r2 = Math.floor((yy / fh) * 4), dark = (c + r2) % 2 === 0, X = Math.round(fx2 + 1 + xx), Y = Math.round(yR2 - pole + 1 + yy + wv), bx8 = B8[(Y >> 1) & 7][(X >> 1) & 7];
+            let col = dark ? '#1E2024' : '#F4F2EC';
+            if (fold > 0.25 && bx8 < fold * 0.6) col = dark ? '#3A3C42' : '#C9C6BF';
+            g.fillStyle = col; g.fillRect(X, Y, cells, cells);
+          }
+        }
+        g.fillStyle = DK ? 'rgba(0,0,0,0.45)' : 'rgba(22,23,27,0.2)'; for (let xx = fx2 - 10; xx < fx2 + 14; xx += 2) if (B8[((yR2 + 2) >> 1) & 7][(xx >> 1) & 7] < 0.6) g.fillRect(Math.round(xx), Math.round(yR2 + 1), 2, 2);
       }
       if (W > 760) { const tx = W - 28 - 220, ty = H - 28 - 50; rr(tx, ty, 220, 50, 0, 0.45); ln(tx, ty + 25, tx + 220, ty + 25, 0.3); txt('FRONT BRAKE ASSEMBLY', tx + 12, ty + 13, 0.7); txt('EXPLODED · SCALE 1:4 · REV C', tx + 12, ty + 38, 0.52); }
     } else if (i === 1) {
