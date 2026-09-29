@@ -1,0 +1,2 @@
+/* The dc-runtime's standalone page CSS (FULL_PAGE_CSS in mockup/v3/support.js). */
+html,body{height:100%;margin:0}#dc-root,#dc-root>.sc-host{height:100%}

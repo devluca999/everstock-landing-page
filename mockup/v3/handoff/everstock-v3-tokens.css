@@ -1,0 +1,77 @@
+/* Everstock v3 marketing site tokens. Section themes are fixed per section (not a global toggle):
+   graphite: hero, stakes, final CTA, footer. eggshell: value, industries, sign-off, plan, journey, founders, price file. */
+:root {
+  /* type */
+  --v3-font-sans: 'Inter', system-ui, sans-serif;
+  --v3-font-mono: 'Geist Mono', ui-monospace, monospace;
+  --v3-display: clamp(48px, 7.2vw, 108px);   /* hero H1, final CTA H2 */
+  --v3-h2: clamp(32px, 4vw, 56px);
+  --v3-body: clamp(16px, 1.35vw, 19px);
+  --v3-label: 10.5px;                        /* mono micro-label, uppercase, tracking 0.08em */
+
+  /* graphite (dark) */
+  --v3-g-bg: #16171B;
+  --v3-g-raised: #1D1E23;
+  --v3-g-ink: #FAF9F5;
+  --v3-g-dim: rgba(242, 241, 237, 0.72);
+  --v3-g-faint: rgba(242, 241, 237, 0.50);
+  --v3-g-hair: rgba(242, 241, 237, 0.10);
+  --v3-g-line: rgba(242, 241, 237, 0.18);
+  --v3-g-guide: rgba(242, 241, 237, 0.34);
+  --v3-g-grid: rgba(226, 222, 214, 0.045);   /* section lattice; hero uses 0.065 */
+
+  /* eggshell (light) */
+  --v3-e-bg: #FAF7F1;
+  --v3-e-raised: #F3F0E9;
+  --v3-e-ink: #101115;
+  --v3-e-dim: rgba(22, 23, 27, 0.72);
+  --v3-e-faint: rgba(22, 23, 27, 0.56);
+  --v3-e-hair: rgba(22, 23, 27, 0.10);
+  --v3-e-line: rgba(22, 23, 27, 0.20);
+  --v3-e-guide: rgba(22, 23, 27, 0.34);
+  --v3-e-grid: rgba(18, 18, 20, 0.07);
+
+  /* signal + state (blue only ever means "Everstock is doing something") */
+  --v3-signal: #0B5FFF;           /* on eggshell and on label paper */
+  --v3-signal-on-dark: #4D8BFF;   /* text/dots on graphite */
+  --v3-pass: #08745A;             /* on eggshell / paper */
+  --v3-pass-on-dark: #2FC49B;
+  --v3-deny: #C46620;             /* denied or a problem; text on eggshell #A3511A */
+  --v3-deny-text-light: #A3511A;
+  --v3-stamp-ink: #2B2C31;        /* lifecycle stamps: Shipped, Arriving, Received, Stocked, Sold */
+
+  /* box palette: the only values the ordered dither may emit */
+  --v3-kraft-top: #A8845C;
+  --v3-kraft-front: #845F41;
+  --v3-kraft-end: #6E5238;
+  --v3-tape: rgba(214, 200, 172, 0.85);   /* composited on top face: #CFBEA0 */
+  --v3-label: rgba(232, 228, 218, 0.90);  /* composited on front face: #DED7CB (use for HTML label backgrounds on boxes) */
+  --v3-seam: rgba(70, 50, 32, 0.50);
+  --v3-shadow-dark: #0B0C0F;
+  --v3-shadow-light: #2A2B30;
+  --v3-paper: #E8E4DA;                    /* standalone paper (slips, spec labels), not on a box */
+
+  /* grid */
+  --v3-lattice: 84px;
+  --v3-dither-cell: 2px;                  /* one Bayer 8x8 cell = 2 CSS px */
+  --v3-content: 1280px;
+  --v3-breakpoint: 900px;                 /* below: single column, straight journey path */
+
+  /* motion: ONE curve site-wide */
+  --v3-ease: cubic-bezier(.2, .8, .25, 1);
+  --v3-dur-press: 110ms;
+  --v3-dur-stamp: 140ms;
+  --v3-dur-ui: 220ms;
+  --v3-dur-reveal: 420ms;
+  --v3-dur-xfade: 520ms;
+  --v3-dur-travel: 820ms;
+
+  /* radii */
+  --v3-r-btn: 8px;
+  --v3-r-stamp: 3px;
+  --v3-r-label: 4px;
+  --v3-r-frame: 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --v3-dur-press: 0ms; --v3-dur-stamp: 0ms; --v3-dur-ui: 0ms; --v3-dur-reveal: 0ms; --v3-dur-xfade: 0ms; --v3-dur-travel: 0ms; }
+}

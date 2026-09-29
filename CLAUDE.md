@@ -10,6 +10,16 @@ This repo is the marketing/landing site, live at **tryeverstock.com**, deployed 
 
 Primary audience for the site: the economic buyer (owner/GM/CFO of a mid-market distributor). Positioning stance is "stealth SaaS" — reads as sharp procurement software first; agentic-commerce vocabulary is reserved for category/investor-facing contexts, not the buyer-facing copy.
 
+## v3 port (2026-09-29): the live page, and what it supersedes
+
+The site now renders **Everstock v3** from Claude Design (project "Everstock site" → `Everstock v3.dc.html`), ported byte-for-byte. The design files live in `mockup/v3/` (the page, the Foundations sheet, the handoff spec + tokens, and the dc-runtime `support.js`). **Where v3 and the older sections of this file disagree (graphite-only hero title system, beams, nav pills, section panels, copy, section order, fonts), v3 wins**; those sections describe v2 and are kept only as history. The Request-access Convex pipeline below still applies.
+
+- **How the port works.** `npm run port:v3` (`scripts/port-dc.mjs`) compiles the design ahead of time using the dc-runtime's own code sliced out of `support.js`: `components/v3/generated/` holds the template as a node tree, the logic `<script>` verbatim, the helmet CSS and the `style-hover`/`-focus`/`-active` rules. `components/v3/DcPage.jsx` hosts it exactly like the runtime does (synchronous `logic.state` merges, `renderVals()` merged over props, `componentDidUpdate(prevProps)` with no prevState). **Never hand-edit `generated/`**: re-pull the design into `mockup/v3/` and re-run the port. Byte-exact pull: `render_preview` gives a serve URL; curl it and strip the two `data-omelette-injected` lines plus the blank line after (the byte count then matches `list_files`).
+- **Client-only render.** The design reads `window`/`document` inside `renderVals()`, so the page mounts with `ssr: false`; metadata, JSON-LD and the theme script stay server-rendered in `app/layout.tsx`. The page CSS is imported by `app/page.tsx` so the background is right before JS arrives.
+- **Known design-side quirk, kept on purpose:** the logic's `componentDidUpdate(pp, ps)` reads `ps.modal`, but the runtime never passes prevState, so it throws on every update in Claude Design too (the modal's scroll lock/autofocus never run). The host swallows it the same way. Fix it in the design, not here.
+- **Deliberate deviations from the design (all in the port script or the host, never in generated code):** the guardrail video uses the repo's upscaled `/videos/beat3-approve.mp4` instead of the pre-upscale CloudFront original (same decision as v2); the access modal and the price-file form also POST to `/api/request-access` (sources `early-access`, `founding-partner`, `price-file`; name/company fall back to the email's local part/domain because v3 does not ask for them). The price file itself is not uploaded yet (handoff open item).
+- **Parity check** used for the port: section offsets identical to the design at 1440×900 and 390×844, screenshot diffs ≤1% (animated canvases only).
+
 ## Tech stack
 
 Next.js (App Router) + TypeScript + Tailwind CSS.

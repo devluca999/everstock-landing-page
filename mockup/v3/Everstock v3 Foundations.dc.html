@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/tokens/fonts.css">
+<script src="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/_ds_bundle.js"></script>
+<style>
+html,body{margin:0;padding:0;background:#131418;}
+*{box-sizing:border-box;}
+a{color:inherit;text-decoration:none;}
+a:hover{color:inherit;}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="min-height:100vh;background-color:#131418;background-image:linear-gradient(rgba(226,222,214,0.045) 1px,transparent 1px),linear-gradient(90deg,rgba(226,222,214,0.045) 1px,transparent 1px);background-size:84px 84px;font-family:Inter,system-ui,sans-serif;color:#FAF9F5;--e-bg:#16171B;--e-raised:#1D1E23;--e-ink:#FAF9F5;--e-dim:rgba(242,241,237,0.72);--e-faint:rgba(242,241,237,0.5);--e-hair:rgba(242,241,237,0.10);--e-line:rgba(242,241,237,0.18);">
+<div style="max-width:1320px;margin:0 auto;padding:56px clamp(20px,4vw,56px) 120px;display:grid;gap:96px;">
+
+<header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;">
+  <div style="display:grid;gap:20px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <img src="assets/logo-mark-dark.svg" width="52" height="32" alt="">
+      <span style="font-weight:600;font-size:14px;letter-spacing:0.2em;color:#FAF9F5;">EVERSTOCK</span>
+    </div>
+    <h1 style="margin:0;font-weight:600;font-size:clamp(34px,4.4vw,56px);line-height:1.02;letter-spacing:-0.03em;">v3 foundations</h1>
+    <p style="margin:0;max-width:560px;font-size:16px;line-height:1.55;color:rgba(242,241,237,0.72);text-wrap:pretty;">Tokens, the box, the shipping label, the nav and the guide line. Every v3 section is built from these parts, in graphite and eggshell.</p>
+  </div>
+  <span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">{{ motionLabel }}</span>
+</header>
+
+<section data-screen-label="01 Tokens" style="display:grid;gap:28px;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px 40px;padding-top:18px;border-top:1px solid rgba(242,241,237,0.18);">
+    <div style="display:flex;gap:14px;align-items:baseline;"><span style="font-family:'Geist Mono',monospace;font-size:12px;color:rgba(242,241,237,0.5);">01</span><h2 style="margin:0;font-weight:600;font-size:26px;letter-spacing:-0.02em;">Tokens</h2></div>
+    <p style="margin:0;max-width:560px;font-size:15px;line-height:1.55;color:rgba(242,241,237,0.72);text-wrap:pretty;">Two themes built on the same lattice. Blue is a signal and never decorates. The three state colours only appear when something is being checked, has passed, or has been denied.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:20px;">
+    <div style="--e-bg:#16171B;--e-raised:#1D1E23;--e-ink:#FAF9F5;--e-dim:rgba(242,241,237,0.72);--e-faint:rgba(242,241,237,0.5);--e-hair:rgba(242,241,237,0.10);--e-line:rgba(242,241,237,0.18);background:var(--e-bg);color:var(--e-ink);border:1px solid var(--e-hair);border-radius:12px;padding:28px;display:grid;gap:30px;align-content:start;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;"><span style="font-weight:600;font-size:19px;letter-spacing:-0.01em;">Graphite</span><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Dark · flagship</span></div>
+      <div style="display:grid;gap:10px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Surfaces</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="height:76px;border-radius:8px;background:#16171B;border:1px solid var(--e-line);padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;"><span style="font-size:13px;font-weight:500;">Field</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#16171B</span></div>
+          <div style="height:76px;border-radius:8px;background:#1D1E23;border:1px solid var(--e-line);padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;"><span style="font-size:13px;font-weight:500;">Raised</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#1D1E23</span></div>
+        </div>
+      </div>
+      <div style="display:grid;gap:10px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Ink</span>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;"><span style="font-size:17px;font-weight:500;color:#FAF9F5;">Headlines and key values</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#FAF9F5</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;"><span style="font-size:15px;color:rgba(242,241,237,0.72);">Body copy and secondary text</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">242,241,237 · 0.72</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;"><span style="font-size:14px;color:rgba(242,241,237,0.5);">Labels and metadata only</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">242,241,237 · 0.50</span></div>
+      </div>
+      <div style="display:grid;gap:12px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Lines and lattice</span>
+        <div style="display:grid;grid-template-columns:84px minmax(0,1fr) auto;align-items:center;gap:14px;"><span style="font-size:13px;color:var(--e-dim);">Hairline</span><div style="height:1px;background:rgba(242,241,237,0.10);"></div><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">0.10</span></div>
+        <div style="display:grid;grid-template-columns:84px minmax(0,1fr) auto;align-items:center;gap:14px;"><span style="font-size:13px;color:var(--e-dim);">Line</span><div style="height:1px;background:rgba(242,241,237,0.18);"></div><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">0.18</span></div>
+        <div style="display:grid;grid-template-columns:84px minmax(0,1fr) auto;align-items:center;gap:14px;"><span style="font-size:13px;color:var(--e-dim);">Guide</span><div style="height:1px;background:rgba(242,241,237,0.34);"></div><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">0.34</span></div>
+        <canvas data-lattice="dark" style="width:100%;height:168px;display:block;border-radius:8px;border:1px solid var(--e-hair);background:#16171B;"></canvas>
+        <span style="font-size:12.5px;color:var(--e-faint);">Lattice · 84px pitch · v2 warp at half amplitude · rgba(226,222,214,0.11)</span>
+      </div>
+      <div style="display:grid;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);padding-bottom:10px;">Signal and state</span>
+        <div style="display:grid;grid-template-columns:10px 84px minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--e-hair);"><span style="width:7px;height:7px;border-radius:50%;background:#4D8BFF;box-shadow:0 0 0 1px rgba(77,139,255,0.35),0 0 10px rgba(77,139,255,0.75);"></span><span style="font-size:14px;font-weight:600;color:#4D8BFF;">Checking</span><span style="font-size:13.5px;color:var(--e-dim);">Everstock is doing something</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#4D8BFF</span></div>
+        <div style="display:grid;grid-template-columns:10px 84px minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--e-hair);"><span style="width:7px;height:7px;border-radius:50%;background:#2FC49B;box-shadow:0 0 0 1px rgba(47,196,155,0.3),0 0 9px rgba(47,196,155,0.6);"></span><span style="font-size:14px;font-weight:600;color:#2FC49B;">Passed</span><span style="font-size:13.5px;color:var(--e-dim);">Cleared a check or was approved</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#2FC49B</span></div>
+        <div style="display:grid;grid-template-columns:10px 84px minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--e-hair);border-bottom:1px solid var(--e-hair);"><span style="width:7px;height:7px;border-radius:50%;background:#C46620;box-shadow:0 0 0 1px rgba(196,102,32,0.35),0 0 9px rgba(196,102,32,0.6);"></span><span style="font-size:14px;font-weight:600;color:#C46620;">Denied</span><span style="font-size:13.5px;color:var(--e-dim);">Denied, or a problem</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#C46620</span></div>
+        <span style="font-size:12.5px;color:var(--e-faint);padding-top:10px;">Signal family #0B5FFF, lifted to #4D8BFF on graphite for legibility.</span>
+      </div>
+      <div style="display:grid;gap:12px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Type</span>
+        <div style="font-weight:600;font-size:44px;line-height:1.02;letter-spacing:-0.035em;">Makes, moves or sells.</div>
+        <div style="font-size:16px;line-height:1.55;color:var(--e-dim);max-width:420px;">Inter 600 for display, 400 for body at 16 over 1.55. Sentences stay short and specific.</div>
+        <div style="font-family:'Geist Mono',monospace;font-size:12px;color:var(--e-faint);">Geist Mono · SKU BR-4410-F · 480 units · 12 Mar</div>
+      </div>
+    </div>
+
+    <div style="--e-bg:#FAF7F1;--e-raised:#F3F0E9;--e-ink:#101115;--e-dim:rgba(22,23,27,0.72);--e-faint:rgba(22,23,27,0.56);--e-hair:rgba(22,23,27,0.10);--e-line:rgba(22,23,27,0.2);background:var(--e-bg);color:var(--e-ink);border:1px solid var(--e-hair);border-radius:12px;padding:28px;display:grid;gap:30px;align-content:start;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;"><span style="font-weight:600;font-size:19px;letter-spacing:-0.01em;">Eggshell</span><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Light · first class</span></div>
+      <div style="display:grid;gap:10px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Surfaces</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="height:76px;border-radius:8px;background:#FAF7F1;border:1px solid var(--e-line);padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;"><span style="font-size:13px;font-weight:500;">Field</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#FAF7F1</span></div>
+          <div style="height:76px;border-radius:8px;background:#F3F0E9;border:1px solid var(--e-line);padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;"><span style="font-size:13px;font-weight:500;">Raised</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#F3F0E9</span></div>
+        </div>
+      </div>
+      <div style="display:grid;gap:10px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Ink</span>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;"><span style="font-size:17px;font-weight:500;color:#101115;">Headlines and key values</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#101115</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;"><span style="font-size:15px;color:rgba(22,23,27,0.72);">Body copy and secondary text</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">22,23,27 · 0.72</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;"><span style="font-size:14px;color:rgba(22,23,27,0.56);">Labels and metadata only</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">22,23,27 · 0.56</span></div>
+      </div>
+      <div style="display:grid;gap:12px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Lines and lattice</span>
+        <div style="display:grid;grid-template-columns:84px minmax(0,1fr) auto;align-items:center;gap:14px;"><span style="font-size:13px;color:var(--e-dim);">Hairline</span><div style="height:1px;background:rgba(22,23,27,0.10);"></div><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">0.10</span></div>
+        <div style="display:grid;grid-template-columns:84px minmax(0,1fr) auto;align-items:center;gap:14px;"><span style="font-size:13px;color:var(--e-dim);">Line</span><div style="height:1px;background:rgba(22,23,27,0.2);"></div><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">0.20</span></div>
+        <div style="display:grid;grid-template-columns:84px minmax(0,1fr) auto;align-items:center;gap:14px;"><span style="font-size:13px;color:var(--e-dim);">Guide</span><div style="height:1px;background:rgba(22,23,27,0.34);"></div><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">0.34</span></div>
+        <canvas data-lattice="light" style="width:100%;height:168px;display:block;border-radius:8px;border:1px solid var(--e-hair);background:#FAF7F1;"></canvas>
+        <span style="font-size:12.5px;color:var(--e-faint);">Lattice · 84px pitch · v2 warp at half amplitude · rgba(18,18,20,0.12)</span>
+      </div>
+      <div style="display:grid;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);padding-bottom:10px;">Signal and state</span>
+        <div style="display:grid;grid-template-columns:10px 84px minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--e-hair);"><span style="width:7px;height:7px;border-radius:50%;background:#0B5FFF;box-shadow:0 0 0 1.5px rgba(255,255,255,0.95),0 0 0 2.5px rgba(11,95,255,0.35);"></span><span style="font-size:14px;font-weight:600;color:#0B5FFF;">Checking</span><span style="font-size:13.5px;color:var(--e-dim);">Everstock is doing something</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#0B5FFF</span></div>
+        <div style="display:grid;grid-template-columns:10px 84px minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--e-hair);"><span style="width:7px;height:7px;border-radius:50%;background:#08745A;box-shadow:0 0 0 1.5px rgba(255,255,255,0.95),0 0 0 2.5px rgba(8,116,90,0.35);"></span><span style="font-size:14px;font-weight:600;color:#08745A;">Passed</span><span style="font-size:13.5px;color:var(--e-dim);">Cleared a check or was approved</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#08745A</span></div>
+        <div style="display:grid;grid-template-columns:10px 84px minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--e-hair);border-bottom:1px solid var(--e-hair);"><span style="width:7px;height:7px;border-radius:50%;background:#C46620;box-shadow:0 0 0 1.5px rgba(255,255,255,0.95),0 0 0 2.5px rgba(196,102,32,0.35);"></span><span style="font-size:14px;font-weight:600;color:#A3511A;">Denied</span><span style="font-size:13.5px;color:var(--e-dim);">Denied, or a problem</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">#C46620 · text #A3511A</span></div>
+        <span style="font-size:12.5px;color:var(--e-faint);padding-top:10px;">Dots swap the glow for a tight contrast ring on eggshell.</span>
+      </div>
+      <div style="display:grid;gap:12px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Type</span>
+        <div style="font-weight:600;font-size:44px;line-height:1.02;letter-spacing:-0.035em;">Makes, moves or sells.</div>
+        <div style="font-size:16px;line-height:1.55;color:var(--e-dim);max-width:420px;">Inter 600 for display, 400 for body at 16 over 1.55. Sentences stay short and specific.</div>
+        <div style="font-family:'Geist Mono',monospace;font-size:12px;color:var(--e-faint);">Geist Mono · SKU OM-1L-12 · 60 cases · 14 Nov</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;gap:12px;">
+    <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Box palette · both themes · the only values the dither may use</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:10px;">
+      <div style="border:1px solid rgba(242,241,237,0.10);border-radius:8px;overflow:hidden;background:#16171B;"><div style="height:58px;background:#A8845C;"></div><div style="padding:10px 12px;display:grid;gap:3px;"><span style="font-size:13.5px;font-weight:500;">Top</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">#A8845C</span></div></div>
+      <div style="border:1px solid rgba(242,241,237,0.10);border-radius:8px;overflow:hidden;background:#16171B;"><div style="height:58px;background:#845F41;"></div><div style="padding:10px 12px;display:grid;gap:3px;"><span style="font-size:13.5px;font-weight:500;">Front</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">#845F41</span></div></div>
+      <div style="border:1px solid rgba(242,241,237,0.10);border-radius:8px;overflow:hidden;background:#16171B;"><div style="height:58px;background:#6E5238;"></div><div style="padding:10px 12px;display:grid;gap:3px;"><span style="font-size:13.5px;font-weight:500;">End</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">#6E5238</span></div></div>
+      <div style="border:1px solid rgba(242,241,237,0.10);border-radius:8px;overflow:hidden;background:#16171B;"><div style="height:58px;background:linear-gradient(rgba(214,200,172,0.85),rgba(214,200,172,0.85)),#A8845C;"></div><div style="padding:10px 12px;display:grid;gap:3px;"><span style="font-size:13.5px;font-weight:500;">Tape</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">214,200,172 · 0.85</span></div></div>
+      <div style="border:1px solid rgba(242,241,237,0.10);border-radius:8px;overflow:hidden;background:#16171B;"><div style="height:58px;background:linear-gradient(rgba(232,228,218,0.9),rgba(232,228,218,0.9)),#845F41;"></div><div style="padding:10px 12px;display:grid;gap:3px;"><span style="font-size:13.5px;font-weight:500;">Label</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">232,228,218 · 0.90</span></div></div>
+      <div style="border:1px solid rgba(242,241,237,0.10);border-radius:8px;overflow:hidden;background:#16171B;"><div style="height:58px;background:linear-gradient(rgba(70,50,32,0.5),rgba(70,50,32,0.5)),#CFBEA0;"></div><div style="padding:10px 12px;display:grid;gap:3px;"><span style="font-size:13.5px;font-weight:500;">Seam</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">70,50,32 · 0.50</span></div></div>
+      <div style="border:1px solid rgba(242,241,237,0.10);border-radius:8px;overflow:hidden;background:#16171B;"><div style="height:58px;display:grid;grid-template-columns:1fr 1fr;"><div style="background:#0B0C0F;"></div><div style="background:#2A2B30;"></div></div><div style="padding:10px 12px;display:grid;gap:3px;"><span style="font-size:13.5px;font-weight:500;">Graphite shadow</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">#0B0C0F · #2A2B30</span></div></div>
+    </div>
+    <span style="font-size:12.5px;color:rgba(242,241,237,0.5);">Dither: ordered 8×8 Bayer on a 2px cell. State colours join the palette only while a box carries state.</span>
+  </div>
+</section>
+
+<section data-screen-label="02 Box" style="display:grid;gap:28px;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px 40px;padding-top:18px;border-top:1px solid rgba(242,241,237,0.18);">
+    <div style="display:flex;gap:14px;align-items:baseline;"><span style="font-family:'Geist Mono',monospace;font-size:12px;color:rgba(242,241,237,0.5);">02</span><h2 style="margin:0;font-weight:600;font-size:26px;letter-spacing:-0.02em;">Box</h2></div>
+    <p style="margin:0;max-width:560px;font-size:15px;line-height:1.55;color:rgba(242,241,237,0.72);text-wrap:pretty;">The mascot. The same kraft crate that rides the v2 conveyor, drawn isometric in three sizes plus a flat front for mobile. State shows as dithered colour in the cardboard. Checking runs a slow scan down the box, and holds a still frame under reduced motion.</p>
+  </div>
+
+  <div style="--e-bg:#16171B;--e-ink:#FAF9F5;--e-dim:rgba(242,241,237,0.72);--e-faint:rgba(242,241,237,0.5);--e-hair:rgba(242,241,237,0.10);background:var(--e-bg);color:var(--e-ink);border:1px solid var(--e-hair);border-radius:12px;padding:28px;display:grid;gap:40px;overflow-x:auto;">
+    <span style="font-weight:600;font-size:19px;">Graphite</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:40px;">
+      <div style="display:grid;gap:16px;align-content:start;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Sizes · isometric</span>
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:36px;">
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="132" data-state="default" data-theme="dark" style="width:132px;display:block;image-rendering:pixelated;"></canvas><figcaption style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">S · 132</figcaption></figure>
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="200" data-state="default" data-theme="dark" style="width:200px;display:block;image-rendering:pixelated;"></canvas><figcaption style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">M · 200</figcaption></figure>
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="300" data-state="default" data-theme="dark" style="width:300px;display:block;image-rendering:pixelated;"></canvas><figcaption style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">L · 300</figcaption></figure>
+        </div>
+      </div>
+      <div style="display:grid;gap:16px;align-content:start;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">States · M</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:24px 20px;">
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="160" data-state="default" data-theme="dark" style="width:160px;display:block;image-rendering:pixelated;"></canvas><figcaption style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;color:var(--e-dim);">Default</figcaption></figure>
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="160" data-state="checking" data-theme="dark" style="width:160px;display:block;image-rendering:pixelated;"></canvas><figcaption style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:#4D8BFF;box-shadow:0 0 0 1px rgba(77,139,255,0.35),0 0 10px rgba(77,139,255,0.75);"></span>Checking</figcaption></figure>
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="160" data-state="passed" data-theme="dark" style="width:160px;display:block;image-rendering:pixelated;"></canvas><figcaption style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:#2FC49B;box-shadow:0 0 0 1px rgba(47,196,155,0.3),0 0 9px rgba(47,196,155,0.6);"></span>Passed</figcaption></figure>
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="160" data-state="denied" data-theme="dark" style="width:160px;display:block;image-rendering:pixelated;"></canvas><figcaption style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:#C46620;box-shadow:0 0 0 1px rgba(196,102,32,0.35),0 0 9px rgba(196,102,32,0.6);"></span>Denied</figcaption></figure>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:40px;align-items:end;">
+      <div style="display:grid;gap:16px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Flat front · mobile · copy on the label</span>
+        <div style="position:relative;width:340px;">
+          <canvas data-box="flat" data-w="340" data-state="checking" data-theme="dark" style="width:340px;display:block;image-rendering:pixelated;"></canvas>
+          <div data-flat-label="true" style="position:absolute;left:0;top:0;opacity:0;padding:12px 14px;display:grid;align-content:space-between;color:#1A1B1F;">
+            <div style="display:grid;gap:8px;">
+              <div style="font-weight:700;font-size:17px;line-height:1.1;letter-spacing:-0.02em;">Reorder 480 brake rotors</div>
+              <div style="display:grid;grid-template-columns:64px 1fr;gap:3px 10px;align-items:baseline;">
+                <span style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Qty</span><span style="font-family:'Geist Mono',monospace;font-size:12px;">480 units</span>
+                <span style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Vendor</span><span style="font-size:12.5px;font-weight:500;">Meridian Supply</span>
+              </div>
+            </div>
+            <span style="justify-self:end;display:inline-flex;padding:4px 9px;border:2px solid #0B5FFF;border-radius:3px;box-shadow:inset 0 0 0 1.5px rgba(232,228,218,0.9),inset 0 0 0 2.5px #0B5FFF;color:#0B5FFF;font-family:'Geist Mono',monospace;font-weight:700;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;transform:rotate(-6deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;">Matched</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;gap:16px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Isometric focus · desktop · copy on the label</span>
+        <div style="position:relative;width:520px;">
+          <canvas data-box="iso" data-focus="1" data-w="520" data-state="default" data-theme="dark" style="width:520px;display:block;image-rendering:pixelated;"></canvas>
+          <div data-iso-label="true" style="position:absolute;left:0;top:0;opacity:0;transform:matrix(0.866,0.5,0,1,0,0);transform-origin:0 0;padding:11px 13px;display:grid;align-content:start;gap:7px;color:#1A1B1F;">
+            <div style="font-weight:700;font-size:15px;line-height:1.1;letter-spacing:-0.02em;">Reorder 480 brake rotors</div>
+            <div style="display:grid;grid-template-columns:58px 1fr;gap:2px 8px;align-items:baseline;">
+              <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">SKU</span><span style="font-family:'Geist Mono',monospace;font-size:11px;">BR-4410-F</span>
+              <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Arrives</span><span style="font-family:'Geist Mono',monospace;font-size:11px;">12 Mar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="--e-bg:#FAF7F1;--e-ink:#101115;--e-dim:rgba(22,23,27,0.72);--e-faint:rgba(22,23,27,0.56);--e-hair:rgba(22,23,27,0.10);background:var(--e-bg);color:var(--e-ink);border:1px solid var(--e-hair);border-radius:12px;padding:28px;display:grid;gap:40px;overflow-x:auto;">
+    <span style="font-weight:600;font-size:19px;">Eggshell</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:40px;">
+      <div style="display:grid;gap:16px;align-content:start;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Sizes · isometric</span>
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:36px;">
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="132" data-state="default" data-theme="light" style="width:132px;display:block;image-rendering:pixelated;"></canvas><figcaption style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">S · 132</figcaption></figure>
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="200" data-state="default" data-theme="light" style="width:200px;display:block;image-rendering:pixelated;"></canvas><figcaption style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">M · 200</figcaption></figure>
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="300" data-state="default" data-theme="light" style="width:300px;display:block;image-rendering:pixelated;"></canvas><figcaption style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--e-faint);">L · 300</figcaption></figure>
+        </div>
+      </div>
+      <div style="display:grid;gap:16px;align-content:start;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">States · M</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:24px 20px;">
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="160" data-state="default" data-theme="light" style="width:160px;display:block;image-rendering:pixelated;"></canvas><figcaption style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;color:var(--e-dim);">Default</figcaption></figure>
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="160" data-state="checking" data-theme="light" style="width:160px;display:block;image-rendering:pixelated;"></canvas><figcaption style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:#0B5FFF;box-shadow:0 0 0 1.5px rgba(255,255,255,0.95),0 0 0 2.5px rgba(11,95,255,0.35);"></span>Checking</figcaption></figure>
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="160" data-state="passed" data-theme="light" style="width:160px;display:block;image-rendering:pixelated;"></canvas><figcaption style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:#08745A;box-shadow:0 0 0 1.5px rgba(255,255,255,0.95),0 0 0 2.5px rgba(8,116,90,0.35);"></span>Passed</figcaption></figure>
+          <figure style="margin:0;display:grid;gap:10px;"><canvas data-box="iso" data-w="160" data-state="denied" data-theme="light" style="width:160px;display:block;image-rendering:pixelated;"></canvas><figcaption style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:#C46620;box-shadow:0 0 0 1.5px rgba(255,255,255,0.95),0 0 0 2.5px rgba(196,102,32,0.35);"></span>Denied</figcaption></figure>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:40px;align-items:end;">
+      <div style="display:grid;gap:16px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Flat front · mobile · copy on the label</span>
+        <div style="position:relative;width:340px;">
+          <canvas data-box="flat" data-w="340" data-state="passed" data-theme="light" style="width:340px;display:block;image-rendering:pixelated;"></canvas>
+          <div data-flat-label="true" style="position:absolute;left:0;top:0;opacity:0;padding:12px 14px;display:grid;align-content:space-between;color:#1A1B1F;">
+            <div style="display:grid;gap:8px;">
+              <div style="font-weight:700;font-size:17px;line-height:1.1;letter-spacing:-0.02em;">Restock 60 cases of oat milk</div>
+              <div style="display:grid;grid-template-columns:64px 1fr;gap:3px 10px;align-items:baseline;">
+                <span style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Qty</span><span style="font-family:'Geist Mono',monospace;font-size:12px;">60 cases</span>
+                <span style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Arrives</span><span style="font-family:'Geist Mono',monospace;font-size:12px;">Thu 14 Nov</span>
+              </div>
+            </div>
+            <span style="justify-self:end;display:inline-flex;padding:4px 9px;border:2px solid #08745A;border-radius:3px;box-shadow:inset 0 0 0 1.5px rgba(232,228,218,0.9),inset 0 0 0 2.5px #08745A;color:#08745A;font-family:'Geist Mono',monospace;font-weight:700;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;transform:rotate(5deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;">Approved</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;gap:16px;">
+        <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--e-faint);">Isometric focus · desktop · copy on the label</span>
+        <div style="position:relative;width:520px;">
+          <canvas data-box="iso" data-focus="1" data-w="520" data-state="default" data-theme="light" style="width:520px;display:block;image-rendering:pixelated;"></canvas>
+          <div data-iso-label="true" style="position:absolute;left:0;top:0;opacity:0;transform:matrix(0.866,0.5,0,1,0,0);transform-origin:0 0;padding:11px 13px;display:grid;align-content:start;gap:7px;color:#1A1B1F;">
+            <div style="font-weight:700;font-size:15px;line-height:1.1;letter-spacing:-0.02em;">Restock 60 cases of oat milk</div>
+            <div style="display:grid;grid-template-columns:58px 1fr;gap:2px 8px;align-items:baseline;">
+              <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">SKU</span><span style="font-family:'Geist Mono',monospace;font-size:11px;">OM-1L-12</span>
+              <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Arrives</span><span style="font-family:'Geist Mono',monospace;font-size:11px;">Thu 14 Nov</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="03 Shipping label" style="display:grid;gap:28px;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px 40px;padding-top:18px;border-top:1px solid rgba(242,241,237,0.18);">
+    <div style="display:flex;gap:14px;align-items:baseline;"><span style="font-family:'Geist Mono',monospace;font-size:12px;color:rgba(242,241,237,0.5);">03</span><h2 style="margin:0;font-weight:600;font-size:26px;letter-spacing:-0.02em;">Shipping label</h2></div>
+    <p style="margin:0;max-width:560px;font-size:15px;line-height:1.55;color:rgba(242,241,237,0.72);text-wrap:pretty;">Where the copy lives when a box is the focus. A heading of six words or fewer, three to five fields, and a stamp. It is all live text, so it translates, wraps and stays selectable.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:20px;">
+    <div style="background:#16171B;border:1px solid rgba(242,241,237,0.10);border-radius:12px;padding:48px 28px;display:grid;justify-items:center;gap:18px;">
+      <div style="width:360px;max-width:100%;background-color:#E8E4DA;background-image:var(--v3-paper);background-size:160px;border-radius:4px;padding:18px 20px;color:#1A1B1F;display:grid;gap:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 2px 4px rgba(0,0,0,0.25),0 20px 44px -18px rgba(0,0,0,0.7);">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1.5px solid #1A1B1F;"><span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#4E4A43;">Everstock</span><span style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:500;">PO-2291</span></div>
+        <div style="font-weight:700;font-size:26px;line-height:1.08;letter-spacing:-0.025em;text-wrap:balance;">Reorder 480 brake rotors</div>
+        <div style="display:grid;grid-template-columns:88px 1fr;gap:7px 12px;align-items:baseline;">
+          <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">SKU</span><span style="font-family:'Geist Mono',monospace;font-size:13.5px;">BR-4410-F</span>
+          <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Vendor</span><span style="font-size:14.5px;font-weight:500;">Meridian Supply</span>
+          <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Qty</span><span style="font-family:'Geist Mono',monospace;font-size:13.5px;">480 units</span>
+          <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Unit price</span><span style="font-family:'Geist Mono',monospace;font-size:13.5px;">$18.40</span>
+          <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Arrives</span><span style="font-family:'Geist Mono',monospace;font-size:13.5px;">12 Mar</span>
+        </div>
+        <div style="height:96px;border-top:1px dashed rgba(26,27,31,0.32);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;">
+          <span style="display:inline-flex;padding:7px 14px;border:3px solid #08745A;border-radius:4px;box-shadow:inset 0 0 0 2px #E8E4DA,inset 0 0 0 3.5px #08745A;color:#08745A;font-family:'Geist Mono',monospace;font-weight:700;font-size:20px;letter-spacing:0.16em;text-transform:uppercase;transform:rotate(-6deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;">Approved</span>
+        </div>
+      </div>
+      <span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">On graphite · five fields</span>
+    </div>
+    <div style="background:#FAF7F1;border:1px solid rgba(22,23,27,0.10);border-radius:12px;padding:48px 28px;display:grid;justify-items:center;gap:18px;">
+      <div style="width:360px;max-width:100%;background-color:#E8E4DA;background-image:var(--v3-paper);background-size:160px;border-radius:4px;padding:18px 20px;color:#1A1B1F;display:grid;gap:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.5),0 1px 2px rgba(42,43,48,0.16),0 16px 36px -18px rgba(42,43,48,0.45);">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1.5px solid #1A1B1F;"><span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#4E4A43;">Everstock</span><span style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:500;">RFQ-0418</span></div>
+        <div style="font-weight:700;font-size:26px;line-height:1.08;letter-spacing:-0.025em;text-wrap:balance;">Restock 60 cases of oat milk</div>
+        <div style="display:grid;grid-template-columns:88px 1fr;gap:7px 12px;align-items:baseline;">
+          <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Vendor</span><span style="font-size:14.5px;font-weight:500;">Northfield Dairy</span>
+          <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Qty</span><span style="font-family:'Geist Mono',monospace;font-size:13.5px;">60 cases</span>
+          <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Quotes</span><span style="font-family:'Geist Mono',monospace;font-size:13.5px;">3 of 4 in</span>
+        </div>
+        <div style="height:96px;border-top:1px dashed rgba(26,27,31,0.32);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;">
+          <span style="display:inline-flex;padding:7px 14px;border:3px solid #0B5FFF;border-radius:4px;box-shadow:inset 0 0 0 2px #E8E4DA,inset 0 0 0 3.5px #0B5FFF;color:#0B5FFF;font-family:'Geist Mono',monospace;font-weight:700;font-size:20px;letter-spacing:0.16em;text-transform:uppercase;transform:rotate(4deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;">Quoted</span>
+        </div>
+      </div>
+      <span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(22,23,27,0.56);">On eggshell · three fields</span>
+    </div>
+  </div>
+
+  <div style="background-color:#E8E4DA;background-image:var(--v3-paper);background-size:160px;border-radius:12px;padding:32px 28px;color:#1A1B1F;display:grid;gap:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;">
+      <span style="font-weight:600;font-size:17px;">Stamp variants</span>
+      <span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Blue: Everstock is checking · Green: approved · Ink: the box is moving</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:32px 20px;">
+      <div style="display:grid;gap:14px;justify-items:start;"><span style="display:inline-flex;padding:6px 12px;border:3px solid #0B5FFF;border-radius:4px;box-shadow:inset 0 0 0 2px #E8E4DA,inset 0 0 0 3.5px #0B5FFF;color:#0B5FFF;font-family:'Geist Mono',monospace;font-weight:700;font-size:17px;letter-spacing:0.16em;text-transform:uppercase;transform:rotate(-5deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;">Quoted</span><span style="font-size:13px;color:#4E4A43;">Prices are in and being compared</span></div>
+      <div style="display:grid;gap:14px;justify-items:start;"><span style="display:inline-flex;padding:6px 12px;border:3px solid #0B5FFF;border-radius:4px;box-shadow:inset 0 0 0 2px #E8E4DA,inset 0 0 0 3.5px #0B5FFF;color:#0B5FFF;font-family:'Geist Mono',monospace;font-weight:700;font-size:17px;letter-spacing:0.16em;text-transform:uppercase;transform:rotate(3deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;mask-position:40px 20px;">Matched</span><span style="font-size:13px;color:#4E4A43;">Fits how you usually buy</span></div>
+      <div style="display:grid;gap:14px;justify-items:start;"><span style="display:inline-flex;padding:6px 12px;border:3px solid #08745A;border-radius:4px;box-shadow:inset 0 0 0 2px #E8E4DA,inset 0 0 0 3.5px #08745A;color:#08745A;font-family:'Geist Mono',monospace;font-weight:700;font-size:17px;letter-spacing:0.16em;text-transform:uppercase;transform:rotate(-7deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;mask-position:90px 10px;">Approved</span><span style="font-size:13px;color:#4E4A43;">You said yes</span></div>
+      <div style="display:grid;gap:14px;justify-items:start;"><span style="display:inline-flex;padding:6px 12px;border:3px solid #2B2C31;border-radius:4px;box-shadow:inset 0 0 0 2px #E8E4DA,inset 0 0 0 3.5px #2B2C31;color:#2B2C31;font-family:'Geist Mono',monospace;font-weight:700;font-size:17px;letter-spacing:0.16em;text-transform:uppercase;transform:rotate(5deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;mask-position:20px 60px;">Shipped</span><span style="font-size:13px;color:#4E4A43;">Left the vendor</span></div>
+      <div style="display:grid;gap:14px;justify-items:start;"><span style="display:inline-flex;padding:6px 12px;border:3px solid #2B2C31;border-radius:4px;box-shadow:inset 0 0 0 2px #E8E4DA,inset 0 0 0 3.5px #2B2C31;color:#2B2C31;font-family:'Geist Mono',monospace;font-weight:700;font-size:17px;letter-spacing:0.16em;text-transform:uppercase;transform:rotate(-3deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;mask-position:120px 70px;">Arriving</span><span style="font-size:13px;color:#4E4A43;">On the truck, date confirmed</span></div>
+      <div style="display:grid;gap:14px;justify-items:start;"><span style="display:inline-flex;padding:6px 12px;border:3px solid #2B2C31;border-radius:4px;box-shadow:inset 0 0 0 2px #E8E4DA,inset 0 0 0 3.5px #2B2C31;color:#2B2C31;font-family:'Geist Mono',monospace;font-weight:700;font-size:17px;letter-spacing:0.16em;text-transform:uppercase;transform:rotate(6deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;mask-position:60px 110px;">Received</span><span style="font-size:13px;color:#4E4A43;">At your dock, counted</span></div>
+      <div style="display:grid;gap:14px;justify-items:start;"><span style="display:inline-flex;padding:6px 12px;border:3px solid #2B2C31;border-radius:4px;box-shadow:inset 0 0 0 2px #E8E4DA,inset 0 0 0 3.5px #2B2C31;color:#2B2C31;font-family:'Geist Mono',monospace;font-weight:700;font-size:17px;letter-spacing:0.16em;text-transform:uppercase;transform:rotate(-4deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;mask-position:150px 30px;">Stocked</span><span style="font-size:13px;color:#4E4A43;">On the shelf</span></div>
+      <div style="display:grid;gap:14px;justify-items:start;"><span style="display:inline-flex;padding:6px 12px;border:3px solid #2B2C31;border-radius:4px;box-shadow:inset 0 0 0 2px #E8E4DA,inset 0 0 0 3.5px #2B2C31;color:#2B2C31;font-family:'Geist Mono',monospace;font-weight:700;font-size:17px;letter-spacing:0.16em;text-transform:uppercase;transform:rotate(7deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:180px;mask-size:180px;mask-position:30px 140px;">Sold</span><span style="font-size:13px;color:#4E4A43;">Out the door</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 24px;padding-top:18px;border-top:1px dashed rgba(26,27,31,0.3);">
+      <div style="display:grid;gap:4px;"><span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Heading</span><span style="font-size:13.5px;">Inter 700, six words or fewer</span></div>
+      <div style="display:grid;gap:4px;"><span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Fields</span><span style="font-size:13.5px;">3 to 5 rows · mono label · mono for numbers and IDs</span></div>
+      <div style="display:grid;gap:4px;"><span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Stamp</span><span style="font-size:13.5px;">Double rule · rotated 3° to 7° · distressed mask</span></div>
+      <div style="display:grid;gap:4px;"><span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#4E4A43;">Paper</span><span style="font-family:'Geist Mono',monospace;font-size:12.5px;">#E8E4DA · grain</span></div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="04 Nav" style="display:grid;gap:28px;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px 40px;padding-top:18px;border-top:1px solid rgba(242,241,237,0.18);">
+    <div style="display:flex;gap:14px;align-items:baseline;"><span style="font-family:'Geist Mono',monospace;font-size:12px;color:rgba(242,241,237,0.5);">04</span><h2 style="margin:0;font-weight:600;font-size:26px;letter-spacing:-0.02em;">Nav</h2></div>
+    <p style="margin:0;max-width:560px;font-size:15px;line-height:1.55;color:rgba(242,241,237,0.72);text-wrap:pretty;">Segmented logo on the left, three links and one button on the right. It is transparent over the dark hero and turns solid after 24px of scroll. The button uses an ink fill because blue is kept for signal.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr));gap:20px;">
+    <div style="display:grid;gap:10px;">
+      <div style="position:relative;height:208px;border-radius:12px;overflow:hidden;border:1px solid rgba(242,241,237,0.10);background-color:#16171B;background-image:linear-gradient(rgba(226,222,214,0.11) 1px,transparent 1px),linear-gradient(90deg,rgba(226,222,214,0.11) 1px,transparent 1px);background-size:84px 84px;">
+        <nav style="height:68px;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 24px;background:rgba(22,23,27,0);border-bottom:1px solid rgba(242,241,237,0);">
+          <a href="#top" style="display:flex;align-items:center;gap:12px;"><img src="assets/logo-mark-dark.svg" width="45" height="28" alt=""><span style="font-weight:600;font-size:13.5px;letter-spacing:0.2em;color:#FAF9F5;">EVERSTOCK</span></a>
+          <div style="display:flex;align-items:center;gap:28px;">
+            <div style="display:flex;gap:24px;"><a href="#how" style="font-size:14px;font-weight:500;color:rgba(242,241,237,0.72);" style-hover="color:#FAF9F5;">How it works</a><a href="#industries" style="font-size:14px;font-weight:500;color:rgba(242,241,237,0.72);" style-hover="color:#FAF9F5;">Industries</a><a href="#founders" style="font-size:14px;font-weight:500;color:rgba(242,241,237,0.72);" style-hover="color:#FAF9F5;">Founders</a></div>
+            <a href="#cta" style="height:36px;padding:0 16px;display:inline-flex;align-items:center;border-radius:8px;background:#FAF9F5;color:#16171B;font-size:14px;font-weight:600;" style-hover="background:#FFFFFF;color:#16171B;">{{ cta }}</a>
+          </div>
+        </nav>
+      </div>
+      <span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">Graphite · top of page · transparent, lattice runs under it</span>
+    </div>
+    <div style="display:grid;gap:10px;">
+      <div style="position:relative;height:208px;border-radius:12px;overflow:hidden;border:1px solid rgba(242,241,237,0.10);background-color:#16171B;background-image:linear-gradient(rgba(226,222,214,0.11) 1px,transparent 1px),linear-gradient(90deg,rgba(226,222,214,0.11) 1px,transparent 1px);background-size:84px 84px;">
+        <nav style="height:68px;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 24px;background:#16171B;border-bottom:1px solid rgba(242,241,237,0.12);">
+          <a href="#top" style="display:flex;align-items:center;gap:12px;"><img src="assets/logo-mark-dark.svg" width="45" height="28" alt=""><span style="font-weight:600;font-size:13.5px;letter-spacing:0.2em;color:#FAF9F5;">EVERSTOCK</span></a>
+          <div style="display:flex;align-items:center;gap:28px;">
+            <div style="display:flex;gap:24px;"><a href="#how" style="font-size:14px;font-weight:500;color:rgba(242,241,237,0.72);" style-hover="color:#FAF9F5;">How it works</a><a href="#industries" style="font-size:14px;font-weight:500;color:rgba(242,241,237,0.72);" style-hover="color:#FAF9F5;">Industries</a><a href="#founders" style="font-size:14px;font-weight:500;color:rgba(242,241,237,0.72);" style-hover="color:#FAF9F5;">Founders</a></div>
+            <a href="#cta" style="height:36px;padding:0 16px;display:inline-flex;align-items:center;border-radius:8px;background:#FAF9F5;color:#16171B;font-size:14px;font-weight:600;" style-hover="background:#FFFFFF;color:#16171B;">{{ cta }}</a>
+          </div>
+        </nav>
+      </div>
+      <span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">Graphite · scrolled · solid field and a hairline</span>
+    </div>
+    <div style="display:grid;gap:10px;">
+      <div style="position:relative;height:208px;border-radius:12px;overflow:hidden;border:1px solid rgba(22,23,27,0.10);background-color:#FAF7F1;background-image:linear-gradient(rgba(18,18,20,0.12) 1px,transparent 1px),linear-gradient(90deg,rgba(18,18,20,0.12) 1px,transparent 1px);background-size:84px 84px;">
+        <nav style="height:68px;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 24px;background:#FAF7F1;border-bottom:1px solid rgba(22,23,27,0.12);">
+          <a href="#top" style="display:flex;align-items:center;gap:12px;"><img src="assets/logo-mark-light.svg" width="45" height="28" alt=""><span style="font-weight:600;font-size:13.5px;letter-spacing:0.2em;color:#101115;">EVERSTOCK</span></a>
+          <div style="display:flex;align-items:center;gap:28px;">
+            <div style="display:flex;gap:24px;"><a href="#how" style="font-size:14px;font-weight:500;color:rgba(22,23,27,0.72);" style-hover="color:#101115;">How it works</a><a href="#industries" style="font-size:14px;font-weight:500;color:rgba(22,23,27,0.72);" style-hover="color:#101115;">Industries</a><a href="#founders" style="font-size:14px;font-weight:500;color:rgba(22,23,27,0.72);" style-hover="color:#101115;">Founders</a></div>
+            <a href="#cta" style="height:36px;padding:0 16px;display:inline-flex;align-items:center;border-radius:8px;background:#101115;color:#FAF7F1;font-size:14px;font-weight:600;" style-hover="background:#2A2B30;color:#FAF7F1;">{{ cta }}</a>
+          </div>
+        </nav>
+      </div>
+      <span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">Eggshell · scrolled</span>
+    </div>
+    <div style="display:grid;gap:10px;">
+      <div style="position:relative;height:208px;border-radius:12px;overflow:hidden;border:1px solid rgba(242,241,237,0.10);background:#101114;display:flex;justify-content:center;">
+        <div style="width:390px;max-width:100%;height:100%;background-color:#16171B;background-image:linear-gradient(rgba(226,222,214,0.11) 1px,transparent 1px),linear-gradient(90deg,rgba(226,222,214,0.11) 1px,transparent 1px);background-size:84px 84px;border-left:1px solid rgba(242,241,237,0.08);border-right:1px solid rgba(242,241,237,0.08);">
+          <nav style="height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;">
+            <a href="#top" style="display:flex;align-items:center;gap:10px;"><img src="assets/logo-mark-dark.svg" width="39" height="24" alt=""><span style="font-weight:600;font-size:12.5px;letter-spacing:0.2em;color:#FAF9F5;">EVERSTOCK</span></a>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <a href="#cta" style="height:44px;padding:0 14px;display:inline-flex;align-items:center;border-radius:8px;background:#FAF9F5;color:#16171B;font-size:13.5px;font-weight:600;">{{ cta }}</a>
+              <button aria-label="Open menu" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid rgba(242,241,237,0.18);background:transparent;color:#FAF9F5;cursor:pointer;"><svg width="18" height="12" viewBox="0 0 18 12" fill="none" aria-hidden="true"><path d="M1 1h16M1 6h16M1 11h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg></button>
+            </div>
+          </nav>
+        </div>
+      </div>
+      <span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">Mobile · 390 · links move into the menu · 44px targets</span>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:20px;align-items:start;">
+    <div style="display:grid;gap:10px;">
+      <div style="position:relative;height:320px;border-radius:12px;overflow:hidden;border:1px solid rgba(242,241,237,0.10);">
+        <div ref="{{ navScroll }}" onScroll="{{ onNavScroll }}" style="height:100%;overflow-y:auto;background:#16171B;">
+          <nav style="position:sticky;top:0;z-index:2;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 20px;background:{{ liveNavBg }};border-bottom:1px solid {{ liveNavLine }};transition:{{ liveNavTransition }};">
+            <a href="#top" style="display:flex;align-items:center;gap:10px;"><img src="assets/logo-mark-dark.svg" width="39" height="24" alt=""><span style="font-weight:600;font-size:12.5px;letter-spacing:0.2em;color:#FAF9F5;">EVERSTOCK</span></a>
+            <div style="display:flex;align-items:center;gap:20px;">
+              <div style="display:flex;gap:18px;"><a href="#how" style="font-size:13px;font-weight:500;color:rgba(242,241,237,0.72);">How it works</a><a href="#industries" style="font-size:13px;font-weight:500;color:rgba(242,241,237,0.72);">Industries</a><a href="#founders" style="font-size:13px;font-weight:500;color:rgba(242,241,237,0.72);">Founders</a></div>
+              <a href="#cta" style="height:34px;padding:0 14px;display:inline-flex;align-items:center;border-radius:8px;background:#FAF9F5;color:#16171B;font-size:13px;font-weight:600;">{{ cta }}</a>
+            </div>
+          </nav>
+          <div style="margin-top:-64px;height:420px;background-color:#16171B;background-image:linear-gradient(rgba(226,222,214,0.11) 1px,transparent 1px),linear-gradient(90deg,rgba(226,222,214,0.11) 1px,transparent 1px);background-size:84px 84px;display:flex;align-items:flex-end;padding:24px;">
+            <span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">Hero zone · scroll this frame</span>
+          </div>
+          <div style="height:560px;background:#1D1E23;border-top:1px solid rgba(242,241,237,0.10);padding:24px;">
+            <span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">Next section</span>
+          </div>
+        </div>
+      </div>
+      <span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">Live · {{ liveNavState }}</span>
+    </div>
+    <div style="display:grid;">
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Height</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">68 desktop, 60 mobile. Content max width 1280.</span></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Logo</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">Segmented mark 45×28, display cut. Wordmark Inter 600, tracked 0.2em. Never animates.</span></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Links</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">Inter 500 14 in body ink. Hover moves to full ink, nothing else.</span></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Button</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">Ink fill, radius 8, height 36. Never blue.</span></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Switch</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">Solid after 24px of scroll, 220ms fade. Instant under reduced motion.</span></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);border-bottom:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Solid</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">Page field at full opacity plus a 0.12 hairline. No blur, no shadow.</span></div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="05 Guide line" style="display:grid;gap:28px;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px 40px;padding-top:18px;border-top:1px solid rgba(242,241,237,0.18);">
+    <div style="display:flex;gap:14px;align-items:baseline;"><span style="font-family:'Geist Mono',monospace;font-size:12px;color:rgba(242,241,237,0.5);">05</span><h2 style="margin:0;font-weight:600;font-size:26px;letter-spacing:-0.02em;">Guide line</h2></div>
+    <p style="margin:0;max-width:560px;font-size:15px;line-height:1.55;color:rgba(242,241,237,0.72);text-wrap:pretty;">One hairline, snapped to a lattice column, that draws itself down the page as you scroll. It ties the sections together without adding another effect.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:20px;align-items:start;">
+    <div style="display:grid;gap:10px;">
+      <div style="position:relative;height:460px;border-radius:12px;overflow:hidden;border:1px solid rgba(242,241,237,0.10);">
+        <div ref="{{ guideScroll }}" onScroll="{{ onGuideScroll }}" style="height:100%;overflow-y:auto;background-color:#16171B;background-image:linear-gradient(rgba(226,222,214,0.11) 1px,transparent 1px),linear-gradient(90deg,rgba(226,222,214,0.11) 1px,transparent 1px);background-size:84px 84px;background-attachment:local;">
+          <div style="position:relative;height:1512px;">
+            <div style="position:absolute;left:168px;top:0;width:1px;height:{{ guideH }};background:rgba(242,241,237,0.34);"></div>
+            <span style="position:absolute;left:184px;top:14px;font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">01 · Hero</span>
+            <span style="position:absolute;left:184px;top:434px;font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">02 · Who it is for</span>
+            <span style="position:absolute;left:184px;top:938px;font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">03 · How it works</span>
+            <span style="position:absolute;left:184px;top:1358px;font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">04 · You stay in control</span>
+          </div>
+        </div>
+        <span style="position:absolute;right:14px;top:12px;font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);pointer-events:none;">Scroll inside the frame</span>
+      </div>
+      <span style="font-family:'Geist Mono',monospace;font-size:11px;color:rgba(242,241,237,0.5);">Live · {{ guideReadout }}</span>
+    </div>
+    <div style="display:grid;">
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Stroke</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">1px on a whole pixel. It never scales, tapers or glows.</span></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Colour</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">Guide token: <span style="font-family:'Geist Mono',monospace;font-size:12.5px;">rgba(242,241,237,0.34)</span> on graphite, <span style="font-family:'Geist Mono',monospace;font-size:12.5px;">rgba(22,23,27,0.34)</span> on eggshell. Never blue, because the line is not Everstock doing anything.</span></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Position</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">Sits exactly on a lattice column: the second column from the content edge on desktop, the first on mobile. Section labels hang 16px to its right.</span></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Draw</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">Length equals scroll position plus 60% of the viewport, so the tip leads the reader. Tied directly to scroll: no easing, no overshoot. Retracts when you scroll back up.</span></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Layer</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">Above the lattice and below all content. Boxes and labels cover it where they overlap.</span></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(242,241,237,0.10);border-bottom:1px solid rgba(242,241,237,0.10);"><span style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(242,241,237,0.5);">Reduced</span><span style="font-size:14px;color:rgba(242,241,237,0.72);">Drawn at full length from the start, static.</span></div>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;motion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;full&quot;,&quot;reduced&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;'auto'|'full'|'reduced'&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;ditherCell&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:4,&quot;step&quot;:1,&quot;default&quot;:2,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Illustration&quot;},&quot;ctaLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Get early access&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Nav&quot;}}">
+class Component extends DCLogic {
+  state = { sysReduced: false, navSolid: false, guideH: 0, guideMax: 1512 };
+  rootRef = React.createRef();
+  navScroll = React.createRef();
+  guideScroll = React.createRef();
+  B8 = (() => {
+    let b = [[0, 2], [3, 1]];
+    for (let n = 2; n < 8; n *= 2) {
+      const nb = [];
+      for (let y = 0; y < n * 2; y++) {
+        nb.push([]);
+        for (let x = 0; x < n * 2; x++) nb[y].push(4 * b[y % n][x % n] + [0, 2, 3, 1][(y < n ? 0 : 2) + (x < n ? 0 : 1)]);
+      }
+      b = nb;
+    }
+    return b.map(r => r.map(v => (v + 0.5) / 64));
+  })();
+
+  componentDidMount() {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.mq = mq;
+    this.onMq = () => this.setState({ sysReduced: mq.matches }, () => this.redraw());
+    if (mq.addEventListener) mq.addEventListener('change', this.onMq);
+    this.setState({ sysReduced: mq.matches }, () => this.redraw());
+    this.textures();
+    this.t0 = performance.now();
+    this.redraw();
+    let lastBox = 0;
+    const loop = (now) => {
+      this.raf = requestAnimationFrame(loop);
+      if (this.reduced()) return;
+      const t = (now - this.t0) / 1000;
+      this.drawLattices(t);
+      if (now - lastBox > 90) { lastBox = now; this.drawBoxes(t, true); }
+    };
+    this.raf = requestAnimationFrame(loop);
+    this.ro = new ResizeObserver(() => { clearTimeout(this.rz); this.rz = setTimeout(() => this.redraw(), 80); });
+    if (this.rootRef.current) this.ro.observe(this.rootRef.current);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.redraw());
+  }
+  componentWillUnmount() {
+    cancelAnimationFrame(this.raf);
+    if (this.ro) this.ro.disconnect();
+    if (this.mq && this.mq.removeEventListener) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(pp) {
+    if (pp.ditherCell !== this.props.ditherCell || pp.motion !== this.props.motion) this.redraw();
+  }
+  reduced() {
+    const m = this.props.motion ?? 'auto';
+    return m === 'reduced' || (m === 'auto' && this.state.sysReduced);
+  }
+  cell() { return Math.max(1, Math.min(4, Math.round(this.props.ditherCell ?? 2))); }
+  redraw() {
+    const t = this.reduced() ? 0 : (performance.now() - (this.t0 || 0)) / 1000;
+    this.drawBoxes(t, false);
+    this.drawLattices(t);
+    this.onGuide();
+  }
+
+  textures() {
+    const root = this.rootRef.current; if (!root) return;
+    const mk = (n, fn) => { const c = document.createElement('canvas'); c.width = c.height = n; fn(c.getContext('2d'), n); return c.toDataURL(); };
+    const stamp = mk(180, (g, n) => {
+      g.fillStyle = '#000'; g.fillRect(0, 0, n, n);
+      g.globalCompositeOperation = 'destination-out';
+      for (let i = 0; i < 1500; i++) { g.globalAlpha = 0.35 + Math.random() * 0.65; g.beginPath(); g.arc(Math.random() * n, Math.random() * n, 0.3 + Math.random() * 1.2, 0, 7); g.fill(); }
+      for (let i = 0; i < 24; i++) { g.globalAlpha = 0.16 + Math.random() * 0.26; g.beginPath(); g.ellipse(Math.random() * n, Math.random() * n, 4 + Math.random() * 14, 2 + Math.random() * 5, Math.random() * 3, 0, 7); g.fill(); }
+    });
+    const paper = mk(160, (g, n) => {
+      for (let i = 0; i < 2800; i++) {
+        const a = Math.random() * 0.07;
+        g.fillStyle = Math.random() < 0.55 ? 'rgba(70,56,36,' + a + ')' : 'rgba(255,255,255,' + (a * 1.5) + ')';
+        g.fillRect((Math.random() * n) | 0, (Math.random() * n) | 0, 1, 1);
+      }
+    });
+    root.style.setProperty('--v3-stamp', 'url(' + stamp + ')');
+    root.style.setProperty('--v3-paper', 'url(' + paper + ')');
+  }
+
+  palette(theme) {
+    return [theme === 'light' ? [42, 43, 48] : [11, 12, 15], [110, 82, 56], [132, 95, 65], [168, 132, 92], [207, 190, 160], [222, 215, 203]];
+  }
+  tint(state, theme) {
+    const L = theme === 'light';
+    if (state === 'checking') return L ? [11, 95, 255] : [77, 139, 255];
+    if (state === 'passed') return L ? [8, 116, 90] : [47, 196, 155];
+    if (state === 'denied') return [196, 102, 32];
+    return null;
+  }
+  hash(x, y) { const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453; return n - Math.floor(n); }
+  scanZ(t, H) { return (this.reduced() ? 0.55 : 1.08 - ((t * 0.3) % 1) * 1.16) * H; }
+
+  drawBoxes(t, onlyAnim) {
+    const root = this.rootRef.current; if (!root) return;
+    root.querySelectorAll('canvas[data-box]').forEach(cv => {
+      if (onlyAnim && cv.dataset.state !== 'checking') return;
+      if (cv.dataset.box === 'flat') this.paintFlat(cv, t); else this.paintIso(cv, t);
+    });
+  }
+
+  put(px, i, col) { px[i] = col[0]; px[i + 1] = col[1]; px[i + 2] = col[2]; px[i + 3] = 255; }
+  pick(v, qx, py) {
+    const b = Math.floor(v), f = v - b + (this.hash(qx, py) - 0.5) * 0.16;
+    return Math.max(0, Math.min(5, f > this.B8[py & 7][qx & 7] ? b + 1 : b));
+  }
+
+  paintIso(cv, t) {
+    const cell = this.cell(), d = cv.dataset, B = this.B8;
+    const w = Math.max(24, Math.round(+d.w / cell));
+    const W = 1.4, D = 0.92, H = 0.9, c = 0.866, s = 0.5, pad = 3;
+    const k = (w - pad * 2) / ((W + D + 0.5 * H) * c);
+    const ox = pad + D * c * k, oy = pad + H * k;
+    const h = Math.ceil(oy + (W + D + 0.5 * H) * s * k + pad);
+    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+    cv.style.width = w * cell + 'px'; cv.style.height = h * cell + 'px';
+    const focus = d.focus === '1';
+    const Lb = focus ? [0.08, 0.74, 0.14, 0.8] : [0.15, 0.55, 0.22, 0.5];
+    const lx0 = Lb[0] * W, lx1 = Lb[1] * W, lz0 = Lb[2] * H, lz1 = Lb[3] * H;
+    const pal = this.palette(d.theme), tint = this.tint(d.state, d.theme);
+    const zb = d.state === 'checking' ? this.scanZ(t, H) : -9;
+    const shadowCap = d.theme === 'light' ? 0.5 : 0.8;
+    const ctx = cv.getContext('2d'), img = ctx.createImageData(w, h), px = img.data;
+    const tw = 0.075 * D, seam = 0.5 / k;
+    for (let py = 0; py < h; py++) for (let qx = 0; qx < w; qx++) {
+      const u = (qx + 0.5 - ox) / (k * c), Y = (py + 0.5 - oy) / k;
+      let v = -1, zz = -1, isLabel = false, cov = 0;
+      let A = (Y + H) / s, x = (u + A) / 2, y = (A - u) / 2;
+      if (x >= 0 && x <= W && y >= 0 && y <= D) {
+        zz = H;
+        const dy = Math.abs(y - D / 2);
+        if (dy < seam) v = 0.75;
+        else if (dy < tw) v = 3.92 - 0.22 * (x / W);
+        else v = 3.02 - 0.3 * (y / D) - 0.12 * (x / W);
+      } else {
+        x = u + D; let z = (x + D) * s - Y;
+        if (x >= 0 && x <= W && z >= 0 && z <= H) {
+          zz = z;
+          if (x >= lx0 && x <= lx1 && z >= lz0 && z <= lz1) { isLabel = true; v = 4.94 - 0.14 * ((x - lx0) / (lx1 - lx0)); }
+          else v = 2.14 - 0.34 * (x / W) - 0.26 * (1 - z / H);
+        } else {
+          y = W - u; z = (W + y) * s - Y;
+          if (y >= 0 && y <= D && z >= 0 && z <= H) {
+            zz = z;
+            if (Math.abs(y - D / 2) < tw && z > 0.6 * H) v = 3.62 - 0.4 * ((H - z) / (0.4 * H));
+            else v = 1.1 - 0.5 * (1 - z / H) - 0.12 * (y / D);
+          } else {
+            A = Y / s; const gx = (u + A) / 2, gy = (A - u) / 2;
+            if (gx >= -0.02 && gy >= -0.02 && gx < W + 0.5 * H && gy < D + 0.2 * H) {
+              const m = Math.max(Math.max(0, gx - W) / (0.5 * H), Math.max(0, gy - D) / (0.2 * H));
+              if (m < 1) cov = m < 0.08 ? 0.92 : shadowCap * (1 - m);
+            }
+          }
+        }
+      }
+      const i = (py * w + qx) * 4;
+      if (v >= 0) {
+        let col = pal[this.pick(v, qx, py)];
+        if (tint && !isLabel) {
+          let amt = 0.2;
+          if (zb > -1) { const dz = Math.abs(zz - zb) / (0.09 * H); amt = dz < 1 ? 0.2 + 0.52 * (1 - dz) : 0.13; }
+          if (B[(py + 3) & 7][(qx + 5) & 7] < amt) col = tint;
+        }
+        this.put(px, i, col);
+      } else if (cov > 0 && B[py & 7][qx & 7] < cov) this.put(px, i, pal[0]);
+    }
+    ctx.putImageData(img, 0, 0);
+    const ov = cv.parentElement && cv.parentElement.querySelector('[data-iso-label]');
+    if (ov) {
+      ov.style.left = (ox + (lx0 - D) * c * k) * cell + 'px';
+      ov.style.top = (oy + ((lx0 + D) * s - lz1) * k) * cell + 'px';
+      ov.style.width = (lx1 - lx0) * k * cell + 'px';
+      ov.style.height = (lz1 - lz0) * k * cell + 'px';
+      ov.style.opacity = '1';
+    }
+  }
+
+  paintFlat(cv, t) {
+    const cell = this.cell(), d = cv.dataset, B = this.B8;
+    const w = Math.max(24, Math.round(+d.w / cell)), pad = 3, fw = w - pad * 2;
+    const ts = Math.max(3, Math.round(fw * 0.07)), fh = Math.round(fw * 0.68), sh = Math.max(3, Math.round(fw * 0.05));
+    const h = pad + ts + fh + sh + pad;
+    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+    cv.style.width = w * cell + 'px'; cv.style.height = h * cell + 'px';
+    const lx0 = Math.round(fw * 0.07), lx1 = Math.round(fw * 0.81), ly0 = Math.round(fh * 0.13), ly1 = Math.round(fh * 0.9);
+    const pal = this.palette(d.theme), tint = this.tint(d.state, d.theme);
+    const H = 1, zb = d.state === 'checking' ? this.scanZ(t, H) : -9;
+    const shadowCap = d.theme === 'light' ? 0.5 : 0.8;
+    const ctx = cv.getContext('2d'), img = ctx.createImageData(w, h), px = img.data;
+    for (let py = 0; py < h; py++) for (let qx = 0; qx < w; qx++) {
+      const fx = qx - pad, fy = py - pad, i = (py * w + qx) * 4;
+      let v = -1, zz = -1, isLabel = false;
+      if (fx >= 0 && fx < fw && fy >= 0 && fy < ts) {
+        zz = H;
+        const dm = Math.abs(fy + 0.5 - ts / 2);
+        if (ts >= 6 && dm < 0.5) v = 0.75;
+        else if (dm < ts * 0.24) v = 3.9 - 0.2 * (fx / fw);
+        else v = 3.0 - 0.28 * (fy / ts) - 0.1 * (fx / fw);
+      } else if (fx >= 0 && fx < fw && fy >= ts && fy < ts + fh) {
+        const fy2 = fy - ts; zz = H * (1 - fy2 / fh);
+        if (fx < 1 || fx >= fw - 1) v = 1.4;
+        else if (fx >= lx0 && fx < lx1 && fy2 >= ly0 && fy2 < ly1) { isLabel = true; v = 4.94 - 0.14 * ((fx - lx0) / (lx1 - lx0)); }
+        else v = 2.14 - 0.3 * (fy2 / fh) - 0.1 * (fx / fw);
+      } else if (fx >= -1 && fx <= fw && fy >= ts + fh && fy < ts + fh + sh) {
+        const r = (fy - ts - fh) / sh, cov = r < 0.2 ? 0.92 : shadowCap * (1 - r);
+        if (B[py & 7][qx & 7] < cov) this.put(px, i, pal[0]);
+        continue;
+      }
+      if (v < 0) continue;
+      let col = pal[this.pick(v, qx, py)];
+      if (tint && !isLabel) {
+        let amt = 0.2;
+        if (zb > -1) { const dz = Math.abs(zz - zb) / 0.09; amt = dz < 1 ? 0.2 + 0.52 * (1 - dz) : 0.13; }
+        if (B[(py + 3) & 7][(qx + 5) & 7] < amt) col = tint;
+      }
+      this.put(px, i, col);
+    }
+    ctx.putImageData(img, 0, 0);
+    const ov = cv.parentElement && cv.parentElement.querySelector('[data-flat-label]');
+    if (ov) {
+      ov.style.left = (pad + lx0) * cell + 'px';
+      ov.style.top = (pad + ts + ly0) * cell + 'px';
+      ov.style.width = (lx1 - lx0) * cell + 'px';
+      ov.style.height = (ly1 - ly0) * cell + 'px';
+      ov.style.opacity = '1';
+    }
+  }
+
+  drawLattices(t) {
+    const root = this.rootRef.current; if (!root) return;
+    root.querySelectorAll('canvas[data-lattice]').forEach(cv => {
+      const r = cv.getBoundingClientRect(); if (!r.width) return;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const PW = Math.round(r.width * dpr), PH = Math.round(r.height * dpr);
+      if (cv.width !== PW || cv.height !== PH) { cv.width = PW; cv.height = PH; }
+      const g = cv.getContext('2d'), w = r.width, h = r.height, S = 84, ws = 0.5;
+      g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+      const wx = (x) => { const cx = w / 2, p = 1 + Math.sin(t * 0.45) * 0.04 * ws; const dd = (Math.sin(x * 0.0062 + t * 0.37) * 16 + Math.sin(x * 0.0131 - t * 0.23) * 10 + Math.sin(x * 0.0037 + t * 0.61) * 7) * ws; return cx + (x + dd - cx) * p; };
+      const wy = (y) => { const cy = h / 2, p = 1 + Math.sin(t * 0.45 + 1.9) * 0.04 * ws; const dd = (Math.cos(y * 0.0074 - t * 0.31) * 15 + Math.sin(y * 0.0148 + t * 0.27) * 9 + Math.sin(y * 0.0041 - t * 0.53) * 7) * ws; return cy + (y + dd - cy) * p; };
+      const cols = Math.ceil(w / S) + 4, rows = Math.ceil(h / S) + 4, xs = [], ys = [];
+      for (let i = 0; i <= cols; i++) xs.push(wx(-S * 2 + i * S));
+      for (let j = 0; j <= rows; j++) ys.push(wy(-S * 2 + j * S));
+      g.lineWidth = 1;
+      g.strokeStyle = cv.dataset.lattice === 'light' ? 'rgba(18,18,20,0.14)' : 'rgba(226,222,214,0.13)';
+      g.beginPath();
+      for (let j = 0; j <= rows; j++) { g.moveTo(xs[0], ys[j]); g.lineTo(xs[cols], ys[j]); }
+      for (let i = 0; i <= cols; i++) { g.moveTo(xs[i], ys[0]); g.lineTo(xs[i], ys[rows]); }
+      g.stroke();
+    });
+  }
+
+  onGuide() {
+    const el = this.guideScroll.current; if (!el) return;
+    const max = el.scrollHeight;
+    const H = this.reduced() ? max : Math.min(max, Math.round(el.scrollTop + el.clientHeight * 0.6));
+    if (H !== this.state.guideH || max !== this.state.guideMax) this.setState({ guideH: H, guideMax: max });
+  }
+
+  renderVals() {
+    const solid = this.state.navSolid, red = this.reduced();
+    return {
+      rootRef: this.rootRef, navScroll: this.navScroll, guideScroll: this.guideScroll,
+      onNavScroll: (e) => { const s = e.currentTarget.scrollTop > 24; if (s !== this.state.navSolid) this.setState({ navSolid: s }); },
+      onGuideScroll: () => this.onGuide(),
+      cta: this.props.ctaLabel ?? 'Get early access',
+      liveNavBg: solid ? '#16171B' : 'rgba(22,23,27,0)',
+      liveNavLine: solid ? 'rgba(242,241,237,0.12)' : 'rgba(242,241,237,0)',
+      liveNavTransition: red ? 'none' : 'background-color 220ms cubic-bezier(.2,.8,.25,1), border-color 220ms cubic-bezier(.2,.8,.25,1)',
+      liveNavState: solid ? 'solid, scrolled' : 'transparent over the hero',
+      guideH: this.state.guideH + 'px',
+      guideReadout: red ? 'reduced motion, drawn full length' : 'drawn ' + this.state.guideH + ' of ' + this.state.guideMax + 'px',
+      motionLabel: red ? 'Reduced motion · static frames' : 'Full motion · micro only',
+    };
+  }
+}
+</script>
+</body>
+</html>

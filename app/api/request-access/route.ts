@@ -3,7 +3,7 @@ import { ConvexError } from "convex/values";
 import { api } from "@/convex/_generated/api";
 
 const STACKS = new Set(["netsuite", "epicor-p21", "sap-b1", "spreadsheets", "other"]);
-const SOURCES = new Set(["hero", "nav", "contract", "final", "sheet", "hash", "other"]);
+const SOURCES = new Set(["hero", "nav", "contract", "final", "sheet", "hash", "early-access", "founding-partner", "price-file", "other"]);
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_FILL_MS = 2500; // a person cannot read and fill four fields faster than this
 
@@ -28,9 +28,12 @@ export async function POST(req: Request) {
   const elapsed = Number(body.elapsed);
   if (!Number.isFinite(elapsed) || elapsed < MIN_FILL_MS) return Response.json({ ok: true });
 
-  const name = str("name", 120);
   const email = str("email", 200).toLowerCase();
-  const company = str("company", 160);
+  // the v3 forms ask for less (the access modal: email + company; the price-file form:
+  // email only), so name and company fall back to what the email already says
+  const [local = "", domain = ""] = email.split("@");
+  const name = str("name", 120) || local;
+  const company = str("company", 160) || domain;
   const stack = STACKS.has(str("stack", 40)) ? str("stack", 40) : "other";
   if (name.length < 2) return Response.json({ error: "Please add your name." }, { status: 400 });
   if (!EMAIL.test(email)) return Response.json({ error: "That email address doesn't look right." }, { status: 400 });

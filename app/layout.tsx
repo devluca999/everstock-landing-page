@@ -1,60 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import {
-  Space_Grotesk,
-  Unbounded,
-  Anton,
-  Syne,
-  IBM_Plex_Sans,
-  IBM_Plex_Mono,
-} from "next/font/google";
-import "./globals.css";
-import { ThemeProvider, themeScript, scrollScript } from "./theme";
-
-// only weights the page actually sets: every font file preloaded here sits on the
-// mobile LCP path (the hero statement re-paints when its face arrives)
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["500", "700"],
-  variable: "--font-space",
-  display: "swap",
-});
-// the three cycle faces + the mono are never in the first paint (the title starts in
-// Space Grotesk; mono appears from section 01 down), so they stay off the preload list
-// and stop competing with the LCP fonts on slow connections
-const unbounded = Unbounded({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-unbounded",
-  display: "swap",
-  preload: false,
-});
-const anton = Anton({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-anton",
-  display: "swap",
-  preload: false,
-});
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["600", "800"],
-  variable: "--font-syne",
-  display: "swap",
-  preload: false,
-});
-const plex = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["300", "500"],
-  variable: "--font-plex",
-  display: "swap",
-});
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-mono",
-  display: "swap",
-  preload: false,
-});
+import { themeScript, scrollScript } from "./head-scripts";
 
 const TITLE =
   "Everstock: Sourcing, procurement and data management automation for supply-chain distributors";
@@ -125,16 +70,19 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: scrollScript }} />
+        {/* the design's <helmet> fonts, as links (the page names these families directly) */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&family=Space+Grotesk:wght@700&family=Unbounded:wght@700&family=Anton&family=Syne:wght@700&display=swap"
+        />
+        <link rel="stylesheet" href="/_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/tokens/fonts.css" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body
-        className={`${spaceGrotesk.variable} ${unbounded.variable} ${anton.variable} ${syne.variable} ${plex.variable} ${plexMono.variable}`}
-      >
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
