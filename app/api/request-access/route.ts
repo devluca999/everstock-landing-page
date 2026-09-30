@@ -3,7 +3,7 @@ import { ConvexError } from "convex/values";
 import { api } from "@/convex/_generated/api";
 
 const STACKS = new Set(["netsuite", "epicor-p21", "sap-b1", "spreadsheets", "other"]);
-const SOURCES = new Set(["hero", "nav", "contract", "final", "sheet", "hash", "early-access", "founding-partner", "price-file", "other"]);
+const SOURCES = new Set(["hero", "nav", "contract", "final", "sheet", "hash", "early-access", "founding-partner", "price-file", "book-demo", "scattered-records", "other"]);
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_FILL_MS = 2500; // a person cannot read and fill four fields faster than this
 
