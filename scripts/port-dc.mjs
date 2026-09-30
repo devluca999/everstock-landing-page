@@ -25,6 +25,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseFragment } from "parse5";
+import * as v4Fixes from "./port-patches/v4-industries-fixes.mjs";
 
 const PAGES = {
   v3: {
@@ -53,8 +54,10 @@ const PAGES = {
         find: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.42;",
         replace: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.72;",
       },
+      ...v4Fixes.logicPatches,
     ],
     templatePatches: [
+      ...v4Fixes.templatePatches,
       {
         why: "The archived v3 journey block (journeyArchive: false) never renders; /journey hosts the v3 page itself, so the block is dropped instead of shipping dead markup",
         find: /\n {2}<sc-if value="\{\{ journeyArchive \}\}"[\s\S]*?\n {2}<\/sc-if>/g,

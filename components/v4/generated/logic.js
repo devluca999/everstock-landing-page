@@ -2164,6 +2164,7 @@ class Component extends DCLogic {
       }
       const cloud = (x, y, s, a) => { const c = night ? M(8, 0.7, a) : M(3, 1, a); C(x, y, 5 * s, c); C(x + 7 * s, y - 3 * s, 6.5 * s, c); C(x + 15 * s, y, 5 * s, c); R(x - 4 * s, y, 24 * s, 5 * s, c); };
       for (let k = 0; k < 4; k++) { const x = (((k * 91 - drift * 0.55) % span) + span) % span - 45; cloud(x, H * (0.1 + 0.1 * (k % 2)), 0.9 + (k % 3) * 0.2, 0.5); }
+      for (let k = 0; k < 5; k++) { const x = (((k * 73 - drift * 1.2) % span) + span) % span - 45; cloud(x, H * (0.82 + 0.06 * (k % 2)), 1.1 + (k % 2) * 0.3, 0.62); } // behind the plane
       for (let k = 0; k < 3; k++) { const bs = W + 40, x = (((k * 70 + 18 - uc * W * 0.9 - t * 7) % bs) + bs) % bs - 20, y = H * (0.22 + 0.07 * k) + Math.sin(t * 1.4 + k) * 2, f = Math.sin(t * 8 + k * 2) * 2.4; LN(x - 4, y - f, x, y, M(2, 0.1), 1); LN(x, y, x + 4, y - f, M(2, 0.1), 1); }
       const L = W * 0.92, bx0 = cx - L * 0.52 + ox, byT = sy - bh - 7 + bob, byB = sy + 5 + bob, bhh = byB - byT;
       const len = 26 + Math.sin(t * 0.8) * 3;
@@ -2181,7 +2182,6 @@ class Component extends DCLogic {
       else { g.lineCap = 'round'; LN(hx - hw / 2, sy + bob + 1, hx - hw / 2 + Math.cos(da) * hw, sy + bob + 1 + Math.sin(da) * hw, M(3, 0.4), 2.5); g.lineCap = 'butt'; }
       PL([[bx0 + L * 0.36, byB - 3], [bx0 + L * 0.58, byB - 3], [bx0 + L * 0.47, byB + bhh * 0.6], [bx0 + L * 0.35, byB + bhh * 0.6]], M(3, 0.45));
       R(bx0 + L * 0.4, byB + 1, 18, 6, M(2, 0.2));
-      for (let k = 0; k < 5; k++) { const x = (((k * 73 - drift * 1.2) % span) + span) % span - 45; cloud(x, H * (0.82 + 0.06 * (k % 2)), 1.1 + (k % 2) * 0.3, 0.62); }
     } else if (i === 2) {
       const ox = u < 0 ? -u * u * W * 1.05 : u > 1 ? (u - 1) * (u - 1) * W * 1.3 : 0;
       const dd = u <= 0 ? u * 0.25 : u < 0.3 ? u : u < 0.52 ? 0.3 + (u - 0.3) * 0.14 : u <= 1 ? 0.3308 + (u - 0.52) : 0.8108 + (u - 1) * 0.25;
@@ -2576,6 +2576,7 @@ class Component extends DCLogic {
   drawInd(i, t) {
     const cv = this.indCanvases && this.indCanvases[i]; if (!cv || !cv._w) return;
     const W0 = cv._w, H = cv._h, MX = Math.max(24, (W0 - 1280) / 2 + 40), W = W0 - 2 * MX; let g = cv.getContext('2d'); const gB = g;
+    const X0 = -MX, X1 = W + MX, mob = W0 < 768; // page edges in the translated space; phone layout
     g.setTransform(cv._dpr, 0, 0, cv._dpr, 0, 0); g.clearRect(0, 0, W0, H); g.translate(MX, 0);
     const fgc = this.indFg && this.indFg._w && i === this.state.tab ? this.indFg.getContext('2d') : null;
     if (fgc) { fgc.setTransform(cv._dpr, 0, 0, cv._dpr, 0, 0); fgc.clearRect(0, 0, W0, H); fgc.translate(MX, 0); }
@@ -2585,7 +2586,7 @@ class Component extends DCLogic {
     const lx = Math.max(side * 0.5, 70), rx = Math.min(W - side * 0.5, W - 70);
     const sc = Math.max(0.5, Math.min(1.1, side / 300));
     const ln = (x1, y1, x2, y2, a, w) => { g.strokeStyle = ink(a); g.lineWidth = w || 1; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); };
-    const grid = (step, a) => { g.strokeStyle = ink(a); g.lineWidth = 1; g.beginPath(); for (let x = ((W / 2) % step) + 0.5; x < W; x += step) { g.moveTo(x, 0); g.lineTo(x, H); } for (let y = ((H / 2) % step) + 0.5; y < H; y += step) { g.moveTo(0, y); g.lineTo(W, y); } g.stroke(); };
+    const grid = (step, a) => { g.strokeStyle = ink(a); g.lineWidth = 1; g.beginPath(); for (let x = ((W / 2) % step) + 0.5 - Math.ceil(MX / step) * step; x < X1; x += step) { g.moveTo(x, 0); g.lineTo(x, H); } for (let y = ((H / 2) % step) + 0.5; y < H; y += step) { g.moveTo(X0, y); g.lineTo(X1, y); } g.stroke(); };
     const ell = (x, y, a2, b2, a, w) => { g.strokeStyle = ink(a); g.lineWidth = w || 1; g.beginPath(); g.ellipse(x, y, Math.max(0.2, a2), Math.max(0.2, b2), 0, 0, Math.PI * 2); g.stroke(); };
     const rr = (x, y, w2, h2, r, a, w) => { g.strokeStyle = ink(a); g.lineWidth = w || 1; g.beginPath(); if (g.roundRect) g.roundRect(x, y, w2, h2, r); else g.rect(x, y, w2, h2); g.stroke(); };
     const txt = (s, x, y, a, al) => { g.fillStyle = ink(a); g.font = '500 10px "Geist Mono", ui-monospace, monospace'; g.textAlign = al || 'left'; g.textBaseline = 'middle'; g.fillText(s, x, y); };
@@ -2621,7 +2622,7 @@ class Component extends DCLogic {
 
     if (i === 0) {
       grid(14, 0.04); grid(84, 0.1);
-      dash([22, 5, 3, 5]); ln(0, cy, W, cy, 0.3); dash();
+      dash([22, 5, 3, 5]); ln(X0, cy, X1, cy, 0.3); dash();
       const R = 118 * sc, e = 0.3;
       const hx = lx - 100 * sc, hr = 0.36 * R, hl = 34 * sc;
       ell(hx, cy, hr * e, hr, 0.45); ell(hx + hl, cy, hr * e, hr, 0.45); ln(hx, cy - hr, hx + hl, cy - hr, 0.45); ln(hx, cy + hr, hx + hl, cy + hr, 0.45);
@@ -2655,15 +2656,15 @@ class Component extends DCLogic {
       ln(c0 + 59 * sc, cy + 0.36 * R, c0 + 59 * sc, cy + 0.36 * R + 30, 0.4); bubble(4, c0 + 59 * sc, cy + 0.36 * R + 39); txt('CALIPER', c0 + 59 * sc + 16, cy + 0.36 * R + 39, 0.6);
       {
         const kc = Math.max(0.6, Math.min(1.05, W / 1300)), yR = Math.min(H - 34, cy + bh / 2 + 10), LOOP = 6, DRIVE = 2.8;
-        const lt = t % LOOP, span = W + 420 * kc, v = span / DRIVE, xs = -190 * kc;
+        const lt = t % LOOP, span = X1 - X0 + 420 * kc, v = span / DRIVE, xs = X0 - 190 * kc;
         const x0 = red ? Math.max(24, side * 0.5 - 90 * kc) : xs + Math.min(lt, DRIVE) * v;
-        dash([10, 8]); ln(0, yR + 0.5, W, yR + 0.5, 0.2); dash();
+        dash([10, 8]); ln(X0, yR + 0.5, X1, yR + 0.5, 0.2); dash();
         if (fgc) { g = fgc; boxShade(x0 + 86 * kc, yR - 36 * kc, 108 * kc, 34 * kc, 0.2); }
         if (!red) {
           const cell = 4, maxAge = 2.6, exY = yR - 20 * kc;
           g.fillStyle = DK ? 'rgba(150,152,158,0.55)' : ink(0.4); g.beginPath();
           for (let x = Math.floor(x0 / cell) * cell; x > Math.max(xs, x0 - v * maxAge) - cell; x -= cell) {
-            if (x < -cell || x > W) continue;
+            if (x < X0 - cell || x > X1) continue;
             const age = lt - (x - xs) / v; if (age < 0 || age > maxAge) continue;
             const life = 1 - age / maxAge, spread = 3 * kc + age * 15 * kc, yc = exY - age * 14 * kc, col = Math.round(x / cell);
             for (let yy = Math.round((yc - spread * 1.8) / cell) * cell; yy < yc + spread * 1.8; yy += cell) {
@@ -2674,7 +2675,7 @@ class Component extends DCLogic {
           }
           g.fill();
         }
-        if (x0 > -200 * kc && x0 < W + 20) {
+        if (x0 > X0 - 200 * kc && x0 < X1 + 20) {
           const x = x0, y = yR + (red ? 0 : Math.sin(t * 31) * 0.5), k = kc, spin = x / (16 * k), RD = '#D23B2D', RD2 = '#A62C21';
           shadow(x + 86 * k, yR + 1, 88 * k, 4 * k);
           poly([[x - 6 * k, y - 52 * k], [x + 16 * k, y - 52 * k], [x + 16 * k, y - 45 * k], [x - 6 * k, y - 45 * k]], OBJ(0.86));
@@ -2779,41 +2780,45 @@ class Component extends DCLogic {
       }
       if (W > 760) { const tx = W - 28 - 220, ty = H - 28 - 50; rr(tx, ty, 220, 50, 0, 0.45); ln(tx, ty + 25, tx + 220, ty + 25, 0.3); txt('FRONT BRAKE ASSEMBLY', tx + 12, ty + 13, 0.7); txt('EXPLODED · SCALE 1:4 · REV C', tx + 12, ty + 38, 0.52); }
     } else if (i === 1) {
-      g.fillStyle = ink(0.1); for (let y = ((H / 2) % 14); y < H; y += 14) for (let x = ((W / 2) % 14); x < W; x += 14) g.fillRect(x, y, 1.2, 1.2);
-      rr(18.5, 18.5, W - 37, H - 37, 16, 0.32);
-      [[36, 36], [W - 36, 36], [36, H - 36], [W - 36, H - 36]].forEach((p) => { ell(p[0], p[1], 7, 7, 0.4); ell(p[0], p[1], 3, 3, 0.3); });
+      g.fillStyle = ink(0.1); for (let y = ((H / 2) % 14); y < H; y += 14) for (let x = ((W / 2) % 14) - Math.ceil(MX / 14) * 14; x < X1; x += 14) g.fillRect(x, y, 1.2, 1.2);
       const R2 = this.rng(5), G = 28;
       g.lineJoin = 'round'; g.lineCap = 'round';
       const traces = [], ends = [];
       let EC = this.eCyc;
-      if (!EC || t < EC.t0 || t >= EC.t0 + EC.len) { const t0 = EC && t >= EC.t0 + EC.len && t < EC.t0 + EC.len + 1 ? EC.t0 + EC.len : t; EC = this.eCyc = { t0, len: 2.6 + 5.1 + 0.5 + Math.random() * 0.5, burst: false }; }
-      const TR = 2.6, lt = red ? 1.4 : t - EC.t0;
+      if (!EC || t < EC.t0 || t >= EC.t0 + EC.len) { const t0 = EC && t >= EC.t0 + EC.len && t < EC.t0 + EC.len + 1 ? EC.t0 + EC.len : t; EC = this.eCyc = { t0, len: (mob ? 1.8 : 2.6) + 5.1 + 0.5 + Math.random() * 0.5, burst: false }; }
+      const TR = mob ? 1.8 : 2.6, lt = red ? 1.4 : t - EC.t0;
       // board power-up: ripples out from J1 over 0.6s, holds 2.5s, cools far-to-near over ~2s
       const l2 = lt - TR, c01 = (v) => Math.max(0, Math.min(1, v));
       const glowAt = (dn) => { if (red || l2 < 0) return 0; const on = c01((l2 - dn * 0.6) / 0.12), cool = c01((l2 - (3.1 + (1 - dn) * 0.8)) / 1.2); return on * Math.pow(1 - cool, 1.6); };
       const pwr = glowAt(0);
       const HOT = (I, a) => 'rgba(' + Math.round(196 + 59 * I) + ',' + Math.round(84 + 130 * I) + ',' + Math.round(40 * I * I) + ',' + c01(a).toFixed(3) + ')';
       const YEL = (a) => HOT(1, a);
-      for (let n = 0; n < 18; n++) {
-        let y = Math.round((48 + R2() * (H - 96)) / G) * G, x = 34 + R2() * W * 0.18; const pts = [[x, y]];
-        while (x < W - 60) { x = Math.min(W - 48, x + G * (2 + Math.floor(R2() * 6))); pts.push([x, y]); if (R2() < 0.5 && x < W - 110) { const dy = (R2() < 0.5 ? -1 : 1) * G * (1 + Math.floor(R2() * 2)); const ny = Math.max(48, Math.min(H - 48, y + dy)); x += Math.abs(ny - y); y = ny; pts.push([x, y]); } if (R2() < 0.16) break; }
+      const TW = X1 - X0;
+      for (let n = 0; n < Math.round((18 * TW) / W); n++) {
+        let y = Math.round((48 + R2() * (H - 96)) / G) * G, x = X0 + 34 + R2() * (TW - W * 0.82); const pts = [[x, y]];
+        while (x < X1 - 60) { x = Math.min(X1 - 48, x + G * (2 + Math.floor(R2() * 6))); pts.push([x, y]); if (R2() < 0.5 && x < X1 - 110) { const dy = (R2() < 0.5 ? -1 : 1) * G * (1 + Math.floor(R2() * 2)); const ny = Math.max(48, Math.min(H - 48, y + dy)); x += Math.abs(ny - y); y = ny; pts.push([x, y]); } if (R2() < 0.16) break; }
         g.strokeStyle = ink(0.16); g.lineWidth = 1.6; g.beginPath(); pts.forEach((p, k) => (k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]))); g.stroke();
         traces.push(pts);
         const e2 = pts[pts.length - 1]; ends.push(e2); g.fillStyle = BG; g.beginPath(); g.arc(e2[0], e2[1], 3.6, 0, 7); g.fill(); ell(e2[0], e2[1], 3.6, 3.6, 0.36); g.fillStyle = ink(0.36); g.beginPath(); g.arc(e2[0], e2[1], 1.3, 0, 7); g.fill();
       }
-      const cw = 88 * sc, ch = 34 * sc, cx = lx;
-      g.fillStyle = BG; g.fillRect(cx - cw / 2 - 8, cy - ch / 2 - 22, cw + 16, ch + 44);
-      rr(cx - cw / 2, cy - ch / 2, cw, ch, ch / 2, 0.62, 1.2); rr(cx - cw * 0.34, cy - ch * 0.2, cw * 0.68, ch * 0.4, ch * 0.2, 0.45);
-      for (let k = 0; k < 12; k++) ln(cx - cw * 0.3 + k * cw * 0.055, cy + ch / 2, cx - cw * 0.3 + k * cw * 0.055, cy + ch / 2 + 6, 0.5);
-      txt('J1 · USB-C', cx, cy - ch / 2 - 12, 0.66, 'center');
-      const fx = rx, pw = 4.5 * sc, pg = 8 * sc, fx0 = fx - 5.5 * pg;
-      g.fillStyle = BG; g.fillRect(fx - 76 * sc, cy - 40 * sc, 152 * sc, 80 * sc);
-      dash([4, 3]); rr(fx - 64 * sc, cy - 22 * sc, 128 * sc, 50 * sc, 4, 0.36); dash();
-      for (let k = 0; k < 12; k++) { const x = fx0 + k * pg - pw / 2; g.fillStyle = FILL2; g.fillRect(x, cy - 8 * sc, pw, 16 * sc); rr(x, cy - 8 * sc, pw, 16 * sc, 1, 0.6); }
-      [[-1, 1], [1, 1]].forEach((s2) => { ell(fx + s2[0] * 54 * sc, cy + 14 * sc, 6 * sc, 6 * sc, 0.5); ell(fx + s2[0] * 54 * sc, cy + 14 * sc, 3 * sc, 3 * sc, 0.4); });
-      txt('J1 FOOTPRINT · REV C', fx, cy - 32 * sc, 0.66, 'center');
-      const yb = Math.min(H - 44, cy + bh / 2 + 38), xa = cx + cw / 2, xL = Math.max(xa + 24, W / 2 - bw / 2 - 28), xR = Math.min(fx0 - 24, W / 2 + bw / 2 + 28), j = 16;
-      const path = [[xa, cy], [xL - j, cy], [xL, cy + j], [xL, yb - j], [xL + j, yb], [xR - j, yb], [xR, yb - j], [xR, cy + j], [xR + j, cy], [fx0 - pw, cy]];
+      // phones: the box fills the width, so J1 sits above it, the footprint below the CTA
+      // under it, and the trace runs down the box's left side; nothing off screen
+      const sE = mob ? 0.72 : sc, bxL = W / 2 - bw / 2, bxT = cy - bh / 2, bxB = cy + bh / 2;
+      const cw = 88 * sE, ch = 34 * sE, cx = mob ? W / 2 - bw * 0.18 : lx, jy = mob ? Math.max(ch / 2 + 30, bxT * 0.5) : cy;
+      g.fillStyle = BG; g.fillRect(cx - cw / 2 - 8, jy - ch / 2 - 22, cw + 16, ch + 44);
+      rr(cx - cw / 2, jy - ch / 2, cw, ch, ch / 2, 0.62, 1.2); rr(cx - cw * 0.34, jy - ch * 0.2, cw * 0.68, ch * 0.4, ch * 0.2, 0.45);
+      for (let k = 0; k < 12; k++) ln(cx - cw * 0.3 + k * cw * 0.055, jy + ch / 2, cx - cw * 0.3 + k * cw * 0.055, jy + ch / 2 + 6, 0.5);
+      txt('J1 · USB-C', cx, jy - ch / 2 - 12, 0.66, 'center');
+      const fx = mob ? W / 2 + bw * 0.12 : rx, fyF = mob ? Math.min(H - 34 * sE, (bxB + 64 + H) / 2 + 6) : cy, pw = 4.5 * sE, pg = 8 * sE, fx0 = fx - 5.5 * pg;
+      g.fillStyle = BG; g.fillRect(fx - 76 * sE, fyF - 40 * sE, 152 * sE, 80 * sE);
+      dash([4, 3]); rr(fx - 64 * sE, fyF - 22 * sE, 128 * sE, 50 * sE, 4, 0.36); dash();
+      for (let k = 0; k < 12; k++) { const x = fx0 + k * pg - pw / 2; g.fillStyle = FILL2; g.fillRect(x, fyF - 8 * sE, pw, 16 * sE); rr(x, fyF - 8 * sE, pw, 16 * sE, 1, 0.6); }
+      [[-1, 1], [1, 1]].forEach((s2) => { ell(fx + s2[0] * 54 * sE, fyF + 14 * sE, 6 * sE, 6 * sE, 0.5); ell(fx + s2[0] * 54 * sE, fyF + 14 * sE, 3 * sE, 3 * sE, 0.4); });
+      txt('J1 FOOTPRINT · REV C', fx, fyF - 32 * sE, 0.66, 'center');
+      let path;
+      if (mob) { const xL = bxL - 14, j = 10; path = [[cx - cw / 2, jy], [xL + j, jy], [xL, jy + j], [xL, fyF - j], [xL + j, fyF], [fx0 - pw, fyF]]; }
+      else { const yb = Math.min(H - 44, cy + bh / 2 + 38), xa = cx + cw / 2, xL = Math.max(xa + 24, W / 2 - bw / 2 - 28), xR = Math.min(fx0 - 24, W / 2 + bw / 2 + 28), j = 16;
+        path = [[xa, cy], [xL - j, cy], [xL, cy + j], [xL, yb - j], [xL + j, yb], [xR - j, yb], [xR, yb - j], [xR, cy + j], [xR + j, cy], [fx0 - pw, cy]]; }
       g.strokeStyle = ink(0.44); g.lineWidth = 2; g.beginPath(); path.forEach((p, k) => (k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]))); g.stroke();
       const segs = []; let tot = 0; for (let k = 1; k < path.length; k++) { const l = Math.hypot(path[k][0] - path[k - 1][0], path[k][1] - path[k - 1][1]); segs.push(l); tot += l; }
       const at = (d) => { d = Math.max(0, Math.min(tot, d)); for (let k = 0; k < segs.length; k++) { if (d <= segs[k]) { const f = d / segs[k]; return [path[k][0] + (path[k + 1][0] - path[k][0]) * f, path[k][1] + (path[k + 1][1] - path[k][1]) * f]; } d -= segs[k]; } return path[path.length - 1]; };
@@ -2827,9 +2832,9 @@ class Component extends DCLogic {
         g.fillStyle = gl; g.beginPath(); g.arc(hp[0], hp[1], rg, 0, 7); g.fill(); disc(hp[0], hp[1], 3.6, '#1462FF'); disc(hp[0], hp[1], 1.8, '#F4F8FF');
         const n = Math.random() < 0.6 ? 2 : 1; for (let q = 0; q < n; q++) sp.push({ x: hp[0], y: hp[1], vx: (Math.random() - 0.5) * 220, vy: (Math.random() - 0.75) * 190, age: 0, life: 0.18 + Math.random() * 0.26, c: 0 });
       }
-      if (!red && lt >= TR && !EC.burst) { EC.burst = true; for (let q = 0; q < 22; q++) sp.push({ x: fx0 + Math.random() * 11 * pg, y: cy + (Math.random() - 0.5) * 16 * sc, vx: (Math.random() - 0.5) * 300, vy: (Math.random() - 0.8) * 260, age: 0, life: 0.3 + Math.random() * 0.35, c: 1 }); }
+      if (!red && lt >= TR && !EC.burst) { EC.burst = true; for (let q = 0; q < 22; q++) sp.push({ x: fx0 + Math.random() * 11 * pg, y: fyF + (Math.random() - 0.5) * 16 * sE, vx: (Math.random() - 0.5) * 300, vy: (Math.random() - 0.8) * 260, age: 0, life: 0.3 + Math.random() * 0.35, c: 1 }); }
       if (l2 >= 0 && l2 < 5.2 && !red) {
-        const dmax = Math.hypot(Math.max(fx, W - fx), Math.max(cy, H - cy)), dnOf = (x, y) => Math.min(1, Math.hypot(x - fx, y - cy) / dmax);
+        const dmax = Math.hypot(Math.max(fx - X0, X1 - fx), Math.max(fyF, H - fyF)), dnOf = (x, y) => Math.min(1, Math.hypot(x - fx, y - fyF) / dmax);
         const relight = (pts, wd) => {
           for (let k = 1; k < pts.length; k++) {
             const a = pts[k - 1], b = pts[k], len = Math.hypot(b[0] - a[0], b[1] - a[1]), n = Math.max(1, Math.ceil(len / 22));
@@ -2843,13 +2848,15 @@ class Component extends DCLogic {
           }
         };
         g.lineCap = 'round'; g.lineJoin = 'round';
-        g.save(); g.beginPath(); g.rect(0, 0, W, H); g.rect(fx - 76 * sc, cy - 40 * sc, 152 * sc, 80 * sc); g.rect(cx - cw / 2 - 8, cy - ch / 2 - 22, cw + 16, ch + 44); g.clip('evenodd');
+        g.save(); g.beginPath(); g.rect(X0, 0, X1 - X0, H); g.rect(fx - 76 * sE, fyF - 40 * sE, 152 * sE, 80 * sE); g.rect(cx - cw / 2 - 8, jy - ch / 2 - 22, cw + 16, ch + 44); g.clip('evenodd');
         traces.forEach((p) => relight(p, 1.6));
         ends.forEach((e2) => { const I = glowAt(dnOf(e2[0], e2[1])); if (I <= 0.01) return; disc(e2[0], e2[1], 6, HOT(I, 0.25 * I)); g.fillStyle = BG; g.beginPath(); g.arc(e2[0], e2[1], 3.6, 0, 7); g.fill(); g.strokeStyle = HOT(I, I); g.lineWidth = 1.2; g.beginPath(); g.arc(e2[0], e2[1], 3.6, 0, 7); g.stroke(); disc(e2[0], e2[1], 1.4, HOT(I, I)); });
         g.restore();
         relight(path, 2);
-        for (let k = 0; k < 12; k++) { const x = fx0 + k * pg - pw / 2, I = glowAt(0); g.fillStyle = FILL2; g.fillRect(x, cy - 8 * sc, pw, 16 * sc); if (I > 0.01) { g.fillStyle = HOT(I, 0.92 * I); g.fillRect(x, cy - 8 * sc, pw, 16 * sc); } rr(x, cy - 8 * sc, pw, 16 * sc, 1, 0.6); }
+        const cool0 = c01((l2 - 3.9) / 1.2), pinI = (k) => (mob ? c01((l2 - k * 0.05) / 0.06) * Math.pow(1 - cool0, 1.6) : glowAt(0));
+        for (let k = 0; k < 12; k++) { const x = fx0 + k * pg - pw / 2, I = pinI(k); g.fillStyle = FILL2; g.fillRect(x, fyF - 8 * sE, pw, 16 * sE); if (I > 0.01) { g.fillStyle = HOT(I, 0.92 * I); g.fillRect(x, fyF - 8 * sE, pw, 16 * sE); } rr(x, fyF - 8 * sE, pw, 16 * sE, 1, 0.6); }
       }
+      if (mob && !red && i === this.state.tab && this.state.labFrom === this.indLabels[1][3]) { const want = lt >= TR + 11 * 0.05 + 0.06; if (want !== !!this.state.stampOn) this.setState({ stampOn: want }); }
       for (let q = sp.length - 1; q >= 0; q--) {
         const s = sp[q]; s.age += dt; if (s.age >= s.life || red) { sp.splice(q, 1); continue; }
         s.x += s.vx * dt; s.y += s.vy * dt; s.vy += 420 * dt;
@@ -2897,12 +2904,12 @@ class Component extends DCLogic {
       hub(S, 16 * sc); hub(E, 13 * sc); hub(Wr, 10 * sc);
       bubble(1, base[0] + 64 * sc, base[1] - 8 * sc); txt('ARM', base[0] + 80 * sc, base[1] - 8 * sc, 0.6);
       {
-        const k = Math.max(0.62, Math.min(1.05, W / 1300)), yF = Math.min(H - 30, cy + bh / 2 + 14), LOOP = 10, span = W + 420 * k;
-        dash([10, 8]); ln(0, yF + 0.5, W, yF + 0.5, 0.2); dash();
-        const x = red ? Math.max(20, side * 0.5 - 90 * k) : -200 * k + ((t % LOOP) / LOOP) * span, y = yF + (red ? 0 : Math.abs(Math.sin(t * 9)) * -0.8), spin = x / (13 * k);
+        const k = Math.max(0.62, Math.min(1.05, W / 1300)), yF = Math.min(H - 30, cy + bh / 2 + 14), LOOP = 10, span = X1 - X0 + 420 * k;
+        dash([10, 8]); ln(X0, yF + 0.5, X1, yF + 0.5, 0.2); dash();
+        const x = red ? Math.max(20, side * 0.5 - 90 * k) : X0 - 200 * k + ((t % LOOP) / LOOP) * span, y = yF + (red ? 0 : Math.abs(Math.sin(t * 9)) * -0.8), spin = x / (13 * k);
         const lift = red ? 10 * k : 10 * k + Math.sin(t * 1.3) * 2 * k, AMB = '#D6A03C', AMB2 = '#B7822C';
         if (fgc) { g = fgc; boxShade(x + 80 * k, yF - 52 * k, 100 * k, 52 * k, 0.18); }
-        if (x > -220 * k && x < W + 20) {
+        if (x > X0 - 220 * k && x < X1 + 20) {
           shadow(x + 76 * k, yF + 1, 86 * k, 4 * k);
           fillR(x - 6 * k, y - 50 * k, 26 * k, 36 * k, 4 * k, '#3A3A40'); hatch(x - 6 * k, y - 50 * k, 26 * k, 36 * k, 4 * k, 'rgba(250,247,241,0.16)');
           poly([[x + 14 * k, y - 14 * k], [x + 14 * k, y - 44 * k], [x + 30 * k, y - 51 * k], [x + 84 * k, y - 51 * k], [x + 92 * k, y - 40 * k], [x + 92 * k, y - 14 * k]], AMB, 0.8);
@@ -2922,9 +2929,9 @@ class Component extends DCLogic {
         }
         // excavator, right to left, crossing the box half a loop after the forklift
         {
-          const sp2 = W + 300 * k, fX = (W / 2 + 120 * k) / span, gX = (W / 2 + 40 + 60 * k) / sp2, te0 = fX * LOOP + LOOP / 2 - gX * LOOP;
-          const ph2 = ((((t - te0) % LOOP) + LOOP) % LOOP) / LOOP, ex = red ? W - Math.max(20, side * 0.5) - 60 * k : W + 40 - ph2 * sp2, ey = yF + (red ? 0 : Math.abs(Math.sin(t * 8 + 1)) * -0.7);
-          if (ex > -200 * k && ex < W + 60) {
+          const sp2 = X1 - X0 + 300 * k, fX = (W / 2 - X0 + 120 * k) / span, gX = (X1 - W / 2 + 40 + 60 * k) / sp2, te0 = fX * LOOP + LOOP / 2 - gX * LOOP;
+          const ph2 = ((((t - te0) % LOOP) + LOOP) % LOOP) / LOOP, ex = red ? W - Math.max(20, side * 0.5) - 60 * k : X1 + 40 - ph2 * sp2, ey = yF + (red ? 0 : Math.abs(Math.sin(t * 8 + 1)) * -0.7);
+          if (ex > X0 - 200 * k && ex < X1 + 60) {
             if (fgc) boxShade(ex + 60 * k, yF - 46 * k, 96 * k, 46 * k, 0.18);
             shadow(ex + 60 * k, yF + 1, 72 * k, 4 * k);
             const AM = '#D6A03C', AM2 = '#B7822C', bob = red ? 0 : Math.sin(t * 1.4) * 0.12, a1 = -2.25 + bob, a2 = a1 + 1.95 + (red ? 0 : Math.sin(t * 1.4 + 0.8) * 0.1);
@@ -3002,7 +3009,7 @@ class Component extends DCLogic {
       slots.forEach((sl, q) => {
         const p = red ? 1 : Math.max(0, Math.min(1, (lt - starts[q]) / D)); if (p <= 0) return;
         let x = sl[0], y = sl[1];
-        if (sl[2] === 0) x = sl[0] + (W + 40 - sl[0]) * (1 - outBack(p)); else y = sl[1] - (sl[1] + s) * (1 - outBounce(p));
+        if (sl[2] === 0) x = sl[0] + (X1 + 40 - sl[0]) * (1 - outBack(p)); else y = sl[1] - (sl[1] + s) * (1 - outBounce(p));
         crate(x, y, s);
       });
       g.globalAlpha = 1;
