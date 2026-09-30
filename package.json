@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "port:v3": "node scripts/port-dc.mjs \"mockup/v3/Everstock v3.dc.html\" mockup/v3/support.js components/v3/generated"
+    "port:v3": "node scripts/port-dc.mjs v3",
+    "port:v4": "node scripts/port-dc.mjs v4"
   },
   "dependencies": {
     "convex": "^1.45.0",

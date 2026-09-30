@@ -2,7 +2,7 @@
 /**
  * Ports a Claude Design `.dc.html` page into the Next.js app without retyping it.
  *
- *   node scripts/port-dc.mjs "mockup/v3/Everstock v3.dc.html" "mockup/v3/support.js" components/v3/generated
+ *   node scripts/port-dc.mjs v4      (or v3; see PAGES below, and `npm run port:v4`)
  *
  * The design runs on the dc-runtime (support.js): a template compiled at runtime into
  * React elements, driven by a logic class. This script does the compile step ahead of
@@ -16,19 +16,92 @@
  *   logic.js       the logic <script>, byte-for-byte, wrapped exactly like evalDcLogic()
  *   dcrt.js        the runtime's expression + attribute helpers (src/expr.ts, src/encode.ts)
  *   props.json     the declared props' defaults
+ *
+ * Site-side changes to a design are applied here, at port time, so mockup/<page> stays a
+ * byte-exact copy of the design. Every patch anchor must match an exact number of times:
+ * if the design changes under a patch, the port fails instead of silently dropping it
+ * (then either carry the change into the design and delete the patch, or update it).
  */
 import fs from "node:fs";
 import path from "node:path";
 import { parseFragment } from "parse5";
 
-const [, , srcPath, runtimePath, outDir] = process.argv;
-if (!srcPath || !runtimePath || !outDir) {
-  console.error("usage: port-dc.mjs <page.dc.html> <support.js> <outDir>");
+const PAGES = {
+  v3: {
+    src: "mockup/v3/Everstock v3.dc.html",
+    runtime: "mockup/v3/support.js",
+    out: "components/v3/generated",
+    logicPatches: [
+      {
+        why: "Industries › Any physical product: the screw + gear group sits the stack's distance (max(30, side * 0.16)) off the box's left edge, measured from its rightmost part incl. callouts (was pinned at side * 0.14 from the page edge)",
+        find: "const ks = Math.max(0.6, Math.min(1, side / 420)), L0 = side * 0.14, sy2 = cy + 62 * ks, T6 = red ? 3.2 : t % 6;",
+        replace:
+          "const ks = Math.max(0.6, Math.min(1, side / 420)), sy2 = cy + 62 * ks, T6 = red ? 3.2 : t % 6;\n" +
+          "        const L0 = (() => { g.font = '500 10px \"Geist Mono\", ui-monospace, monospace'; const mw = (s) => g.measureText(s).width; const reach = Math.max(130 * ks, 140 * ks + 22 + mw('MODULE: 1.5'), 125 * ks + 6 + mw('FITS: M12 × 2.0')); return Math.max(12, side - Math.max(30, side * 0.16) - reach); })();",
+      },
+    ],
+    templatePatches: [],
+    hrefBindings: {},
+  },
+  v4: {
+    src: "mockup/v4/Everstock v4.dc.html",
+    runtime: "mockup/v4/support.js",
+    out: "components/v4/generated",
+    logicPatches: [],
+    templatePatches: [
+      {
+        why: "The archived v3 journey block (journeyArchive: false) never renders; /journey hosts the v3 page itself, so the block is dropped instead of shipping dead markup",
+        find: /\n {2}<sc-if value="\{\{ journeyArchive \}\}"[\s\S]*?\n {2}<\/sc-if>/g,
+        count: 1,
+        replace: "",
+      },
+      {
+        why: "Footer nav: the transitional CTA carries its final label everywhere (r8), not the design's leftover 'Upload your documents'",
+        find: ">Upload your documents</a>",
+        replace: ">Send us your scattered records</a>",
+      },
+      {
+        why: "Records form sent state: files are not uploaded yet, so it is a stamped RECEIVED (ink, the foundations' moving-box colour) instead of 'Everstock is reading your file.' + a blue Checking stamp",
+        find: '<span style="font-size:16px;color:#1A1B1F;">Everstock is reading your file.</span>',
+        replace: '<span style="font-size:16px;color:#1A1B1F;">Got it. Add your company and we\'ll be in touch.</span>',
+      },
+      {
+        why: "(same) the stamp itself",
+        find: /border:3px solid #0B5FFF;border-radius:4px;box-shadow:inset 0 0 0 2px #DED7CB,inset 0 0 0 3\.5px #0B5FFF;color:#0B5FFF;([^"]*)">Checking<\/span>/g,
+        count: 1,
+        replace: 'border:3px solid #2B2C31;border-radius:4px;box-shadow:inset 0 0 0 2px #DED7CB,inset 0 0 0 3.5px #2B2C31;color:#2B2C31;$1">Received</span>',
+      },
+    ],
+    // CTA destinations come from lib/cta.ts (through renderVals keys the host adds),
+    // never from the template: each designed <a href> below is rebound to its config key.
+    hrefBindings: {
+      "#book-demo": "{{ ctaBookDemoHref }}",
+      "#access": "{{ ctaEarlyAccessHref }}",
+      "#price-file": "{{ ctaRecordsHref }}",
+      "/journey": "{{ ctaJourneyHref }}",
+    },
+  },
+};
+
+const page = PAGES[process.argv[2]];
+if (!page) {
+  console.error("usage: port-dc.mjs <" + Object.keys(PAGES).join("|") + ">");
   process.exit(1);
 }
-const html = fs.readFileSync(srcPath, "utf8");
-const support = fs.readFileSync(runtimePath, "utf8");
+const html = fs.readFileSync(page.src, "utf8");
+const support = fs.readFileSync(page.runtime, "utf8");
+const outDir = page.out;
 fs.mkdirSync(outDir, { recursive: true });
+
+function applyPatches(src, patches, kind) {
+  for (const p of patches) {
+    const n = typeof p.find === "string" ? src.split(p.find).length - 1 : (src.match(p.find) || []).length;
+    const want = p.count ?? 1;
+    if (n !== want) throw new Error(`${kind} patch anchor matched ${n} times (expected ${want}): ${p.why}`);
+    src = typeof p.find === "string" ? src.split(p.find).join(p.replace) : src.replace(p.find, p.replace);
+  }
+  return src;
+}
 
 /* ---------- runtime sections, sliced verbatim ---------- */
 function section(name) {
@@ -65,6 +138,7 @@ const helmetMatch = inner.match(/<helmet>([\s\S]*?)<\/helmet>/i);
 if (!helmetMatch) throw new Error("no <helmet>");
 const helmet = helmetMatch[1];
 inner = inner.replace(helmetMatch[0], "");
+inner = applyPatches(inner, page.templatePatches, "template");
 
 const styles = [...helmet.matchAll(/<style>([\s\S]*?)<\/style>/gi)].map((m) => m[1]);
 fs.writeFileSync(
@@ -79,21 +153,8 @@ const propsMeta = JSON.parse(decode(scriptMatch[1]));
 const defaults = Object.fromEntries(Object.entries(propsMeta).filter(([, m]) => m.default !== undefined).map(([k, m]) => [k, m.default]));
 fs.writeFileSync(path.join(outDir, "props.json"), JSON.stringify(defaults, null, 2) + "\n");
 
-/* Site-side changes to the design's logic, applied at port time so mockup/v3 stays a
-   byte-exact copy of the design. Each anchor must match exactly once: if the design
-   changes that line, the port fails here instead of silently dropping the change
-   (then either carry the change into the design or update the patch). */
-const LOGIC_PATCHES = [
-  {
-    why: "Industries › Any physical product: the screw + gear group sits the stack's distance (max(30, side * 0.16)) off the box's left edge, measured from its rightmost part incl. callouts (was pinned at side * 0.14 from the page edge)",
-    find: "const ks = Math.max(0.6, Math.min(1, side / 420)), L0 = side * 0.14, sy2 = cy + 62 * ks, T6 = red ? 3.2 : t % 6;",
-    replace:
-      "const ks = Math.max(0.6, Math.min(1, side / 420)), sy2 = cy + 62 * ks, T6 = red ? 3.2 : t % 6;\n" +
-      "        const L0 = (() => { g.font = '500 10px \"Geist Mono\", ui-monospace, monospace'; const mw = (s) => g.measureText(s).width; const reach = Math.max(130 * ks, 140 * ks + 22 + mw('MODULE: 1.5'), 125 * ks + 6 + mw('FITS: M12 × 2.0')); return Math.max(12, side - Math.max(30, side * 0.16) - reach); })();",
-  },
-];
 let logicSrc = scriptMatch[2];
-for (const p of LOGIC_PATCHES) {
+for (const p of page.logicPatches) {
   const n = logicSrc.split(p.find).length - 1;
   if (n !== 1) throw new Error(`logic patch anchor matched ${n} times (expected 1): ${p.why}`);
   logicSrc = logicSrc.replace(p.find, () => p.replace);
@@ -133,6 +194,7 @@ const SRC_OVERRIDES = {
 };
 
 const tags = new Set();
+const unbound = new Set();
 function walk(node) {
   if (node.nodeName === "#text") {
     const txt = node.value ?? "";
@@ -164,7 +226,11 @@ function walk(node) {
     if (key === "class") key = "className";
     else if (key === "for") key = "htmlFor";
     else if (key.startsWith("on")) key = rt.EVENT_MAP[key] || "on" + key[2].toUpperCase() + key.slice(3);
-    props.push([key, key === "src" && SRC_OVERRIDES[value] ? SRC_OVERRIDES[value] : value]);
+    let v = value;
+    if (key === "src" && SRC_OVERRIDES[v]) v = SRC_OVERRIDES[v];
+    if (key === "href" && tag === "a" && page.hrefBindings[v]) v = page.hrefBindings[v];
+    else if (key === "href" && tag === "a" && Object.keys(page.hrefBindings).length && !v.includes("{{")) unbound.add(v);
+    props.push([key, v]);
   }
   const realTag = rt.RAW_UNWRAP[tag] || tag;
   tags.add(realTag);
@@ -182,6 +248,7 @@ fs.writeFileSync(
 console.log(
   `template: ${tree.length} root nodes, tags: ${[...tags].sort().join(" ")}\n` +
     `pseudo rules: ${pseudoRules.length}\nlogic: ${scriptMatch[2].length} chars\nprops: ${JSON.stringify(defaults)}\n` +
+    (unbound.size ? `hrefs left as designed (not CTAs): ${[...unbound].join(" ")}\n` : "") +
     `helmet links:\n${[...helmet.matchAll(/<link[^>]*>/gi)].map((m) => "  " + m[0]).join("\n")}\n` +
     `helmet scripts:\n${[...helmet.matchAll(/<script[^>]*>/gi)].map((m) => "  " + m[0]).join("\n")}`
 );
