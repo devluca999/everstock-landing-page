@@ -65,13 +65,14 @@ function prefillModalEmail(email) {
    empty until the rain starts at 50% in view anyway. */
 const HALF_SCREEN = "50% 0px 50% 0px";
 const DEFERRED = [
-  { fn: "layoutStakes", section: "stakes", kick: "stkKick", margin: "0px" },
-  { fn: "fillBA", section: "before-after", margin: HALF_SCREEN },
-  { fn: "sizeInd", section: "industries", margin: HALF_SCREEN },
-  { fn: "layoutActs", section: "act-1", kick: "actKick", margin: HALF_SCREEN },
-  { fn: "layoutWhy", section: "why", kick: "whyKick", margin: HALF_SCREEN },
-  { fn: "layoutPlan", section: "plan", margin: HALF_SCREEN },
-  { fn: "fillClosing", section: "price-file", margin: HALF_SCREEN },
+  { fn: "layoutStakes", sections: ["stakes"], kick: "stkKick", margin: "0px" },
+  { fn: "fillBA", sections: ["before-after"], margin: HALF_SCREEN },
+  { fn: "sizeInd", sections: ["industries"], margin: HALF_SCREEN },
+  // lays out both acts; a jump can land near act 2 without passing act 1
+  { fn: "layoutActs", sections: ["act-1", "act-2"], kick: "actKick", margin: HALF_SCREEN },
+  { fn: "layoutWhy", sections: ["why"], kick: "whyKick", margin: HALF_SCREEN },
+  { fn: "layoutPlan", sections: ["plan"], margin: HALF_SCREEN },
+  { fn: "fillClosing", sections: ["price-file"], margin: HALF_SCREEN },
 ];
 
 const extend = (DesignLogic) =>
@@ -156,12 +157,34 @@ const extend = (DesignLogic) =>
         submitForm(e); // the design's RECEIVED state
         this.openAccess();
         this.records = { files: uploadRecords(files) };
+        // the route's minimum-fill-time bot check counts from here; the visitor already
+        // filled the records form, so the clock starts at page load, not at the modal
+        this.accOpenedAt = pageLoadedAt;
         prefillModalEmail(email);
       };
     }
 
     componentDidMount() {
-      super.componentDidMount();
+      try {
+        super.componentDidMount();
+      } finally {
+        // even if the design's mount throws, the deferred paints still get observers
+        this.watchDeferred();
+      }
+      // CTA links opened in a new tab, shared, or typed arrive as /#book-demo or
+      // /#access (#request: the v2/v3 links); they open what the click would have
+      this.onHash = () => {
+        const h = location.hash;
+        if (h === "#book-demo") {
+          if (CTA.bookDemo.externalUrl) location.assign(CTA.bookDemo.externalUrl);
+          else this.openDemo();
+        } else if (h === CTA.earlyAccess.href || h === "#request") this.openAccess();
+      };
+      this.onHash();
+      window.addEventListener("hashchange", this.onHash);
+    }
+
+    watchDeferred() {
       if (typeof IntersectionObserver === "undefined") return;
       this.ioNear = [...new Set(this.deferred.map((d) => d.margin))].map((margin) => {
         const mine = this.deferred.filter((d) => d.margin === margin);
@@ -173,7 +196,7 @@ const extend = (DesignLogic) =>
               if (!en.isIntersecting || en.intersectionRatio === 0) return;
               obs.unobserve(en.target);
               for (const d of mine) {
-                if (d.section !== en.target.id) continue;
+                if (!d.sections.includes(en.target.id)) continue;
                 d.ready = true;
                 if (!this.pendingPaint.delete(d.fn)) continue;
                 this[d.fn]();
@@ -182,7 +205,7 @@ const extend = (DesignLogic) =>
             }),
           { rootMargin: margin, threshold: 0.01 }
         );
-        new Set(mine.map((d) => d.section)).forEach((id) => {
+        new Set(mine.flatMap((d) => d.sections)).forEach((id) => {
           const el = document.getElementById(id);
           if (el) obs.observe(el);
         });
@@ -192,6 +215,7 @@ const extend = (DesignLogic) =>
 
     componentWillUnmount() {
       (this.ioNear || []).forEach((obs) => obs.disconnect());
+      window.removeEventListener("hashchange", this.onHash);
       super.componentWillUnmount();
     }
 
