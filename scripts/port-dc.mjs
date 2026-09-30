@@ -261,7 +261,11 @@ function walk(node) {
     else if (key === "href" && tag === "a" && Object.keys(page.hrefBindings).length && !v.includes("{{")) unbound.add(v);
     props.push([key, v]);
   }
-  const realTag = rt.RAW_UNWRAP[tag] || tag;
+  // SVG elements keep their case-adjusted names (linearGradient, feGaussianBlur…) as
+  // the browser's parser gives them to the runtime; lowercased, React creates unknown
+  // elements and every url(#…) gradient and filter reference silently renders nothing
+  const svgTag = node.namespaceURI === "http://www.w3.org/2000/svg" ? node.tagName : null;
+  const realTag = rt.RAW_UNWRAP[tag] || svgTag || tag;
   tags.add(realTag);
   const out = { t: "el", tag: realTag, props, kids: kids() };
   if (classes.length) out.cls = classes;
