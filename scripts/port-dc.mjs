@@ -47,7 +47,13 @@ const PAGES = {
     src: "mockup/v4/Everstock v4.dc.html",
     runtime: "mockup/v4/support.js",
     out: "components/v4/generated",
-    logicPatches: [],
+    logicPatches: [
+      {
+        why: "AA contrast: the Plan's inactive steps dimmed to 0.42 (1.8:1 and 2.7:1 on eggshell); 0.72 keeps the highlight and clears 4.5:1 (with the step-number ink below)",
+        find: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.42;",
+        replace: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.72;",
+      },
+    ],
     templatePatches: [
       {
         why: "The archived v3 journey block (journeyArchive: false) never renders; /journey hosts the v3 page itself, so the block is dropped instead of shipping dead markup",

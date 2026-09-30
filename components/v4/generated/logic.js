@@ -3151,7 +3151,7 @@ class Component extends DCLogic {
       planLeft: 'calc(' + Math.max(0, this.state.planStep) + ' * (100% + 32px) / 3)',
       planTf: this.state.planStep < 0 ? 'translateX(-24px)' : 'translateX(0px)',
       planTr: red ? 'none' : 'left 820ms cubic-bezier(.2,.8,.25,1), transform 820ms cubic-bezier(.2,.8,.25,1)',
-      ...[0, 1, 2].reduce((o, i) => { o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.42; return o; }, {}),
+      ...[0, 1, 2].reduce((o, i) => { o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.72; return o; }, {}),
       journeyRef: this.journeyRef, jPathRef: this.jPathRef, jBoxRef: this.jBoxRef,
       formBoxRef: this.formBoxRef, stackRef: this.stackRef, submitForm: this.submitForm, onFile: this.onFile,
       sent: this.state.sent, notSent: !this.state.sent, fileName: this.state.fileName,
