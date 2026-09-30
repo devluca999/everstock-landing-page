@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { themeScript, scrollScript } from "./head-scripts";
 
-const TITLE =
-  "Everstock: Sourcing, procurement and data management automation for supply-chain distributors";
+const TITLE = "Everstock · Supply chain software for physical products";
 const DESCRIPTION =
-  "Everstock automates sourcing, procurement, and product-data management. It monitors vendor pricing, flags reorders, keeps SKU records clean, and queues every purchase order for your approval. For supply-chain distributors of auto parts, electronics, and industrial supply, on top of your existing ERP.";
+  "Everstock reads your quotes, orders and invoices, finds the right part, and drafts every order for your sign-off. For companies that make, move and sell physical products, with or without an ERP.";
+// the v4 hero at 1200×630 (see CLAUDE.md → "v4 port" for how it is regenerated)
+const OG_IMAGE = { url: "/og-image.png", width: 1200, height: 630, alt: TITLE };
 const SITE_URL = "https://tryeverstock.com";
 
 export const metadata: Metadata = {
@@ -20,11 +21,13 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
     locale: "en_US",
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
+    images: [OG_IMAGE.url],
   },
   robots: {
     index: true,
@@ -37,6 +40,7 @@ export const viewport: Viewport = {
   themeColor: "#16171B",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 const jsonLd = {
@@ -49,7 +53,7 @@ const jsonLd = {
       url: SITE_URL,
       logo: `${SITE_URL}/logo/logo-mark-dark.svg`,
       description:
-        "Sourcing, procurement, and data management automation for mid-market distributors of auto parts, electronics, and industrial supply.",
+        "Supply chain software for companies that make, move and sell physical products: it reads quotes, orders and invoices and drafts every order for your sign-off.",
     },
     {
       "@type": "WebSite",

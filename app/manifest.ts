@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Everstock",
     short_name: "Everstock",
     description:
-      "Supply-chain intelligence for mid-market distributors.",
+      "Supply chain software for physical products.",
     start_url: "/",
     display: "standalone",
     background_color: "#16171B",
