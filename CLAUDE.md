@@ -4,13 +4,39 @@ This file is read automatically at the start of every Claude Code session in thi
 
 ## What this is
 
-Everstock is agentic procurement automation for mid-market distributors, starting with auto parts (tires, brake pads, rotors, oil filters, batteries, fluids). Core thesis: **deterministic spine, agentic edges** — price-threshold rules and PO execution run as deterministic logic; vendor discovery and quote parsing run as agentic (LLM) work in scheduled batches. This decouples LLM cost from transaction volume.
+Everstock is supply chain software for companies that make, move and sell physical products, with or without an ERP. It reads quotes, orders and invoices, finds the right part, and drafts every order for the buyer's sign-off (a person approves every order; Everstock never spends a dollar you didn't approve). Core thesis: **deterministic spine, agentic edges**: price-threshold rules and PO execution run as deterministic logic; vendor discovery and document parsing run as agentic (LLM) work in scheduled batches, which decouples LLM cost from transaction volume.
 
-This repo is the marketing/landing site, live at **tryeverstock.com**, deployed on Vercel.
+This repo is the marketing/landing site, live at **tryeverstock.com**, deployed on Vercel (project `everstock-website`).
 
-Primary audience for the site: the economic buyer (owner/GM/CFO of a mid-market distributor). Positioning stance is "stealth SaaS" — reads as sharp procurement software first; agentic-commerce vocabulary is reserved for category/investor-facing contexts, not the buyer-facing copy.
+Primary audience for the site: the owner/GM/buyer of a company that ships physical products (auto parts is still the lead worked example: "fitment"). Positioning stance is "stealth SaaS": reads as sharp supply-chain software first; agentic-commerce vocabulary is reserved for category/investor-facing contexts, not the buyer-facing copy. The v4 story follows SB7: life without Everstock (stakes, the "before" column) against life with it, and why it beats spreadsheets or a new ERP.
 
-## v3 port (2026-09-29): the live page, and what it supersedes
+## v4 port (2026-09-29): the live home page
+
+`/` renders **Everstock v4** from Claude Design (project "Everstock site" → `Everstock v4.dc.html`), ported the same way as v3 below. Design files: `mockup/v4/` (page, handoff, `support.js`). Decisions of record: eBRAiN `notes/landing-redesign-v4-direction`, `-revisions-r1` … `-r10`, `-port-scope` (later rounds override earlier ones). **Where v4 and older sections of this file disagree, v4 wins**; the v2/v3 sections below are history plus the port mechanics.
+
+- **Section order (ids):** Nav (fixed; sticky "Book a demo") · Hero `#top` · Stakes `#stakes` · Before/After `#before-after` · Industries `#industries` · The full package `#act-1` · Counted, shelved, sold. `#act-2` · Not another system to feed. `#why` · Up and running in two weeks `#plan` · marquee banner · Join the founding cohort + "Send us your scattered records" form `#price-file` · Footer `#cta`.
+- **Routes:** `/` = v4 (`components/v4/`), `/journey` = the v3 page unchanged (`components/v3/`, linked from the v4 nav/footer "Journey" and "Walk the full journey"). The two pages link with plain anchors (full loads), so each only ever has its own design CSS. The v3 journey gets reworked later.
+- **Port mechanics:** `npm run port:v4` / `npm run port:v3` (`scripts/port-dc.mjs`, one `PAGES` entry per page with its `logicPatches`, `templatePatches` and `hrefBindings`). Both pages run on the shared host `components/dc/host.jsx` (`createDcPage`); each page's `DcPage.jsx` only adds its site-side wiring. Same rules as v3: never hand-edit `generated/`, pull byte-exact, every patch anchor must match its expected count or the port fails.
+- **CTA config:** every CTA destination lives in `lib/cta.ts`. The port rebinds the designed hrefs (`#book-demo`, `#access`, `#price-file`, `/journey`) to render values (`ctaBookDemoHref` …) that `components/v4/DcPage.jsx` fills from the config; its Logic subclass routes `openDemo` / `openAccess` / `submitAccess` / `submitForm` through it. Labels are exactly "Book a demo" (primary), "Get early access" (secondary), "Send us your scattered records" (transitional). No analytics vendor is installed, so CTA clicks are not tracked (do not add one without asking).
+- **Request access pipeline** (below) is unchanged: the v4 modal (demo / early access / founding partner modes) posts to `/api/request-access` with sources `book-demo`, `early-access`, `founding-partner`, `scattered-records`.
+- **v4 port patches (deviations from the design, all in `scripts/port-dc.mjs` or the host):** the archived v3 journey block is stripped (never rendered); "Get early access →" loses its arrow (3 places) so labels are exact; the footer's "Upload your documents" reads "Send us your scattered records"; the records form's sent state is an ink RECEIVED stamp with "Got it. Add your company and we'll be in touch." (the design said "Everstock is reading your file." + a blue Checking stamp, but no file is uploaded yet); the footer's Privacy / Terms / LinkedIn placeholders (`#privacy` …) are removed until those pages and the company URL exist. Host CSS (`components/dc/dc-host.css`) adds visible `:focus-visible` rings on links/buttons and the hidden file input's label, and grows the flying bird banners' tap area to 44px.
+- **Metadata:** title "Everstock · Supply chain software for physical products", the v4 description, OG/Twitter image `public/og-image.png` (1200×630 screenshot of the v4 hero, nav and CTA row hidden, title in Space Grotesk). Regenerate it by screenshotting the hero at a 1200×630 viewport if the hero changes.
+- **Parity check** used for the port: section offsets identical to the design at 1440×900 and 390×844; screenshot diffs ≤3% per section in graphite and eggshell (animated canvases only); no horizontal overflow at 360 / 390 / 430 / 768 / 1280 / 1440 / 1920.
+
+### Pending wiring
+
+- **TODO(booking):** set `NEXT_PUBLIC_BOOKING_URL` in Vercel (Production + Preview; inlined at build time, so redeploy after). Until it is set, every "Book a demo" opens the Request access modal in demo mode (Convex source `book-demo`). Once set, "Book a demo" opens the booking link in a new tab.
+- **TODO(records-upload):** the "Send us your scattered records" form (email, multi-file picker, SEND RECORDS stamp, RECEIVED state) uploads nothing. On submit it validates the email, then opens the Request access modal with the email prefilled; the chosen file names ride along in the request note (source `scattered-records`). Upload + storage plug in at `uploadRecords` in `components/v4/DcPage.jsx`. No Convex table or storage exists for it yet.
+- **Footer legal:** Privacy and Terms pages and the LinkedIn company URL don't exist; the links are left out (see the patch above) until they do.
+
+### Flagged: v4 against sections marked LOCKED / standing below (not changed, decide in the design)
+
+- **Logo (LOCKED segmented chrome infinity):** v4's Why Everstock column shows the chrome + glass "loading" variant with a beam (1.5 s) alternating with the segmented rest state (1 s), instant cuts, never rotating (r8/r9). The lock allows the live variant only in "motion/onboarding contexts"; this is a motion context on the marketing page, so it reads as consistent, but it is the first marketing use of the live variant.
+- **Blue as signal only:** the older rule lists "CTA hover/focus states" as a blue use; v4 never uses blue on a CTA (hover lands a green APPROVED stamp). v4 is stricter, not looser.
+- **Hero title system (standing decision):** v4 keeps the v3 hero, including the font cycle; nothing contradicts it.
+- **Nav, copy, integrations, section panels (v2 sections below):** superseded by v4 (no Integrations section; nav is How it works · Industries · Journey · theme · Book a demo).
+
+## v3 port (2026-09-29): now served at /journey
 
 The site now renders **Everstock v3** from Claude Design (project "Everstock site" → `Everstock v3.dc.html`), ported byte-for-byte. The design files live in `mockup/v3/` (the page, the Foundations sheet, the handoff spec + tokens, and the dc-runtime `support.js`). **Where v3 and the older sections of this file disagree (graphite-only hero title system, beams, nav pills, section panels, copy, section order, fonts), v3 wins**; those sections describe v2 and are kept only as history. The Request-access Convex pipeline below still applies.
 
