@@ -13,6 +13,8 @@
  *   /api/request-access → Convex.
  * - The records form validates the email, shows its RECEIVED stamp, then opens the
  *   modal with the email prefilled. Files are not uploaded yet (see uploadRecords).
+ * - Below-the-fold paints are deferred until their section is half a screen away
+ *   (see DEFERRED), so the first load does not pay for the whole page at once.
  */
 import * as dcrt from "./generated/dcrt";
 import defineLogic from "./generated/logic";
@@ -52,6 +54,26 @@ function prefillModalEmail(email) {
   requestAnimationFrame(tick);
 }
 
+/* The design paints every section's sprites and canvases in componentDidMount (about
+   350ms of main thread on a fast desktop, several times that on a throttled phone).
+   These are idempotent paint/layout procedures that bail when their refs are missing,
+   and the loops that read their output already guard against it being absent, so each
+   waits until its section comes within `margin` of the viewport, then runs once and
+   passes through from then on (theme toggles and resizes call them again as designed).
+   A section whose loop may already have stopped for lack of that layout gets its loop
+   kicked again after the replay. Stakes waits for the viewport itself: its canvas is
+   empty until the rain starts at 50% in view anyway. */
+const HALF_SCREEN = "50% 0px 50% 0px";
+const DEFERRED = [
+  { fn: "layoutStakes", section: "stakes", kick: "stkKick", margin: "0px" },
+  { fn: "fillBA", section: "before-after", margin: HALF_SCREEN },
+  { fn: "sizeInd", section: "industries", margin: HALF_SCREEN },
+  { fn: "layoutActs", section: "act-1", kick: "actKick", margin: HALF_SCREEN },
+  { fn: "layoutWhy", section: "why", kick: "whyKick", margin: HALF_SCREEN },
+  { fn: "layoutPlan", section: "plan", margin: HALF_SCREEN },
+  { fn: "fillClosing", section: "price-file", margin: HALF_SCREEN },
+];
+
 const extend = (DesignLogic) =>
   class Logic extends DesignLogic {
     constructor(props) {
@@ -61,6 +83,18 @@ const extend = (DesignLogic) =>
       const openFounding = this.openFounding;
       const submitAccess = this.submitAccess;
       const submitForm = this.submitForm;
+
+      // readiness is per instance (DEFERRED is shared module state)
+      const io = typeof IntersectionObserver !== "undefined";
+      this.pendingPaint = new Set();
+      this.deferred = DEFERRED.map((d) => ({ ...d, ready: !io }));
+      for (const d of this.deferred) {
+        const paint = DesignLogic.prototype[d.fn];
+        this[d.fn] = (...args) => {
+          if (d.ready) return paint.apply(this, args);
+          this.pendingPaint.add(d.fn);
+        };
+      }
 
       const opened = () => {
         this.accOpenedAt = performance.now();
@@ -124,6 +158,41 @@ const extend = (DesignLogic) =>
         this.records = { files: uploadRecords(files) };
         prefillModalEmail(email);
       };
+    }
+
+    componentDidMount() {
+      super.componentDidMount();
+      if (typeof IntersectionObserver === "undefined") return;
+      this.ioNear = [...new Set(this.deferred.map((d) => d.margin))].map((margin) => {
+        const mine = this.deferred.filter((d) => d.margin === margin);
+        const obs = new IntersectionObserver(
+          (entries) =>
+            entries.forEach((en) => {
+              // edge-adjacent counts as intersecting (a section starting exactly at
+              // the fold), so it takes a real overlap
+              if (!en.isIntersecting || en.intersectionRatio === 0) return;
+              obs.unobserve(en.target);
+              for (const d of mine) {
+                if (d.section !== en.target.id) continue;
+                d.ready = true;
+                if (!this.pendingPaint.delete(d.fn)) continue;
+                this[d.fn]();
+                if (d.kick && this[d.kick]) this[d.kick]();
+              }
+            }),
+          { rootMargin: margin, threshold: 0.01 }
+        );
+        new Set(mine.map((d) => d.section)).forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) obs.observe(el);
+        });
+        return obs;
+      });
+    }
+
+    componentWillUnmount() {
+      (this.ioNear || []).forEach((obs) => obs.disconnect());
+      super.componentWillUnmount();
     }
 
     renderVals() {

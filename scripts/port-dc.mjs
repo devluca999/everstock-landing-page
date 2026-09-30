@@ -72,6 +72,11 @@ const PAGES = {
         replace: 'border:3px solid #2B2C31;border-radius:4px;box-shadow:inset 0 0 0 2px #DED7CB,inset 0 0 0 3.5px #2B2C31;color:#2B2C31;$1">Received</span>',
       },
       {
+        why: "(with the legal nav removal below) the © line keeps the removed links' 44px row height, so the footer keeps the design's height",
+        find: `<span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgb(var(--ink) / 0.64);">© 2026 Everstock</span>`,
+        replace: `<span style="display:inline-flex;align-items:center;min-height:44px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgb(var(--ink) / 0.64);">© 2026 Everstock</span>`,
+      },
+      {
         why: "CTA labels are exactly 'Get early access' (port brief); the design's Act 1 card link, bird banner and its label carry a trailing arrow",
         find: "Get early access →<",
         count: 3,
