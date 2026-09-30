@@ -71,6 +71,18 @@ const PAGES = {
         count: 1,
         replace: 'border:3px solid #2B2C31;border-radius:4px;box-shadow:inset 0 0 0 2px #DED7CB,inset 0 0 0 3.5px #2B2C31;color:#2B2C31;$1">Received</span>',
       },
+      {
+        why: "CTA labels are exactly 'Get early access' (port brief); the design's Act 1 card link, bird banner and its label carry a trailing arrow",
+        find: "Get early access →<",
+        count: 3,
+        replace: "Get early access<",
+      },
+      {
+        why: "Footer legal nav: Privacy, Terms and LinkedIn are placeholder anchors (#privacy, #terms, #linkedin) with nothing behind them; left out until the pages and the company URL exist",
+        find: /\n {6}<nav aria-label="Legal"[\s\S]*?<\/nav>/g,
+        count: 1,
+        replace: "",
+      },
     ],
     // CTA destinations come from lib/cta.ts (through renderVals keys the host adds),
     // never from the template: each designed <a href> below is rebound to its config key.
