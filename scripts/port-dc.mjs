@@ -77,6 +77,12 @@ const PAGES = {
         replace: `<span style="display:inline-flex;align-items:center;min-height:44px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgb(var(--ink) / 0.64);">© 2026 Everstock</span>`,
       },
       {
+        why: "AA contrast: the Plan step numbers are muted ink (0.64) and dim with their step; at 0.9 ink they clear 4.5:1 while dimmed (0.9 × 0.72)",
+        find: /(opacity:\{\{ po[0-2] \}\};transition:\{\{ fade \}\};font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:0\.08em;color:rgb\(var\(--ink\) \/ )0\.64\)/g,
+        count: 3,
+        replace: "$10.9)",
+      },
+      {
         why: "CTA labels are exactly 'Get early access' (port brief); the design's Act 1 card link, bird banner and its label carry a trailing arrow",
         find: "Get early access →<",
         count: 3,
