@@ -719,6 +719,9 @@ class Component extends DCLogic {
       a.width = b.width = W; a.height = b.height = H;
       // portrait: render the landscape composition and crop to the belt, box and gears
       this.floorCrop = window.innerWidth < 900 && H > W * 1.05;
+      if (this.floorCrop) { const ct = document.getElementById('hero-cta'), r = ct && ct.getBoundingClientRect(); this.cropTop = r && r.height ? Math.max(0.4, Math.min(0.66, (r.bottom + window.scrollY + 12) / window.innerHeight)) : 0.52; }
+      // the CTA row only settles once the web fonts and the title box have laid out
+      if (this.floorCrop && !this.cropSettle) { this.cropSettle = true; if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!this.dead) size(); }); setTimeout(() => { if (!this.dead) size(); }, 900); }
       if (this.floorCrop) { this.scene.height = H; this.scene.width = Math.round(H * 1.6); } else { this.scene.width = W; this.scene.height = H; }
       if (this.reduced) this.drawFloor(0);
     };
@@ -929,7 +932,7 @@ class Component extends DCLogic {
       }
     }
     for (const c of nearer) drawCrate(c);
-    const crop = !!this.floorCrop, aw = a.width, ah = a.height, ch0 = crop ? H * 0.74 : H, dh = crop ? ah * 0.58 : ah, cw0 = crop ? Math.min(W * 0.62, ch0 * aw / dh) : W, cx0 = crop ? Math.min(W - cw0, W * 0.42) : 0, cy0 = crop ? H - ch0 : 0, dy = ah - dh;
+    const crop = !!this.floorCrop, aw = a.width, ah = a.height, ch0 = crop ? H * 0.88 : H, dh = crop ? Math.round(ah * (1 - (this.cropTop || 0.52))) : ah, cw0 = crop ? Math.min(W, ch0 * aw / dh) : W, cx0 = crop ? Math.max(0, Math.min(W - cw0, W * 0.6 - cw0 / 2)) : 0, cy0 = crop ? H * 0.05 : 0, dy = ah - dh;
     this.drawDrive(g, P, W, H, crop ? cw0 / window.innerWidth : W / Math.max(1, window.innerWidth));
     const A2 = a.getContext('2d'), B2 = b.getContext('2d');
     A2.clearRect(0, 0, aw, ah); A2.filter = 'blur(0.6px)'; A2.drawImage(s, cx0, cy0, cw0, ch0, 0, dy, aw, dh); A2.filter = 'none';
@@ -1047,12 +1050,12 @@ class Component extends DCLogic {
     g.restore();
   }
   floorFade(W, H) {
-    const wide = window.innerWidth >= 900, key = W + 'x' + H + (wide ? 'w' : 'n');
+    const wide = window.innerWidth >= 900, ct0 = !wide && this.floorCrop ? this.cropTop || 0.52 : 0, key = W + 'x' + H + (wide ? 'w' : 'n') + ct0;
     if (this.fadeKey === key && this.fadeCv) return this.fadeCv;
     const cv = this.fadeCv || document.createElement('canvas'); cv.width = W; cv.height = H;
     const g = cv.getContext('2d'); g.clearRect(0, 0, W, H);
     if (wide) { const a = g.createLinearGradient(0, 0, W, 0); a.addColorStop(0, 'rgba(0,0,0,0)'); a.addColorStop(0.22, 'rgba(0,0,0,0)'); a.addColorStop(0.46, 'rgba(0,0,0,0.55)'); a.addColorStop(0.68, '#000'); a.addColorStop(1, '#000'); g.fillStyle = a; }
-    else { const a = g.createLinearGradient(0, 0, 0, H); a.addColorStop(0, 'rgba(0,0,0,0)'); a.addColorStop(0.46, 'rgba(0,0,0,0)'); a.addColorStop(0.64, 'rgba(0,0,0,0.6)'); a.addColorStop(0.8, '#000'); a.addColorStop(1, '#000'); g.fillStyle = a; }
+    else { const a = g.createLinearGradient(0, 0, 0, H), s0 = ct0 ? ct0 : 0.46, s1 = ct0 ? Math.min(0.95, ct0 + 0.05) : 0.64, s2 = ct0 ? Math.min(0.97, ct0 + 0.12) : 0.8; a.addColorStop(0, 'rgba(0,0,0,0)'); a.addColorStop(s0, 'rgba(0,0,0,0)'); a.addColorStop(s1, 'rgba(0,0,0,0.6)'); a.addColorStop(s2, '#000'); a.addColorStop(1, '#000'); g.fillStyle = a; }
     g.fillRect(0, 0, W, H);
     const v = g.createLinearGradient(0, 0, 0, H); v.addColorStop(0, '#000'); v.addColorStop(wide ? 0.72 : 0.9, '#000'); v.addColorStop(1, 'rgba(0,0,0,0)');
     g.globalCompositeOperation = 'destination-in'; g.fillStyle = v; g.fillRect(0, 0, W, H); g.globalCompositeOperation = 'source-over';
