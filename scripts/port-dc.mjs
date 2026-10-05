@@ -72,6 +72,12 @@ const ACCESS_FIELDS = {
       `<input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">`,
     ].join("\n" + ind),
 };
+const FOOTER_FEEDBACK = {
+  why: "Footer: a 'Send feedback' link, styled like its neighbours; components/feedback/FeedbackDialog.tsx (mounted in the root layout) opens on any #feedback link",
+  find: /(\n( *)<a href="#book-demo" onClick="\{\{ openDemo \}\}" (style="[^"]*") (style-hover="[^"]*")>Book a demo<\/a>)(\n *<\/nav>)/g,
+  count: 1,
+  replace: '$1\n$2<a href="#feedback" $3 $4>Send feedback</a>$5',
+};
 const accessFocus = (count) => ({
   why: "Forms: the modal opens on its first field, which is Name now (the design focuses the email input)",
   find: "getElementById('acc-email')",
@@ -122,6 +128,7 @@ const PAGES = {
       NO_LEGAL_NAV,
       ACCESS_FIELDS,
       ACCESS_STEPS,
+      FOOTER_FEEDBACK,
     ],
     hrefBindings: {
       ...CTA_BINDINGS,
@@ -152,7 +159,7 @@ const PAGES = {
         replace: "this.dead = true; if (this.raf) cancelAnimationFrame(this.raf);",
       },
     ],
-    templatePatches: [NO_LEGAL_NAV, ACCESS_FIELDS, ACCESS_STEPS],
+    templatePatches: [NO_LEGAL_NAV, ACCESS_FIELDS, ACCESS_STEPS, FOOTER_FEEDBACK],
     // deterministic paints served as baked PNGs (see bakes below)
     bakes: [{ method: "paintStack", png: "public/pricing/stack-{hash}.png" }],
     hrefBindings: {

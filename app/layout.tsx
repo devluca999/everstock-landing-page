@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { themeScript, scrollScript } from "./head-scripts";
+import FeedbackDialog from "@/components/feedback/FeedbackDialog";
 
 const TITLE = "Everstock · Supply chain software for physical products";
 const DESCRIPTION =
@@ -86,7 +87,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <FeedbackDialog />
+      </body>
     </html>
   );
 }

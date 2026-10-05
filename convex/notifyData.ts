@@ -27,6 +27,12 @@ export const get = internalQuery({
   },
 });
 
+/** One feedback message, for the notifier. */
+export const getFeedback = internalQuery({
+  args: { id: v.id("feedback") },
+  handler: async (ctx, { id }) => ctx.db.get(id),
+});
+
 /** The whole row, for the brain mirror (it records status, counts and timestamps too). */
 export const getRow = internalQuery({
   args: { id: v.id("accessRequests") },

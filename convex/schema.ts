@@ -31,4 +31,15 @@ export default defineSchema({
   })
     .index("by_email", ["email"])
     .index("by_createdAt", ["createdAt"]),
+
+  /** The footer's "Send feedback": one row per message. */
+  feedback: defineTable({
+    kind: v.string(), // feedback | suggestion | bug
+    message: v.string(),
+    email: v.optional(v.string()), // only when they want a reply
+    page: v.optional(v.string()), // the path they sent it from
+    userAgent: v.optional(v.string()),
+    status: v.string(), // new | read | done  (edited from the dashboard)
+    createdAt: v.number(),
+  }).index("by_createdAt", ["createdAt"]),
 });
