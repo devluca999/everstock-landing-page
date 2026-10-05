@@ -10,8 +10,8 @@
  * - CTA destinations come from lib/cta.ts: the template's hrefs are bound to the
  *   cta*Href render values below. "Join the waitlist" opens the modal in founding
  *   partner mode; "Book a demo" goes to the booking URL once set, else the demo modal.
- * - The Request access modal (demo / founding partner) posts to /api/request-access →
- *   Convex.
+ * - The waitlist / Book a demo modal posts to /api/request-access → Convex, then asks its
+ *   follow-up questions (components/dc/accessFlow.js).
  * - The closing Book a demo card validates the email, shows its RECEIVED stamp, then
  *   opens the booking link (recording the email first) or the demo modal prefilled.
  * - Below-the-fold paints are deferred until their section is half a screen away
@@ -22,13 +22,15 @@ import defineLogic from "./generated/logic";
 import tree from "./generated/template.json";
 import defaults from "./generated/props.json";
 import { createDcPage, sendRequest } from "../dc/host";
+import { submitAccess as sendAccess, accessVals } from "../dc/accessFlow";
 import { CTA } from "@/lib/cta";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const pageLoadedAt = typeof performance !== "undefined" ? performance.now() : 0;
 
-const SOURCES = { demo: "book-demo", founding: "founding-partner" };
-const NOTES = { demo: "Book a demo", founding: "Founding partner waitlist" };
+const NOTES = { demo: "Book a demo", waitlist: "Waitlist" };
+// the design calls the waitlist mode "founding"; the site's forms say waitlist
+const planOf = (state) => (state.plan === "demo" ? "demo" : "waitlist");
 const CARD_NOTE = "Book a demo card";
 
 /* Sets the modal's email once it has rendered (the input is uncontrolled). */
@@ -38,8 +40,8 @@ function prefillModalEmail(email) {
     const input = document.getElementById("acc-email");
     if (input) {
       if (!input.value) input.value = email;
-      const company = input.form && input.form.elements.namedItem("company");
-      if (company && company.focus) company.focus();
+      const name = input.form && input.form.elements.namedItem("name");
+      if (name && name.focus) name.focus();
       return;
     }
     if (++tries < 90) requestAnimationFrame(tick);
@@ -114,20 +116,14 @@ const extend = (DesignLogic) =>
       };
 
       this.submitAccess = (e) => {
-        const f = new FormData(e.currentTarget);
-        const plan = this.state.plan in SOURCES ? this.state.plan : "founding";
-        sendRequest(
-          {
-            email: String(f.get("email") || ""),
-            company: String(f.get("company") || ""),
-            stack: "other",
-            source: SOURCES[plan],
-            note: this.fromCard && plan === "demo" ? CARD_NOTE : NOTES[plan],
-            elapsed: performance.now() - (this.accOpenedAt || pageLoadedAt),
-          },
-          "v5"
-        );
-        submitAccess(e);
+        const plan = planOf(this.state);
+        sendAccess(this, e, {
+          plan,
+          note: this.fromCard && plan === "demo" ? CARD_NOTE : NOTES[plan],
+          elapsed: performance.now() - (this.accOpenedAt || pageLoadedAt),
+          tag: "v5",
+          designSubmit: submitAccess,
+        });
       };
 
       // the closing Book a demo card (the design's records form, patched)
@@ -138,7 +134,7 @@ const extend = (DesignLogic) =>
         if (!EMAIL.test(email)) {
           e.preventDefault();
           if (input && input.setCustomValidity) {
-            input.setCustomValidity("Enter a work email, like you@company.com.");
+            input.setCustomValidity("Enter an email, like you@company.com.");
             input.reportValidity();
             input.addEventListener("input", () => input.setCustomValidity(""), { once: true });
           }
@@ -147,7 +143,7 @@ const extend = (DesignLogic) =>
         submitForm(e); // the design's RECEIVED state
         if (CTA.bookDemo.externalUrl) {
           // record the email first: the booking tool is outside the site
-          sendRequest({ email, stack: "other", source: SOURCES.demo, note: CARD_NOTE, elapsed: performance.now() - pageLoadedAt }, "v5");
+          sendRequest({ email, stack: "other", source: "book-demo", note: CARD_NOTE, elapsed: performance.now() - pageLoadedAt }, "v5");
           window.open(CTA.bookDemo.externalUrl, "_blank", "noopener,noreferrer");
           return;
         }
@@ -234,6 +230,7 @@ const extend = (DesignLogic) =>
     renderVals() {
       return {
         ...super.renderVals(),
+        ...accessVals(this, planOf(this.state)),
         ctaWaitlistHref: CTA.waitlist.href,
         ctaBookDemoHref: CTA.bookDemo.href,
       };

@@ -40,6 +40,57 @@ const CTA_BINDINGS = {
   "#waitlist": "{{ ctaWaitlistHref }}",
   "#book-demo": "{{ ctaBookDemoHref }}",
 };
+// The waitlist / Book a demo modal (same markup on both pages): the fields the site asks
+// for, and the questions asked once the form is sent. The logic behind both lives in
+// components/dc/accessFlow.js; the styles are the design's own label/input/button styles.
+const LBL = "font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(22,23,27,0.56);";
+const OPT = '<span style="color:rgba(22,23,27,0.4);"> · optional</span>';
+const INPUT =
+  'style="width:100%;min-width:0;height:44px;padding:0 12px;border:1px solid rgba(22,23,27,0.2);border-radius:7px;background:#FFFFFF;font-family:inherit;font-size:15px;color:#101115;outline:none;box-sizing:border-box;" style-focus="border-color:#101115;"';
+const field = (label, input) => `<label style="display:grid;gap:6px;"><span style="${LBL}">${label}</span>${input}</label>`;
+const BTN_PRIMARY =
+  'style="height:44px;padding:0 18px;border:0;border-radius:8px;background:#16171B;color:#FAF9F5;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;" style-hover="background:#000000;" style-active="transform:scale(0.985);"';
+const BTN_QUIET =
+  'style="height:44px;padding:0 16px;border-radius:8px;border:1px solid rgba(22,23,27,0.2);background:transparent;color:#101115;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;" style-hover="border-color:#101115;"';
+const HEARD = ["Search engine", "LinkedIn", "A colleague or friend", "An event", "An article or newsletter", "Something else"];
+const ACCESS_FIELDS = {
+  why: "Forms: name (required), email and work email (at least one), company and 'How did you hear about us?' (optional), plus the route's honeypot",
+  find: /<label style="display:grid;gap:6px;"><span[^>]*>Work email<\/span><input id="acc-email"[^\n]*\n( *)<label style="display:grid;gap:6px;"><span[^>]*>Company<\/span>[^\n]*?<\/label>/g,
+  count: 1,
+  replace: (_m, ind) =>
+    [
+      `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:18px 12px;">`,
+      `  ${field("Name", `<input id="acc-name" name="name" type="text" required="{{ true }}" autocomplete="name" ${INPUT}>`)}`,
+      `  ${field("Email", `<input id="acc-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" ${INPUT}>`)}`,
+      `  ${field("Work email" + OPT, `<input name="workEmail" type="email" autocomplete="work email" placeholder="you@company.com" ${INPUT}>`)}`,
+      `  ${field("Company" + OPT, `<input name="company" type="text" autocomplete="organization" ${INPUT}>`)}`,
+      `</div>`,
+      field(
+        "How did you hear about us?" + OPT,
+        `<select name="heardFrom" ${INPUT.replace('box-sizing:border-box;"', 'box-sizing:border-box;color-scheme:light;"')}><option value="">Choose one</option>${HEARD.map((h) => `<option>${h}</option>`).join("")}</select>`
+      ),
+      `<input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">`,
+    ].join("\n" + ind),
+};
+const accessFocus = (count) => ({
+  why: "Forms: the modal opens on its first field, which is Name now (the design focuses the email input)",
+  find: "getElementById('acc-email')",
+  replace: "getElementById('acc-name')",
+  count,
+});
+const ACCESS_STEPS = {
+  why: "Forms: the sent state asks the follow-up questions (Book a demo: the waitlist too?; both: the founding partner program?) one at a time, and promises no email (none is sent yet)",
+  find: /<p style="([^"]*)">Request received for \{\{ accPlanName \}\}\. Look for an email with next steps\.<\/p>/g,
+  count: 1,
+  replace: (_m, pStyle) =>
+    `<div aria-live="polite" style="display:grid;gap:20px;"><p style="${pStyle}">{{ accSentText }}</p>` +
+    `<sc-if value="{{ accAsk }}" hint-placeholder-val="{{ true }}"><div style="display:grid;gap:14px;padding-top:20px;border-top:1px solid rgba(22,23,27,0.12);">` +
+    `<div style="display:grid;gap:6px;"><p style="margin:0;font-size:18px;font-weight:600;letter-spacing:-0.01em;line-height:1.3;">{{ accAskTitle }}</p>` +
+    `<p style="margin:0;font-size:14px;line-height:1.5;color:rgba(22,23,27,0.68);">{{ accAskBody }}</p></div>` +
+    `<div style="display:flex;flex-wrap:wrap;gap:10px;"><button type="button" onClick="{{ accYes }}" ${BTN_PRIMARY}>{{ accYesLabel }}</button>` +
+    `<button type="button" onClick="{{ accNo }}" ${BTN_QUIET}>{{ accNoLabel }}</button></div></div></sc-if>` +
+    `<sc-if value="{{ accFinished }}" hint-placeholder-val="{{ false }}"><div><button type="button" onClick="{{ closeAccess }}" ${BTN_PRIMARY}>Done</button></div></sc-if></div>`,
+};
 
 const PAGES = {
   // the home page (Claude Design "Everstock v5.dc.html")
@@ -48,6 +99,7 @@ const PAGES = {
     runtime: "mockup/v5/support.js",
     out: "components/v5/generated",
     logicPatches: [
+      accessFocus(1),
       {
         why: "AA contrast: the Plan's inactive steps dimmed to 0.42 (1.8:1 and 2.7:1 on eggshell); 0.72 keeps the highlight and clears 4.5:1 (with the step-number ink below)",
         find: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.42;",
@@ -68,6 +120,8 @@ const PAGES = {
         replace: "$10.9)",
       },
       NO_LEGAL_NAV,
+      ACCESS_FIELDS,
+      ACCESS_STEPS,
     ],
     hrefBindings: {
       ...CTA_BINDINGS,
@@ -81,6 +135,7 @@ const PAGES = {
     runtime: "mockup/v5/support.js",
     out: "components/pricing/generated",
     logicPatches: [
+      accessFocus(2),
       {
         why: "Perf: tick clears this.raf before goScene → kick(), so every auto-advance started a second loop (60 → 120 → 180 ticks/s, the scene re-rendered once per loop per frame); the loop is now one vsync-paced rAF chain, capped near 60fps on high-refresh phones",
         find: "kick() { if (!this.raf && !this.dead) this.raf = setTimeout(() => this.tick(performance.now()), 16); }",
@@ -97,7 +152,7 @@ const PAGES = {
         replace: "this.dead = true; if (this.raf) cancelAnimationFrame(this.raf);",
       },
     ],
-    templatePatches: [NO_LEGAL_NAV],
+    templatePatches: [NO_LEGAL_NAV, ACCESS_FIELDS, ACCESS_STEPS],
     // deterministic paints served as baked PNGs (see bakes below)
     bakes: [{ method: "paintStack", png: "public/pricing/stack-{hash}.png" }],
     hrefBindings: {
@@ -182,8 +237,9 @@ fs.writeFileSync(path.join(outDir, "props.json"), JSON.stringify(defaults, null,
 let logicSrc = scriptMatch[2];
 for (const p of page.logicPatches) {
   const n = logicSrc.split(p.find).length - 1;
-  if (n !== 1) throw new Error(`logic patch anchor matched ${n} times (expected 1): ${p.why}`);
-  logicSrc = logicSrc.replace(p.find, () => p.replace);
+  const want = p.count ?? 1;
+  if (n !== want) throw new Error(`logic patch anchor matched ${n} times (expected ${want}): ${p.why}`);
+  logicSrc = logicSrc.split(p.find).join(p.replace);
 }
 
 fs.writeFileSync(

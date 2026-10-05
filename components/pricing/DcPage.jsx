@@ -7,9 +7,9 @@
  * Site-side wiring on top of the design's logic, the same as the home page's:
  * - CTA destinations come from lib/cta.ts (the template's hrefs are bound to the
  *   cta*Href render values below); "Book a demo" goes to the booking URL once set.
- * - The Request access modal (demo / founding partner waitlist) posts to
- *   /api/request-access → Convex. The design defines its submit handler inside
- *   renderVals(), so it is wrapped there.
+ * - The waitlist / Book a demo modal posts to /api/request-access → Convex, then asks its
+ *   follow-up questions (components/dc/accessFlow.js). The design defines its submit
+ *   handler inside renderVals(), so it is wrapped there.
  * - /pricing#book-demo and /pricing#waitlist open the matching modal on arrival.
  * - Deterministic paints baked by the port (generated/bakes.json) load as PNGs instead of
  *   painting at mount: the closing crate stack alone was ~100ms of main thread on a fast
@@ -20,12 +20,14 @@ import defineLogic from "./generated/logic";
 import tree from "./generated/template.json";
 import defaults from "./generated/props.json";
 import bakes from "./generated/bakes.json";
-import { createDcPage, sendRequest } from "../dc/host";
+import { createDcPage } from "../dc/host";
+import { submitAccess as sendAccess, accessVals } from "../dc/accessFlow";
 import { CTA } from "@/lib/cta";
 
 const pageLoadedAt = typeof performance !== "undefined" ? performance.now() : 0;
-const SOURCES = { demo: "book-demo", founding: "founding-partner" };
-const NOTES = { demo: "Book a demo (pricing page)", founding: "Founding partner waitlist (pricing page)" };
+const NOTES = { demo: "Book a demo (pricing page)", waitlist: "Waitlist (pricing page)" };
+// the design calls the waitlist mode "founding"; the site's forms say waitlist
+const planOf = (state) => (state.plan === "demo" ? "demo" : "waitlist");
 
 const extend = (DesignLogic) =>
   class Logic extends DesignLogic {
@@ -73,25 +75,18 @@ const extend = (DesignLogic) =>
 
     renderVals() {
       const vals = super.renderVals();
-      const submitAccess = vals.submitAccess;
+      const plan = planOf(this.state);
       return {
         ...vals,
-        submitAccess: (e) => {
-          const f = new FormData(e.currentTarget);
-          const plan = this.state.plan in SOURCES ? this.state.plan : "founding";
-          sendRequest(
-            {
-              email: String(f.get("email") || ""),
-              company: String(f.get("company") || ""),
-              stack: "other",
-              source: SOURCES[plan],
-              note: NOTES[plan],
-              elapsed: performance.now() - (this.accOpenedAt || pageLoadedAt),
-            },
-            "pricing"
-          );
-          if (submitAccess) submitAccess(e);
-        },
+        ...accessVals(this, plan),
+        submitAccess: (e) =>
+          sendAccess(this, e, {
+            plan,
+            note: NOTES[plan],
+            elapsed: performance.now() - (this.accOpenedAt || pageLoadedAt),
+            tag: "pricing",
+            designSubmit: (ev) => vals.submitAccess && vals.submitAccess(ev),
+          }),
         ctaWaitlistHref: CTA.waitlist.href,
         ctaBookDemoHref: CTA.bookDemo.href,
       };

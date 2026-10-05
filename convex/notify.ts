@@ -21,7 +21,9 @@ export const newRequest = internalAction({
     const lines = [
       `${r.name} · ${r.company}`,
       r.email,
+      r.workEmail ? `Work: ${r.workEmail}` : null,
       `Uses: ${stackLabel(r.stack)}`,
+      r.heardFrom ? `Heard about us: ${r.heardFrom}` : null,
       r.phone ? `Phone: ${r.phone}` : null,
       r.note ? `Note: ${r.note}` : null,
       r.source ? `From: ${r.source}${r.referrer ? ` · ref ${r.referrer}` : ""}` : null,

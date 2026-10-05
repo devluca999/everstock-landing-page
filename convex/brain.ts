@@ -77,9 +77,14 @@ export function pageFor(r: Doc<"accessRequests">): Page {
           .join(", ")
       : null;
 
+  const yesNo = (b: boolean | undefined) => (b === undefined ? null : b ? "yes" : "no");
   const facts = [
     `- Email: ${r.email}`,
+    r.workEmail ? `- Work email: ${r.workEmail}` : null,
     r.phone ? `- Phone: ${r.phone}` : null,
+    r.heardFrom ? `- Heard about us: ${r.heardFrom}` : null,
+    yesNo(r.waitlist) ? `- Waitlist: ${yesNo(r.waitlist)}` : null,
+    yesNo(r.foundingInterest) ? `- Founding partner program: ${yesNo(r.foundingInterest)}` : null,
     `- Uses today: ${stackLabel(r.stack)}`,
     `- Status: ${r.status}`,
     `- Submissions: ${r.submissions} (first ${when(r.createdAt)}, latest ${when(r.updatedAt)})`,
@@ -94,7 +99,7 @@ export function pageFor(r: Doc<"accessRequests">): Page {
   const content = [
     `*Inbound access request from tryeverstock.com, received ${when(r.createdAt)}. Synced automatically by the landing site; the status is edited in the landing site's Convex dashboard and this page mirrors the latest submission.*`,
     ``,
-    `**${r.name}** at **${r.company}** asked for founding-partner access.`,
+    `**${r.name}** at **${r.company}** ${r.source === "book-demo" ? "booked a demo" : r.source === "waitlist" ? "joined the waitlist" : "asked for founding-partner access"}.`,
     ``,
     ...facts,
     ...(r.note ? [``, `## What they want off their desk`, ``, `> ${r.note.replace(/\r?\n/g, "\n> ")}`] : []),
@@ -107,7 +112,16 @@ export function pageFor(r: Doc<"accessRequests">): Page {
     slug: `people/${person}-${org}`,
     title: `${r.name} · ${r.company}`,
     type: "crm",
-    tags: ["inbound", "access-request", "founding-partner", r.stack, `status-${r.status}`],
+    tags: [
+      "inbound",
+      "access-request",
+      ...(r.source === "book-demo" ? ["book-demo"] : []),
+      ...(r.waitlist || r.source === "waitlist" ? ["waitlist"] : []),
+      // older rows came from the founding-partner form itself; newer ones answer the question
+      ...(r.foundingInterest ?? (r.source !== "book-demo" && r.source !== "waitlist") ? ["founding-partner"] : []),
+      r.stack,
+      `status-${r.status}`,
+    ],
     content,
     edges: [{ toSlug: "companies/everstock", edgeType: "prospect_for" }],
   };

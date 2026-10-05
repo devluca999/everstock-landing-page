@@ -183,7 +183,7 @@ class Component extends DCLogic {
   componentDidUpdate(pp, ps) {
     const redA = this.isReduced(); if (this.actData && redA !== this.lastRedA) { this.lastRedA = redA; setTimeout(() => { if (!this.dead) { this.layoutActs(); this.actKick(); } }, 0); }
     if (ps && ps.wide !== this.state.wide) setTimeout(() => { if (!this.dead) { this.layoutActs(); this.layoutWhy(); } }, 0);
-    if (!!ps.modal !== !!this.state.modal) { document.documentElement.style.overflow = this.state.modal ? 'hidden' : ''; if (this.state.modal) setTimeout(() => { const el = document.getElementById('acc-email'); if (el) el.focus(); }, 30); }
+    if (!!ps.modal !== !!this.state.modal) { document.documentElement.style.overflow = this.state.modal ? 'hidden' : ''; if (this.state.modal) setTimeout(() => { const el = document.getElementById('acc-name'); if (el) el.focus(); }, 30); }
     this.planSprite();
     this.fillJImgs();
     this.fillClosing();

@@ -469,8 +469,8 @@ class Component extends DCLogic {
     window.removeEventListener('resize', this.onResize); window.removeEventListener('scroll', this.onScroll);
     if (this.ro) this.ro.disconnect(); if (this.io) this.io.disconnect();
   }
-  openFounding = (e) => { if (e && e.preventDefault) e.preventDefault(); this.accReturn = document.activeElement; this.setState({ navMenu: false, modal: true, plan: 'founding', accSent: false }, () => setTimeout(() => { const i = document.getElementById('acc-email'); if (i) i.focus(); }, 30)); };
-  openDemo = (e) => { if (e && e.preventDefault) e.preventDefault(); this.accReturn = document.activeElement; this.setState({ navMenu: false, modal: true, plan: 'demo', accSent: false }, () => setTimeout(() => { const i = document.getElementById('acc-email'); if (i) i.focus(); }, 30)); };
+  openFounding = (e) => { if (e && e.preventDefault) e.preventDefault(); this.accReturn = document.activeElement; this.setState({ navMenu: false, modal: true, plan: 'founding', accSent: false }, () => setTimeout(() => { const i = document.getElementById('acc-name'); if (i) i.focus(); }, 30)); };
+  openDemo = (e) => { if (e && e.preventDefault) e.preventDefault(); this.accReturn = document.activeElement; this.setState({ navMenu: false, modal: true, plan: 'demo', accSent: false }, () => setTimeout(() => { const i = document.getElementById('acc-name'); if (i) i.focus(); }, 30)); };
   closeAccess = () => { this.setState({ modal: false }); const r = this.accReturn; if (r && r.focus) setTimeout(() => r.focus(), 0); };
   ctaIn = (e) => { const k = e.currentTarget && e.currentTarget.dataset.cta; if (k) this.setState({ ctaHov: k }); };
   ctaOut = () => { if (this.state.ctaHov) this.setState({ ctaHov: '' }); };

@@ -172,18 +172,39 @@ export function createDcPage({ name, tree, defaults, dcrt, defineLogic, extend }
 /* Posts to the Request access pipeline (/api/request-access → Convex). The designs'
    forms only flip to a local "sent" state; the hosts call this alongside, so the sent
    state still shows at once, as designed. */
+/* Posts a form to /api/request-access; resolves true once it is stored (the follow-up
+   answers wait on it, so they never race the row they patch), false on any failure. */
 export function sendRequest(fields, tag) {
   const params = new URLSearchParams(location.search);
   const utm = {};
   params.forEach((v, k) => {
     if (k.startsWith("utm_")) utm[k] = v;
   });
-  fetch("/api/request-access", {
+  return fetch("/api/request-access", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     keepalive: true,
     body: JSON.stringify({ ...fields, referrer: document.referrer, utm }),
   })
     .then((r) => (r.ok ? r.json() : r.json().then((j) => Promise.reject(j.error || r.status))))
-    .catch((err) => console.error(`[${tag}] request not recorded:`, err));
+    .then(() => true)
+    .catch((err) => {
+      console.error(`[${tag}] request not recorded:`, err);
+      return false;
+    });
+}
+
+/* Records an answer to a question asked after the form was sent (see accessFlow.js). */
+export function sendAnswer(fields, tag) {
+  return fetch("/api/request-access/answer", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    keepalive: true,
+    body: JSON.stringify(fields),
+  })
+    .then((r) => (r.ok ? true : r.json().then((j) => Promise.reject(j.error || r.status))))
+    .catch((err) => {
+      console.error(`[${tag}] answer not recorded:`, err);
+      return false;
+    });
 }

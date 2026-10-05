@@ -19,6 +19,9 @@ export const submit = mutation({
     stack: v.string(),
     phone: v.optional(v.string()),
     note: v.optional(v.string()),
+    workEmail: v.optional(v.string()),
+    heardFrom: v.optional(v.string()),
+    waitlist: v.optional(v.boolean()),
     source: v.optional(v.string()),
     referrer: v.optional(v.string()),
     utm: v.optional(v.record(v.string(), v.string())),
@@ -35,6 +38,9 @@ export const submit = mutation({
     if (company.length < 2) throw new ConvexError("Please add your company.");
     const phone = args.phone ? clip(args.phone, 40) : undefined;
     const note = args.note ? clip(args.note, 1000) : undefined;
+    const workEmail = args.workEmail ? clip(args.workEmail, 200).toLowerCase() : undefined;
+    if (workEmail && !EMAIL.test(workEmail)) throw new ConvexError("That work email doesn't look right.");
+    const heardFrom = args.heardFrom ? clip(args.heardFrom, 120) : undefined;
     const now = Date.now();
 
     const existing = await ctx.db
@@ -49,6 +55,9 @@ export const submit = mutation({
         stack,
         phone: phone ?? existing.phone,
         note: note ?? existing.note,
+        workEmail: workEmail ?? existing.workEmail,
+        heardFrom: heardFrom ?? existing.heardFrom,
+        waitlist: args.waitlist ?? existing.waitlist,
         source: args.source ?? existing.source,
         submissions: existing.submissions + 1,
         updatedAt: now,
@@ -65,6 +74,9 @@ export const submit = mutation({
       stack,
       phone,
       note,
+      workEmail,
+      heardFrom,
+      waitlist: args.waitlist,
       source: args.source,
       referrer: args.referrer,
       utm: args.utm,
@@ -81,6 +93,34 @@ export const submit = mutation({
   },
 });
 
+/**
+ * The questions asked after a form is sent (Book a demo: "the waitlist too?"; both:
+ * "the founding partner program?"). Only ever patches the row the form just created, so
+ * an answer for an unknown email is dropped and `submissions` stays a count of forms.
+ */
+export const answer = mutation({
+  args: {
+    email: v.string(),
+    waitlist: v.optional(v.boolean()),
+    foundingInterest: v.optional(v.boolean()),
+  },
+  returns: v.boolean(),
+  handler: async (ctx, args) => {
+    const email = clip(args.email, 200).toLowerCase();
+    const row = await ctx.db
+      .query("accessRequests")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .unique();
+    if (!row) return false;
+    const patch: { waitlist?: boolean; foundingInterest?: boolean; updatedAt: number } = { updatedAt: Date.now() };
+    if (args.waitlist !== undefined) patch.waitlist = args.waitlist;
+    if (args.foundingInterest !== undefined) patch.foundingInterest = args.foundingInterest;
+    await ctx.db.patch(row._id, patch);
+    await ctx.scheduler.runAfter(0, internal.brain.syncRequest, { id: row._id });
+    return true;
+  },
+});
+
 /** Newest first, for a future protected /requests page. The dashboard covers today. */
 export const list = query({
   args: { limit: v.optional(v.number()) },
@@ -94,6 +134,10 @@ export const list = query({
       stack: v.string(),
       phone: v.optional(v.string()),
       note: v.optional(v.string()),
+      workEmail: v.optional(v.string()),
+      heardFrom: v.optional(v.string()),
+      waitlist: v.optional(v.boolean()),
+      foundingInterest: v.optional(v.boolean()),
       source: v.optional(v.string()),
       referrer: v.optional(v.string()),
       utm: v.optional(v.record(v.string(), v.string())),

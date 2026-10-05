@@ -13,6 +13,8 @@ export const get = internalQuery({
       stack: v.string(),
       phone: v.optional(v.string()),
       note: v.optional(v.string()),
+      workEmail: v.optional(v.string()),
+      heardFrom: v.optional(v.string()),
       source: v.optional(v.string()),
       referrer: v.optional(v.string()),
     })
@@ -20,8 +22,8 @@ export const get = internalQuery({
   handler: async (ctx, { id }) => {
     const r = await ctx.db.get(id);
     if (!r) return null;
-    const { name, email, company, stack, phone, note, source, referrer } = r;
-    return { name, email, company, stack, phone, note, source, referrer };
+    const { name, email, company, stack, phone, note, workEmail, heardFrom, source, referrer } = r;
+    return { name, email, company, stack, phone, note, workEmail, heardFrom, source, referrer };
   },
 });
 

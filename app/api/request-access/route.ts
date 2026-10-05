@@ -3,7 +3,7 @@ import { ConvexError } from "convex/values";
 import { api } from "@/convex/_generated/api";
 
 const STACKS = new Set(["netsuite", "epicor-p21", "sap-b1", "spreadsheets", "other"]);
-const SOURCES = new Set(["hero", "nav", "contract", "final", "sheet", "hash", "early-access", "founding-partner", "price-file", "book-demo", "scattered-records", "other"]);
+const SOURCES = new Set(["hero", "nav", "contract", "final", "sheet", "hash", "early-access", "founding-partner", "price-file", "book-demo", "waitlist", "scattered-records", "other"]);
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_FILL_MS = 2500; // a person cannot read and fill four fields faster than this
 
@@ -28,10 +28,16 @@ export async function POST(req: Request) {
   const elapsed = Number(body.elapsed);
   if (!Number.isFinite(elapsed) || elapsed < MIN_FILL_MS) return Response.json({ ok: true });
 
-  const email = str("email", 200).toLowerCase();
-  // the v3 forms ask for less (the access modal: email + company; the price-file form:
-  // email only), so name and company fall back to what the email already says
-  const [local = "", domain = ""] = email.split("@");
+  // the forms ask for an email and an optional work email, and need at least one of
+  // them: a work email given on its own becomes the row's email
+  let email = str("email", 200).toLowerCase();
+  let workEmail = str("workEmail", 200).toLowerCase() || undefined;
+  if (!email && workEmail) [email, workEmail] = [workEmail, undefined];
+  if (workEmail === email) workEmail = undefined;
+  if (workEmail && !EMAIL.test(workEmail)) return Response.json({ error: "That work email doesn't look right." }, { status: 400 });
+  // older forms asked for less (the price-file form: email only), so name and company
+  // fall back to what the email already says
+  const [local = "", domain = ""] = (workEmail || email).split("@");
   const name = str("name", 120) || local;
   const company = str("company", 160) || domain;
   const stack = STACKS.has(str("stack", 40)) ? str("stack", 40) : "other";
@@ -41,6 +47,8 @@ export async function POST(req: Request) {
 
   const phone = str("phone", 40) || undefined;
   const note = str("note", 1000) || undefined;
+  const heardFrom = str("heardFrom", 120) || undefined;
+  const waitlist = body.waitlist === true ? true : undefined;
   const source = SOURCES.has(str("source", 20)) ? str("source", 20) : "other";
   const referrer = str("referrer", 300) || undefined;
   const utmRaw = body.utm;
@@ -63,6 +71,9 @@ export async function POST(req: Request) {
       stack,
       phone,
       note,
+      workEmail,
+      heardFrom,
+      waitlist,
       source,
       referrer,
       utm: utm && Object.keys(utm).length ? utm : undefined,
