@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    // the v3 Journey page was removed (2026-10-02); old links land on the home page
+    return [{ source: "/journey", destination: "/", permanent: true }];
+  },
   async headers() {
     return [
       {

@@ -2,7 +2,7 @@
 /**
  * Ports a Claude Design `.dc.html` page into the Next.js app without retyping it.
  *
- *   node scripts/port-dc.mjs v4      (or v3; see PAGES below, and `npm run port:v4`)
+ *   node scripts/port-dc.mjs v4      (see PAGES below, and `npm run port:v4`)
  *
  * The design runs on the dc-runtime (support.js): a template compiled at runtime into
  * React elements, driven by a logic class. This script does the compile step ahead of
@@ -27,24 +27,9 @@ import path from "node:path";
 import { parseFragment } from "parse5";
 import * as v4Fixes from "./port-patches/v4-industries-fixes.mjs";
 import * as v4Hero from "./port-patches/v4-hero-mobile.mjs";
+import * as v4Waitlist from "./port-patches/v4-waitlist-dark-only.mjs";
 
 const PAGES = {
-  v3: {
-    src: "mockup/v3/Everstock v3.dc.html",
-    runtime: "mockup/v3/support.js",
-    out: "components/v3/generated",
-    logicPatches: [
-      {
-        why: "Industries › Any physical product: the screw + gear group sits the stack's distance (max(30, side * 0.16)) off the box's left edge, measured from its rightmost part incl. callouts (was pinned at side * 0.14 from the page edge)",
-        find: "const ks = Math.max(0.6, Math.min(1, side / 420)), L0 = side * 0.14, sy2 = cy + 62 * ks, T6 = red ? 3.2 : t % 6;",
-        replace:
-          "const ks = Math.max(0.6, Math.min(1, side / 420)), sy2 = cy + 62 * ks, T6 = red ? 3.2 : t % 6;\n" +
-          "        const L0 = (() => { g.font = '500 10px \"Geist Mono\", ui-monospace, monospace'; const mw = (s) => g.measureText(s).width; const reach = Math.max(130 * ks, 140 * ks + 22 + mw('MODULE: 1.5'), 125 * ks + 6 + mw('FITS: M12 × 2.0')); return Math.max(12, side - Math.max(30, side * 0.16) - reach); })();",
-      },
-    ],
-    templatePatches: [],
-    hrefBindings: {},
-  },
   v4: {
     src: "mockup/v4/Everstock v4.dc.html",
     runtime: "mockup/v4/support.js",
@@ -57,6 +42,7 @@ const PAGES = {
       },
       ...v4Fixes.logicPatches,
       ...v4Hero.logicPatches,
+      ...v4Waitlist.logicPatches,
     ],
     templatePatches: [
       ...v4Fixes.templatePatches,
@@ -106,14 +92,15 @@ const PAGES = {
         count: 1,
         replace: "",
       },
+      // last: these anchor on the labels and links as the patches above leave them
+      ...v4Waitlist.templatePatches,
     ],
     // CTA destinations come from lib/cta.ts (through renderVals keys the host adds),
-    // never from the template: each designed <a href> below is rebound to its config key.
+    // never from the template: each <a href> below (as the patches leave it) is rebound
+    // to its config key.
     hrefBindings: {
+      "#waitlist": "{{ ctaWaitlistHref }}",
       "#book-demo": "{{ ctaBookDemoHref }}",
-      "#access": "{{ ctaEarlyAccessHref }}",
-      "#price-file": "{{ ctaRecordsHref }}",
-      "/journey": "{{ ctaJourneyHref }}",
     },
   },
 };

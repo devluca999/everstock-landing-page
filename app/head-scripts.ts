@@ -1,5 +1,9 @@
-/** Inline, render-blocking script that sets data-theme before paint to avoid a flash. */
-export const themeScript = `(function(){try{var t=localStorage.getItem('es-theme');document.documentElement.dataset.theme=(t==='light'?'light':'graphite');}catch(e){document.documentElement.dataset.theme='graphite';}})();`;
+/**
+ * Inline, render-blocking script that sets data-theme before paint. The site is graphite
+ * only (2026-10-02): there is no theme switch, and a light choice stored by the old
+ * switch is cleared so it can never apply.
+ */
+export const themeScript = `(function(){document.documentElement.dataset.theme='graphite';try{localStorage.removeItem('es-theme');}catch(e){}})();`;
 
 /**
  * Inline, render-blocking scroll policy. A refresh keeps your place (the browser's own

@@ -8,11 +8,12 @@
  * Site-side wiring on top of the design's logic (the design itself only flips its
  * forms to a local "sent" state):
  * - CTA destinations come from lib/cta.ts: the template's hrefs are bound to the
- *   cta*Href render values below, and "Book a demo" goes to the booking URL once set.
- * - The Request access modal (demo / early access / founding partner) posts to
- *   /api/request-access → Convex.
- * - The records form validates the email, shows its RECEIVED stamp, then opens the
- *   modal with the email prefilled. Files are not uploaded yet (see uploadRecords).
+ *   cta*Href render values below. "Join the waitlist" opens the modal in founding
+ *   partner mode; "Book a demo" goes to the booking URL once set, else the demo modal.
+ * - The Request access modal (demo / founding partner) posts to /api/request-access →
+ *   Convex.
+ * - The closing Book a demo card validates the email, shows its RECEIVED stamp, then
+ *   opens the booking link (recording the email first) or the demo modal prefilled.
  * - Below-the-fold paints are deferred until their section is half a screen away
  *   (see DEFERRED), so the first load does not pay for the whole page at once.
  */
@@ -26,17 +27,9 @@ import { CTA } from "@/lib/cta";
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const pageLoadedAt = typeof performance !== "undefined" ? performance.now() : 0;
 
-const SOURCES = { demo: "book-demo", early: "early-access", founding: "founding-partner" };
-const NOTES = { demo: "Book a demo", early: "Early access", founding: "Founding partner program" };
-
-/**
- * TODO(records-upload): upload + storage plug in here. Today it only returns the
- * chosen file names, which ride along in the request's note; nothing leaves the
- * browser. When the backend exists, upload `files` and return a reference to them.
- */
-function uploadRecords(files) {
-  return files.map((f) => f.name).join(", ");
-}
+const SOURCES = { demo: "book-demo", founding: "founding-partner" };
+const NOTES = { demo: "Book a demo", founding: "Founding partner waitlist" };
+const CARD_NOTE = "Book a demo card";
 
 /* Sets the modal's email once it has rendered (the input is uncontrolled). */
 function prefillModalEmail(email) {
@@ -79,9 +72,7 @@ const extend = (DesignLogic) =>
   class Logic extends DesignLogic {
     constructor(props) {
       super(props);
-      const openAccess = this.openAccess;
       const openDemo = this.openDemo;
-      const openFounding = this.openFounding;
       const submitAccess = this.submitAccess;
       const submitForm = this.submitForm;
 
@@ -99,15 +90,16 @@ const extend = (DesignLogic) =>
 
       const opened = () => {
         this.accOpenedAt = performance.now();
-        this.records = null;
+        this.fromCard = false;
       };
-      this.openAccess = (e) => {
-        opened();
-        openAccess(e);
-      };
+      // "Join the waitlist" is now a stamped primary CTA, so it opens the way the design's
+      // openDemo does (closes the phone menu, waits for the tap stamp), in founding mode
       this.openFounding = (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        this.accReturn = document.activeElement;
+        this.setState({ navMenu: false });
         opened();
-        openFounding(e);
+        this.openLater(() => this.setState({ modal: true, plan: "founding", accSent: false }));
       };
       this.openDemo = (e) => {
         if (CTA.bookDemo.externalUrl) {
@@ -123,15 +115,14 @@ const extend = (DesignLogic) =>
 
       this.submitAccess = (e) => {
         const f = new FormData(e.currentTarget);
-        const plan = this.state.plan in SOURCES ? this.state.plan : "early";
-        const rec = this.records;
+        const plan = this.state.plan in SOURCES ? this.state.plan : "founding";
         sendRequest(
           {
             email: String(f.get("email") || ""),
             company: String(f.get("company") || ""),
             stack: "other",
-            source: rec ? "scattered-records" : SOURCES[plan],
-            note: rec ? "Scattered records form" + (rec.files ? ": " + rec.files + " (files not uploaded yet)" : "") : NOTES[plan],
+            source: SOURCES[plan],
+            note: this.fromCard && plan === "demo" ? CARD_NOTE : NOTES[plan],
             elapsed: performance.now() - (this.accOpenedAt || pageLoadedAt),
           },
           "v4"
@@ -139,6 +130,7 @@ const extend = (DesignLogic) =>
         submitAccess(e);
       };
 
+      // the closing Book a demo card (the design's records form, patched)
       this.submitForm = (e) => {
         const form = e.currentTarget;
         const input = form.elements.namedItem("email");
@@ -152,13 +144,17 @@ const extend = (DesignLogic) =>
           }
           return;
         }
-        const picker = form.elements.namedItem("files");
-        const files = picker && picker.files ? Array.from(picker.files) : [];
         submitForm(e); // the design's RECEIVED state
-        this.openAccess();
-        this.records = { files: uploadRecords(files) };
+        if (CTA.bookDemo.externalUrl) {
+          // record the email first: the booking tool is outside the site
+          sendRequest({ email, stack: "other", source: SOURCES.demo, note: CARD_NOTE, elapsed: performance.now() - pageLoadedAt }, "v4");
+          window.open(CTA.bookDemo.externalUrl, "_blank", "noopener,noreferrer");
+          return;
+        }
+        this.openDemo();
+        this.fromCard = true;
         // the route's minimum-fill-time bot check counts from here; the visitor already
-        // filled the records form, so the clock starts at page load, not at the modal
+        // filled the card, so the clock starts at page load, not at the modal
         this.accOpenedAt = pageLoadedAt;
         prefillModalEmail(email);
       };
@@ -172,13 +168,14 @@ const extend = (DesignLogic) =>
         this.watchDeferred();
       }
       // CTA links opened in a new tab, shared, or typed arrive as /#book-demo or
-      // /#access (#request: the v2/v3 links); they open what the click would have
+      // /#waitlist (#access, #request: the older early-access links, which now mean the
+      // waitlist); they open what the click would have
       this.onHash = () => {
         const h = location.hash;
         if (h === "#book-demo") {
           if (CTA.bookDemo.externalUrl) location.assign(CTA.bookDemo.externalUrl);
           else this.openDemo();
-        } else if (h === CTA.earlyAccess.href || h === "#request") this.openAccess();
+        } else if (h === CTA.waitlist.href || h === "#access" || h === "#request") this.openFounding();
       };
       this.onHash();
       window.addEventListener("hashchange", this.onHash);
@@ -222,10 +219,8 @@ const extend = (DesignLogic) =>
     renderVals() {
       return {
         ...super.renderVals(),
+        ctaWaitlistHref: CTA.waitlist.href,
         ctaBookDemoHref: CTA.bookDemo.href,
-        ctaEarlyAccessHref: CTA.earlyAccess.href,
-        ctaRecordsHref: CTA.scatteredRecords.href,
-        ctaJourneyHref: CTA.journey.href,
       };
     }
   };

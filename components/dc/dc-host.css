@@ -1,16 +1,11 @@
-/* The dc-runtime's standalone page CSS (FULL_PAGE_CSS in mockup/v3/support.js). */
+/* The dc-runtime's standalone page CSS (FULL_PAGE_CSS in mockup/v4/support.js). */
 html,body{height:100%;margin:0}#dc-root,#dc-root>.sc-host{height:100%}
 
 /* v4 keyboard focus (site-side, not in the design): a visible ring on every link and
-   button, and on the records form's file picker, whose native input is visually hidden
-   inside its label. Inputs keep the design's own focus border. */
+   button. Inputs keep the design's own focus border. */
 .sc-host[data-sc-name="Everstock v4"] :is(a, button, [role="radio"], [tabindex]):focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
-}
-.sc-host[data-sc-name="Everstock v4"] label:has(> input[type="file"]:focus-visible) {
-  outline: 2px solid #1A1B1F;
-  outline-offset: 4px;
 }
 
 /* The acts' flying bird banners are decorative twins of the cards' CTAs, but still

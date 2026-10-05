@@ -13,7 +13,6 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     // generated from the Claude Design export by scripts/port-dc.mjs; the design source is linted there, not here
-    "components/v3/generated/**",
     "mockup/**",
   ]),
 ]);
