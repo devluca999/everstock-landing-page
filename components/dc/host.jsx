@@ -108,6 +108,8 @@ export function createDcPage({ name, tree, defaults, dcrt, defineLogic, extend }
       this.state = { __v: 0 };
       this.logic = new Logic(props);
       this.logic.__host = this;
+      // dev-only console handle, used to re-bake a page's baked paints (scripts/port-dc.mjs)
+      if (process.env.NODE_ENV !== "production" && typeof window !== "undefined") window.__dcLogic = this.logic;
     }
     __setLogicState(update, cb) {
       const prev = this.logic.state;

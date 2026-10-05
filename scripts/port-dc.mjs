@@ -24,6 +24,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { parseFragment } from "parse5";
 /* Site-side patches shared by both v5 pages. */
 const NO_LEGAL_NAV = {
@@ -79,8 +80,26 @@ const PAGES = {
     src: "mockup/v5/Pricing.dc.html",
     runtime: "mockup/v5/support.js",
     out: "components/pricing/generated",
-    logicPatches: [],
+    logicPatches: [
+      {
+        why: "Perf: tick clears this.raf before goScene → kick(), so every auto-advance started a second loop (60 → 120 → 180 ticks/s, the scene re-rendered once per loop per frame); the loop is now one vsync-paced rAF chain, capped near 60fps on high-refresh phones",
+        find: "kick() { if (!this.raf && !this.dead) this.raf = setTimeout(() => this.tick(performance.now()), 16); }",
+        replace: "kick() { if (!this.raf && !this.dead) this.raf = requestAnimationFrame(this.frame); }\n  frame = (t) => { this.raf = 0; if (t - (this.tickT || 0) < 15) { this.kick(); return; } this.tickT = t; this.tick(t); };",
+      },
+      {
+        why: "Perf: the tick reschedules through the guarded kick (see above), never alongside a loop goScene already started",
+        find: "    this.raf = setTimeout(() => this.tick(performance.now()), 16);\n  };",
+        replace: "    this.kick();\n  };",
+      },
+      {
+        why: "The loop is rAF-driven now; cancel it the same way",
+        find: "this.dead = true; if (this.raf) clearTimeout(this.raf);",
+        replace: "this.dead = true; if (this.raf) cancelAnimationFrame(this.raf);",
+      },
+    ],
     templatePatches: [NO_LEGAL_NAV],
+    // deterministic paints served as baked PNGs (see bakes below)
+    bakes: [{ method: "paintStack", png: "public/pricing/stack-{hash}.png" }],
     hrefBindings: {
       ...CTA_BINDINGS,
       "Everstock%20v5.dc.html": "/",
@@ -176,6 +195,30 @@ fs.writeFileSync(
     logicSrc +
     '\n;return (typeof Component!=="undefined"&&Component)||undefined;\n}\n'
 );
+
+/* ---------- baked paints ----------
+   A deterministic paint method (no inputs, same pixels every run) can be served as a PNG
+   instead of painting at runtime. The PNG's name carries a hash of the method's source and
+   bakes.json lists only PNGs that exist for the current hash, so a design change to the
+   method falls back to the live paint (the host's override finds no entry) until the PNG
+   is re-baked. To re-bake: open the
+   page under `next dev`, run window.__dcLogic.<method>().src in the console, and save
+   that data URL's PNG at the path the port prints. */
+const bakes = {};
+for (const b of page.bakes || []) {
+  const a = logicSrc.indexOf("  " + b.method + "() {");
+  const end = logicSrc.indexOf("\n  }\n", a);
+  if (a < 0 || end < 0) throw new Error(`bake: no ${b.method}() in the logic`);
+  const hash = crypto.createHash("sha1").update(logicSrc.slice(a, end + 4)).digest("hex").slice(0, 10);
+  const png = b.png.replace("{hash}", hash);
+  if (!fs.existsSync(png)) {
+    console.warn(`bake: ${png} is missing; ${b.method}() paints live until it is baked`);
+    continue;
+  }
+  const head = fs.readFileSync(png).subarray(16, 24); // the PNG's IHDR width and height
+  bakes[b.method] = { src: "/" + png.replace(/^public\//, ""), w: head.readUInt32BE(0), h: head.readUInt32BE(4) };
+}
+if (page.bakes) fs.writeFileSync(path.join(outDir, "bakes.json"), JSON.stringify(bakes, null, 2) + "\n");
 
 /* ---------- template -> node tree (compileTemplate / walk / collectProps) ---------- */
 const frag = parseFragment(rt.encodeCase(inner));

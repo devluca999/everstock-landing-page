@@ -11,11 +11,15 @@
  *   /api/request-access → Convex. The design defines its submit handler inside
  *   renderVals(), so it is wrapped there.
  * - /pricing#book-demo and /pricing#waitlist open the matching modal on arrival.
+ * - Deterministic paints baked by the port (generated/bakes.json) load as PNGs instead of
+ *   painting at mount: the closing crate stack alone was ~100ms of main thread on a fast
+ *   desktop, several times that on a phone.
  */
 import * as dcrt from "./generated/dcrt";
 import defineLogic from "./generated/logic";
 import tree from "./generated/template.json";
 import defaults from "./generated/props.json";
+import bakes from "./generated/bakes.json";
 import { createDcPage, sendRequest } from "../dc/host";
 import { CTA } from "@/lib/cta";
 
@@ -43,6 +47,10 @@ const extend = (DesignLogic) =>
         this.accOpenedAt = performance.now();
         openFounding(e);
       };
+    }
+
+    paintStack() {
+      return bakes.paintStack || super.paintStack();
     }
 
     componentDidMount() {

@@ -422,7 +422,8 @@ class Component extends DCLogic {
     if (n === 2) this.truckT0 = now;
     this.lastSwitch = now; this.setState({ scene: n }, () => { try { this.renderScene(performance.now()); } catch (err) { console.error('render err ' + err.message); } }); this.kick();
   }
-  kick() { if (!this.raf && !this.dead) this.raf = setTimeout(() => this.tick(performance.now()), 16); }
+  kick() { if (!this.raf && !this.dead) this.raf = requestAnimationFrame(this.frame); }
+  frame = (t) => { this.raf = 0; if (t - (this.tickT || 0) < 15) { this.kick(); return; } this.tickT = t; this.tick(t); };
   tick = (now) => {
     this.raf = 0; if (this.dead || !this.inView) return;
     const red = this.isReduced();
@@ -430,7 +431,7 @@ class Component extends DCLogic {
     if (this.state.auto && (this.props.autoAdvance ?? true) && !red && !document.hidden && now - this.lastSwitch > 7300) this.goScene((this.state.scene + 1) % 3, false);
     if (this.tr || (this.state.scene === 2 && !red) || this.dirty) { this.dirty = false; this.renderScene(now); }
     if (this.bubOn && now - (this.bubT || 0) > 7000) this.pingBubble();
-    this.raf = setTimeout(() => this.tick(performance.now()), 16);
+    this.kick();
   };
   grain() {
     const root = this.rootRef.current; if (!root) return;
@@ -464,7 +465,7 @@ class Component extends DCLogic {
     if (ps.frameN !== this.state.frameN || ps.heroWide !== this.state.heroWide) setTimeout(() => this.sizeScene(), 0);
   }
   componentWillUnmount() {
-    this.dead = true; if (this.raf) clearTimeout(this.raf);
+    this.dead = true; if (this.raf) cancelAnimationFrame(this.raf);
     window.removeEventListener('resize', this.onResize); window.removeEventListener('scroll', this.onScroll);
     if (this.ro) this.ro.disconnect(); if (this.io) this.io.disconnect();
   }
