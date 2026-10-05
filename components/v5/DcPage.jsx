@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Everstock v4, hosted by components/dc/host.jsx. The page's CSS (helmet,
+ * Everstock v5 (the home page), hosted by components/dc/host.jsx. The page's CSS (helmet,
  * pseudo-classes, host) is imported by app/page.tsx so it is in the first HTML
  * response, before this client-only chunk arrives.
  *
@@ -59,7 +59,7 @@ function prefillModalEmail(email) {
 const HALF_SCREEN = "50% 0px 50% 0px";
 const DEFERRED = [
   { fn: "layoutStakes", sections: ["stakes"], kick: "stkKick", margin: "0px" },
-  { fn: "fillBA", sections: ["before-after"], margin: HALF_SCREEN },
+  { fn: "fillBA", sections: ["how-it-works"], margin: HALF_SCREEN },
   { fn: "sizeInd", sections: ["industries"], margin: HALF_SCREEN },
   // lays out both acts; a jump can land near act 2 without passing act 1
   { fn: "layoutActs", sections: ["act-1", "act-2"], kick: "actKick", margin: HALF_SCREEN },
@@ -125,7 +125,7 @@ const extend = (DesignLogic) =>
             note: this.fromCard && plan === "demo" ? CARD_NOTE : NOTES[plan],
             elapsed: performance.now() - (this.accOpenedAt || pageLoadedAt),
           },
-          "v4"
+          "v5"
         );
         submitAccess(e);
       };
@@ -147,7 +147,7 @@ const extend = (DesignLogic) =>
         submitForm(e); // the design's RECEIVED state
         if (CTA.bookDemo.externalUrl) {
           // record the email first: the booking tool is outside the site
-          sendRequest({ email, stack: "other", source: SOURCES.demo, note: CARD_NOTE, elapsed: performance.now() - pageLoadedAt }, "v4");
+          sendRequest({ email, stack: "other", source: SOURCES.demo, note: CARD_NOTE, elapsed: performance.now() - pageLoadedAt }, "v5");
           window.open(CTA.bookDemo.externalUrl, "_blank", "noopener,noreferrer");
           return;
         }
@@ -179,6 +179,14 @@ const extend = (DesignLogic) =>
       };
       this.onHash();
       window.addEventListener("hashchange", this.onHash);
+      // section links from /pricing (/#how-it-works, /#industries) arrive before the
+      // client-rendered page exists, so the browser's own jump lands at the top
+      const target = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (target) {
+        const jump = () => window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY);
+        requestAnimationFrame(jump);
+        setTimeout(() => { if (!this.dead) jump(); }, 600);
+      }
     }
 
     watchDeferred() {
@@ -206,6 +214,13 @@ const extend = (DesignLogic) =>
           const el = document.getElementById(id);
           if (el) obs.observe(el);
         });
+        // a paint whose section is not on the page (a design change) runs as designed
+        // instead of waiting for an observer that never fires
+        for (const d of mine) {
+          if (d.sections.some((id) => document.getElementById(id))) continue;
+          d.ready = true;
+          if (this.pendingPaint.delete(d.fn)) this[d.fn]();
+        }
         return obs;
       });
     }
@@ -225,4 +240,4 @@ const extend = (DesignLogic) =>
     }
   };
 
-export default createDcPage({ name: "Everstock v4", tree, defaults, dcrt, defineLogic, extend });
+export default createDcPage({ name: "Everstock v5", tree, defaults, dcrt, defineLogic, extend });

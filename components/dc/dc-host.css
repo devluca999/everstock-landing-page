@@ -1,9 +1,9 @@
-/* The dc-runtime's standalone page CSS (FULL_PAGE_CSS in mockup/v4/support.js). */
+/* The dc-runtime's standalone page CSS (FULL_PAGE_CSS in mockup/v5/support.js). */
 html,body{height:100%;margin:0}#dc-root,#dc-root>.sc-host{height:100%}
 
-/* v4 keyboard focus (site-side, not in the design): a visible ring on every link and
+/* Keyboard focus (site-side, not in the design): a visible ring on every link and
    button. Inputs keep the design's own focus border. */
-.sc-host[data-sc-name="Everstock v4"] :is(a, button, [role="radio"], [tabindex]):focus-visible {
+.sc-host :is(a, button, [role="radio"], [tabindex]):focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
 }
@@ -11,7 +11,7 @@ html,body{height:100%;margin:0}#dc-root,#dc-root>.sc-host{height:100%}
 /* The acts' flying bird banners are decorative twins of the cards' CTAs, but still
    tappable: grow their hit area to 44px+ at the 0.72 mobile scale without changing
    how they look. */
-.sc-host[data-sc-name="Everstock v4"] [data-actbird]::before {
+.sc-host [data-actbird]::before {
   content: "";
   position: absolute;
   inset: -12px -4px;

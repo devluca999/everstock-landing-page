@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pricing · Everstock</title>
+<meta name="description" content="Everstock grows with you. Start with stockbot for $20/mo, then move to Base, Scale or Enterprise with your history and setup intact.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;700&amp;display=swap">
+<link rel="stylesheet" href="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/tokens/fonts.css">
+<script src="_ds/everstock-design-system-8b23c388-3b6f-45e0-b4a6-57749b70c168/_ds_bundle.js"></script>
+<style>
+html,body{margin:0;padding:0;background:#16171B;overflow-x:clip;}
+[data-tone="dark"]{--ink:242 241 237;--bg:22 23 27;--hi:255 255 255;}
+[data-tone="light"]{--ink:22 23 27;--bg:250 247 241;--hi:0 0 0;}
+*{box-sizing:border-box;}
+a{color:inherit;text-decoration:none;}
+a:hover{color:inherit;}
+@keyframes esMarquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes esMk40{from{stroke-dashoffset:36}to{stroke-dashoffset:-64}}
+@keyframes esMk32{from{stroke-dashoffset:28}to{stroke-dashoffset:-72}}
+@keyframes esMk25{from{stroke-dashoffset:21}to{stroke-dashoffset:-79}}
+@keyframes esMk19{from{stroke-dashoffset:15}to{stroke-dashoffset:-85}}
+@keyframes esMk18{from{stroke-dashoffset:14}to{stroke-dashoffset:-86}}
+@keyframes esMk14{from{stroke-dashoffset:10}to{stroke-dashoffset:-90}}
+@keyframes esMk13{from{stroke-dashoffset:9}to{stroke-dashoffset:-91}}
+@keyframes esMk10{from{stroke-dashoffset:6}to{stroke-dashoffset:-94}}
+@keyframes esMk7{from{stroke-dashoffset:3}to{stroke-dashoffset:-97}}
+@keyframes esMk5{from{stroke-dashoffset:1}to{stroke-dashoffset:-99}}
+@keyframes esMk4{from{stroke-dashoffset:0}to{stroke-dashoffset:-100}}
+@keyframes esMk3{from{stroke-dashoffset:-1}to{stroke-dashoffset:-101}}
+@keyframes esMk2{from{stroke-dashoffset:-2}to{stroke-dashoffset:-102}}
+@keyframes esMkW{from{stroke-dashoffset:-2.2}to{stroke-dashoffset:-102.2}}
+@keyframes esMkG{from{stroke-dashoffset:-3.6}to{stroke-dashoffset:-103.6}}
+@keyframes esMkGate{0%,22%{opacity:0}30%,72%{opacity:1}80%,100%{opacity:0}}
+@keyframes esUnify{0%,6%{stroke-dasharray:6.63 1.7}18%,80%{stroke-dasharray:100 0}92%,100%{stroke-dasharray:6.63 1.7}}
+@keyframes esT2{from{stroke-dashoffset:2}to{stroke-dashoffset:-98}}
+@keyframes esT4{from{stroke-dashoffset:4}to{stroke-dashoffset:-96}}
+@keyframes esT5{from{stroke-dashoffset:5}to{stroke-dashoffset:-95}}
+@keyframes esT7{from{stroke-dashoffset:7}to{stroke-dashoffset:-93}}
+@keyframes esT9{from{stroke-dashoffset:9}to{stroke-dashoffset:-91}}
+@keyframes esT12{from{stroke-dashoffset:12}to{stroke-dashoffset:-88}}
+@keyframes esT15{from{stroke-dashoffset:15}to{stroke-dashoffset:-85}}
+@keyframes esT22{from{stroke-dashoffset:22}to{stroke-dashoffset:-78}}
+@keyframes esT30{from{stroke-dashoffset:30}to{stroke-dashoffset:-70}}
+@keyframes esTravel{from{stroke-dashoffset:0}to{stroke-dashoffset:-100}}
+@keyframes esHlGate{0%,24%{opacity:0}26%,74%{opacity:1}76%,100%{opacity:0}}
+@keyframes esPing{0%{transform:scale(1);opacity:0.9}70%,100%{transform:scale(3.4);opacity:0}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" data-tone="dark" style="position:relative;min-height:100svh;background:rgb(var(--bg));color:rgb(var(--ink));font-family:Inter,system-ui,sans-serif;">
+
+<header data-tone="light" data-screen-label="00 Nav" style="position:fixed;top:0;left:0;right:0;z-index:20;padding-top:env(safe-area-inset-top);background:{{ navBg }};border-bottom:1px solid {{ navLine }};transition:background-color 220ms cubic-bezier(.2,.8,.25,1),border-color 220ms cubic-bezier(.2,.8,.25,1);">
+  <nav style="height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 max(clamp(16px,4vw,40px), env(safe-area-inset-right)) 0 max(clamp(16px,4vw,40px), env(safe-area-inset-left));">
+    <a href="Everstock%20v5.dc.html" aria-label="Everstock home" style="display:flex;align-items:center;gap:12px;min-height:44px;min-width:0;"><img src="assets/logo-mark-light.svg" width="45" height="28" alt=""><span style="font-weight:600;font-size:13.5px;letter-spacing:0.2em;color:rgb(var(--ink));white-space:nowrap;">EVERSTOCK</span></a>
+    <div style="display:flex;align-items:center;gap:clamp(10px,2vw,28px);flex:none;">
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:24px;">
+          <a href="Everstock%20v5.dc.html#how-it-works" style="font-size:14px;font-weight:500;color:rgb(var(--ink) / 0.72);" style-hover="color:rgb(var(--ink));">How it works</a>
+          <a href="Everstock%20v5.dc.html#industries" style="font-size:14px;font-weight:500;color:rgb(var(--ink) / 0.72);" style-hover="color:rgb(var(--ink));">Industries</a>
+          <a href="#top" aria-current="page" style="font-size:14px;font-weight:600;color:rgb(var(--ink));text-decoration:underline;text-decoration-color:rgb(var(--ink) / 0.4);text-underline-offset:6px;">Pricing</a>
+        </div>
+      </sc-if>
+      <a href="#waitlist" onClick="{{ openFounding }}" data-cta="nav" onMouseEnter="{{ ctaIn }}" onTouchStart="{{ ctaIn }}" onMouseLeave="{{ ctaOut }}" onFocus="{{ ctaIn }}" onBlur="{{ ctaOut }}" style="position:relative;height:44px;padding:0 16px;display:inline-flex;align-items:center;border-radius:8px;background:rgb(var(--ink));color:rgb(var(--bg));font-size:14.5px;font-weight:600;white-space:nowrap;transition:box-shadow 220ms cubic-bezier(.2,.8,.25,1),background-color 220ms cubic-bezier(.2,.8,.25,1);" style-hover="background:rgb(var(--hi));box-shadow:0 10px 22px -10px rgba(0,0,0,0.5);" style-active="transform:scale(0.985);">Join the waitlist<span aria-hidden="true" style="position:absolute;top:-11px;right:-12px;z-index:1;padding:2px 6px;background:#FAF7F1;border:2px solid #08745A;border-radius:3px;color:#08745A;font-family:'Geist Mono',monospace;font-weight:700;font-size:9.5px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:140px;mask-size:140px;pointer-events:none;opacity:{{ navStampOp }};transform:{{ navStampTf }};transition:{{ stampTr }};">Approved</span></a>
+      <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{ toggleMenu }}" aria-label="Menu" aria-expanded="{{ navMenuAria }}" aria-controls="nav-menu" style="flex:none;position:relative;width:44px;height:44px;display:grid;place-items:center;border-radius:8px;border:1px solid rgb(var(--ink) / 0.22);background:transparent;color:rgb(var(--ink));cursor:pointer;">
+          <span aria-hidden="true" style="position:absolute;left:13px;right:13px;top:16px;height:1.5px;background:currentColor;transform:{{ mnTop }};transition:transform 220ms cubic-bezier(.2,.8,.25,1);"></span>
+          <span aria-hidden="true" style="position:absolute;left:13px;right:13px;top:21px;height:1.5px;background:currentColor;opacity:{{ mnMidO }};"></span>
+          <span aria-hidden="true" style="position:absolute;left:13px;right:13px;top:26px;height:1.5px;background:currentColor;transform:{{ mnBot }};transition:transform 220ms cubic-bezier(.2,.8,.25,1);"></span>
+        </button>
+      </sc-if>
+    </div>
+  </nav>
+  <sc-if value="{{ navMenuOpen }}" hint-placeholder-val="{{ false }}">
+    <div id="nav-menu" style="display:grid;padding:4px max(16px, env(safe-area-inset-right)) 16px max(16px, env(safe-area-inset-left));background:rgb(var(--bg));color:rgb(var(--ink));border-top:1px solid rgb(var(--ink) / 0.10);border-bottom:1px solid rgb(var(--ink) / 0.14);">
+      <a href="Everstock%20v5.dc.html#how-it-works" style="display:flex;align-items:center;min-height:52px;font-size:17px;font-weight:500;border-bottom:1px solid rgb(var(--ink) / 0.08);">How it works</a>
+      <a href="Everstock%20v5.dc.html#industries" style="display:flex;align-items:center;min-height:52px;font-size:17px;font-weight:500;border-bottom:1px solid rgb(var(--ink) / 0.08);">Industries</a>
+      <a href="#top" onClick="{{ closeMenu }}" aria-current="page" style="display:flex;align-items:center;min-height:52px;font-size:17px;font-weight:600;">Pricing</a>
+    </div>
+  </sc-if>
+</header>
+
+<main>
+  <section id="top" data-tone="light" data-screen-label="01 Hero + scenes" style="position:relative;background-color:rgb(var(--bg));background-image:linear-gradient(rgb(var(--ink) / 0.06) 1px,transparent 1px),linear-gradient(90deg,rgb(var(--ink) / 0.06) 1px,transparent 1px);background-size:84px 84px;color:rgb(var(--ink));">
+    <div style="max-width:1360px;margin:0 auto;padding:calc(68px + clamp(16px,3svh,36px)) clamp(16px,4vw,40px) clamp(40px,6svh,72px);display:grid;grid-template-columns:{{ heroCols }};grid-template-areas:{{ heroAreas }};grid-template-rows:{{ heroRows }};gap:clamp(14px,2.2svh,24px) clamp(28px,4vw,56px);align-items:start;">
+      <div style="grid-area:head;display:grid;gap:12px;">
+        <span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:rgb(var(--ink) / 0.64);">Pricing</span>
+        <h1 style="margin:0;max-width:14ch;font-weight:600;font-size:clamp(32px,3.8vw,58px);line-height:0.98;letter-spacing:-0.045em;text-wrap:balance;">Everstock grows with you.</h1>
+        <p style="margin:0;max-width:40ch;font-size:clamp(15px,1.2vw,18px);line-height:1.5;color:rgb(var(--ink) / 0.72);text-wrap:pretty;">From the living room to the loading dock. Same agent, same history, more room.</p>
+      </div>
+
+      <div id="plans" style="display:contents;">
+        <div role="tablist" aria-label="Plans" onKeyDown="{{ tabKey }}" style="grid-area:tabs;justify-self:start;display:flex;gap:4px;padding:4px;max-width:100%;border:1px solid rgb(var(--ink) / 0.16);border-radius:10px;background:rgb(var(--bg) / 0.72);">
+          <button type="button" role="tab" id="plan-tab-0" aria-selected="{{ tabSel0 }}" aria-controls="plan-panel" tabIndex="{{ tabTi0 }}" onClick="{{ tabGo0 }}" style="flex:1 1 auto;height:44px;padding:0 clamp(12px,2vw,20px);border:0;border-radius:7px;background:{{ tabBg0 }};color:{{ tabC0 }};font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background-color 220ms cubic-bezier(.2,.8,.25,1),color 220ms cubic-bezier(.2,.8,.25,1);" style-hover="box-shadow:inset 0 0 0 1px rgb(var(--ink) / 0.18);">Base</button>
+          <button type="button" role="tab" id="plan-tab-1" aria-selected="{{ tabSel1 }}" aria-controls="plan-panel" tabIndex="{{ tabTi1 }}" onClick="{{ tabGo1 }}" style="flex:1 1 auto;height:44px;padding:0 clamp(12px,2vw,20px);border:0;border-radius:7px;background:{{ tabBg1 }};color:{{ tabC1 }};font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background-color 220ms cubic-bezier(.2,.8,.25,1),color 220ms cubic-bezier(.2,.8,.25,1);" style-hover="box-shadow:inset 0 0 0 1px rgb(var(--ink) / 0.18);">Scale</button>
+          <button type="button" role="tab" id="plan-tab-2" aria-selected="{{ tabSel2 }}" aria-controls="plan-panel" tabIndex="{{ tabTi2 }}" onClick="{{ tabGo2 }}" style="flex:1 1 auto;height:44px;padding:0 clamp(12px,2vw,20px);border:0;border-radius:7px;background:{{ tabBg2 }};color:{{ tabC2 }};font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background-color 220ms cubic-bezier(.2,.8,.25,1),color 220ms cubic-bezier(.2,.8,.25,1);" style-hover="box-shadow:inset 0 0 0 1px rgb(var(--ink) / 0.18);">Enterprise</button>
+        </div>
+
+        <div id="plan-panel" role="tabpanel" aria-labelledby="{{ tabLbl }}" style="display:contents;">
+          <div ref="{{ frameRef }}" role="img" aria-label="{{ scAlt }}" style="grid-area:frame;align-self:center;position:relative;width:100%;aspect-ratio:{{ frameAR }};overflow:hidden;background:transparent;">
+            <canvas ref="{{ sceneCvRef }}" style="position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated;"></canvas>
+            <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;">
+              <div ref="{{ fgLabRef }}" style="position:absolute;left:0;top:0;width:120px;height:72px;transform-origin:0 0;opacity:0;display:grid;align-content:center;justify-items:start;gap:6px;padding:8px 10px;color:#1A1B1F;">
+                <span style="font-family:'Geist Mono',monospace;font-weight:700;font-size:13px;letter-spacing:0.14em;line-height:1;">EVERSTOCK</span>
+                <span style="display:block;width:92px;height:16px;background-image:repeating-linear-gradient(90deg,#1A1B1F 0 2px,transparent 2px 3px,#1A1B1F 3px 4px,transparent 4px 6px,#1A1B1F 6px 9px,transparent 9px 10px,#1A1B1F 10px 11px,transparent 11px 14px);"></span>
+              </div>
+              <div ref="{{ dotsRef }}" style="position:absolute;inset:0;">
+                <span data-dot="true" style="position:absolute;left:0;top:0;width:0;height:0;opacity:0;transition:opacity 320ms cubic-bezier(.2,.8,.25,1);"><span style="position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;border:1.5px solid #2E7BFF;animation:{{ pingAnim }};animation-delay:0s;"></span><span style="position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:#2E7BFF;box-shadow:0 0 0 1.5px #FFFFFF,0 0 8px 2px rgba(11,95,255,0.55);"></span></span>
+                <span data-dot="true" style="position:absolute;left:0;top:0;width:0;height:0;opacity:0;transition:opacity 320ms cubic-bezier(.2,.8,.25,1);"><span style="position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;border:1.5px solid #2E7BFF;animation:{{ pingAnim }};animation-delay:0.7s;"></span><span style="position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:#2E7BFF;box-shadow:0 0 0 1.5px #FFFFFF,0 0 8px 2px rgba(11,95,255,0.55);"></span></span>
+                <span data-dot="true" style="position:absolute;left:0;top:0;width:0;height:0;opacity:0;transition:opacity 320ms cubic-bezier(.2,.8,.25,1);"><span style="position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;border:1.5px solid #2E7BFF;animation:{{ pingAnim }};animation-delay:1.3s;"></span><span style="position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:#2E7BFF;box-shadow:0 0 0 1.5px #FFFFFF,0 0 8px 2px rgba(11,95,255,0.55);"></span></span>
+                <span data-dot="true" style="position:absolute;left:0;top:0;width:0;height:0;opacity:0;transition:opacity 320ms cubic-bezier(.2,.8,.25,1);"><span style="position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;border:1.5px solid #2E7BFF;animation:{{ pingAnim }};animation-delay:0.35s;"></span><span style="position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:#2E7BFF;box-shadow:0 0 0 1.5px #FFFFFF,0 0 8px 2px rgba(11,95,255,0.55);"></span></span>
+                <span data-dot="true" style="position:absolute;left:0;top:0;width:0;height:0;opacity:0;transition:opacity 320ms cubic-bezier(.2,.8,.25,1);"><span style="position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;border:1.5px solid #2E7BFF;animation:{{ pingAnim }};animation-delay:1.9s;"></span><span style="position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:#2E7BFF;box-shadow:0 0 0 1.5px #FFFFFF,0 0 8px 2px rgba(11,95,255,0.55);"></span></span>
+                <span data-dot="true" style="position:absolute;left:0;top:0;width:0;height:0;opacity:0;transition:opacity 320ms cubic-bezier(.2,.8,.25,1);"><span style="position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;border:1.5px solid #2E7BFF;animation:{{ pingAnim }};animation-delay:1.05s;"></span><span style="position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:#2E7BFF;box-shadow:0 0 0 1.5px #FFFFFF,0 0 8px 2px rgba(11,95,255,0.55);"></span></span>
+                <span data-dot="true" style="position:absolute;left:0;top:0;width:0;height:0;opacity:0;transition:opacity 320ms cubic-bezier(.2,.8,.25,1);"><span style="position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;border:1.5px solid #2E7BFF;animation:{{ pingAnim }};animation-delay:1.6s;"></span><span style="position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:#2E7BFF;box-shadow:0 0 0 1.5px #FFFFFF,0 0 8px 2px rgba(11,95,255,0.55);"></span></span>
+              </div>
+              <div ref="{{ bubRef }}" style="position:absolute;left:0;top:0;width:0;height:0;opacity:0;transition:opacity 240ms cubic-bezier(.2,.8,.25,1);">
+                <div style="position:absolute;left:-14px;bottom:12px;width:max-content;max-width:{{ bubMax }};display:grid;gap:4px;padding:8px 11px 9px;border-radius:12px 12px 12px 3px;background:#FFFFFF;color:#1A1B1F;box-shadow:0 1px 2px rgba(22,23,27,0.2),0 12px 24px -12px rgba(22,23,27,0.45);transform-origin:0 100%;">
+                  <span style="display:flex;align-items:center;gap:6px;font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#5A564E;"><span style="width:6px;height:6px;border-radius:50%;background:#0B5FFF;box-shadow:0 0 0 2px rgba(11,95,255,0.18);"></span>stockbot</span>
+                  <span style="font-size:{{ bubFs }};line-height:1.35;text-wrap:pretty;">{{ bubText }}</span>
+                </div>
+              </div>
+            </div>
+            <span aria-hidden="true" style="position:absolute;left:0;top:0;padding:5px 8px;border-radius:3px;background:rgba(250,247,241,0.92);border:1px solid rgba(22,23,27,0.14);font-family:'Geist Mono',monospace;font-size:10.5px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#1A1B1F;white-space:nowrap;">{{ scCode }}</span>
+          </div>
+
+          <div ref="{{ infoRef }}" style="grid-area:info;display:grid;gap:16px;align-content:start;max-width:560px;">
+            <div style="display:grid;gap:8px;align-content:start;">
+              <h2 style="margin:0;max-width:18ch;font-weight:600;font-size:clamp(24px,2.3vw,32px);line-height:1.08;letter-spacing:-0.025em;text-wrap:balance;">{{ scCap }}</h2>
+              <p style="margin:0;max-width:44ch;font-size:16px;line-height:1.5;color:rgb(var(--ink) / 0.86);text-wrap:pretty;">{{ scWhy }}</p>
+              <p style="margin:0;max-width:44ch;font-size:15px;line-height:1.5;color:rgb(var(--ink) / 0.66);text-wrap:pretty;">{{ scSub }}</p>
+            </div>
+            <div style="position:relative;display:grid;background-color:#F4F1EA;background-image:var(--v3-paper);background-size:160px;border-radius:3px;color:#1A1B1F;box-shadow:0 1px 2px rgba(0,0,0,0.18),0 22px 44px -22px rgba(0,0,0,0.38);">
+              <div aria-hidden="true" style="position:relative;height:16px;border-radius:3px 3px 0 0;background:#C6A878;background-image:linear-gradient(180deg,rgba(255,255,255,0.12),rgba(0,0,0,0.08));border-bottom:1px solid rgba(26,27,31,0.18);"><span style="position:absolute;left:50%;top:-5px;width:68px;height:24px;transform:translateX(-50%) rotate(-1.5deg);background:rgba(236,228,206,0.82);border-left:1px dashed rgba(26,27,31,0.18);border-right:1px dashed rgba(26,27,31,0.18);"></span></div>
+              <div style="display:grid;gap:14px;padding:16px clamp(16px,2vw,24px) 16px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:26px;"><span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#1A1B1F;">{{ scTier }}</span><sc-if value="{{ scHi }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;padding:3px 8px;border:2px solid #0B5FFF;box-shadow:inset 0 0 0 1.5px #F4F1EA,inset 0 0 0 2.5px #0B5FFF;border-radius:3px;color:#0B5FFF;font-family:'Geist Mono',monospace;font-weight:700;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;white-space:nowrap;transform:rotate(-3deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:140px;mask-size:140px;">Most teams</span></sc-if></div>
+                <div style="display:grid;gap:6px;align-content:start;">
+                  <p style="margin:0;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;font-family:'Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums lining-nums;"><sc-if value="{{ scHasPre }}" hint-placeholder-val="{{ true }}"><span style="font-size:13px;font-weight:500;letter-spacing:0.04em;color:#4E4A43;">From</span></sc-if><span style="font-size:clamp(30px,2.6vw,38px);font-weight:500;line-height:1;letter-spacing:-0.03em;">{{ scPrice }}</span><sc-if value="{{ scHasPer }}" hint-placeholder-val="{{ true }}"><span style="font-size:14px;color:#4E4A43;">/mo</span></sc-if></p>
+                  <p style="margin:0;font-family:'Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums lining-nums;font-size:12.5px;line-height:1.45;color:#4E4A43;">{{ scNote }}</p>
+                </div>
+                <ul style="list-style:none;margin:0;padding:0;display:grid;gap:10px;align-content:start;">
+                  <sc-for list="{{ scBullets }}" as="b" hint-placeholder-count="3"><li style="display:flex;align-items:baseline;gap:10px;font-size:15px;line-height:1.4;text-wrap:pretty;"><span aria-hidden="true" style="flex:none;width:6px;height:6px;transform:translateY(-2px);background:#1A1B1F;opacity:0.7;"></span>{{ b }}</li></sc-for>
+                </ul>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;padding:12px clamp(16px,2vw,24px) 14px;border-top:1px dashed rgba(26,27,31,0.3);">
+                <div aria-hidden="true" style="display:grid;gap:5px;"><span style="display:block;width:132px;height:16px;background-image:repeating-linear-gradient(90deg,#1A1B1F 0 2px,transparent 2px 3px,#1A1B1F 3px 4px,transparent 4px 6px,#1A1B1F 6px 9px,transparent 9px 10px,#1A1B1F 10px 11px,transparent 11px 14px);"></span><span style="font-family:'Geist Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#4E4A43;">{{ scId }}</span></div>
+                <a href="{{ scHref }}" onClick="{{ scFn }}" data-cta="sc" onMouseEnter="{{ ctaIn }}" onTouchStart="{{ ctaIn }}" onMouseLeave="{{ ctaOut }}" onFocus="{{ ctaIn }}" onBlur="{{ ctaOut }}" style="position:relative;height:50px;padding:0 22px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:#1A1B1F;color:#FAF7F1;font-size:16px;font-weight:600;white-space:nowrap;transition:box-shadow 220ms cubic-bezier(.2,.8,.25,1),background-color 220ms cubic-bezier(.2,.8,.25,1);" style-hover="background:#000000;box-shadow:0 10px 22px -10px rgba(0,0,0,0.5);" style-active="transform:scale(0.985);">{{ scCta }}<span aria-hidden="true" style="position:absolute;top:-11px;right:-12px;z-index:1;padding:2px 6px;background:#FAF7F1;border:2px solid #08745A;border-radius:3px;color:#08745A;font-family:'Geist Mono',monospace;font-weight:700;font-size:9.5px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:140px;mask-size:140px;pointer-events:none;opacity:{{ scStampOp }};transform:{{ scStampTf }};transition:{{ stampTr }};">Approved</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stockbot" data-tone="light" data-screen-label="02 stockbot strip" aria-label="stockbot" style="position:relative;background:rgb(var(--bg));color:rgb(var(--ink));border-top:1px solid rgb(var(--ink) / 0.10);border-bottom:1px solid rgb(var(--ink) / 0.10);">
+    <div style="max-width:1280px;margin:0 auto;padding:clamp(22px,3.4svh,32px) clamp(16px,4vw,40px);display:grid;gap:10px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;">
+        <canvas ref="{{ sbIconRef }}" aria-hidden="true" width="34" height="28" style="flex:none;width:68px;height:56px;display:block;image-rendering:pixelated;"></canvas>
+        <p style="margin:0;flex:1 1 320px;font-weight:600;font-size:clamp(18px,1.7vw,22px);line-height:1.3;letter-spacing:-0.015em;text-wrap:pretty;">Not ready for a plan? Start with stockbot, <span style="font-family:'Geist Mono',ui-monospace,monospace;font-weight:500;font-variant-numeric:tabular-nums lining-nums;">$20/mo</span>.</p>
+        <a href="#waitlist" onClick="{{ openFounding }}" data-cta="sb" onMouseEnter="{{ ctaIn }}" onTouchStart="{{ ctaIn }}" onMouseLeave="{{ ctaOut }}" onFocus="{{ ctaIn }}" onBlur="{{ ctaOut }}" style="position:relative;flex:none;height:48px;padding:0 20px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1.5px solid rgb(var(--ink) / 0.7);color:rgb(var(--ink));font-size:15.5px;font-weight:600;white-space:nowrap;transition:background-color 220ms cubic-bezier(.2,.8,.25,1),border-color 220ms cubic-bezier(.2,.8,.25,1);" style-hover="background:rgb(var(--ink) / 0.08);border-color:rgb(var(--ink));" style-active="transform:scale(0.985);">Join the waitlist<span aria-hidden="true" style="position:absolute;top:-11px;right:-12px;z-index:1;padding:2px 6px;background:#FAF7F1;border:2px solid #08745A;border-radius:3px;color:#08745A;font-family:'Geist Mono',monospace;font-weight:700;font-size:9.5px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:140px;mask-size:140px;pointer-events:none;opacity:{{ sbStampOp }};transform:{{ sbStampTf }};transition:{{ stampTr }};">Approved</span></a>
+      </div>
+      <p style="margin:0;font-family:'Geist Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.04em;line-height:1.6;color:rgb(var(--ink) / 0.66);text-wrap:pretty;">Bring your stockbot to Everstock. Your history and setup come with you.</p>
+    </div>
+  </section>
+
+  <section id="integrations" data-tone="light" data-screen-label="02b Platforms" aria-label="Platforms" style="position:relative;background:rgb(var(--bg));border-top:1px solid rgb(var(--ink) / 0.08);padding:clamp(30px,4.6svh,52px) 0;display:grid;gap:clamp(16px,2.6svh,26px);">
+    <p style="margin:0;padding:0 20px;text-align:center;font-weight:600;font-size:clamp(18px,1.7vw,24px);line-height:1.25;letter-spacing:-0.015em;color:rgb(var(--ink));text-wrap:balance;">Built for sellers on Shopify, Etsy, and wherever you sell next.</p>
+    <ul aria-label="Works with" style="list-style:none;margin:0;padding:0 20px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:20px clamp(36px,5vw,72px);">
+        <li title="Shopify" style="display:flex;align-items:center;height:24px;color:rgb(var(--ink));opacity:0.6;transition:opacity 220ms cubic-bezier(.2,.8,.25,1);" style-hover="opacity:1;"><svg role="img" aria-label="Shopify" viewBox="0 0 109.5 124.5" height="24" width="21.1" fill="currentColor" style="display:block;flex:none;"><path d="M74.7,14.8c0,0-1.4,0.4-3.7,1.1c-0.4-1.3-1-2.8-1.8-4.4c-2.6-5-6.5-7.7-11.1-7.7c0,0,0,0,0,0c-0.3,0-0.6,0-1,0.1   c-0.1-0.2-0.3-0.3-0.4-0.5c-2-2.2-4.6-3.2-7.7-3.1c-6,0.2-12,4.5-16.8,12.2c-3.4,5.4-6,12.2-6.7,17.5c-6.9,2.1-11.7,3.6-11.8,3.7   c-3.5,1.1-3.6,1.2-4,4.5C9.1,40.7,0,111.2,0,111.2l75.6,13.1V14.6C75.2,14.7,74.9,14.7,74.7,14.8z M57.2,20.2   c-4,1.2-8.4,2.6-12.7,3.9c1.2-4.7,3.6-9.4,6.4-12.5c1.1-1.1,2.6-2.4,4.3-3.2C56.9,12,57.3,16.9,57.2,20.2z M49.1,4.3   c1.4,0,2.6,0.3,3.6,0.9c-1.6,0.8-3.2,2.1-4.7,3.6c-3.8,4.1-6.7,10.5-7.9,16.6c-3.6,1.1-7.2,2.2-10.5,3.2   C31.7,19.1,39.8,4.6,49.1,4.3z M37.4,59.3c0.4,6.4,17.3,7.8,18.3,22.9c0.7,11.9-6.3,20-16.4,20.6c-12.2,0.8-18.9-6.4-18.9-6.4   l2.6-11c0,0,6.7,5.1,12.1,4.7c3.5-0.2,4.8-3.1,4.7-5.1c-0.5-8.4-14.3-7.9-15.2-21.7C23.8,51.8,31.4,40.1,48.2,39   c6.5-0.4,9.8,1.2,9.8,1.2l-3.8,14.4c0,0-4.3-2-9.4-1.6C37.4,53.5,37.3,58.2,37.4,59.3z M61.2,19c0-3-0.4-7.3-1.8-10.9   c4.6,0.9,6.8,6,7.8,9.1C65.4,17.7,63.4,18.3,61.2,19z"></path><path d="M78.1,123.9l31.4-7.8c0,0-13.5-91.3-13.6-91.9c-0.1-0.6-0.6-1-1.1-1c-0.5,0-9.3-0.2-9.3-0.2s-5.4-5.2-7.4-7.2V123.9z"></path></svg></li>
+        <li title="Etsy" style="display:flex;align-items:center;height:24px;color:rgb(var(--ink));opacity:0.6;transition:opacity 220ms cubic-bezier(.2,.8,.25,1);" style-hover="opacity:1;"><span style="display:block;font-size:24px;line-height:24px;font-weight:600;letter-spacing:-0.02em;">Etsy</span></li>
+        <li title="WhatsApp" style="display:flex;align-items:center;height:24px;color:rgb(var(--ink));opacity:0.6;transition:opacity 220ms cubic-bezier(.2,.8,.25,1);" style-hover="opacity:1;"><svg role="img" aria-label="WhatsApp" viewBox="0 0 720 720" height="24" width="24" fill="currentColor" style="display:block;flex:none;"><path d="M360,0C161.18,0,0,161.18,0,360c0,65.41,17.45,126.75,47.94,179.61L0,720l187.02-44.21c51.34,28.18,110.28,44.21,172.98,44.21,198.82,0,360-161.18,360-360S558.82,0,360,0ZM360,655.52c-60.17,0-116.13-17.98-162.82-48.87l-110.49,28.14,30.99-105.61c-33.53-47.93-53.2-106.26-53.2-169.19,0-163.21,132.31-295.52,295.52-295.52s295.52,132.31,295.52,295.52-132.31,295.52-295.52,295.52Z"></path><path d="M444.35,407.52l87.1,41.06c4,1.88,6.56,5.94,6.2,10.34-.94,11.46-5.54,34.43-26.13,55.02-58.12,58.12-162.49-7.64-166.74-10.18-25.67-13.79-50.06-32.24-73.19-55.36-23.12-23.12-41.58-47.52-55.37-73.19-2.55-4.24-68.31-108.61-10.18-166.74,20.59-20.59,43.56-25.19,55.02-26.13,4.41-.36,8.46,2.2,10.34,6.2l41.07,87.1c1.94,4.12,1.09,9.02-2.13,12.24l-30.61,30.61c-6.62,6.62-8.56,16.93-4,25.11,11.17,20.03,26.19,39.32,43.59,57.07,17.75,17.4,37.04,32.43,57.07,43.59,8.18,4.56,18.48,2.62,25.11-4l30.61-30.61c3.22-3.22,8.12-4.08,12.24-2.13Z"></path></svg></li>
+        <li title="Telegram" style="display:flex;align-items:center;height:24px;color:rgb(var(--ink));opacity:0.6;transition:opacity 220ms cubic-bezier(.2,.8,.25,1);" style-hover="opacity:1;"><svg role="img" aria-label="Telegram" viewBox="0 0 1000 1000" height="24" width="24" fill="currentColor" style="display:block;flex:none;"><defs><mask id="tgcut" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000"><rect width="1000" height="1000" fill="#fff"></rect><path d="M226.328419,494.722069 C372.088573,431.216685 469.284839,389.350049 517.917216,369.122161 C656.772535,311.36743 685.625481,301.334815 704.431427,301.003532 C708.567621,300.93067 717.815839,301.955743 723.806446,306.816707 C728.864797,310.92121 730.256552,316.46581 730.922551,320.357329 C731.588551,324.248848 732.417879,333.113828 731.758626,340.040666 C724.234007,419.102486 691.675104,610.964674 675.110982,699.515267 C668.10208,736.984342 654.301336,749.547532 640.940618,750.777006 C611.904684,753.448938 589.856115,731.588035 561.733393,713.153237 C517.726886,684.306416 492.866009,666.349181 450.150074,638.200013 C400.78442,605.66878 432.786119,587.789048 460.919462,558.568563 C468.282091,550.921423 596.21508,434.556479 598.691227,424.000355 C599.00091,422.680135 599.288312,417.758981 596.36474,415.160431 C593.441168,412.561881 589.126229,413.450484 586.012448,414.157198 C581.598758,415.158943 511.297793,461.625274 375.109553,553.556189 C355.154858,567.258623 337.080515,573.934908 320.886524,573.585046 C303.033948,573.199351 268.692754,563.490928 243.163606,555.192408 C211.851067,545.013936 186.964484,539.632504 189.131547,522.346309 C190.260287,513.342589 202.659244,504.134509 226.328419,494.722069 Z" fill="#000"></path></mask></defs><circle cx="500" cy="500" r="500" mask="url(#tgcut)"></circle></svg></li>
+        <li title="Spreadsheets" style="display:flex;align-items:center;height:24px;color:rgb(var(--ink));opacity:0.6;transition:opacity 220ms cubic-bezier(.2,.8,.25,1);" style-hover="opacity:1;"><svg role="img" aria-label="Spreadsheets" viewBox="0 0 24 24" height="24" width="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" style="display:block;flex:none;"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M3 15h18M9 3v18M15 3v18"></path></svg></li>
+    <li title="iMessage" style="display:flex;align-items:center;height:24px;color:rgb(var(--ink));opacity:0.6;transition:opacity 220ms cubic-bezier(.2,.8,.25,1);" style-hover="opacity:1;"><svg role="img" aria-label="iMessage" viewBox="0 0 24 24" height="24" width="24" fill="currentColor" style="display:block;flex:none;"><path d="M12 3C6.48 3 2 6.92 2 11.75c0 2.5 1.2 4.75 3.13 6.34-.2 1.43-.86 2.62-1.9 3.6 2.2.06 4.03-.6 5.4-1.66 1.07.3 2.2.47 3.37.47 5.52 0 10-3.92 10-8.75S17.52 3 12 3Z"></path></svg></li>
+        <li title="Your ERP" style="display:flex;align-items:center;height:24px;color:rgb(var(--ink));opacity:0.6;transition:opacity 220ms cubic-bezier(.2,.8,.25,1);" style-hover="opacity:1;"><svg role="img" aria-label="Your ERP" viewBox="0 0 24 24" height="24" width="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6"></path><path d="M8 13h8M8 17h5"></path></svg></li>
+    </ul>
+    <p style="margin:0;padding:0 20px;text-align:center;font-family:'Geist Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.06em;color:rgb(var(--ink) / 0.64);">Text stockbot on WhatsApp, Telegram or iMessage.</p>
+  </section>
+
+  <section id="compare" data-tone="dark" data-screen-label="03 Compare" style="position:relative;background-color:rgb(var(--bg));background-image:linear-gradient(rgb(var(--ink) / 0.05) 1px,transparent 1px),linear-gradient(90deg,rgb(var(--ink) / 0.05) 1px,transparent 1px);background-size:84px 84px;color:rgb(var(--ink));scroll-margin-top:68px;">
+    <div style="max-width:1280px;margin:0 auto;padding:clamp(80px,11svh,120px) clamp(16px,4vw,40px) clamp(56px,8svh,88px);display:grid;gap:clamp(24px,4svh,40px);">
+      <div style="display:grid;gap:14px;">
+        <span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:rgb(var(--ink) / 0.64);">Compare plans</span>
+        <h2 style="margin:0;max-width:20ch;font-weight:600;font-size:clamp(32px,4vw,56px);line-height:1.04;letter-spacing:-0.035em;text-wrap:balance;">Every feature, side by side.</h2>
+      </div>
+      <div role="table" aria-label="Plan comparison" style="display:grid;">
+        <div style="position:sticky;top:calc(68px + env(safe-area-inset-top));z-index:5;background:rgb(var(--bg));border-bottom:1.5px solid rgb(var(--ink) / 0.8);">
+          <sc-if value="{{ tblNarrow }}" hint-placeholder-val="{{ false }}">
+            <div role="group" aria-label="Choose a plan to compare" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:10px 0 6px;">
+              <sc-for list="{{ tierPick }}" as="tp" hint-placeholder-count="4"><button type="button" aria-pressed="{{ tp.sel }}" onClick="{{ tp.go }}" style="min-width:0;height:44px;padding:0 4px;border-radius:7px;border:1px solid rgb(var(--ink) / 0.16);background:{{ tp.bg }};color:{{ tp.c }};font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ tp.n }}</button></sc-for>
+            </div>
+          </sc-if>
+          <div role="row" style="display:grid;grid-template-columns:{{ tblCols }};">
+            <div role="columnheader" style="display:flex;align-items:flex-end;padding:16px 12px;font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgb(var(--ink) / 0.64);">Plans</div>
+            <sc-for list="{{ tierCols }}" as="t" hint-placeholder-count="4">
+              <div role="columnheader" style="position:relative;display:grid;align-content:start;gap:8px;padding:16px 12px 14px;background:{{ t.bg }};border-radius:6px 6px 0 0;min-width:0;">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:22px;"><span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;">{{ t.n }}</span><sc-if value="{{ t.hi }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-10px;right:8px;background:rgb(var(--bg));display:inline-flex;padding:2px 6px;border:2px solid #6E9BFF;border-radius:3px;color:#6E9BFF;font-family:'Geist Mono',monospace;font-weight:700;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;white-space:nowrap;transform:rotate(-3deg);-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:140px;mask-size:140px;">Most teams</span></sc-if></div>
+                <p style="margin:0;display:flex;align-items:baseline;gap:5px;flex-wrap:wrap;font-family:'Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums lining-nums;"><span style="font-size:12px;color:rgb(var(--ink) / 0.64);">{{ t.pre }}</span><span style="font-size:clamp(22px,2vw,28px);font-weight:500;line-height:1;letter-spacing:-0.02em;">{{ t.p }}</span><span style="font-size:13px;color:rgb(var(--ink) / 0.64);">{{ t.per }}</span></p>
+                <a href="{{ t.href }}" onClick="{{ t.fn }}" data-cta="{{ t.k }}" onMouseEnter="{{ ctaIn }}" onTouchStart="{{ ctaIn }}" onMouseLeave="{{ ctaOut }}" onFocus="{{ ctaIn }}" onBlur="{{ ctaOut }}" style="position:relative;justify-self:start;max-width:100%;height:44px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;background:{{ t.ctaBg }};color:{{ t.ctaC }};border:1.5px solid rgb(var(--ink));font-size:14px;font-weight:600;white-space:nowrap;transition:background-color 220ms cubic-bezier(.2,.8,.25,1),box-shadow 220ms cubic-bezier(.2,.8,.25,1);" style-hover="box-shadow:0 10px 22px -12px rgba(0,0,0,0.45);" style-active="transform:scale(0.985);">{{ t.cta }}<span aria-hidden="true" style="position:absolute;top:-11px;right:-12px;z-index:1;padding:2px 6px;background:#FAF7F1;border:2px solid #08745A;border-radius:3px;color:#08745A;font-family:'Geist Mono',monospace;font-weight:700;font-size:9.5px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:140px;mask-size:140px;pointer-events:none;opacity:{{ t.stOp }};transform:{{ t.stTf }};transition:{{ stampTr }};">Approved</span></a>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <sc-for list="{{ shownGroups }}" as="g" hint-placeholder-count="2">
+          <div role="rowgroup" style="display:grid;">
+            <div role="row" style="display:grid;grid-template-columns:{{ tblCols }};"><span role="rowheader" style="grid-column:1 / -1;padding:30px 12px 10px;font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgb(var(--ink) / 0.72);">{{ g.name }}</span></div>
+            <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3">
+              <div role="row" style="display:grid;grid-template-columns:{{ tblCols }};border-top:1px solid rgb(var(--ink) / 0.12);">
+                <span role="rowheader" style="display:flex;align-items:center;padding:14px 12px;font-size:15px;line-height:1.4;text-wrap:pretty;min-width:0;">{{ r.label }}</span>
+                <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="4">
+                  <span role="cell" style="display:flex;align-items:center;padding:14px 12px;background:{{ c.bg }};min-width:0;">
+                    <sc-if value="{{ c.chk }}" hint-placeholder-val="{{ true }}"><svg role="img" aria-label="Included" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#40D69A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+                    <sc-if value="{{ c.dash }}" hint-placeholder-val="{{ false }}"><span role="img" aria-label="Not included" style="display:block;width:12px;height:1.5px;background:rgb(var(--ink) / 0.32);"></span></sc-if>
+                    <sc-if value="{{ c.txt }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums lining-nums;font-size:13px;line-height:1.4;text-wrap:pretty;">{{ c.text }}</span></sc-if>
+                  </span>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:center;padding-top:28px;border-top:1px solid rgb(var(--ink) / 0.12);">
+          <button type="button" onClick="{{ toggleFeat }}" aria-expanded="{{ featExp }}" style="height:48px;padding:0 22px;display:inline-flex;align-items:center;gap:10px;border-radius:8px;border:1.5px solid rgb(var(--ink));background:transparent;color:rgb(var(--ink));font-family:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:background-color 220ms cubic-bezier(.2,.8,.25,1);" style-hover="background:rgb(var(--ink) / 0.06);">{{ featLabel }}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="transform:{{ featRot }};transition:transform 220ms cubic-bezier(.2,.8,.25,1);"><path d="m6 9 6 6 6-6"></path></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-tone="dark" data-screen-label="03b Marquee" aria-label="Everstock in brief" style="position:relative;background:rgb(var(--bg));border-top:1px solid rgb(var(--ink) / 0.08);padding:clamp(30px,4.6svh,52px) 0;">
+    <sc-if value="{{ mqStatic }}" hint-placeholder-val="{{ false }}">
+      <p style="margin:0;padding:0 20px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px clamp(26px,3vw,52px);font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgb(var(--ink) / 0.78);text-align:center;"><span>No rip and replace</span><span aria-hidden="true" style="display:block;width:4px;height:4px;border-radius:50%;background:rgb(var(--ink) / 0.44);"></span><span>Runs with your ERP, or without one</span><span aria-hidden="true" style="display:block;width:4px;height:4px;border-radius:50%;background:rgb(var(--ink) / 0.44);"></span><span>You approve every order</span></p>
+    </sc-if>
+    <sc-if value="{{ mqLive }}" hint-placeholder-val="{{ true }}">
+      <div onMouseEnter="{{ mqPause }}" onMouseLeave="{{ mqPlay }}" style="overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%);">
+        <div style="display:flex;width:max-content;animation:{{ mqAnim }};animation-play-state:{{ mqPlayState }};">
+          <div style="display:flex;align-items:center;"><sc-for list="{{ mqItems }}" as="m" hint-placeholder-count="7"><div style="display:flex;align-items:center;gap:clamp(26px,3vw,52px);padding-right:clamp(26px,3vw,52px);"><span style="font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgb(var(--ink) / 0.72);white-space:nowrap;">{{ m }}</span><span aria-hidden="true" style="display:block;width:4px;height:4px;border-radius:50%;background:rgb(var(--ink) / 0.44);"></span></div></sc-for></div>
+          <div aria-hidden="true" style="display:flex;align-items:center;"><sc-for list="{{ mqItems }}" as="m" hint-placeholder-count="7"><div style="display:flex;align-items:center;gap:clamp(26px,3vw,52px);padding-right:clamp(26px,3vw,52px);"><span style="font-size:clamp(11px,1.05vw,13px);font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgb(var(--ink) / 0.72);white-space:nowrap;">{{ m }}</span><span aria-hidden="true" style="display:block;width:4px;height:4px;border-radius:50%;background:rgb(var(--ink) / 0.44);"></span></div></sc-for></div>
+        </div>
+      </div>
+    </sc-if>
+  </section>
+  <section id="faq" data-tone="light" data-screen-label="04 FAQ" style="position:relative;background:rgb(var(--bg));color:rgb(var(--ink));border-top:1px solid rgb(var(--ink) / 0.10);">
+    <div style="max-width:1280px;margin:0 auto;padding:clamp(72px,10svh,112px) clamp(16px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:28px clamp(32px,5vw,72px);align-items:start;">
+      <div style="display:grid;gap:14px;">
+        <span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:rgb(var(--ink) / 0.64);">FAQ</span>
+        <h2 style="margin:0;max-width:13ch;font-weight:600;font-size:clamp(32px,4vw,56px);line-height:1.04;letter-spacing:-0.035em;text-wrap:balance;">Your burning questions, answered.</h2>
+        <div aria-hidden="true" style="width:min(580px,94%);margin-top:clamp(24px,5svh,56px);">
+          <svg viewBox="-6 -6 76 56" width="100%" shape-rendering="geometricPrecision" color-interpolation-filters="sRGB" style="display:block;overflow:visible;filter:{{ mkReduced }};">
+            <defs>
+              <linearGradient id="mkg" x1="0.08" y1="0" x2="0.92" y2="1"><stop offset="0" stop-color="#3C4048"></stop><stop offset=".167" stop-color="#D9E0EB"></stop><stop offset=".333" stop-color="#24262C"></stop><stop offset=".5" stop-color="#AEB7C5"></stop><stop offset=".667" stop-color="#2C2F36"></stop><stop offset=".833" stop-color="#CCD4E1"></stop><stop offset="1" stop-color="#383C44"></stop></linearGradient>
+              <linearGradient id="mks" x1="0.05" y1="0" x2="0.78" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="1"></stop><stop offset=".20" stop-color="#fff" stop-opacity=".28"></stop><stop offset=".46" stop-color="#fff" stop-opacity="0"></stop><stop offset=".74" stop-color="#fff" stop-opacity=".5"></stop><stop offset="1" stop-color="#fff" stop-opacity="0"></stop></linearGradient>
+              <linearGradient id="mko" x1="0.05" y1="0" x2="0.78" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"></stop><stop offset=".38" stop-color="#fff" stop-opacity=".8"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop><stop offset=".92" stop-color="#fff" stop-opacity=".65"></stop></linearGradient>
+              <linearGradient id="mktop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="1"></stop><stop offset=".42" stop-color="#fff" stop-opacity=".55"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop></linearGradient>
+              <linearGradient id="mkbot" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" stop-color="#fff" stop-opacity="0"></stop><stop offset=".8" stop-color="#fff" stop-opacity=".7"></stop><stop offset="1" stop-color="#fff" stop-opacity="1"></stop></linearGradient>
+              <linearGradient id="mksh" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="-8" y2="40"><stop offset="0" stop-color="#fff" stop-opacity="0"></stop><stop offset=".5" stop-color="#fff" stop-opacity=".9"></stop><stop offset="1" stop-color="#fff" stop-opacity="0"></stop><animateTransform attributeName="gradientTransform" type="translate" values="0 0;0 0;112 0;112 0" keyTimes="0;0.3;0.62;1" dur="6.4s" repeatCount="indefinite" calcMode="spline" keySplines="0 0 1 1;.45 0 .55 1;0 0 1 1"></animateTransform></linearGradient>
+              <radialGradient id="mkfloor" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#23262D" stop-opacity=".22"></stop><stop offset=".6" stop-color="#23262D" stop-opacity=".08"></stop><stop offset="1" stop-color="#23262D" stop-opacity="0"></stop></radialGradient>
+              <mask id="mkms" maskUnits="userSpaceOnUse" x="-6" y="-6" width="76" height="56"><rect width="64" height="40" fill="url(#mks)"></rect></mask>
+              <mask id="mkmo" maskUnits="userSpaceOnUse" x="-6" y="-6" width="76" height="56"><rect width="64" height="40" fill="url(#mko)"></rect></mask>
+              <mask id="mkmt" maskUnits="userSpaceOnUse" x="-6" y="-6" width="76" height="56"><rect y="5" width="64" height="30" fill="url(#mktop)"></rect></mask>
+              <mask id="mkmb" maskUnits="userSpaceOnUse" x="-6" y="-6" width="76" height="56"><rect y="5" width="64" height="30" fill="url(#mkbot)"></rect></mask>
+              <mask id="mkmsh" maskUnits="userSpaceOnUse" x="-6" y="-6" width="76" height="56"><rect x="-6" y="-6" width="76" height="56" fill="url(#mksh)"></rect></mask>
+              <clipPath id="mkc"><path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="#fff" stroke-width="5.7"></path></clipPath>
+              <filter id="mkhalo" filterUnits="userSpaceOnUse" x="-12" y="-12" width="88" height="68"><feGaussianBlur stdDeviation="1.9"></feGaussianBlur></filter>
+              <filter id="mkglow" filterUnits="userSpaceOnUse" x="-14" y="-14" width="92" height="72"><feGaussianBlur stdDeviation="2.8"></feGaussianBlur></filter>
+              <filter id="mkbloom" filterUnits="userSpaceOnUse" x="-16" y="-16" width="96" height="76"><feGaussianBlur stdDeviation="5"></feGaussianBlur></filter>
+              <filter id="mksoft" filterUnits="userSpaceOnUse" x="-12" y="-12" width="88" height="68"><feGaussianBlur stdDeviation="0.45"></feGaussianBlur></filter>
+              <filter id="mkcore" filterUnits="userSpaceOnUse" x="-12" y="-12" width="88" height="68"><feGaussianBlur stdDeviation="0.22"></feGaussianBlur></filter>
+            </defs>
+            <ellipse cx="32" cy="43.5" rx="30" ry="2.6" fill="url(#mkfloor)"></ellipse>
+            <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke="#23262D" stroke-opacity=".22" stroke-width="7.4" stroke-linejoin="round" filter="url(#mkhalo)"></path>
+            <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke-linejoin="miter" stroke-dasharray="6.63 1.7" style="animation:{{ mkUnify }};" stroke-width="6.1" stroke="#1B1D22" opacity=".55"></path>
+            <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke-linejoin="miter" stroke-dasharray="6.63 1.7" style="animation:{{ mkUnify }};" stroke-width="5.6" stroke="url(#mkg)"></path>
+            <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke-linejoin="miter" stroke-dasharray="6.63 1.7" style="animation:{{ mkUnify }};" stroke-width="5.6" mask="url(#mkmo)" stroke="#191B20" opacity=".42"></path>
+            <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke-linejoin="miter" stroke-dasharray="6.63 1.7" style="animation:{{ mkUnify }};" stroke-width="5.6" mask="url(#mkmb)" stroke="#14161A" opacity=".28"></path>
+            <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke-linejoin="miter" stroke-dasharray="6.63 1.7" style="animation:{{ mkUnify }};" stroke-width="3.6" mask="url(#mkmt)" stroke="#EEF3FB" opacity=".22"></path>
+            <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke-linejoin="miter" stroke-dasharray="6.63 1.7" style="animation:{{ mkUnify }};" stroke-width="2.2" mask="url(#mkms)" stroke="#C9D4E6" opacity=".95"></path>
+            <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke-linejoin="miter" stroke-dasharray="6.63 1.7" style="animation:{{ mkUnify }};" stroke-width="0.9" mask="url(#mkms)" stroke="#F4F8FF" opacity=".85"></path>
+            <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke-linejoin="miter" stroke-dasharray="6.63 1.7" style="animation:{{ mkUnify }};" stroke-width="0.35" mask="url(#mkms)" stroke="#FFFFFF" opacity=".9" transform="translate(0 -0.35)"></path>
+            <g style="opacity:0;animation:{{ mkGate }};">
+              <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" stroke-width="5.6" mask="url(#mkmsh)" stroke="#FFFFFF" opacity=".5"></path>
+              <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="round" stroke="#2C7BE8" stroke-opacity=".22" stroke-width="14" stroke-dasharray="20 80" filter="url(#mkbloom)" style="animation:{{ mkT18 }};"></path>
+              <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="round" stroke="#2C7BE8" stroke-opacity=".34" stroke-width="9" stroke-dasharray="12 88" filter="url(#mkglow)" style="animation:{{ mkT10 }};"></path>
+              <g clip-path="url(#mkc)">
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke="#0B5FD0" stroke-opacity="0.05" stroke-width="6" stroke-dasharray="40 60" filter="url(#mksoft)" style="animation:{{ mkT40 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke="#0B5FD0" stroke-opacity="0.08" stroke-width="6" stroke-dasharray="32 68" filter="url(#mksoft)" style="animation:{{ mkT32 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke="#0B5FD0" stroke-opacity="0.12" stroke-width="6" stroke-dasharray="25 75" filter="url(#mksoft)" style="animation:{{ mkT25 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke="#0B5FD0" stroke-opacity="0.17" stroke-width="6" stroke-dasharray="19 81" filter="url(#mksoft)" style="animation:{{ mkT19 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke="#0B5FD0" stroke-opacity="0.24" stroke-width="6" stroke-dasharray="14 86" filter="url(#mksoft)" style="animation:{{ mkT14 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke="#0B5FD0" stroke-opacity="0.33" stroke-width="6" stroke-dasharray="10 90" filter="url(#mksoft)" style="animation:{{ mkT10 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke="#0B5FD0" stroke-opacity="0.45" stroke-width="6" stroke-dasharray="7 93" filter="url(#mksoft)" style="animation:{{ mkT7 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="butt" stroke="#0B5FD0" stroke-opacity="0.6" stroke-width="6" stroke-dasharray="5 95" filter="url(#mksoft)" style="animation:{{ mkT5 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="round" stroke="#0B5FD0" stroke-width="6" stroke-dasharray="4 96" filter="url(#mksoft)" style="animation:{{ mkT4 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="round" stroke="#5E9BFF" stroke-width="3.6" stroke-dasharray="3.5 96.5" filter="url(#mkcore)" style="animation:{{ mkT3 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="round" stroke="#BFD8FF" stroke-width="1.8" stroke-dasharray="2.6 97.4" filter="url(#mkcore)" style="animation:{{ mkT2 }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="round" stroke="#FFFFFF" stroke-width="0.7" stroke-dasharray="1.8 98.2" style="animation:{{ mkTW }};"></path>
+                <path d="M32 20C28 12 22 8 16 8C8 8 3 13 3 20C3 27 8 32 16 32C22 32 28 28 32 20C36 12 42 8 48 8C56 8 61 13 61 20C61 27 56 32 48 32C42 32 36 28 32 20Z" fill="none" pathLength="100" stroke-linecap="round" stroke="#FFFFFF" stroke-opacity=".75" stroke-width="5" stroke-dasharray="1.2 98.8" mask="url(#mkms)" filter="url(#mksoft)" style="animation:{{ mkTG }};"></path>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div style="display:grid;border-top:1px solid rgb(var(--ink) / 0.16);">
+        <div style="border-bottom:1px solid rgb(var(--ink) / 0.16);">
+          <h3 style="margin:0;"><button type="button" id="faq-q-0" aria-expanded="{{ faqExp0 }}" aria-controls="faq-a-0" onClick="{{ faqT0 }}" style="width:100%;min-height:64px;padding:16px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;border:0;background:transparent;color:rgb(var(--ink));font-family:inherit;font-size:clamp(16px,1.4vw,19px);font-weight:600;text-align:left;cursor:pointer;">What does stockbot actually do?<span aria-hidden="true" style="flex:none;font-family:'Geist Mono',monospace;font-size:20px;font-weight:400;transform:{{ faqRot0 }};transition:transform 220ms cubic-bezier(.2,.8,.25,1);">+</span></button></h3>
+          <div id="faq-a-0" role="region" aria-labelledby="faq-q-0" style="display:grid;grid-template-rows:{{ faqRows0 }};transition:grid-template-rows 320ms cubic-bezier(.2,.8,.25,1);"><div style="overflow:hidden;"><p style="margin:0;padding:0 0 20px;max-width:58ch;font-size:16px;line-height:1.6;color:rgb(var(--ink) / 0.76);text-wrap:pretty;">stockbot is an agent you text. Send it a photo or PDF of an invoice, quote or packing slip. It reads it, matches it to your orders, and flags overcharges, missing items and price changes. It can draft the reply to your supplier for you.</p></div></div>
+        </div>
+        <div style="border-bottom:1px solid rgb(var(--ink) / 0.16);">
+          <h3 style="margin:0;"><button type="button" id="faq-q-1" aria-expanded="{{ faqExp1 }}" aria-controls="faq-a-1" onClick="{{ faqT1 }}" style="width:100%;min-height:64px;padding:16px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;border:0;background:transparent;color:rgb(var(--ink));font-family:inherit;font-size:clamp(16px,1.4vw,19px);font-weight:600;text-align:left;cursor:pointer;">What happens to my data when I upgrade?<span aria-hidden="true" style="flex:none;font-family:'Geist Mono',monospace;font-size:20px;font-weight:400;transform:{{ faqRot1 }};transition:transform 220ms cubic-bezier(.2,.8,.25,1);">+</span></button></h3>
+          <div id="faq-a-1" role="region" aria-labelledby="faq-q-1" style="display:grid;grid-template-rows:{{ faqRows1 }};transition:grid-template-rows 320ms cubic-bezier(.2,.8,.25,1);"><div style="overflow:hidden;"><p style="margin:0;padding:0 0 20px;max-width:58ch;font-size:16px;line-height:1.6;color:rgb(var(--ink) / 0.76);text-wrap:pretty;">It comes with you. Your documents, order history, suppliers and setup move into your Everstock workspace. There is nothing to export or re-enter.</p></div></div>
+        </div>
+        <div style="border-bottom:1px solid rgb(var(--ink) / 0.16);">
+          <h3 style="margin:0;"><button type="button" id="faq-q-2" aria-expanded="{{ faqExp2 }}" aria-controls="faq-a-2" onClick="{{ faqT2 }}" style="width:100%;min-height:64px;padding:16px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;border:0;background:transparent;color:rgb(var(--ink));font-family:inherit;font-size:clamp(16px,1.4vw,19px);font-weight:600;text-align:left;cursor:pointer;">How does per-seat pricing work on Base?<span aria-hidden="true" style="flex:none;font-family:'Geist Mono',monospace;font-size:20px;font-weight:400;transform:{{ faqRot2 }};transition:transform 220ms cubic-bezier(.2,.8,.25,1);">+</span></button></h3>
+          <div id="faq-a-2" role="region" aria-labelledby="faq-q-2" style="display:grid;grid-template-rows:{{ faqRows2 }};transition:grid-template-rows 320ms cubic-bezier(.2,.8,.25,1);"><div style="overflow:hidden;"><p style="margin:0;padding:0 0 20px;max-width:58ch;font-size:16px;line-height:1.6;color:rgb(var(--ink) / 0.76);text-wrap:pretty;">Base is <span style="font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums;">$199/mo</span> plus <span style="font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums;">$75</span> for each seat. Your bill is capped at <span style="font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums;">$499/mo</span>, so adding people past that point costs nothing extra.</p></div></div>
+        </div>
+        <div style="border-bottom:1px solid rgb(var(--ink) / 0.16);">
+          <h3 style="margin:0;"><button type="button" id="faq-q-3" aria-expanded="{{ faqExp3 }}" aria-controls="faq-a-3" onClick="{{ faqT3 }}" style="width:100%;min-height:64px;padding:16px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;border:0;background:transparent;color:rgb(var(--ink));font-family:inherit;font-size:clamp(16px,1.4vw,19px);font-weight:600;text-align:left;cursor:pointer;">Do I need an ERP?<span aria-hidden="true" style="flex:none;font-family:'Geist Mono',monospace;font-size:20px;font-weight:400;transform:{{ faqRot3 }};transition:transform 220ms cubic-bezier(.2,.8,.25,1);">+</span></button></h3>
+          <div id="faq-a-3" role="region" aria-labelledby="faq-q-3" style="display:grid;grid-template-rows:{{ faqRows3 }};transition:grid-template-rows 320ms cubic-bezier(.2,.8,.25,1);"><div style="overflow:hidden;"><p style="margin:0;padding:0 0 20px;max-width:58ch;font-size:16px;line-height:1.6;color:rgb(var(--ink) / 0.76);text-wrap:pretty;">No. Everstock works from your inbox, documents and spreadsheets. If you already run an ERP, Enterprise plugs into it.</p></div></div>
+        </div>
+        <div style="border-bottom:1px solid rgb(var(--ink) / 0.16);">
+          <h3 style="margin:0;"><button type="button" id="faq-q-4" aria-expanded="{{ faqExp4 }}" aria-controls="faq-a-4" onClick="{{ faqT4 }}" style="width:100%;min-height:64px;padding:16px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;border:0;background:transparent;color:rgb(var(--ink));font-family:inherit;font-size:clamp(16px,1.4vw,19px);font-weight:600;text-align:left;cursor:pointer;">Which platforms do you work with?<span aria-hidden="true" style="flex:none;font-family:'Geist Mono',monospace;font-size:20px;font-weight:400;transform:{{ faqRot4 }};transition:transform 220ms cubic-bezier(.2,.8,.25,1);">+</span></button></h3>
+          <div id="faq-a-4" role="region" aria-labelledby="faq-q-4" style="display:grid;grid-template-rows:{{ faqRows4 }};transition:grid-template-rows 320ms cubic-bezier(.2,.8,.25,1);"><div style="overflow:hidden;"><p style="margin:0;padding:0 0 20px;max-width:58ch;font-size:16px;line-height:1.6;color:rgb(var(--ink) / 0.76);text-wrap:pretty;">Shopify, Etsy, Excel, Google Sheets, your ERP, WhatsApp and Telegram. stockbot also works right in the Everstock app.</p></div></div>
+        </div>
+        <div style="border-bottom:1px solid rgb(var(--ink) / 0.16);">
+          <h3 style="margin:0;"><button type="button" id="faq-q-5" aria-expanded="{{ faqExp5 }}" aria-controls="faq-a-5" onClick="{{ faqT5 }}" style="width:100%;min-height:64px;padding:16px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;border:0;background:transparent;color:rgb(var(--ink));font-family:inherit;font-size:clamp(16px,1.4vw,19px);font-weight:600;text-align:left;cursor:pointer;">Can I cancel anytime?<span aria-hidden="true" style="flex:none;font-family:'Geist Mono',monospace;font-size:20px;font-weight:400;transform:{{ faqRot5 }};transition:transform 220ms cubic-bezier(.2,.8,.25,1);">+</span></button></h3>
+          <div id="faq-a-5" role="region" aria-labelledby="faq-q-5" style="display:grid;grid-template-rows:{{ faqRows5 }};transition:grid-template-rows 320ms cubic-bezier(.2,.8,.25,1);"><div style="overflow:hidden;"><p style="margin:0;padding:0 0 20px;max-width:58ch;font-size:16px;line-height:1.6;color:rgb(var(--ink) / 0.76);text-wrap:pretty;">Yes. There are no setup fees and no lock-in. Cancel anytime, and your data comes with you.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="cta" data-tone="dark" data-screen-label="06 Footer" style="position:relative;background-color:rgb(var(--bg));background-image:linear-gradient(rgb(var(--ink) / 0.05) 1px,transparent 1px),linear-gradient(90deg,rgb(var(--ink) / 0.05) 1px,transparent 1px);background-size:84px 84px;color:rgb(var(--ink));">
+  <div style="max-width:1280px;margin:0 auto;padding:96px max(clamp(20px,4vw,40px), env(safe-area-inset-right)) calc(48px + env(safe-area-inset-bottom)) max(clamp(20px,4vw,40px), env(safe-area-inset-left));display:grid;gap:clamp(48px,7svh,72px);">
+    <div style="display:grid;grid-template-columns:{{ footCols }};column-gap:clamp(32px,5vw,72px);align-items:center;">
+      <div style="display:contents;">
+        <h2 style="grid-area:{{ footA1 }};justify-self:start;margin:0;max-width:11ch;font-weight:600;font-size:clamp(44px,6.4vw,96px);line-height:0.98;letter-spacing:-0.045em;color:rgb(var(--ink));text-wrap:balance;">Stay in stock, with Everstock.</h2>
+        <div style="grid-area:{{ footA2 }};margin-top:36px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px;width:{{ footColW }};"><a href="#waitlist" onClick="{{ openFounding }}" data-cta="foot" onMouseEnter="{{ ctaIn }}" onTouchStart="{{ ctaIn }}" onMouseLeave="{{ ctaOut }}" onFocus="{{ ctaIn }}" onBlur="{{ ctaOut }}" style="position:relative;height:54px;padding:0 26px;display:inline-flex;align-items:center;flex:{{ footBtnFlex }};justify-content:center;border-radius:8px;background:rgb(var(--ink));color:rgb(var(--bg));font-size:16px;font-weight:600;white-space:nowrap;transition:box-shadow 220ms cubic-bezier(.2,.8,.25,1),background-color 220ms cubic-bezier(.2,.8,.25,1);" style-hover="background:rgb(var(--hi));color:rgb(var(--bg));box-shadow:0 10px 22px -10px rgba(0,0,0,0.5);" style-active="transform:scale(0.985);">Join the waitlist<span aria-hidden="true" style="position:absolute;top:-11px;right:{{ footStampR }};z-index:1;padding:2px 6px;background:#FAF7F1;border:2px solid #08745A;border-radius:3px;color:#08745A;font-family:'Geist Mono',monospace;font-weight:700;font-size:9.5px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:140px;mask-size:140px;pointer-events:none;opacity:{{ footStampOp }};transform:{{ footStampTf }};transition:{{ stampTr }};">Approved</span></a><a href="#book-demo" onClick="{{ openDemo }}" style="display:inline-flex;align-items:center;justify-content:center;flex:{{ footBtnFlex }};min-height:44px;font-size:max(15px, min(16px, calc((900px - 100vw) * 100)));font-weight:500;color:rgb(var(--ink));text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px;text-decoration-color:rgb(var(--ink) / 0.5);white-space:nowrap;" style-hover="text-decoration-color:rgb(var(--ink));">Book a demo</a></div>
+        <nav aria-label="Footer" style="grid-area:{{ footA3 }};margin-top:48px;display:{{ footNavDisp }};grid-template-columns:repeat(2,minmax(0,1fr));flex-wrap:wrap;gap:{{ footNavGap }};width:{{ footColW }};">
+          <a href="Everstock%20v5.dc.html#how-it-works" style="display:inline-flex;align-items:center;min-height:44px;font-size:max(14px, min(16px, calc((900px - 100vw) * 100)));font-weight:500;color:rgb(var(--ink) / 0.72);white-space:nowrap;" style-hover="color:rgb(var(--ink));">How it works</a>
+          <a href="Everstock%20v5.dc.html#industries" style="display:inline-flex;align-items:center;min-height:44px;font-size:max(14px, min(16px, calc((900px - 100vw) * 100)));font-weight:500;color:rgb(var(--ink) / 0.72);white-space:nowrap;" style-hover="color:rgb(var(--ink));">Industries</a>
+          <a href="#top" style="display:inline-flex;align-items:center;min-height:44px;font-size:max(14px, min(16px, calc((900px - 100vw) * 100)));font-weight:500;color:rgb(var(--ink) / 0.72);white-space:nowrap;" style-hover="color:rgb(var(--ink));">Pricing</a>
+          <a href="#waitlist" onClick="{{ openFounding }}" style="display:inline-flex;align-items:center;min-height:44px;font-size:max(14px, min(16px, calc((900px - 100vw) * 100)));font-weight:500;color:rgb(var(--ink) / 0.72);white-space:nowrap;" style-hover="color:rgb(var(--ink));">Join the waitlist</a>
+          <a href="#book-demo" onClick="{{ openDemo }}" style="display:inline-flex;align-items:center;min-height:44px;font-size:max(14px, min(16px, calc((900px - 100vw) * 100)));font-weight:500;color:rgb(var(--ink) / 0.72);white-space:nowrap;" style-hover="color:rgb(var(--ink));">Book a demo</a>
+        </nav>
+      </div>
+      <div ref="{{ stackRef }}" data-keep="true" aria-hidden="true" style="grid-area:{{ footA4 }};align-self:center;justify-self:{{ footArtJs }};margin-top:{{ footArtMt }};position:relative;margin-right:{{ footArtMr }};">
+        <img data-stack2="true" alt="" style="display:block;image-rendering:pixelated;">
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 32px;padding-top:24px;border-top:1px solid rgb(var(--ink) / 0.12);">
+      <span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgb(var(--ink) / 0.64);">© 2026 Everstock</span>
+      <nav aria-label="Legal" style="display:flex;flex-wrap:wrap;gap:10px 24px;">
+        <a href="#privacy" style="display:inline-flex;align-items:center;min-height:44px;font-size:max(12.5px, min(16px, calc((900px - 100vw) * 100)));color:rgb(var(--ink) / 0.64);white-space:nowrap;" style-hover="color:rgb(var(--ink));">Privacy</a>
+        <a href="#terms" style="display:inline-flex;align-items:center;min-height:44px;font-size:max(12.5px, min(16px, calc((900px - 100vw) * 100)));color:rgb(var(--ink) / 0.64);white-space:nowrap;" style-hover="color:rgb(var(--ink));">Terms</a>
+        <a href="#linkedin" style="display:inline-flex;align-items:center;min-height:44px;font-size:max(12.5px, min(16px, calc((900px - 100vw) * 100)));color:rgb(var(--ink) / 0.64);white-space:nowrap;" style-hover="color:rgb(var(--ink));">LinkedIn</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<sc-if value="{{ mbarShow }}" hint-placeholder-val="{{ false }}">
+  <div data-tone="dark" style="position:fixed;left:calc(12px + env(safe-area-inset-left));right:calc(12px + env(safe-area-inset-right));bottom:calc(12px + env(safe-area-inset-bottom));z-index:40;display:flex;padding:6px;border-radius:12px;background:rgb(var(--bg) / 0.94);border:1px solid rgb(var(--ink) / 0.12);box-shadow:0 8px 24px -8px rgba(0,0,0,0.5);">
+    <button type="button" onClick="{{ openFounding }}" data-cta="bar" onMouseEnter="{{ ctaIn }}" onTouchStart="{{ ctaIn }}" onMouseLeave="{{ ctaOut }}" onFocus="{{ ctaIn }}" onBlur="{{ ctaOut }}" style="position:relative;flex:1;height:48px;border:0;border-radius:8px;background:rgb(var(--ink));color:rgb(var(--bg));font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;">Join the waitlist<span aria-hidden="true" style="position:absolute;top:-11px;right:-12px;z-index:1;padding:2px 6px;background:#FAF7F1;border:2px solid #08745A;border-radius:3px;color:#08745A;font-family:'Geist Mono',monospace;font-weight:700;font-size:9.5px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:140px;mask-size:140px;pointer-events:none;opacity:{{ barStampOp }};transform:{{ barStampTf }};transition:{{ stampTr }};">Approved</span></button>
+  </div>
+</sc-if>
+<sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-modal="true" aria-labelledby="acc-title" onKeyDown="{{ modalKey }}" style="position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;">
+    <div onClick="{{ closeAccess }}" style="position:absolute;inset:0;background:rgba(16,17,21,0.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);"></div>
+    <div style="position:relative;width:min(480px,100%);max-height:calc(100svh - 40px);overflow:auto;background:#FAF7F1;color:#101115;border:1px solid rgba(22,23,27,0.14);border-radius:12px;box-shadow:0 1px 0 rgba(255,255,255,0.8) inset,0 2px 4px rgba(16,17,21,0.12),0 18px 36px -12px rgba(16,17,21,0.35),0 48px 96px -32px rgba(16,17,21,0.5);padding:clamp(22px,4vw,34px);display:grid;gap:22px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
+        <div style="display:grid;gap:8px;">
+          <span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(22,23,27,0.56);">{{ accEyebrow }}</span>
+          <h3 id="acc-title" style="margin:0;font-weight:600;font-size:clamp(24px,3vw,30px);line-height:1.1;letter-spacing:-0.025em;">{{ accTitle }}</h3>
+        </div>
+        <button type="button" onClick="{{ closeAccess }}" style="height:44px;padding:0 14px;border-radius:7px;border:1px solid rgba(22,23,27,0.18);background:transparent;color:#101115;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;" style-hover="border-color:#101115;">Close</button>
+      </div>
+      <sc-if value="{{ accForm }}" hint-placeholder-val="{{ true }}">
+        <form onSubmit="{{ submitAccess }}" style="display:grid;gap:18px;">
+          <label style="display:grid;gap:6px;"><span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(22,23,27,0.56);">Work email</span><input id="acc-email" name="email" type="email" required="{{ true }}" autocomplete="email" placeholder="you@company.com" style="width:100%;min-width:0;height:44px;padding:0 12px;border:1px solid rgba(22,23,27,0.2);border-radius:7px;background:#FFFFFF;font-family:inherit;font-size:16px;color:#101115;outline:none;" style-focus="border-color:#101115;"></label>
+          <label style="display:grid;gap:6px;"><span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(22,23,27,0.56);">Company</span><input name="company" type="text" autocomplete="organization" style="width:100%;min-width:0;height:44px;padding:0 12px;border:1px solid rgba(22,23,27,0.2);border-radius:7px;background:#FFFFFF;font-family:inherit;font-size:16px;color:#101115;outline:none;" style-focus="border-color:#101115;"></label>
+          <button type="submit" style="height:50px;border:0;border-radius:8px;background:#16171B;color:#FAF9F5;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;" style-hover="background:#000000;" style-active="transform:scale(0.985);">{{ accTitle }}</button>
+        </form>
+      </sc-if>
+      <sc-if value="{{ accSent }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:0;font-size:16px;line-height:1.55;color:rgba(22,23,27,0.8);">Request received for {{ accPlanName }}. Look for an email with next steps.</p>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;motion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;full&quot;,&quot;reduced&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;'auto'|'full'|'reduced'&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;autoAdvance&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Scene switcher&quot;},&quot;startTier&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Base&quot;,&quot;Scale&quot;,&quot;Enterprise&quot;],&quot;default&quot;:&quot;Base&quot;,&quot;tsType&quot;:&quot;'Base'|'Scale'|'Enterprise'&quot;,&quot;section&quot;:&quot;Scene switcher&quot;}}">
+class Component extends DCLogic {
+  state = { scene: 0, auto: true, ctaHov: '', modal: false, plan: 'founding', accSent: false, navMenu: false, wide: true, tblNarrow: false, frameN: false, solid: false, past: false, allFeat: false, faq: 0, tblTier: 2, sysReduced: false, mqHover: false };
+  rootRef = React.createRef(); frameRef = React.createRef(); sceneCvRef = React.createRef(); fgLabRef = React.createRef(); bubRef = React.createRef(); dotsRef = React.createRef(); infoRef = React.createRef(); sbIconRef = React.createRef(); footCvRef = React.createRef(); stackRef = React.createRef(); markRef = React.createRef();
+  C = 0.866; S = 0.5;
+  B4 = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]].map((r) => r.map((v) => (v + 0.5) / 16));
+  MAT = {
+    kraft: ['#D3B78A', '#B08A5C', '#8A6644'], label: ['#F4F2EC', '#E4E1D9', '#CBC7BD'], wall: ['#B9B1A2', '#F2EEE6', '#E3DDD2'], floor: ['#E2DCCF', '#C9C1B2', '#ADA595'],
+    steel: ['#B4BCC5', '#8E98A4', '#6F7883'], board: ['#CDD1D6', '#A5ACB4', '#848B94'], couch: ['#8C96A7', '#6B7487', '#535B6C'], wood: ['#C9A677', '#A9855A', '#8A6A44'],
+    dark: ['#3A3C42', '#26272C', '#1C1D21'], silver: ['#D8DADD', '#B8BBC0', '#9A9DA3'], amber: ['#E7A13E', '#C9831F', '#A66A14'], orange: ['#DB7A3E', '#B85E28', '#91481C'],
+    shirt: ['#5A6583', '#475069', '#373E53'], pants: ['#4A4D55', '#383A41', '#2B2C32'], hair: ['#4E3F33', '#3B2F26', '#2C231C'], rug: ['#BCC5B6', '#A1AA9A', '#879080'],
+    glass: ['#D3DEE3', '#C9D6DC', '#B4C4CC'], door: ['#C8CBCE', '#B6BABE', '#A3A7AC'], truck: ['#F3F2EF', '#E7E5DF', '#E2E0DA'], table: ['#ECE9E2', '#D2CEC5', '#B6B1A7'],
+    paper: ['#FAF8F3', '#EEEBE4', '#DAD6CD'], office: ['#C9C2B5', '#ECE8E0', '#DCD6CB'], day: ['#F8F5EE', '#F8F5EE', '#F8F5EE'], hole: ['#3A3C42', '#3A3C42', '#34363B'], asph: ['#D3CCBF', '#B9B1A2', '#9E9687'], cat: ['#EE9A4C', '#D27B2E', '#B06422'], catd: ['#B85A1C', '#9A4A16', '#7E3C12'], cab: ['#7D8CA3', '#5F6E86', '#4B586D']
+  };
+  SCN = [
+    { tier: 'Base', code: '01 · The living room', id: 'Tier 01 · Base', cap: 'You’re shipping from the living room.', sub: 'stockbot reads your inbox, so paperwork sorts itself.', why: 'Your operation is steady. Now it’s about running it leaner: fewer hours on paperwork, fewer overcharges slipping through.', pre: true, price: '$199', per: true, note: '+ $75 per seat · capped at $499/mo', bullets: ['Reads your inbox automatically', 'Catches supplier overcharges', 'Compares quotes so you pay less'], cta: 'Join the waitlist', bub: 'They billed 12, you got 10. Draft a reply?', alt: 'A living room used as a stockroom: boxes against the wall and behind the couch, a label printer and receipts on the coffee table, and a phone on the armrest with a stockbot message.' },
+    { tier: 'Scale', code: '02 · The first warehouse', id: 'Tier 02 · Scale', cap: 'You just signed your first warehouse lease.', sub: 'Your team and your agent, working off the same page.', why: 'You’re growing fast and your systems have to keep up. More orders, more people, and no time to rebuild how you buy.', pre: false, price: '$999', per: true, note: 'Up to 50 seats', bullets: ['Build workflows by describing them, even by voice', 'An agent that works while you sleep', 'Seats for your whole team (up to 50)'], cta: 'Book a demo', bub: 'Meridian confirmed PO-2291. Arriving Thursday.', alt: 'A first warehouse: one row of steel shelving, two pallets, a half-open roll-up door, a packing table with a laptop and a person packing, and a wall screen showing the Everstock workspace.' },
+    { tier: 'Enterprise', code: '03 · The multi-bay floor', id: 'Tier 03 · Enterprise', cap: 'You have a team whose job is purchasing.', sub: 'Multiple agents, your systems, your rules.', why: 'Multi-team, multi-site, and purchasing is already someone’s whole job. This is the last push that takes your systems and your people to the top of their game.', pre: false, price: 'Custom', per: false, note: 'Built around your operation', bullets: ['Multiple agents running in parallel', 'Shared billing across sites', 'Plugs into your ERP and existing systems'], cta: 'Book a demo', bub: '', alt: 'A multi-bay warehouse floor: several shelving aisles, two loading docks with a truck backing in, a forklift moving a pallet, an office window with a multi-panel workspace, and agent indicators across the floor.' }
+  ];
+  TIERS = [
+    { n: 'stockbot', p: '$20', per: '/mo', cta: 'Join the waitlist' },
+    { n: 'Base', pre: 'From', p: '$199', per: '/mo', cta: 'Join the waitlist' },
+    { n: 'Scale', p: '$999', per: '/mo', cta: 'Book a demo', hi: true },
+    { n: 'Enterprise', p: 'Custom', per: '', cta: 'Book a demo' }
+  ];
+  GROUPS = [
+    ['Agent', [['Text it on WhatsApp or Telegram', 1, 1, 1, 1], ['Chat with it in the Everstock app', 1, 1, 1, 1], ['Desktop workspace', 0, 0, 1, 1], ['An agent that works while you sleep', 0, 0, '1 per workspace', 'Multiple, in parallel']]],
+    ['Paperwork', [['Reads photos and PDFs you send', 1, 1, 1, 1], ['Reads your inbox automatically', 0, 1, 1, 1], ['Catches supplier overcharges', 1, 1, 1, 1], ['Flags missing items and price changes', 1, 1, 1, 1], ['Compares quotes so you pay less', 0, 1, 1, 1]]],
+    ['Workflows', [['Ready-made workflows', '1', 'Core', 'Advanced', 'Advanced'], ['Build workflows by describing them, even by voice', 0, 0, 1, 1], ['Monthly usage', 'Light', 'Standard', 'Higher', 'Custom']]],
+    ['Team', [['Seats', '1', '$75 each, capped at $499/mo', 'Up to 50', 'Unlimited'], ['Shared billing across sites', 0, 0, 0, 1]]],
+    ['Insights', [['Order and invoice history', 1, 1, 1, 1], ['See spend, suppliers, and stock at a glance', 0, 0, 1, 1]]],
+    ['Integrations', [['Shopify, Etsy, Excel and Google Sheets', 0, 1, 1, 1], ['Plugs into your ERP and existing systems', 0, 0, 0, 1], ['Custom integrations', 0, 0, 0, 1]]],
+    ['Support', [['Help by email', 1, 1, 1, 1], ['Onboarding with the founders', 0, 0, 1, 1], ['A dedicated contact', 0, 0, 0, 1]]]
+  ];
+
+  isReduced() { const m = this.props.motion ?? 'auto'; return m === 'reduced' || (m === 'auto' && this.state.sysReduced); }
+  hash(s) { let v = 2166136261; for (let i = 0; i < s.length; i++) { v ^= s.charCodeAt(i); v = Math.imul(v, 16777619); } return ((v >>> 0) % 10007) / 10007; }
+  ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+
+  /* ---------- scene geometry ---------- */
+  buildScenes() {
+    const self = this, mk = (W, D, H) => {
+      const S = { W, D, H, map: new Map() };
+      const B = (id, m, x0, y0, z0, x1, y1, z1, o) => {
+        const p = Object.assign({ id, m, x0, y0, z0, x1, y1, z1, g: 3 }, o || {});
+        if (m === 'kraft' && !p.plain) { const d = [{ f: 'z', a0: 0, a1: 1, b0: 0.43, b1: 0.57, c: '#E4CFA4' }]; if (self.hash(id + 'l') < 0.42 && x1 - x0 > 0.5) d.push({ f: 'y', a0: 0.14, a1: 0.5, b0: 0.34, b1: 0.68, c: '#F2EFE8' }); p.dec = (p.dec || []).concat(d); }
+        S.map.set(id, p); return p;
+      };
+      const F = (id, m, side, a0, a1, z0, z1, o) => side === 'x' ? B(id, m, -0.03, a0, z0, 0.004, a1, z1, Object.assign({ g: 2, faces: 'x' }, o || {})) : B(id, m, a0, -0.03, z0, a1, 0.004, z1, Object.assign({ g: 2, faces: 'y' }, o || {}));
+      return [S, B, F];
+    };
+    const FG = [{ f: 'z', a0: 0, a1: 1, b0: 0.43, b1: 0.57, c: '#E4CFA4' }, { f: 'y', a0: 0.12, a1: 0.66, b0: 0.24, b1: 0.78, c: '#F7F5F0' }];
+    const SCR = [{ f: 'x', a0: 0.08, a1: 0.92, b0: 0.1, b1: 0.9, c: '#DCE5F2' }, { f: 'x', a0: 0.16, a1: 0.62, b0: 0.62, b1: 0.76, c: '#0B5FFF' }, { f: 'x', a0: 0.16, a1: 0.8, b0: 0.4, b1: 0.5, c: '#AEBBCF' }];
+    const PH = [{ f: 'z', a0: 0.08, a1: 0.92, b0: 0.14, b1: 0.86, c: '#8FB2F7' }];
+    const RIDGE = [0.2, 0.4, 0.6, 0.8].map((b) => ({ f: 'x', a0: 0, a1: 1, b0: b - 0.012, b1: b + 0.012, c: '#8F9499' }));
+    const person = (B, id, x, y, mode) => {
+      B(id + 'l1', 'pants', x - 0.36, y, 0, x - 0.05, y + 0.3, 1.2); B(id + 'l2', 'pants', x + 0.05, y, 0, x + 0.36, y + 0.3, 1.2);
+      B(id + 't', 'shirt', x - 0.46, y - 0.04, 1.2, x + 0.46, y + 0.36, 2.15);
+      if (mode === 'reach') { B(id + 'a1', 'shirt', x - 0.64, y, 1.3, x - 0.46, y + 0.3, 2.1); B(id + 'a2', 'shirt', x + 0.46, y - 0.2, 1.9, x + 0.64, y + 0.2, 3.0); }
+      else if (mode === 'stand') { B(id + 'a1', 'shirt', x - 0.64, y, 1.25, x - 0.46, y + 0.3, 2.1); B(id + 'a2', 'shirt', x + 0.46, y, 1.25, x + 0.64, y + 0.3, 2.1); }
+      else if (mode === 'carry') { B(id + 'a1', 'shirt', x - 0.64, y - 0.45, 1.45, x - 0.46, y + 0.25, 1.7); B(id + 'a2', 'shirt', x + 0.46, y - 0.45, 1.45, x + 0.64, y + 0.25, 1.7); B(id + 'bx', 'kraft', x - 0.42, y - 0.9, 1.3, x + 0.42, y - 0.46, 1.95); }
+      else { B(id + 'a1', 'shirt', x - 0.64, y - 0.5, 1.55, x - 0.46, y + 0.25, 1.8); B(id + 'a2', 'shirt', x + 0.46, y - 0.5, 1.55, x + 0.64, y + 0.25, 1.8); }
+      B(id + 'h', 'hair', x - 0.21, y, 2.2, x + 0.21, y + 0.34, 2.64);
+    };
+    const shelf = (B, sid, x0, x1, y0, y1, h, lv) => {
+      const bays = Math.max(2, Math.round((x1 - x0) / 2.4)), bw = (x1 - x0) / bays, gap = (h - 0.3) / (lv - 1);
+      for (let i = 0; i <= bays; i++) { const x = Math.min(x1 - 0.14, x0 + i * bw); B(sid + 'ub' + i, 'steel', x, y0, 0, x + 0.14, y0 + 0.14, h); B(sid + 'uf' + i, 'steel', x, y1 - 0.14, 0, x + 0.14, y1, h); }
+      for (let j = 0; j < lv; j++) {
+        const z = 0.18 + j * gap, room = j < lv - 1 ? gap - 0.28 : 0.9;
+        B(sid + 's' + j, 'board', x0, y0, z, x1, y1, z + 0.1);
+        for (let i = 0; i < bays; i++) {
+          let cx = x0 + i * bw + 0.24; const end = x0 + (i + 1) * bw - 0.12;
+          for (let n = 0; n < 3 && cx < end - 0.45; n++) {
+            const id = sid + 'b' + j + '_' + i + '_' + n, r = this.hash(id);
+            if (r < 0.16) { cx += 0.8; continue; }
+            const w = Math.min(end - cx, 0.7 + r * 0.6), hh = room * (0.55 + 0.4 * this.hash(id + 'h'));
+            B(id, 'kraft', cx, y0 + 0.2, z + 0.1, cx + w, y1 - 0.24, z + 0.1 + hh); cx += w + 0.1;
+          }
+        }
+      }
+    };
+    const stack = (B, ids, x0, y0, x1, y1, z0, lh) => { const cw = (x1 - x0) / 2, cd = (y1 - y0) / 2; ids.forEach((id, k) => { const L = Math.floor(k / 4), c = k % 2, r = Math.floor((k % 4) / 2), ins = L % 2 ? 0.09 : 0.04; B(id, 'kraft', x0 + c * cw + ins, y0 + r * cd + ins, z0 + L * lh, x0 + (c + 1) * cw - ins, y0 + (r + 1) * cd - ins, z0 + (L + 1) * lh - 0.03); }); };
+    const slot = (f, c) => [0.08, 0.42, 0.76].map((a) => ({ f, a0: a, a1: a + 0.16, b0: 0.15, b1: 0.7, c }));
+    const pallet = (B, id, x0, y0, x1, y1) => B(id, 'wood', x0, y0, 0, x1, y1, 0.26, { dec: slot('y', '#5E4A33').concat(slot('x', '#4E3D2A')) });
+    const table = (B, id, m, lm, x0, y0, x1, y1, zt, th) => { B(id, m, x0, y0, zt - th, x1, y1, zt, { dec: id === 'tt' ? [0.08, 0.2, 0.78].map((a) => ({ f: 'y', a0: a, a1: a + 0.05, b0: 0.1, b1: 0.9, c: '#FAF8F3' })) : null }); [[x0 + 0.08, y0 + 0.08], [x1 - 0.2, y0 + 0.08], [x0 + 0.08, y1 - 0.2], [x1 - 0.2, y1 - 0.2]].forEach(([x, y], i) => B(id + 'l' + i, lm, x, y, 0, x + 0.12, y + 0.12, zt - th)); };
+    const lap = (B, x, y, z) => { B('lapB', 'silver', x + 0.06, y, z, x + 0.61, y + 0.7, z + 0.04); B('lapS', 'dark', x, y, z + 0.04, x + 0.06, y + 0.7, z + 0.46, { dec: SCR }); };
+
+    const pickup = (B, x, y) => {
+      B('pkw0', 'dark', x - 0.1, y + 0.5, 0, x + 1.9, y + 1.3, 0.5); B('pkw1', 'dark', x - 0.1, y + 3.4, 0, x + 1.9, y + 4.2, 0.5);
+      B('pkb', 'cab', x, y, 0.5, x + 1.8, y + 2.6, 1.35, { dec: [{ f: 'z', a0: 0.1, a1: 0.9, b0: 0.06, b1: 0.94, c: '#3E4A5C' }] });
+      B('pkc', 'cab', x, y + 2.6, 0.5, x + 1.8, y + 4.0, 2.25, { dec: [{ f: 'y', a0: 0.1, a1: 0.9, b0: 0.6, b1: 0.9, c: '#C7D4DA' }, { f: 'x', a0: 0.12, a1: 0.82, b0: 0.6, b1: 0.9, c: '#C7D4DA' }] });
+      B('pkh', 'cab', x, y + 4.0, 0.5, x + 1.8, y + 4.9, 1.35, { dec: [{ f: 'y', a0: 0.06, a1: 0.2, b0: 0.55, b1: 0.75, c: '#F4F1E6' }, { f: 'y', a0: 0.8, a1: 0.94, b0: 0.55, b1: 0.75, c: '#F4F1E6' }] });
+    };
+    // A — the living room
+    const [A, a, af] = mk(10, 8, 4.8);
+    af('win', 'glass', 'y', 6.6, 9.0, 1.5, 3.5, { dec: [{ f: 'y', a0: 0.485, a1: 0.515, b0: 0, b1: 1, c: '#8E9AA1' }, { f: 'y', a0: 0, a1: 1, b0: 0.47, b1: 0.53, c: '#8E9AA1' }] });
+    a('rug', 'rug', 3.0, 2.4, 0, 7.6, 6.6, 0.03, { flat: true, line: false });
+    a('cbase', 'couch', 1.0, 2.2, 0, 2.4, 6.0, 0.45); a('cc1', 'couch', 1.5, 2.25, 0.45, 2.4, 4.08, 0.68); a('cc2', 'couch', 1.5, 4.12, 0.45, 2.4, 5.95, 0.68);
+    a('cbk', 'couch', 1.0, 2.2, 0.45, 1.5, 6.0, 1.35); a('ca1', 'couch', 1.0, 1.85, 0, 2.4, 2.2, 0.95); a('ca2', 'couch', 1.0, 6.0, 0, 2.4, 6.35, 0.95);
+    a('cb1', 'kraft', 0.12, 2.6, 0, 0.95, 3.5, 0.9); a('cb2', 'kraft', 0.12, 3.6, 0, 0.95, 4.4, 0.7); a('cb3', 'kraft', 0.18, 2.75, 0.9, 0.9, 3.45, 1.55);
+    a('s1t', 'shirt', 1.55, 3.3, 0.68, 1.98, 4.2, 1.75); a('s1h', 'hair', 1.58, 3.56, 1.8, 1.95, 3.94, 2.2);
+    a('s1q1', 'pants', 1.98, 3.36, 0.68, 2.62, 3.72, 0.98); a('s1q2', 'pants', 1.98, 3.78, 0.68, 2.62, 4.14, 0.98);
+    a('s1s1', 'pants', 2.42, 3.38, 0, 2.68, 3.7, 0.68); a('s1s2', 'pants', 2.42, 3.8, 0, 2.68, 4.12, 0.68);
+    a('s1a1', 'shirt', 1.98, 3.12, 1.05, 2.45, 3.3, 1.25); a('s1a2', 'shirt', 1.98, 4.2, 1.05, 2.45, 4.38, 1.25);
+    a('lapB', 'silver', 2.05, 3.42, 0.98, 2.56, 4.08, 1.02); a('lapS', 'silver', 2.56, 3.42, 1.02, 2.62, 4.08, 1.42);
+    a('phone', 'dark', 1.36, 1.87, 0.95, 2.04, 2.19, 1.0, { dec: [{ f: 'z', a0: 0.07, a1: 0.93, b0: 0.1, b1: 0.9, c: '#A9C6FF' }, { f: 'z', a0: 0.2, a1: 0.8, b0: 0.2, b1: 0.5, c: '#FFFFFF' }] });
+    table(a, 'tt', 'wood', 'wood', 4.2, 3.4, 6.6, 5.4, 0.68, 0.1);
+    a('prn', 'label', 4.5, 3.7, 0.68, 5.0, 4.1, 0.95, { dec: [{ f: 'z', a0: 0.62, a1: 0.9, b0: 0.18, b1: 0.82, c: '#2A2B30' }] }); a('prnL', 'paper', 5.0, 3.82, 0.68, 5.32, 3.98, 0.69, { line: false });
+    a('tape', 'orange', 5.9, 4.7, 0.68, 6.3, 4.86, 0.98); a('roll', 'paper', 4.6, 4.6, 0.68, 4.92, 4.92, 0.92, { dec: [{ f: 'z', a0: 0.35, a1: 0.65, b0: 0.35, b1: 0.65, c: '#8C8F96' }] });
+    a('rc1', 'paper', 5.35, 3.58, 0.68, 5.95, 4.1, 0.695, { line: false }); a('rc2', 'paper', 5.45, 3.74, 0.695, 6.05, 4.26, 0.71); a('mug', 'label', 5.62, 3.88, 0.71, 5.86, 4.12, 0.95);
+    a('w1', 'kraft', 3.4, 0.15, 0, 4.4, 1.0, 0.8); a('w2', 'kraft', 4.5, 0.15, 0, 5.3, 0.9, 0.65); a('w3', 'kraft', 3.55, 0.2, 0.8, 4.3, 0.9, 1.4); a('w4', 'kraft', 5.6, 0.15, 0, 6.6, 1.05, 0.85);
+    a('w5', 'kraft', 5.7, 0.2, 0.85, 6.5, 0.95, 1.45); a('w6', 'kraft', 4.6, 0.2, 0.65, 5.2, 0.8, 1.1); a('w7', 'kraft', 5.8, 0.25, 1.45, 6.4, 0.85, 1.9);
+    a('tvc', 'wood', 8.7, 2.9, 0, 9.4, 5.7, 0.45, { dec: [{ f: 'x', a0: 0.04, a1: 0.48, b0: 0.18, b1: 0.82, c: '#6E5236' }, { f: 'x', a0: 0.52, a1: 0.96, b0: 0.18, b1: 0.82, c: '#6E5236' }] });
+    a('tvf', 'dark', 8.95, 4.2, 0.45, 9.15, 4.4, 0.56);
+    a('tv', 'dark', 8.98, 3.3, 0.56, 9.12, 5.3, 1.66, { dec: [{ f: 'x', a0: 0.3, a1: 0.7, b0: 0.3, b1: 0.62, c: '#3A3C42' }] });
+    a('tvglow', 'rug', 7.6, 3.3, 0, 8.7, 5.3, 0.01, { flat: true, line: false });
+    a('catb', 'cat', 3.2, 5.55, 0.03, 4.15, 6.35, 0.44, { dec: [0.2, 0.45, 0.7].map((v) => ({ f: 'z', a0: v - 0.06, a1: v + 0.06, b0: 0.06, b1: 0.94, c: '#B85A1C' })).concat([0.25, 0.55].map((v) => ({ f: 'y', a0: v, a1: v + 0.1, b0: 0.2, b1: 0.85, c: '#B85A1C' }))) });
+    a('cath', 'cat', 4.05, 5.62, 0.03, 4.55, 6.12, 0.56, { dec: [{ f: 'x', a0: 0.12, a1: 0.36, b0: 0.46, b1: 0.66, c: '#3FBF5A' }, { f: 'x', a0: 0.64, a1: 0.88, b0: 0.46, b1: 0.66, c: '#3FBF5A' }, { f: 'x', a0: 0.21, a1: 0.27, b0: 0.46, b1: 0.66, c: '#1A1B1F' }, { f: 'x', a0: 0.73, a1: 0.79, b0: 0.46, b1: 0.66, c: '#1A1B1F' }, { f: 'x', a0: 0.42, a1: 0.58, b0: 0.26, b1: 0.36, c: '#E8A0A0' }, { f: 'x', a0: 0.3, a1: 0.7, b0: 0.04, b1: 0.16, c: '#FFF4E6' }] });
+    a('cate1', 'catd', 4.2, 5.65, 0.56, 4.34, 5.8, 0.72); a('cate2', 'catd', 4.2, 5.94, 0.56, 4.34, 6.09, 0.72);
+    a('catt', 'catd', 3.15, 6.3, 0.03, 4.0, 6.52, 0.17);
+    A.anims = [{ pre: 'catt', dx: (now) => Math.sin(now / 1000 * 1.6) * 0.05 }, { pre: 'catb', dz: 0 }];
+    a('fg', 'kraft', 7.1, 5.7, 0, 8.3, 6.6, 0.85, { plain: true, dec: FG });
+
+    // B — the first warehouse
+    const [Bs, b, bf] = mk(16, 12, 6.2);
+    bf('dOpen', 'day', 'x', 6.8, 10.4, 0, 3.6); bf('dPanel', 'door', 'x', 6.8, 10.4, 2.0, 3.6, { dec: RIDGE });
+    bf('wscr', 'dark', 'y', 12.9, 15.3, 2.6, 3.9, { dec: [{ f: 'y', a0: 0.04, a1: 0.96, b0: 0.07, b1: 0.93, c: '#F1EEE7' }, { f: 'y', a0: 0.04, a1: 0.22, b0: 0.07, b1: 0.93, c: '#DAD5CB' }, { f: 'y', a0: 0.27, a1: 0.58, b0: 0.48, b1: 0.86, c: '#FFFFFF' }, { f: 'y', a0: 0.27, a1: 0.58, b0: 0.78, b1: 0.86, c: '#0B5FFF' }, { f: 'y', a0: 0.62, a1: 0.93, b0: 0.48, b1: 0.86, c: '#FFFFFF' }, { f: 'y', a0: 0.62, a1: 0.93, b0: 0.78, b1: 0.86, c: '#08745A' }, { f: 'y', a0: 0.27, a1: 0.93, b0: 0.14, b1: 0.22, c: '#E3DED4' }, { f: 'y', a0: 0.27, a1: 0.8, b0: 0.28, b1: 0.36, c: '#E3DED4' }] });
+    shelf(b, 'sh0', 2.4, 12.0, 0.3, 1.9, 4.2, 3);
+    pallet(b, 'pa1', 8.4, 4.8, 10.2, 6.3); stack(b, ['w1', 'w2', 'w3', 'w4', 'pb1', 'pb2'], 8.4, 4.8, 10.2, 6.3, 0.26, 0.8);
+    pallet(b, 'pa2', 10.8, 5.6, 12.6, 7.1); stack(b, ['w5', 'w6', 'w7', 'pb3', 'pb4'], 10.8, 5.6, 12.6, 7.1, 0.26, 0.8);
+    table(b, 'pt', 'table', 'steel', 3.6, 7.2, 6.8, 8.4, 1.03, 0.08);
+    lap(b, 3.89, 7.4, 1.03);
+    b('phone', 'dark', 6.2, 7.92, 1.03, 6.56, 8.12, 1.06, { dec: PH });
+    b('pbox', 'kraft', 4.9, 7.4, 1.03, 5.75, 8.1, 1.55, { plain: true, dec: [{ f: 'z', a0: 0.06, a1: 0.94, b0: 0.08, b1: 0.92, c: '#6E5236' }] });
+    b('tape', 'orange', 6.0, 7.35, 1.03, 6.4, 7.51, 1.33);
+    person(b, 'p1', 5.3, 8.75, 'pack'); person(b, 'p3', 7.3, 5.4, 'carry'); person(b, 'p4', 14.1, 1.5, 'stand');
+    b('apron', 'asph', 16.0, 0, 0, 20.4, 12.0, 0.02, { flat: true, line: false, dec: [0.3, 0.6].map((v) => ({ f: 'z', a0: 0.05, a1: 0.09, b0: v, b1: v + 0.12, c: '#F2EEE6' })) });
+    pickup(b, 17.3, 2.6);
+    Bs.ext = 4.4;
+    b('fg', 'kraft', 11.6, 8.9, 0, 13.3, 10.2, 1.2, { plain: true, dec: FG });
+
+    // C — the multi-bay floor
+    const [Cs, c, cf] = mk(26, 18, 7.4);
+    cf('k1Open', 'hole', 'x', 4.0, 7.6, 0, 3.8);
+    cf('truck', 'truck', 'x', 4.25, 7.35, 0.5, 3.6, { dec: [{ f: 'x', a0: 0.495, a1: 0.505, b0: 0.06, b1: 1, c: '#A3A19B' }, { f: 'x', a0: 0, a1: 1, b0: 0, b1: 0.07, c: '#3A3C42' }, { f: 'x', a0: 0.04, a1: 0.1, b0: 0.1, b1: 0.16, c: '#B4432F' }, { f: 'x', a0: 0.9, a1: 0.96, b0: 0.1, b1: 0.16, c: '#B4432F' }, { f: 'x', a0: 0.3, a1: 0.33, b0: 0.3, b1: 0.75, c: '#BDBAB3' }, { f: 'x', a0: 0.67, a1: 0.7, b0: 0.3, b1: 0.75, c: '#BDBAB3' }] });
+    cf('k1Panel', 'door', 'x', 4.0, 7.6, 3.4, 3.8);
+    cf('dOpen', 'day', 'x', 11.0, 14.6, 0, 3.8); cf('dPanel', 'door', 'x', 11.0, 14.6, 0, 3.8, { dec: RIDGE });
+    c('k1Plate', 'steel', 0, 4.3, 0, 1.1, 7.3, 0.06, { flat: true });
+    shelf(c, 'sh0', 6.0, 19.0, 0.3, 1.9, 5.4, 4); shelf(c, 'sh1', 6.0, 19.0, 4.6, 6.2, 5.4, 4); shelf(c, 'sh2', 6.0, 19.0, 8.9, 10.5, 5.4, 4);
+    c('off', 'office', 20.6, 0.2, 0, 25.6, 4.2, 3.6, { dec: [{ f: 'y', a0: 0.06, a1: 0.62, b0: 0.3, b1: 0.86, c: '#C7D4DA' }, { f: 'y', a0: 0.1, a1: 0.58, b0: 0.3, b1: 0.35, c: '#8A6A44' }, { f: 'y', a0: 0.13, a1: 0.55, b0: 0.42, b1: 0.76, c: '#1E1F23' }, { f: 'y', a0: 0.15, a1: 0.24, b0: 0.45, b1: 0.73, c: '#E9E6DF' }, { f: 'y', a0: 0.26, a1: 0.39, b0: 0.61, b1: 0.73, c: '#0B5FFF' }, { f: 'y', a0: 0.26, a1: 0.39, b0: 0.45, b1: 0.58, c: '#F1EEE7' }, { f: 'y', a0: 0.41, a1: 0.53, b0: 0.61, b1: 0.73, c: '#08745A' }, { f: 'y', a0: 0.41, a1: 0.53, b0: 0.45, b1: 0.58, c: '#F1EEE7' }, { f: 'y', a0: 0.7, a1: 0.88, b0: 0, b1: 0.78, c: '#BDB5A7' }, { f: 'y', a0: 0.84, a1: 0.86, b0: 0.36, b1: 0.44, c: '#5A564E' }] });
+    pallet(c, 'pa1', 13.4, 13.2, 15.2, 14.7); stack(c, ['w1', 'w2', 'w3', 'w4', 'pb1', 'pb2', 'pc1', 'pc2'], 13.4, 13.2, 15.2, 14.7, 0.26, 0.8);
+    pallet(c, 'pa2', 1.7, 11.4, 3.5, 12.9); stack(c, ['w5', 'w6', 'w7', 'pb3', 'pb4', 'pc3'], 1.7, 11.4, 3.5, 12.9, 0.26, 0.8);
+    pallet(c, 'pa3', 1.7, 8.6, 3.5, 10.1); stack(c, ['pc4', 'pc5', 'pc6', 'pc7'], 1.7, 8.6, 3.5, 10.1, 0.26, 0.8);
+    table(c, 'pt', 'table', 'steel', 8.0, 13.6, 11.2, 14.8, 1.03, 0.08);
+    lap(c, 8.3, 13.8, 1.03);
+    c('pbox', 'kraft', 9.3, 13.8, 1.03, 10.15, 14.5, 1.55, { plain: true, dec: [{ f: 'z', a0: 0.06, a1: 0.94, b0: 0.08, b1: 0.92, c: '#6E5236' }] });
+    c('tape', 'orange', 10.4, 13.75, 1.03, 10.8, 13.91, 1.33);
+    person(c, 'p1', 9.7, 15.15, 'pack'); person(c, 'p2', 12.2, 6.95, 'reach');
+    person(c, 'p3', 12.0, 3.05, 'carry'); person(c, 'p4', 16.6, 13.8, 'stand'); person(c, 'p5', 5.6, 15.6, 'stand');
+    c('cr_l1', 'amber', 4.6, 12.0, 0, 4.95, 12.4, 6.4); c('cr_l2', 'amber', 18.6, 12.0, 0, 18.95, 12.4, 6.4);
+    c('cr_b', 'amber', 4.6, 12.0, 6.4, 18.95, 12.4, 6.9, { dec: [0.1, 0.3, 0.5, 0.7, 0.9].map((a) => ({ f: 'y', a0: a - 0.02, a1: a + 0.02, b0: 0, b1: 1, c: '#2A2B30' })) });
+    c('crt', 'dark', 11.4, 11.9, 6.1, 12.2, 12.5, 6.4); c('crtc', 'dark', 11.77, 12.17, 4.1, 11.83, 12.23, 6.1, { line: false }); c('crtl', 'kraft', 11.2, 11.6, 3.0, 12.4, 12.8, 4.05);
+    c('apron', 'asph', 26.0, 0, 0, 31.6, 18.0, 0.02, { flat: true, line: false, dec: [0.3, 0.55, 0.8].map((b) => ({ f: 'z', a0: 0.04, a1: 0.07, b0: b, b1: b + 0.1, c: '#F2EEE6' })) });
+    const semi = (B, id, x, y, mt) => {
+      const W = 2.3, rib = Array.from({ length: 15 }, (_, i) => ({ f: 'x', a0: (i + 1) / 16 - 0.005, a1: (i + 1) / 16 + 0.005, b0: 0.05, b1: 0.95, c: 'rgba(26,27,31,0.22)' }));
+      B(id + 'k', 'dark', x + 0.1, y + 0.4, 0.55, x + W - 0.1, y + 11.4, 0.85);
+      [[y + 0.8, y + 2.0], [y + 2.2, y + 3.4], [y + 9.2, y + 10.4], [y + 12.4, y + 13.4]].forEach(([y0, y1], i) => B(id + 'w' + i, 'dark', x + 0.05, y0, 0, x + W - 0.05, y1, 0.75));
+      B(id + 't', mt, x, y, 0.85, x + W, y + 11.2, 4.1, { dec: rib.concat([{ f: 'x', a0: 0.02, a1: 0.98, b0: 0.86, b1: 0.9, c: 'rgba(26,27,31,0.3)' }]) });
+      B(id + 'c', 'cab', x + 0.05, y + 11.6, 0.6, x + W - 0.05, y + 14.4, 3.5, { dec: [{ f: 'y', a0: 0.1, a1: 0.9, b0: 0.6, b1: 0.86, c: '#C7D4DA' }, { f: 'x', a0: 0.62, a1: 0.94, b0: 0.6, b1: 0.86, c: '#C7D4DA' }, { f: 'y', a0: 0.08, a1: 0.24, b0: 0.18, b1: 0.3, c: '#F4F1E6' }, { f: 'y', a0: 0.76, a1: 0.92, b0: 0.18, b1: 0.3, c: '#F4F1E6' }] });
+      B(id + 'x', 'dark', x + 0.4, y + 11.25, 0.85, x + W - 0.4, y + 11.6, 3.2);
+    };
+    semi(c, 'sa', 26.4, 1.2, 'truck'); semi(c, 'sb', 29.1, 2.4, 'cab');
+    const X = 22.2, Y = 9.5;
+    c('fkw1', 'dark', X + 0.1, Y + 0.1, 0, X + 0.55, Y + 1.3, 0.42); c('fkw2', 'dark', X + 1.15, Y + 0.1, 0, X + 1.6, Y + 1.3, 0.42);
+    c('fkb', 'amber', X, Y + 0, 0.42, X + 1.7, Y + 1.4, 1.35); c('fks', 'dark', X + 1.2, Y + 0.35, 1.35, X + 1.45, Y + 1.05, 1.9);
+    c('fkdt', 'shirt', X + 0.6, Y + 0.4, 1.35, X + 1.15, Y + 1.0, 2.05); c('fkdh', 'hair', X + 0.68, Y + 0.5, 2.08, X + 1.05, Y + 0.88, 2.45);
+    c('fkp1', 'dark', X + 1.45, Y + 0.05, 1.35, X + 1.57, Y + 0.17, 2.75); c('fkp2', 'dark', X + 1.45, Y + 1.23, 1.35, X + 1.57, Y + 1.35, 2.75); c('fkp3', 'dark', X + 0.05, Y + 0.05, 1.35, X + 0.17, Y + 0.17, 2.75); c('fkp4', 'dark', X + 0.05, Y + 1.23, 1.35, X + 0.17, Y + 1.35, 2.75);
+    c('fkr', 'dark', X, Y + 0, 2.75, X + 1.7, Y + 1.4, 2.85);
+    c('fkm1', 'dark', X + 0.25, Y + -0.22, 0, X + 0.4, Y + -0.05, 3.0); c('fkm2', 'dark', X + 1.3, Y + -0.22, 0, X + 1.45, Y + -0.05, 3.0);
+    c('fkpal', 'wood', X + 0.05, Y + -1.95, 0.35, X + 1.65, Y + -0.3, 0.6); c('fkbox', 'kraft', X + 0.15, Y + -1.85, 0.6, X + 1.55, Y + -0.4, 1.7);
+    c('fg', 'kraft', 18.4, 14.6, 0, 21.4, 17.0, 2.0, { plain: true, dec: FG });
+    Cs.dots = [[12.5, 1.1, 5.65], [9.0, 5.4, 5.65], [16.0, 9.7, 5.65], [0.4, 5.8, 4.2], [23.1, 2.2, 3.95], 'fk', [9.6, 14.2, 2.0]];
+    Cs.ext = 5.8;
+    const pp = (sp, ph, amp) => (now) => Math.sin(now / 1000 * sp + ph) * amp;
+    Cs.anims = [{ pre: 'fk', dy: pp(0.42, 0, 3.2) }, { pre: 'p3', dx: pp(0.22, 0.6, 4.4), walk: true }, { pre: 'p4', dy: pp(0.36, 2.1, 2.3), walk: true }, { pre: 'p5', dx: pp(0.55, 1.2, 1.5), walk: true }, { pre: 'crt', dx: pp(0.3, 0.4, 4.6) }];
+    this.mkStatic = mk; this.stackFn = stack; this.palletFn = pallet;
+    return [A, Bs, Cs];
+  }
+
+  B8 = (() => {
+    let b = [[0, 2], [3, 1]];
+    for (let n = 2; n < 8; n *= 2) {
+      const nb = [];
+      for (let y = 0; y < n * 2; y++) { nb.push([]); for (let x = 0; x < n * 2; x++) nb[y].push(4 * b[y % n][x % n] + [0, 2, 3, 1][(y < n ? 0 : 2) + (x < n ? 0 : 1)]); }
+      b = nb;
+    }
+    return b.map((r) => r.map((v) => (v + 0.5) / 64));
+  })();
+  hash2(x, y) { const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453; return n - Math.floor(n); }
+  // isometric kraft stack (10 boxes) with a traffic cone on the front corner, z-buffered and dithered
+  paintStack() {
+    const k = 21, c = 0.866, s = 0.5, B = this.B8, E = 1.15 / k;
+    const boxes = [[0, 0, 0, 2, 2, 1.4], [2, 0, 0, 1.6, 1.4, 1.1], [0, 2, 0, 1.4, 1.2, 1.0], [2, 1.4, 0, 1.6, 1.2, 1.1], [0.2, 0.2, 1.4, 1.6, 1.6, 0.9], [2.1, 0.1, 1.1, 1.3, 1.2, 0.8], [2.2, 1.5, 1.1, 1.2, 1.0, 0.7], [0.4, 0.4, 2.3, 1.1, 1.1, 0.7], [2.2, 0.2, 1.9, 1.0, 0.9, 0.6], [0.1, 2.1, 1.0, 1.0, 0.9, 0.6]]
+      .map(([x, y, z, w, d, hh], n) => ({ x0: x, y0: y, z0: z, x1: x + w, y1: y + d, z1: z + hh, n }));
+    const cone = { x: 4.1, y: 3.6, r: 0.42, hgt: 1.5 };
+    boxes.push({ x0: cone.x - 0.58, x1: cone.x + 0.58, y0: cone.y - 0.58, y1: cone.y + 0.58, z0: 0, z1: 0.1, plate: true });
+    const Uf = (x, y) => (x - y) * c, Vf = (x, y, z) => (x + y) * s - z;
+    let u0 = 1e9, u1 = -1e9, v0 = 1e9, v1 = -1e9;
+    boxes.forEach((b) => [[b.x0, b.y0], [b.x1, b.y0], [b.x0, b.y1], [b.x1, b.y1]].forEach(([x, y]) => { u0 = Math.min(u0, Uf(x, y)); u1 = Math.max(u1, Uf(x, y)); v0 = Math.min(v0, Vf(x, y, b.z1)); v1 = Math.max(v1, Vf(x, y, b.z0)); }));
+    const cu = Uf(cone.x, cone.y), vB = Vf(cone.x, cone.y, 0.1), vA = vB - cone.hgt, crx = cone.r * 1.2247, cry = cone.r * 0.7071;
+    v0 = Math.min(v0, vA - 0.1);
+    const pad = 2, w = Math.ceil((u1 - u0) * k) + pad * 2, h = Math.ceil((v1 - v0) * k) + pad * 2, OX = pad - u0 * k, OY = pad - v0 * k;
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    const ctx = cv.getContext('2d'), img = ctx.createImageData(w, h), px = img.data;
+    const KR = [[110, 82, 56], [132, 95, 65], [168, 132, 92], [207, 190, 160]], OUT = [42, 43, 48], OR = [[140, 58, 16], [196, 102, 32], [236, 150, 76]], WH = [[176, 172, 164], [218, 214, 206], [242, 240, 234]];
+    const qz = (ramp, v, x, y) => { v = Math.max(0, Math.min(1, v)) * (ramp.length - 1); const b0 = Math.floor(v), f = v - b0 + (this.hash2(x, y) - 0.5) * 0.14; return ramp[Math.min(ramp.length - 1, f > B[y & 7][x & 7] ? b0 + 1 : b0)]; };
+    for (let py = 0; py < h; py++) for (let qx = 0; qx < w; qx++) {
+      const u = (qx + 0.5 - OX) / k, v = (py + 0.5 - OY) / k, uc = u / c; let best = -1e9, col = null;
+      for (const b of boxes) {
+        const bw = b.x1 - b.x0, bd = b.y1 - b.y0, bh = b.z1 - b.z0, mx = (b.x0 + b.x1) / 2, my = (b.y0 + b.y1) / 2;
+        { const A = (v + b.z1) / s, x = (uc + A) / 2, y = (A - uc) / 2;
+          if (x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1 && x + y + b.z1 > best) { best = x + y + b.z1;
+            const ed = Math.min(x - b.x0, b.x1 - x, y - b.y0, b.y1 - y);
+            col = ed < E ? OUT : b.plate ? qz(OR, 0.42, qx, py) : Math.abs(x - mx) < bw * 0.09 ? qz(KR, 0.52, qx, py) : Math.abs(y - my) < 0.018 ? OUT : qz(KR, 0.9, qx, py); } }
+        { const x = uc + b.y1, z = (x + b.y1) * s - v;
+          if (x >= b.x0 && x <= b.x1 && z >= b.z0 && z <= b.z1 && x + b.y1 + z > best) { best = x + b.y1 + z;
+            const ed = Math.min(x - b.x0, b.x1 - x, z - b.z0, b.z1 - z), fz = (z - b.z0) / bh;
+            const lab = !b.plate && b.n % 3 === 0 && x > b.x0 + bw * 0.12 && x < b.x0 + bw * 0.46 && fz > 0.3 && fz < 0.62;
+            col = ed < E ? OUT : b.plate ? qz(OR, 0.25, qx, py) : lab ? (Math.abs(fz - 0.5) < 0.03 || Math.abs(fz - 0.41) < 0.03 ? OUT : qz(WH, 0.85, qx, py)) : Math.abs(x - mx) < bw * 0.09 && fz > 0.72 ? qz(KR, 0.3, qx, py) : qz(KR, 0.5 + 0.12 * fz, qx, py); } }
+        { const y = b.x1 - uc, z = (b.x1 + y) * s - v;
+          if (y >= b.y0 && y <= b.y1 && z >= b.z0 && z <= b.z1 && b.x1 + y + z > best) { best = b.x1 + y + z;
+            const ed = Math.min(y - b.y0, b.y1 - y, z - b.z0, b.z1 - z), fz = (z - b.z0) / bh;
+            col = ed < E ? OUT : b.plate ? qz(OR, 0.1, qx, py) : qz(KR, 0.14 + 0.1 * fz, qx, py); } }
+      }
+      const du = u - cu;
+      if (v >= vA && v <= vB + cry) {
+        const fr = Math.min(1, (v - vA) / (vB - vA)), rw = crx * Math.max(fr, 0.001);
+        let inC = v <= vB ? Math.abs(du) <= rw : (du / crx) ** 2 + ((v - vB) / cry) ** 2 <= 1;
+        if (inC) {
+          const nx = Math.max(-1, Math.min(1, du / rw)), sh = 0.92 - 0.72 * (nx + 1) / 2;
+          const edge = v <= vB ? rw - Math.abs(du) < E * 1.2 : (du / crx) ** 2 + ((v - vB) / cry) ** 2 > 0.8;
+          col = edge ? OUT : fr > 0.44 && fr < 0.62 ? qz(WH, sh + 0.1, qx, py) : qz(OR, sh, qx, py);
+        }
+      }
+      if (col) { const i = (py * w + qx) * 4; px[i] = col[0]; px[i + 1] = col[1]; px[i + 2] = col[2]; px[i + 3] = 255; }
+    }
+    ctx.putImageData(img, 0, 0);
+    return { src: cv.toDataURL(), w, h };
+  }
+  /* ---------- renderer ---------- */
+  pat(g, hex) {
+    const cache = g.__pc || (g.__pc = {}); if (cache[hex]) return cache[hex];
+    const t = document.createElement('canvas'); t.width = t.height = 4; const tg = t.getContext('2d'), im = tg.createImageData(4, 4);
+    const r = parseInt(hex.slice(1, 3), 16), gg = parseInt(hex.slice(3, 5), 16), bb = parseInt(hex.slice(5, 7), 16);
+    for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) { const v = this.B4[y][x], f = v < 0.2 ? 0.92 : v > 0.88 ? 1.05 : 1, i = (y * 4 + x) * 4; im.data[i] = Math.min(255, r * f); im.data[i + 1] = Math.min(255, gg * f); im.data[i + 2] = Math.min(255, bb * f); im.data[i + 3] = 255; }
+    tg.putImageData(im, 0, 0); return (cache[hex] = g.createPattern(t, 'repeat'));
+  }
+  drawPrim(g, p, P) {
+    const m = this.MAT[p.m] || this.MAT.kraft, F = p.faces || 'zyx', { x0, y0, z0, x1, y1, z1 } = p;
+    if (z1 - z0 < 0.005) return;
+    g.globalAlpha = p.al == null ? 1 : Math.max(0, Math.min(1, p.al));
+    const face = (pts, col) => { g.beginPath(); pts.forEach((q, i) => { const s = P(q[0], q[1], q[2]); if (i) g.lineTo(s[0], s[1]); else g.moveTo(s[0], s[1]); }); g.closePath(); g.fillStyle = this.pat(g, col); g.fill(); if (p.line !== false) g.stroke(); };
+    if (F.includes('z')) face([[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], m[0]);
+    if (F.includes('y')) face([[x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [x0, y1, z0]], m[1]);
+    if (F.includes('x')) face([[x1, y0, z1], [x1, y1, z1], [x1, y1, z0], [x1, y0, z0]], m[2]);
+    if (p.dec && !p.part) {
+      const w = x1 - x0, d = y1 - y0, h = z1 - z0;
+      p.dec.forEach((dc) => {
+        if (!F.includes(dc.f)) return;
+        const pt = dc.f === 'y' ? (A, Bv) => P(x0 + A * w, y1, z0 + Bv * h) : dc.f === 'x' ? (A, Bv) => P(x1, y0 + A * d, z0 + Bv * h) : (A, Bv) => P(x0 + A * w, y0 + Bv * d, z1);
+        const q = [pt(dc.a0, dc.b0), pt(dc.a1, dc.b0), pt(dc.a1, dc.b1), pt(dc.a0, dc.b1)];
+        g.beginPath(); g.moveTo(q[0][0], q[0][1]); g.lineTo(q[1][0], q[1][1]); g.lineTo(q[2][0], q[2][1]); g.lineTo(q[3][0], q[3][1]); g.closePath(); g.fillStyle = dc.c; g.fill();
+      });
+    }
+    g.globalAlpha = 1;
+  }
+  sortIso(list) {
+    const C = this.C, S = this.S, n = list.length, E = 1e-3;
+    const bb = list.map((p) => [(p.x0 - p.y1) * C, (p.x1 - p.y0) * C, (p.x0 + p.y0) * S - p.z1, (p.x1 + p.y1) * S - p.z0]);
+    const adj = list.map(() => []);
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const A = bb[i], Bq = bb[j];
+      if (A[1] <= Bq[0] || Bq[1] <= A[0] || A[3] <= Bq[2] || Bq[3] <= A[2]) continue;
+      const a = list[i], b = list[j]; let o;
+      if (a.x1 <= b.x0 + E) o = -1; else if (b.x1 <= a.x0 + E) o = 1; else if (a.y1 <= b.y0 + E) o = -1; else if (b.y1 <= a.y0 + E) o = 1; else if (a.z1 <= b.z0 + E) o = -1; else if (b.z1 <= a.z0 + E) o = 1;
+      else o = (a.x0 + a.x1 + a.y0 + a.y1 + a.z0 + a.z1) < (b.x0 + b.x1 + b.y0 + b.y1 + b.z0 + b.z1) ? -1 : 1;
+      if (o < 0) adj[j].push(i); else adj[i].push(j);
+    }
+    const mark = new Uint8Array(n), out = [];
+    const visit = (k) => { if (mark[k]) return; mark[k] = 1; for (const d of adj[k]) visit(d); out.push(list[k]); };
+    for (let k = 0; k < n; k++) visit(k);
+    return out;
+  }
+  lerpScene(A, Bs, p) {
+    const out = new Map(), e = this.ease(p), Lr = (x, y, t) => x + (y - x) * t, cl = (v) => Math.max(0, Math.min(1, v));
+    const ids = new Set([...A.map.keys(), ...Bs.map.keys()]);
+    ids.forEach((id) => {
+      const a = A.map.get(id), b = Bs.map.get(id), hs = this.hash(id);
+      if (a && b) {
+        const t = this.ease(cl((p - hs * 0.2) / 0.8)), r = Object.assign({}, b);
+        ['x0', 'y0', 'z0', 'x1', 'y1', 'z1'].forEach((k) => { r[k] = Lr(a[k], b[k], t); });
+        r.al = Lr(a.al == null ? 1 : a.al, 1, t); r.part = t < 0.98 && !!a.part; out.set(id, r);
+      } else if (b) {
+        const q = this.ease(cl((p - 0.3 - hs * 0.4) / 0.3)); if (q <= 0) return;
+        const r = Object.assign({}, b);
+        if (b.g === 2) r.al = q;
+        else if (b.m === 'kraft' || b.m === 'wood') { const dz = (1 - q) * 2.4; r.z0 += dz; r.z1 += dz; r.al = Math.min(1, q * 2.5); }
+        else { r.z1 = b.z0 + (b.z1 - b.z0) * q; r.part = q < 0.98; }
+        out.set(id, r);
+      } else {
+        const q = 1 - this.ease(cl((p - hs * 0.25) / 0.3)); if (q <= 0.02) return;
+        const r = Object.assign({}, a);
+        if (a.g === 2) r.al = (a.al == null ? 1 : a.al) * q; else { r.z1 = a.z0 + (a.z1 - a.z0) * q; r.part = true; }
+        out.set(id, r);
+      }
+    });
+    return { W: Lr(A.W, Bs.W, e), D: Lr(A.D, Bs.D, e), H: Lr(A.H, Bs.H, e), ext: Lr(A.ext || 0, Bs.ext || 0, e), map: out, dots: Bs.dots, dotA: Bs.dots ? cl((p - 0.75) / 0.25) : 0, anims: (A.anims || []).map((q) => Object.assign({}, q, { w: (q.w == null ? 1 : q.w) * (1 - e) })).concat((Bs.anims || []).map((q) => Object.assign({}, q, { w: e }))).filter((q) => q.w > 0.001) };
+  }
+  renderScene(now) {
+    const cv = this.sceneCvRef.current, fr0 = this.frameRef.current; if (!cv || !fr0 || !this.SC) return;
+    let fr;
+    if (this.tr) { const p = this.isReduced() ? 1 : Math.min(1, (now - this.tr.t0) / 1800); if (p >= 1) { fr = this.tr.to; fr.dotA = 1; this.tr = null; } else fr = this.lerpScene(this.tr.from, this.tr.to, p); }
+    else { fr = this.cur || this.SC[this.state.scene]; if (fr.dotA == null) fr.dotA = fr.dots ? 1 : 0; }
+    this.cur = fr;
+    const g = cv.getContext('2d'), lw = cv.width, lh = cv.height, C = this.C, S = this.S, { W, D, H } = fr;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.clearRect(0, 0, lw, lh);
+    const X2 = W + (fr.ext || 0), umin = (-0.35 - D) * C, umax = (X2 + 0.35) * C, vmin = -0.7 * S - H, vmax = (X2 + D) * S + 0.3;
+    const k = Math.min(lw * 0.93 / (umax - umin), lh * 0.88 / (vmax - vmin)), ox = lw / 2 - (umin + umax) / 2 * k, oy = lh / 2 - (vmin + vmax) / 2 * k + lh * 0.02;
+    const P = (x, y, z) => [(x - y) * C * k + ox, ((x + y) * S - z) * k + oy];
+    g.lineWidth = 1; g.lineJoin = 'round'; g.strokeStyle = 'rgba(40,38,36,0.8)';
+    const red2 = this.isReduced(), ams = red2 ? [] : (fr.anims || []), tf = this.isReduced() ? 1 : this.ease(Math.max(0, Math.min(1, (now - (this.truckT0 || 0) - 1500) / 2600)));
+    const list = [];
+    fr.map.forEach((p0) => {
+      let p = p0;
+      const am = ams.find((q) => p0.id.startsWith(q.pre));
+      if (am) {
+        const w = am.w == null ? 1 : am.w, dx = am.dx ? am.dx(now) * w : 0, dy = am.dy ? am.dy(now) * w : 0; p = Object.assign({}, p0); p.x0 += dx; p.x1 += dx; p.y0 += dy; p.y1 += dy;
+        if (am.walk && /l[12]$/.test(p0.id)) { const ph = now / 1000 * 7 + (p0.id.endsWith('l2') ? Math.PI : 0), lift = Math.max(0, Math.sin(ph)) * 0.16 * w; p.z0 += lift; p.z1 += lift; }
+      }
+      else if (p.id === 'truck') { p = Object.assign({}, p0); const s = 0.8 + 0.2 * tf, cy = (p.y0 + p.y1) / 2, hy = (p.y1 - p.y0) / 2 * s, h = (p.z1 - p.z0) * s; p.y0 = cy - hy; p.y1 = cy + hy; p.z0 = 0.5 + (1 - s) * 1.4; p.z1 = p.z0 + h; }
+      list.push(p);
+    });
+    this.drawPrim(g, { id: 'floor', m: 'floor', x0: 0, y0: 0, z0: -0.25, x1: W, y1: D, z1: 0 }, P);
+    g.strokeStyle = 'rgba(22,23,27,0.075)'; g.beginPath();
+    for (let x = 2; x < W - 0.1; x += 2) { const a = P(x, 0, 0), b = P(x, D, 0); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); }
+    for (let y = 2; y < D - 0.1; y += 2) { const a = P(0, y, 0), b = P(W, y, 0); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); }
+    g.stroke(); g.strokeStyle = 'rgba(40,38,36,0.8)';
+    this.drawPrim(g, { id: 'wr', m: 'wall', x0: 0, y0: -0.35, z0: 0, x1: W, y1: 0, z1: H, faces: 'zy' }, P);
+    this.drawPrim(g, { id: 'wl', m: 'wall', x0: -0.35, y0: -0.35, z0: 0, x1: 0, y1: D, z1: H, faces: 'zx' }, P);
+    list.filter((p) => p.g === 2).forEach((p) => this.drawPrim(g, p, P));
+    const objs = list.filter((p) => p.g === 3);
+    objs.filter((p) => p.flat).forEach((p) => this.drawPrim(g, p, P));
+    g.fillStyle = 'rgba(70,58,44,0.13)';
+    objs.forEach((p) => { if (p.flat || p.z0 > 0.05 || p.z1 - p.z0 < 0.25) return; const q = [P(p.x0 - 0.04, p.y0 - 0.04, 0), P(p.x1 + 0.22, p.y0 - 0.04, 0), P(p.x1 + 0.22, p.y1 + 0.14, 0), P(p.x0 - 0.04, p.y1 + 0.14, 0)]; g.globalAlpha = p.al == null ? 1 : p.al; g.beginPath(); q.forEach((s, i) => (i ? g.lineTo(s[0], s[1]) : g.moveTo(s[0], s[1]))); g.closePath(); g.fill(); });
+    g.globalAlpha = 1;
+    this.sortIso(objs.filter((p) => !p.flat)).forEach((p) => this.drawPrim(g, p, P));
+    this.placeOverlays(list, P, fr);
+  }
+  placeOverlays(list, P, fr) {
+    const cv = this.sceneCvRef.current, rx = this.frameRef.current.clientWidth / cv.width, byId = {}; list.forEach((p) => { byId[p.id] = p; });
+    const lab = this.fgLabRef.current, fg = byId.fg;
+    if (lab) {
+      if (fg && !fg.part) {
+        const w = fg.x1 - fg.x0, h = fg.z1 - fg.z0, O = P(fg.x0 + w * 0.12, fg.y1, fg.z0 + h * 0.78), Xp = P(fg.x0 + w * 0.66, fg.y1, fg.z0 + h * 0.78), Yp = P(fg.x0 + w * 0.12, fg.y1, fg.z0 + h * 0.24);
+        lab.style.transform = 'matrix(' + [(Xp[0] - O[0]) * rx / 120, (Xp[1] - O[1]) * rx / 120, (Yp[0] - O[0]) * rx / 72, (Yp[1] - O[1]) * rx / 72, O[0] * rx, O[1] * rx].map((v) => v.toFixed(4)).join(',') + ')';
+        lab.style.opacity = String(fg.al == null ? 1 : fg.al);
+      } else lab.style.opacity = '0';
+    }
+    const bub = this.bubRef.current, ph = byId.phone, show = !!ph && !ph.part && !this.tr && this.state.scene < 2;
+    if (bub) {
+      if (ph) { const q = P((ph.x0 + ph.x1) / 2, (ph.y0 + ph.y1) / 2, ph.z1); bub.style.transform = 'translate(' + (q[0] * rx).toFixed(1) + 'px,' + (q[1] * rx).toFixed(1) + 'px)'; }
+      if (show !== this.bubOn) { this.bubOn = show; bub.style.opacity = show ? '1' : '0'; if (show) this.pingBubble(); }
+    }
+    const dw = this.dotsRef.current;
+    if (dw) {
+      const els = dw.querySelectorAll('[data-dot]'), dots = fr.dots;
+      els.forEach((el, i) => {
+        const d = dots && dots[i]; if (!d) { el.style.opacity = '0'; return; }
+        const fb = byId.fkb, w = d === 'fk' ? (fb ? [(fb.x0 + fb.x1) / 2, (fb.y0 + fb.y1) / 2, 3.15] : [0, 0, -99]) : d, q = P(w[0], w[1], w[2]);
+        el.style.transform = 'translate(' + (q[0] * rx).toFixed(1) + 'px,' + (q[1] * rx).toFixed(1) + 'px)'; el.style.opacity = String(fr.dotA || 0);
+      });
+    }
+  }
+  pingBubble() {
+    this.bubT = performance.now();
+    const el = this.bubRef.current && this.bubRef.current.firstChild; if (!el || this.isReduced() || !el.animate) return;
+    el.animate([{ opacity: 0, transform: 'translateY(6px) scale(0.86)' }, { opacity: 1, transform: 'translateY(-2px) scale(1.02)', offset: 0.7 }, { opacity: 1, transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,.8,.25,1)' });
+  }
+  sizeScene() {
+    const cv = this.sceneCvRef.current, fr = this.frameRef.current;  if (!cv || !fr) return;
+    const w = Math.max(2, Math.ceil(fr.clientWidth / 2)), h = Math.max(2, Math.ceil(fr.clientHeight / 2));
+    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+    try { this.renderScene(performance.now()); } catch (err) { console.error('render err ' + err.message + ' | ' + String(err.stack).slice(0, 400)); }
+  }
+  paintStatic(cv, prims) {
+    if (!cv) return; const g = cv.getContext('2d'), C = this.C, S = this.S; g.clearRect(0, 0, cv.width, cv.height);
+    let u0 = 1e9, u1 = -1e9, v0 = 1e9, v1 = -1e9;
+    prims.forEach((p) => { u0 = Math.min(u0, (p.x0 - p.y1) * C); u1 = Math.max(u1, (p.x1 - p.y0) * C); v0 = Math.min(v0, (p.x0 + p.y0) * S - p.z1); v1 = Math.max(v1, (p.x1 + p.y1) * S - p.z0); });
+    const k = Math.min((cv.width - 3) / (u1 - u0), (cv.height - 3) / (v1 - v0)), ox = cv.width / 2 - (u0 + u1) / 2 * k, oy = cv.height / 2 - (v0 + v1) / 2 * k;
+    const P = (x, y, z) => [(x - y) * C * k + ox, ((x + y) * S - z) * k + oy];
+    g.lineWidth = 1; g.lineJoin = 'round'; g.strokeStyle = 'rgba(40,38,36,0.85)';
+    this.sortIso(prims).forEach((p) => this.drawPrim(g, p, P));
+  }
+  paintStatics() {
+    const [S1, B1] = this.mkStatic(1, 1, 1);
+    B1('box', 'kraft', 0, 0, 0, 1.5, 1.1, 1.0, { plain: true, dec: [{ f: 'z', a0: 0, a1: 1, b0: 0.43, b1: 0.57, c: '#E4CFA4' }, { f: 'y', a0: 0.14, a1: 0.62, b0: 0.28, b1: 0.74, c: '#F7F5F0' }] });
+    this.paintStatic(this.sbIconRef.current, [...S1.map.values()]);
+    const st = this.stackRef.current, im = st && st.querySelector('img[data-stack2]');
+    if (im) { const sp = this.paintStack(); im.setAttribute('src', sp.src); im.style.width = sp.w * 2 + 'px'; im.style.height = sp.h * 2 + 'px'; }
+  }
+
+  /* ---------- control ---------- */
+  goScene(n, user) {
+    if (user && this.state.auto) this.setState({ auto: false });
+    if (n === this.state.scene && !this.tr) return;
+    const now = performance.now();
+    this.tr = { from: this.cur || this.SC[this.state.scene], to: this.SC[n], t0: now };
+    if (n === 2) this.truckT0 = now;
+    this.lastSwitch = now; this.setState({ scene: n }, () => { try { this.renderScene(performance.now()); } catch (err) { console.error('render err ' + err.message); } }); this.kick();
+  }
+  kick() { if (!this.raf && !this.dead) this.raf = setTimeout(() => this.tick(performance.now()), 16); }
+  tick = (now) => {
+    this.raf = 0; if (this.dead || !this.inView) return;
+    const red = this.isReduced();
+    if (this.lastSwitch == null) this.lastSwitch = now;
+    if (this.state.auto && (this.props.autoAdvance ?? true) && !red && !document.hidden && now - this.lastSwitch > 7300) this.goScene((this.state.scene + 1) % 3, false);
+    if (this.tr || (this.state.scene === 2 && !red) || this.dirty) { this.dirty = false; this.renderScene(now); }
+    if (this.bubOn && now - (this.bubT || 0) > 7000) this.pingBubble();
+    this.raf = setTimeout(() => this.tick(performance.now()), 16);
+  };
+  grain() {
+    const root = this.rootRef.current; if (!root) return;
+    const p = document.createElement('canvas'); p.width = p.height = 160; const pg = p.getContext('2d');
+    for (let i = 0; i < 2800; i++) { const a2 = Math.random() * 0.07; pg.fillStyle = Math.random() < 0.55 ? 'rgba(70,56,36,' + a2 + ')' : 'rgba(255,255,255,' + (a2 * 1.5) + ')'; pg.fillRect((Math.random() * 160) | 0, (Math.random() * 160) | 0, 1, 1); }
+    root.style.setProperty('--v3-paper', 'url(' + p.toDataURL() + ')');
+    const m = document.createElement('canvas'); m.width = m.height = 180; const mg = m.getContext('2d'); mg.fillStyle = '#000'; mg.fillRect(0, 0, 180, 180); mg.globalCompositeOperation = 'destination-out';
+    for (let i = 0; i < 1500; i++) { mg.globalAlpha = 0.35 + Math.random() * 0.65; mg.beginPath(); mg.arc(Math.random() * 180, Math.random() * 180, 0.3 + Math.random() * 1.2, 0, 7); mg.fill(); }
+    for (let i = 0; i < 24; i++) { mg.globalAlpha = 0.16 + Math.random() * 0.26; mg.beginPath(); mg.ellipse(Math.random() * 180, Math.random() * 180, 4 + Math.random() * 14, 2 + Math.random() * 5, Math.random() * 3, 0, 7); mg.fill(); }
+    root.style.setProperty('--v3-stamp', 'url(' + m.toDataURL() + ')');
+  }
+  componentDidMount() {
+    this.grain();
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)'); this.onMq = () => this.setState({ sysReduced: mq.matches }, () => { this.dirty = true; this.kick(); }); if (mq.addEventListener) mq.addEventListener('change', this.onMq);
+    this.onResize = () => { const w = window.innerWidth; this.setState({ wide: w >= 900, tblNarrow: w < 720, frameN: w < 720, heroWide: w >= 760, phone: w < 600 }); };
+    this.onScroll = () => { const y = window.scrollY; const solid = y > 8, past = y > 560; if (solid !== this.state.solid || past !== this.state.past) this.setState({ solid, past }); };
+    window.addEventListener('resize', this.onResize); window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.setState({ sysReduced: mq.matches }); this.onResize(); this.onScroll();
+    try { this.SC = this.buildScenes(); } catch (err) { console.error('build err ' + err.message + ' ' + err.stack); }
+    const st = { Base: 0, Scale: 1, Enterprise: 2 }[this.props.startTier ?? 'Base'] || 0;
+    if (st) this.setState({ scene: st });
+    this.cur = this.SC[st]; this.inView = true;
+    this.ro = new ResizeObserver(() => this.sizeScene()); if (this.frameRef.current) this.ro.observe(this.frameRef.current);
+    this.io = new IntersectionObserver((es) => es.forEach((e) => { this.inView = e.isIntersecting; if (this.inView) { this.lastSwitch = performance.now(); this.kick(); } }), { threshold: 0.2 });
+    if (this.frameRef.current) this.io.observe(this.frameRef.current);
+    setTimeout(() => { try { this.sizeScene(); this.paintStatics(); } catch (err) { console.error('scene err ' + err.message + ' ' + err.stack); } });
+  }
+  componentDidUpdate(pp, ps) {
+    if (ps.scene !== this.state.scene && this.infoRef.current && this.infoRef.current.animate && !this.isReduced()) this.infoRef.current.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.25,1)' });
+    if (pp.motion !== this.props.motion || pp.startTier !== this.props.startTier) { if (pp.startTier !== this.props.startTier) this.goScene({ Base: 0, Scale: 1, Enterprise: 2 }[this.props.startTier] || 0, false); this.dirty = true; this.kick(); }
+    if (ps.frameN !== this.state.frameN || ps.heroWide !== this.state.heroWide) setTimeout(() => this.sizeScene(), 0);
+  }
+  componentWillUnmount() {
+    this.dead = true; if (this.raf) clearTimeout(this.raf);
+    window.removeEventListener('resize', this.onResize); window.removeEventListener('scroll', this.onScroll);
+    if (this.ro) this.ro.disconnect(); if (this.io) this.io.disconnect();
+  }
+  openFounding = (e) => { if (e && e.preventDefault) e.preventDefault(); this.accReturn = document.activeElement; this.setState({ navMenu: false, modal: true, plan: 'founding', accSent: false }, () => setTimeout(() => { const i = document.getElementById('acc-email'); if (i) i.focus(); }, 30)); };
+  openDemo = (e) => { if (e && e.preventDefault) e.preventDefault(); this.accReturn = document.activeElement; this.setState({ navMenu: false, modal: true, plan: 'demo', accSent: false }, () => setTimeout(() => { const i = document.getElementById('acc-email'); if (i) i.focus(); }, 30)); };
+  closeAccess = () => { this.setState({ modal: false }); const r = this.accReturn; if (r && r.focus) setTimeout(() => r.focus(), 0); };
+  ctaIn = (e) => { const k = e.currentTarget && e.currentTarget.dataset.cta; if (k) this.setState({ ctaHov: k }); };
+  ctaOut = () => { if (this.state.ctaHov) this.setState({ ctaHov: '' }); };
+
+  renderVals() {
+    const s = this.state, red = this.isReduced(), sc = this.SCN[s.scene], tn = s.tblNarrow, solid = s.solid || s.navMenu;
+    const o = {
+      rootRef: this.rootRef, frameRef: this.frameRef, sceneCvRef: this.sceneCvRef, fgLabRef: this.fgLabRef, bubRef: this.bubRef, dotsRef: this.dotsRef, infoRef: this.infoRef, sbIconRef: this.sbIconRef, footCvRef: this.footCvRef, stackRef: this.stackRef, markRef: this.markRef,
+      mkUnify: red ? 'none' : 'esUnify 6.4s cubic-bezier(.65,0,.35,1) infinite', mkGate: red ? 'none' : 'esMkGate 6.4s linear infinite', mkReduced: red ? 'contrast(1.14) brightness(.9) drop-shadow(0 0 6px rgba(11,95,208,.45))' : 'none',
+      ...[40,32,25,19,18,14,13,10,7,5,4,3,2,'W','G'].reduce((o, L) => { o['mkT' + L] = red ? 'none' : 'esMk' + L + ' 2.1s cubic-bezier(.55,.05,.45,.95) infinite'; return o; }, {}),
+      wide: s.wide, narrow: !s.wide, navMenuOpen: !s.wide && s.navMenu, navMenuAria: s.navMenu ? 'true' : 'false',
+      toggleMenu: () => this.setState({ navMenu: !s.navMenu }), closeMenu: () => this.setState({ navMenu: false }),
+      mnTop: s.navMenu ? 'translateY(5px) rotate(45deg)' : 'none', mnBot: s.navMenu ? 'translateY(-5px) rotate(-45deg)' : 'none', mnMidO: s.navMenu ? 0 : 1,
+      navBg: solid ? 'rgb(var(--bg))' : 'rgb(var(--bg) / 0)', navLine: solid ? 'rgb(var(--ink) / 0.12)' : 'rgb(var(--ink) / 0)',
+      openFounding: this.openFounding, openDemo: this.openDemo, ctaIn: this.ctaIn, ctaOut: this.ctaOut,
+      stampTr: red ? 'none' : 'opacity 120ms cubic-bezier(.2,.8,.25,1),transform 260ms cubic-bezier(.34,1.5,.5,1)',
+      tabKey: (e) => { const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return; e.preventDefault(); const n = (s.scene + d + 3) % 3; this.goScene(n, true); const t = document.getElementById('plan-tab-' + n); if (t) t.focus(); },
+      stackRef: this.stackRef, footStampR: s.wide ? '-12px' : '10px', footColW: s.wide ? 'auto' : '100%',
+      ...(s.phone ? { footCols: 'minmax(0,1fr)', footA1: '1 / 1 / 2 / 2', footA2: '2 / 1 / 3 / 2', footA4: '3 / 1 / 4 / 2', footA3: '4 / 1 / 5 / 2', footArtJs: 'center', footArtMt: '40px', footArtMr: '0' }
+        : { footCols: 'minmax(0,1fr) auto', footA1: '1 / 1 / 2 / 2', footA2: '2 / 1 / 3 / 2', footA4: '1 / 2 / 3 / 3', footA3: '3 / 1 / 4 / 3', footArtJs: 'end', footArtMt: '0', footArtMr: 'clamp(0px,4vw,64px)' }), footBtnFlex: s.wide ? '0 0 auto' : '1 1 100%', footNavDisp: s.wide ? 'flex' : 'grid', footNavGap: s.wide ? '12px 28px' : '0 16px',
+      tabLbl: 'plan-tab-' + s.scene, frameAR: s.heroWide ? '1 / 0.86' : s.frameN ? '1 / 1' : '4 / 3',
+      heroCols: s.heroWide ? 'minmax(290px,0.8fr) minmax(0,1.5fr)' : 'minmax(0,1fr)', heroAreas: s.heroWide ? '"head frame" "tabs frame" "info frame"' : '"head" "tabs" "frame" "info"', heroRows: s.heroWide ? 'auto auto 1fr' : 'auto',
+      scAlt: sc.alt, scCode: sc.code, scTier: sc.tier, scHi: s.scene === 1, scCap: sc.cap, scSub: sc.sub, scWhy: sc.why, scHasPre: sc.pre, scPrice: sc.price, scHasPer: sc.per, scNote: sc.note, scBullets: sc.bullets, scId: sc.id,
+      scCta: sc.cta, scHref: sc.cta === 'Book a demo' ? '#book-demo' : '#waitlist', scFn: sc.cta === 'Book a demo' ? this.openDemo : this.openFounding,
+      bubText: sc.bub, bubMax: s.frameN ? '170px' : '220px', bubFs: s.frameN ? '12px' : '13px', pingAnim: red ? 'none' : 'esPing 2.4s cubic-bezier(.2,.8,.25,1) infinite',
+      tblCols: tn ? 'minmax(0,1.25fr) minmax(0,1fr)' : 'minmax(0,1.5fr) repeat(4,minmax(0,1fr))', tblNarrow: tn,
+      tierCols: (tn ? [s.tblTier] : [0, 1, 2, 3]).map((i) => { const t = this.TIERS[i], k = 't' + i, on = s.ctaHov === k, demo = t.cta === 'Book a demo'; return { n: t.n, pre: t.pre || '', p: t.p, per: t.per || '', cta: t.cta, hi: !!t.hi, k, href: demo ? '#book-demo' : '#waitlist', fn: demo ? this.openDemo : this.openFounding, stOp: on ? 1 : 0, stTf: on ? 'rotate(-4deg) scale(1)' : 'rotate(-4deg) scale(1.35)', bg: i === 2 ? 'rgb(var(--ink) / 0.05)' : 'transparent', ctaBg: t.hi ? 'rgb(var(--ink))' : 'transparent', ctaC: t.hi ? 'rgb(var(--bg))' : 'rgb(var(--ink))' }; }),
+      tierPick: this.TIERS.map((t, i) => ({ n: t.n, sel: i === s.tblTier ? 'true' : 'false', bg: i === s.tblTier ? 'rgb(var(--ink))' : 'transparent', c: i === s.tblTier ? 'rgb(var(--bg))' : 'rgb(var(--ink))', go: () => this.setState({ tblTier: i }) })),
+      shownGroups: (s.allFeat ? this.GROUPS : this.GROUPS.slice(0, 2)).map(([name, rows]) => ({ name, rows: rows.map(([label, ...v]) => ({ label, cells: (tn ? [v[s.tblTier]] : v).map((x, j) => { const col = tn ? s.tblTier : j; return { chk: x === 1, dash: x === 0, txt: typeof x === 'string', text: typeof x === 'string' ? x : '', bg: col === 2 ? 'rgb(var(--ink) / 0.05)' : 'transparent' }; }) })) })),
+      toggleFeat: () => this.setState({ allFeat: !s.allFeat }), featExp: s.allFeat ? 'true' : 'false', featLabel: s.allFeat ? 'Show fewer features' : 'Show all features', featRot: s.allFeat ? 'rotate(180deg)' : 'none',
+      mqItems: ['No rip and replace', 'Runs with your ERP, or without one', 'Nothing buys itself', 'Findings in days', 'Live in two weeks', 'Every part matched to what it fits', 'You approve every order'],
+      mqStatic: red, mqLive: !red, mqAnim: red ? 'none' : 'esMarquee 60s linear infinite', mqPlayState: s.mqHover ? 'paused' : 'running', mqPause: () => this.setState({ mqHover: true }), mqPlay: () => this.setState({ mqHover: false }),
+      mbarShow: !s.wide && s.past && !s.modal,
+      modal: s.modal, closeAccess: this.closeAccess, modalKey: (e) => { if (e.key === 'Escape') this.closeAccess(); },
+      accEyebrow: s.plan === 'demo' ? '30 minutes with the founders' : 'Founding partner access', accTitle: s.plan === 'demo' ? 'Book a demo' : 'Join the waitlist', accPlanName: s.plan === 'demo' ? 'a demo' : 'the founding partner waitlist',
+      accForm: !s.accSent, accSent: s.accSent, submitAccess: (e) => { e.preventDefault(); this.setState({ accSent: true }); }
+    };
+    [0, 1, 2].forEach((i) => { const on = i === s.scene; o['tabSel' + i] = on ? 'true' : 'false'; o['tabTi' + i] = on ? 0 : -1; o['tabBg' + i] = on ? 'rgb(var(--ink))' : 'transparent'; o['tabC' + i] = on ? 'rgb(var(--bg))' : 'rgb(var(--ink) / 0.72)'; o['tabGo' + i] = () => this.goScene(i, true); });
+    ['nav', 'sc', 'sb', 'foot', 'bar'].forEach((k) => { const on = s.ctaHov === k; o[k + 'StampOp'] = on ? 1 : 0; o[k + 'StampTf'] = on ? 'rotate(-4deg) scale(1)' : 'rotate(-4deg) scale(1.35)'; });
+    [0, 1, 2, 3, 4, 5].forEach((i) => { const on = s.faq === i; o['faqExp' + i] = on ? 'true' : 'false'; o['faqRows' + i] = on ? '1fr' : '0fr'; o['faqRot' + i] = on ? 'rotate(45deg)' : 'none'; o['faqT' + i] = () => this.setState({ faq: on ? -1 : i }); });
+    return o;
+  }
+}
+</script>
+</body>
+</html>

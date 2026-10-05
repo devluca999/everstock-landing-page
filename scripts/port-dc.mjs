@@ -2,7 +2,7 @@
 /**
  * Ports a Claude Design `.dc.html` page into the Next.js app without retyping it.
  *
- *   node scripts/port-dc.mjs v4      (see PAGES below, and `npm run port:v4`)
+ *   node scripts/port-dc.mjs v5|pricing   (see PAGES below; `npm run port` runs both)
  *
  * The design runs on the dc-runtime (support.js): a template compiled at runtime into
  * React elements, driven by a logic class. This script does the compile step ahead of
@@ -25,54 +25,40 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseFragment } from "parse5";
-import * as v4Fixes from "./port-patches/v4-industries-fixes.mjs";
-import * as v4Hero from "./port-patches/v4-hero-mobile.mjs";
-import * as v4Waitlist from "./port-patches/v4-waitlist-dark-only.mjs";
+/* Site-side patches shared by both v5 pages. */
+const NO_LEGAL_NAV = {
+  why: "Footer legal nav: Privacy, Terms and LinkedIn are placeholder anchors (#privacy, #terms, #linkedin) with nothing behind them; left out until the pages and the company URL exist",
+  find: /(\n {6})<nav aria-label="Legal"[\s\S]*?<\/nav>/g,
+  count: 1,
+  // an empty slot the nav's size (178px wide, 215px under 900px, 44px tall) keeps the row's wrap, so the footer keeps the design's height on every width
+  replace: '$1<span aria-hidden="true" style="display:block;width:max(178px, min(215px, calc((900px - 100vw) * 100)));min-height:44px;"></span>',
+};
+// CTA destinations come from lib/cta.ts (through renderVals keys the host adds), never
+// from the template; the two design files' links to each other become site routes.
+const CTA_BINDINGS = {
+  "#waitlist": "{{ ctaWaitlistHref }}",
+  "#book-demo": "{{ ctaBookDemoHref }}",
+};
 
 const PAGES = {
-  v4: {
-    src: "mockup/v4/Everstock v4.dc.html",
-    runtime: "mockup/v4/support.js",
-    out: "components/v4/generated",
+  // the home page (Claude Design "Everstock v5.dc.html")
+  v5: {
+    src: "mockup/v5/Everstock v5.dc.html",
+    runtime: "mockup/v5/support.js",
+    out: "components/v5/generated",
     logicPatches: [
       {
         why: "AA contrast: the Plan's inactive steps dimmed to 0.42 (1.8:1 and 2.7:1 on eggshell); 0.72 keeps the highlight and clears 4.5:1 (with the step-number ink below)",
         find: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.42;",
         replace: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.72;",
       },
-      ...v4Fixes.logicPatches,
-      ...v4Hero.logicPatches,
-      ...v4Waitlist.logicPatches,
     ],
     templatePatches: [
-      ...v4Fixes.templatePatches,
-      ...v4Hero.templatePatches,
       {
-        why: "The archived v3 journey block (journeyArchive: false) never renders; /journey hosts the v3 page itself, so the block is dropped instead of shipping dead markup",
+        why: "The archived v3 journey block (journeyArchive: false) never renders, so it is dropped instead of shipping dead markup",
         find: /\n {2}<sc-if value="\{\{ journeyArchive \}\}"[\s\S]*?\n {2}<\/sc-if>/g,
         count: 1,
         replace: "",
-      },
-      {
-        why: "Footer nav: the transitional CTA carries its final label everywhere (r8), not the design's leftover 'Upload your documents'",
-        find: ">Upload your documents</a>",
-        replace: ">Send us your scattered records</a>",
-      },
-      {
-        why: "Records form sent state: files are not uploaded yet, so it is a stamped RECEIVED (ink, the foundations' moving-box colour) instead of 'Everstock is reading your file.' + a blue Checking stamp",
-        find: '<span style="font-size:16px;color:#1A1B1F;">Everstock is reading your file.</span>',
-        replace: '<span style="font-size:16px;color:#1A1B1F;">Got it. Add your company and we\'ll be in touch.</span>',
-      },
-      {
-        why: "(same) the stamp itself",
-        find: /border:3px solid #0B5FFF;border-radius:4px;box-shadow:inset 0 0 0 2px #DED7CB,inset 0 0 0 3\.5px #0B5FFF;color:#0B5FFF;([^"]*)">Checking<\/span>/g,
-        count: 1,
-        replace: 'border:3px solid #2B2C31;border-radius:4px;box-shadow:inset 0 0 0 2px #DED7CB,inset 0 0 0 3.5px #2B2C31;color:#2B2C31;$1">Received</span>',
-      },
-      {
-        why: "(with the legal nav removal below) the © line keeps the removed links' 44px row height, so the footer keeps the design's height",
-        find: `<span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgb(var(--ink) / 0.64);">© 2026 Everstock</span>`,
-        replace: `<span style="display:inline-flex;align-items:center;min-height:44px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;color:rgb(var(--ink) / 0.64);">© 2026 Everstock</span>`,
       },
       {
         why: "AA contrast: the Plan step numbers are muted ink (0.64) and dim with their step; at 0.9 ink they clear 4.5:1 while dimmed (0.9 × 0.72)",
@@ -80,27 +66,26 @@ const PAGES = {
         count: 3,
         replace: "$10.9)",
       },
-      {
-        why: "CTA labels are exactly 'Get early access' (port brief); the design's Act 1 card link, bird banner and its label carry a trailing arrow",
-        find: "Get early access →<",
-        count: 3,
-        replace: "Get early access<",
-      },
-      {
-        why: "Footer legal nav: Privacy, Terms and LinkedIn are placeholder anchors (#privacy, #terms, #linkedin) with nothing behind them; left out until the pages and the company URL exist",
-        find: /\n {6}<nav aria-label="Legal"[\s\S]*?<\/nav>/g,
-        count: 1,
-        replace: "",
-      },
-      // last: these anchor on the labels and links as the patches above leave them
-      ...v4Waitlist.templatePatches,
+      NO_LEGAL_NAV,
     ],
-    // CTA destinations come from lib/cta.ts (through renderVals keys the host adds),
-    // never from the template: each <a href> below (as the patches leave it) is rebound
-    // to its config key.
     hrefBindings: {
-      "#waitlist": "{{ ctaWaitlistHref }}",
-      "#book-demo": "{{ ctaBookDemoHref }}",
+      ...CTA_BINDINGS,
+      "Pricing.dc.html": "/pricing",
+      "Pricing.dc.html#compare": "/pricing#compare",
+    },
+  },
+  // /pricing (Claude Design "Pricing.dc.html")
+  pricing: {
+    src: "mockup/v5/Pricing.dc.html",
+    runtime: "mockup/v5/support.js",
+    out: "components/pricing/generated",
+    logicPatches: [],
+    templatePatches: [NO_LEGAL_NAV],
+    hrefBindings: {
+      ...CTA_BINDINGS,
+      "Everstock%20v5.dc.html": "/",
+      "Everstock%20v5.dc.html#how-it-works": "/#how-it-works",
+      "Everstock%20v5.dc.html#industries": "/#industries",
     },
   },
 };

@@ -9,7 +9,7 @@ import DcPage from "./DcPage";
 // of after hydration; it simply renders nothing on the server.
 const subscribe = () => () => {};
 
-export default function V4Client() {
+export default function V5Client() {
   const mounted = useSyncExternalStore(subscribe, () => true, () => false);
   return mounted ? <DcPage /> : null;
 }

@@ -4,7 +4,7 @@ import { themeScript, scrollScript } from "./head-scripts";
 const TITLE = "Everstock · Supply chain software for physical products";
 const DESCRIPTION =
   "Everstock reads your quotes, orders and invoices, finds the right part, and drafts every order for your sign-off. For companies that make, move and sell physical products, with or without an ERP.";
-// the v4 hero at 1200×630 (see CLAUDE.md → "v4 port" for how it is regenerated)
+// the hero at 1200×630 (see CLAUDE.md → "v4 port" for how it is regenerated)
 const OG_IMAGE = { url: "/og-image.png", width: 1200, height: 630, alt: TITLE };
 const SITE_URL = "https://tryeverstock.com";
 

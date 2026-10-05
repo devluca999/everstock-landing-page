@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "port:v4": "node scripts/port-dc.mjs v4"
+    "port": "node scripts/port-dc.mjs v5 && node scripts/port-dc.mjs pricing"
   },
   "dependencies": {
     "convex": "^1.45.0",

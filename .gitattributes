@@ -1,3 +1,4 @@
 # Claude Design exports and the code generated from them are kept byte-exact (no EOL conversion)
-mockup/v4/** -text
-components/v4/generated/** -text
+mockup/v5/** -text
+components/v5/generated/** -text
+components/pricing/generated/** -text
