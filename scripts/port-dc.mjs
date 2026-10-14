@@ -177,6 +177,21 @@ const PAGES = {
       accessFocus(1),
       MARQUEE_DAYS,
       {
+        why: "Plan autoplays: the section is no longer pinned for 2-2.5 screens of scroll; it sits in the flow like the others",
+        find: "planSecH: red ? 'auto' : wide ? '250svh' : '200svh', planPos: red ? 'relative' : 'sticky',",
+        replace: "planSecH: 'auto', planPos: 'relative',",
+      },
+      {
+        why: "Plan autoplays: progress comes from a clock instead of the scroll position. It starts once the canvas is three quarters up the screen, runs 7s (paperwork → model → APPROVED), holds 2.5s, then loops; steps 01-03 still follow it",
+        find: "const p = c01((window.scrollY - L.top) / L.span), S = L.S, C3 = L.cols;",
+        replace: "if (this.plT0 == null && cv.getBoundingClientRect().top < window.innerHeight * 0.75) this.plT0 = t;\n    const p = this.plT0 == null ? 0 : c01(((t - this.plT0) % 9.5) / 7), S = L.S, C3 = L.cols;",
+      },
+      {
+        why: "Plan autoplays: leaving the section resets the clock, so coming back plays it from the start",
+        find: "this.planVis = en.isIntersecting; if (this.planVis) this.planStart();",
+        replace: "this.planVis = en.isIntersecting; if (this.planVis) this.planStart(); else this.plT0 = null;",
+      },
+      {
         why: "AA contrast: the Plan's inactive steps dimmed to 0.42 (1.8:1 and 2.7:1 on eggshell); 0.72 keeps the highlight and clears 4.5:1 (with the step-number ink below)",
         find: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.42;",
         replace: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.72;",

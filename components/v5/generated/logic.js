@@ -137,7 +137,7 @@ class Component extends DCLogic {
     if ('IntersectionObserver' in window) {
       this.ioV = new IntersectionObserver((es) => { es.forEach((en) => { this.videoVisible = en.isIntersecting; this.syncVideo(); }); }, { threshold: 0.35 });
       if (this.videoRef.current) this.ioV.observe(this.videoRef.current);
-      this.ioP = new IntersectionObserver((es) => { es.forEach((en) => { this.planVis = en.isIntersecting; if (this.planVis) this.planStart(); }); }, { threshold: 0 });
+      this.ioP = new IntersectionObserver((es) => { es.forEach((en) => { this.planVis = en.isIntersecting; if (this.planVis) this.planStart(); else this.plT0 = null; }); }, { threshold: 0 });
       if (this.planRef.current) this.ioP.observe(this.planRef.current);
     } else { this.planVis = true; this.planStart(); }
     this.roPl = new ResizeObserver(() => this.layoutPlan());
@@ -2536,7 +2536,8 @@ class Component extends DCLogic {
       docs(cs[0], cy, S, 1, 0); graph(cs[1], cy, S, 0.2, false); box(cs[2], cy, S, 0, true, 1);
       return;
     }
-    const p = c01((window.scrollY - L.top) / L.span), S = L.S, C3 = L.cols;
+    if (this.plT0 == null && cv.getBoundingClientRect().top < window.innerHeight * 0.75) this.plT0 = t;
+    const p = this.plT0 == null ? 0 : c01(((t - this.plT0) % 9.5) / 7), S = L.S, C3 = L.cols;
     const st = p < 0.36 ? 0 : p < 0.65 ? 1 : 2; if (st !== this.state.planStep) this.setState({ planStep: st });
     const trans = (P, q, x0, x1) => { for (let i = 0; i < P.length; i++) { const o = P[i], qi = c01((q - o.dl * 0.35) / 0.65), e = ease(qi), s = Math.sin(Math.PI * qi), am = o.amp * S * s, sx = x0 + o.ax * S, sy = cy + o.ay * S, dx = x1 + o.bx * S, dy = cy + o.by * S; g.fillStyle = qi < 0.5 ? o.ac : o.bc; const z = S * (1 - 0.3 * s); g.fillRect(sx + (dx - sx) * e + Math.cos(o.ph + t * 2.1) * am, sy + (dy - sy) * e + Math.sin(o.ph * 1.3 + t * 1.7) * am - am * 0.4, z, z); } };
     if (p < 0.28) docs(C3[0], cy, S, c01(p / 0.1), t);
@@ -3223,7 +3224,7 @@ class Component extends DCLogic {
       indStageRef: this.indStageRef, indBoxWrapRef: this.indBoxWrapRef, indBoxRef: this.indBoxRef, indLabelRef: this.indLabelRef,
       videoRef: this.videoRef, toggleVideo: this.toggleVideo, videoLabel: this.state.videoOn ? 'Pause' : 'Play',
       planRef: this.planRef, planBoxRef: this.planBoxRef, planCvRef: this.planCvRef,
-      planSecH: red ? 'auto' : wide ? '250svh' : '200svh', planPos: red ? 'relative' : 'sticky', planCvH: wide ? 'clamp(200px,34svh,340px)' : 'clamp(150px,22svh,200px)',
+      planSecH: 'auto', planPos: 'relative', planCvH: wide ? 'clamp(200px,34svh,340px)' : 'clamp(150px,22svh,200px)',
       planLeft: 'calc(' + Math.max(0, this.state.planStep) + ' * (100% + 32px) / 3)',
       planTf: this.state.planStep < 0 ? 'translateX(-24px)' : 'translateX(0px)',
       planTr: red ? 'none' : 'left 820ms cubic-bezier(.2,.8,.25,1), transform 820ms cubic-bezier(.2,.8,.25,1)',
