@@ -501,7 +501,7 @@ class Component extends DCLogic {
       tierPick: this.TIERS.map((t, i) => ({ n: t.n, sel: i === s.tblTier ? 'true' : 'false', bg: i === s.tblTier ? 'rgb(var(--ink))' : 'transparent', c: i === s.tblTier ? 'rgb(var(--bg))' : 'rgb(var(--ink))', go: () => this.setState({ tblTier: i }) })),
       shownGroups: (s.allFeat ? this.GROUPS : this.GROUPS.slice(0, 2)).map(([name, rows]) => ({ name, rows: rows.map(([label, ...v]) => ({ label, cells: (tn ? [v[s.tblTier]] : v).map((x, j) => { const col = tn ? s.tblTier : j; return { chk: x === 1, dash: x === 0, txt: typeof x === 'string', text: typeof x === 'string' ? x : '', bg: col === 2 ? 'rgb(var(--ink) / 0.05)' : 'transparent' }; }) })) })),
       toggleFeat: () => this.setState({ allFeat: !s.allFeat }), featExp: s.allFeat ? 'true' : 'false', featLabel: s.allFeat ? 'Show fewer features' : 'Show all features', featRot: s.allFeat ? 'rotate(180deg)' : 'none',
-      mqItems: ['No rip and replace', 'Runs with your ERP, or without one', 'Nothing buys itself', 'Findings in days', 'Live in two weeks', 'Every part matched to what it fits', 'You approve every order'],
+      mqItems: ['No rip and replace', 'Runs with your ERP, or without one', 'Nothing buys itself', 'Findings in days', 'Live in a few days', 'Every part matched to what it fits', 'You approve every order'],
       mqStatic: red, mqLive: !red, mqAnim: red ? 'none' : 'esMarquee 60s linear infinite', mqPlayState: s.mqHover ? 'paused' : 'running', mqPause: () => this.setState({ mqHover: true }), mqPlay: () => this.setState({ mqHover: false }),
       mbarShow: !s.wide && s.past && !s.modal,
       modal: s.modal, closeAccess: this.closeAccess, modalKey: (e) => { if (e.key === 'Escape') this.closeAccess(); },
