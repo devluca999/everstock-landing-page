@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Everstock v5 (the home page), hosted by components/dc/host.jsx. The page's CSS (helmet,
+ * Everstock v8 (the home page), hosted by components/dc/host.jsx. The page's CSS (helmet,
  * pseudo-classes, host) is imported by app/page.tsx so it is in the first HTML
  * response, before this client-only chunk arrives.
  *
@@ -60,14 +60,15 @@ function prefillModalEmail(email) {
    empty until the rain starts at 50% in view anyway. */
 const HALF_SCREEN = "50% 0px 50% 0px";
 const DEFERRED = [
-  { fn: "layoutStakes", sections: ["stakes"], kick: "stkKick", margin: "0px" },
+  { fn: "layoutStakes", sections: ["problem"], kick: "stkKick", margin: "0px" },
   { fn: "fillBA", sections: ["how-it-works"], margin: HALF_SCREEN },
   { fn: "sizeInd", sections: ["industries"], margin: HALF_SCREEN },
   // lays out both acts; a jump can land near act 2 without passing act 1
   { fn: "layoutActs", sections: ["act-1", "act-2"], kick: "actKick", margin: HALF_SCREEN },
   { fn: "layoutWhy", sections: ["why"], kick: "whyKick", margin: HALF_SCREEN },
-  { fn: "layoutPlan", sections: ["plan"], margin: HALF_SCREEN },
-  { fn: "fillClosing", sections: ["price-file"], margin: HALF_SCREEN },
+  // v8 dropped the Plan section (layoutPlan bails without its refs); the closing crate
+  // stack is in the footer
+  { fn: "fillClosing", sections: ["cta"], margin: HALF_SCREEN },
 ];
 
 const extend = (DesignLogic) =>
@@ -121,7 +122,7 @@ const extend = (DesignLogic) =>
           plan,
           note: this.fromCard && plan === "demo" ? CARD_NOTE : NOTES[plan],
           elapsed: performance.now() - (this.accOpenedAt || pageLoadedAt),
-          tag: "v5",
+          tag: "v8",
           designSubmit: submitAccess,
         });
       };
@@ -143,7 +144,7 @@ const extend = (DesignLogic) =>
         submitForm(e); // the design's RECEIVED state
         if (CTA.bookDemo.externalUrl) {
           // record the email first: the booking tool is outside the site
-          sendRequest({ email, stack: "other", source: "book-demo", note: CARD_NOTE, elapsed: performance.now() - pageLoadedAt }, "v5");
+          sendRequest({ email, stack: "other", source: "book-demo", note: CARD_NOTE, elapsed: performance.now() - pageLoadedAt }, "v8");
           window.open(CTA.bookDemo.externalUrl, "_blank", "noopener,noreferrer");
           return;
         }
@@ -237,4 +238,4 @@ const extend = (DesignLogic) =>
     }
   };
 
-export default createDcPage({ name: "Everstock v5", tree, defaults, dcrt, defineLogic, extend });
+export default createDcPage({ name: "Everstock v8", tree, defaults, dcrt, defineLogic, extend });

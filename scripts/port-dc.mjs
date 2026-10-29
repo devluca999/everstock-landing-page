@@ -2,7 +2,7 @@
 /**
  * Ports a Claude Design `.dc.html` page into the Next.js app without retyping it.
  *
- *   node scripts/port-dc.mjs v5|pricing   (see PAGES below; `npm run port` runs both)
+ *   node scripts/port-dc.mjs v8|pricing   (see PAGES below; `npm run port` runs both)
  *
  * The design runs on the dc-runtime (support.js): a template compiled at runtime into
  * React elements, driven by a logic class. This script does the compile step ahead of
@@ -26,7 +26,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { parseFragment } from "parse5";
-/* Site-side patches shared by both v5 pages. */
+/* Site-side patches shared by both pages. */
 const NO_LEGAL_NAV = {
   why: "Footer legal nav: Privacy, Terms and LinkedIn are placeholder anchors (#privacy, #terms, #linkedin) with nothing behind them; left out until the pages and the company URL exist",
   find: /(\n {6})<nav aria-label="Legal"[\s\S]*?<\/nav>/g,
@@ -97,82 +97,19 @@ const ACCESS_STEPS = {
     `<button type="button" onClick="{{ accNo }}" ${BTN_QUIET}>{{ accNoLabel }}</button></div></div></sc-if>` +
     `<sc-if value="{{ accFinished }}" hint-placeholder-val="{{ false }}"><div><button type="button" onClick="{{ closeAccess }}" ${BTN_PRIMARY}>Done</button></div></sc-if></div>`,
 };
-// Setup time: the site promises "a few days", not two weeks (2026-10-14). Every place the
-// design says two weeks moves with it: the Plan heading and its footnote, the hero
-// checklist (desktop table + phone list), and the marquee on both pages.
+// Setup time: the site promises "a few days", not two weeks (2026-10-14). v8 dropped the
+// Plan section and the hero checklist that said it; the marquee (both pages) still does.
 const MARQUEE_DAYS = {
   why: "Setup time: the marquee says 'Live in a few days' (the design says two weeks)",
   find: "'Live in two weeks'",
   replace: "'Live in a few days'",
 };
-const SETUP_DAYS = [
-  {
-    why: "Setup time: the Plan heading reads 'Up and running in just a few days.'",
-    find: ">Up and running in two weeks.</h2>",
-    replace: ">Up and running in just a few days.</h2>",
-  },
-  {
-    why: "Setup time: the Plan footnote",
-    find: ">Findings in days. Live in two weeks.</p>",
-    replace: ">Findings in days. Live in a few days.</p>",
-  },
-  {
-    why: "Setup time: the hero checklist's Setup row (desktop table and phone list)",
-    find: ">Learns from your paperwork, live in two weeks</span>",
-    count: 2,
-    replace: ">Learns from your paperwork, live in a few days</span>",
-  },
-];
-// The stockbot chat sits in a real iPhone (titanium band, side buttons, Dynamic Island,
-// status bar, home indicator) instead of the design's rounded dark card. The chat log is
-// kept verbatim (initPricingMotion drives it through its data- attributes), and so are the
-// avatar and composer hooks.
-const SYS = "font-family:-apple-system,'SF Pro Text',system-ui,sans-serif;";
-const sideBtn = (side, top, h) =>
-  `<span aria-hidden="true" style="position:absolute;${side}:-3px;top:${top}px;width:3px;height:${h}px;border-radius:${side === "left" ? "2px 0 0 2px" : "0 2px 2px 0"};background:linear-gradient(90deg,#2B2C31,#45464C,#2B2C31);"></span>`;
-const IPHONE_CHAT = {
-  why: "stockbot chat: rendered in a real iPhone frame (the design's rounded card read as a cheap render)",
-  find: /<div aria-label="Example stockbot chat" role="img"[^\n]*\n *<div style="display:flex;align-items:center;gap:10px;padding:10px 12px 10px;[^\n]*\n *(<span aria-hidden="true"[^\n]*<img data-prbox[^\n]*<\/span>)\n[^\n]*\n *<\/div>\n( *<div data-chatlog="true"[\s\S]*?\n {10}<\/div>)\n *<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;[^\n]*\n *<span style="flex:1;[^"]*">(<span data-composer[^\n]*?Message<\/span>)<\/span>\n[^\n]*\n *<\/div>\n {8}<\/div>/g,
-  count: 1,
-  replace: (_m, avatar, chatlog, composer) =>
-    [
-      `<div aria-label="Example stockbot chat" role="img" style="justify-self:center;position:relative;width:min(100%,292px);aspect-ratio:292/598;box-sizing:border-box;padding:10px;border-radius:50px;background:#0A0A0C;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06),0 0 0 2px #2E2F34,0 0 0 3px #55565C,0 0 0 4px #1C1D21,0 2px 3px rgba(0,0,0,0.25),0 40px 60px -30px rgba(0,0,0,0.55);">`,
-      `  ${sideBtn("left", 104, 26)}${sideBtn("left", 150, 50)}${sideBtn("left", 210, 50)}${sideBtn("right", 168, 78)}`,
-      `  <div style="position:relative;height:100%;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;border-radius:40px;overflow:hidden;background:#FAF7F1;">`,
-      `    <span aria-hidden="true" style="position:absolute;top:10px;left:50%;width:84px;height:25px;margin-left:-42px;border-radius:13px;background:#000;z-index:2;"></span>`,
-      `    <div aria-hidden="true" style="display:flex;align-items:center;justify-content:space-between;height:46px;padding:4px 24px 0 30px;background:#F4F1EA;${SYS}font-size:14px;font-weight:600;letter-spacing:-0.01em;color:#1A1B1F;font-variant-numeric:tabular-nums;">`,
-      `      <span>9:41</span>`,
-      `      <span style="display:flex;align-items:center;gap:5px;"><svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="4.5" y="5" width="3" height="6" rx="1"></rect><rect x="9" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="13.5" y="0" width="3" height="11" rx="1"></rect></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><path d="M7.5 2.2c2 0 3.9.8 5.3 2.1l1.1-1.1A9 9 0 0 0 7.5.6 9 9 0 0 0 1.1 3.2l1.1 1.1a7.5 7.5 0 0 1 5.3-2.1Z"></path><path d="M7.5 5.3c1.2 0 2.3.5 3.1 1.2l1.1-1.1a6 6 0 0 0-8.4 0l1.1 1.1c.8-.7 1.9-1.2 3.1-1.2Z"></path><path d="M7.5 8.3c.4 0 .8.2 1 .4L7.5 10.8 6.5 8.7c.2-.2.6-.4 1-.4Z"></path></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.3" stroke="currentColor" opacity="0.4"></rect><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"></rect><path d="M23 4v4c.8-.3 1.3-1.1 1.3-2S23.8 4.3 23 4Z" fill="currentColor" opacity="0.45"></path></svg></span>`,
-      `    </div>`,
-      `    <div style="display:flex;align-items:center;gap:10px;padding:6px 14px 10px 8px;background:#F4F1EA;border-bottom:1px solid rgba(26,27,31,0.1);">`,
-      `      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A1B1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="m15 5-7 7 7 7"></path></svg>`,
-      `      ${avatar}`,
-      `      <span style="flex:1;min-width:0;display:grid;gap:1px;"><span style="font-size:14px;font-weight:600;color:#1A1B1F;">stockbot</span><span style="font-family:'Geist Mono',ui-monospace,monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#5A564E;">Online</span></span>`,
-      `      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A1B1F" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"></path></svg>`,
-      `    </div>`,
-      chatlog
-        .replace(/^ {10}/, "    ")
-        .replace(/\n {10}/g, "\n    ")
-        // the bubbles' justify-self does nothing in the flex column; sent messages go right, like a real chat
-        .replace(/justify-self:end;/g, "align-self:flex-end;")
-        .replace(/justify-self:start;(?!align-self)/g, "align-self:flex-start;"),
-      `    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px 24px;background:#F4F1EA;border-top:1px solid rgba(26,27,31,0.1);position:relative;">`,
-      `      <span aria-hidden="true" style="flex:none;width:30px;height:30px;display:grid;place-items:center;color:#5A564E;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span>`,
-      `      <span style="flex:1;min-width:0;height:34px;display:flex;align-items:center;padding:0 12px;border-radius:17px;background:#FFFFFF;box-shadow:inset 0 0 0 1px rgba(26,27,31,0.12);font-size:14px;color:#1A1B1F;">${composer}</span>`,
-      `      <span aria-hidden="true" style="flex:none;width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:#1A1B1F;color:#FAF7F1;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg></span>`,
-      `      <span aria-hidden="true" style="position:absolute;left:50%;bottom:8px;width:104px;height:4px;margin-left:-52px;border-radius:2px;background:#1A1B1F;"></span>`,
-      `    </div>`,
-      `  </div>`,
-      `</div>`,
-    ].join("\n        "),
-};
-
 const PAGES = {
-  // the home page (Claude Design "Everstock v5.dc.html")
-  v5: {
-    src: "mockup/v5/Everstock v5.dc.html",
-    runtime: "mockup/v5/support.js",
-    out: "components/v5/generated",
+  // the home page (Claude Design "Everstock v8.dc.html")
+  v8: {
+    src: "mockup/v8/Everstock v8.dc.html",
+    runtime: "mockup/v8/support.js",
+    out: "components/v8/generated",
     logicPatches: [
       accessFocus(1),
       MARQUEE_DAYS,
@@ -199,23 +136,14 @@ const PAGES = {
     ],
     templatePatches: [
       {
-        why: "The archived v3 journey block (journeyArchive: false) never renders, so it is dropped instead of shipping dead markup",
-        find: /\n {2}<sc-if value="\{\{ journeyArchive \}\}"[\s\S]*?\n {2}<\/sc-if>/g,
-        count: 1,
-        replace: "",
-      },
-      {
-        why: "AA contrast: the Plan step numbers are muted ink (0.64) and dim with their step; at 0.9 ink they clear 4.5:1 while dimmed (0.9 × 0.72)",
-        find: /(opacity:\{\{ po[0-2] \}\};transition:\{\{ fade \}\};font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:0\.08em;color:rgb\(var\(--ink\) \/ )0\.64\)/g,
-        count: 3,
-        replace: "$10.9)",
+        why: "Structure: v8 closes the root div right before </main>, so the footer, the phone bar and the modal render outside it (and lose its Space Grotesk, falling back to Times); the root closes at the end, as in v5",
+        find: "\n</div>\n</main>\n\n<footer id=\"cta\"",
+        replace: "\n</main>\n\n<footer id=\"cta\"",
       },
       NO_LEGAL_NAV,
       ACCESS_FIELDS,
       ACCESS_STEPS,
       FOOTER_FEEDBACK,
-      ...SETUP_DAYS,
-      IPHONE_CHAT,
     ],
     hrefBindings: {
       ...CTA_BINDINGS,
@@ -225,8 +153,8 @@ const PAGES = {
   },
   // /pricing (Claude Design "Pricing.dc.html")
   pricing: {
-    src: "mockup/v5/Pricing.dc.html",
-    runtime: "mockup/v5/support.js",
+    src: "mockup/v8/Pricing.dc.html",
+    runtime: "mockup/v8/support.js",
     out: "components/pricing/generated",
     logicPatches: [
       accessFocus(2),
@@ -252,9 +180,9 @@ const PAGES = {
     bakes: [{ method: "paintStack", png: "public/pricing/stack-{hash}.png" }],
     hrefBindings: {
       ...CTA_BINDINGS,
-      "Everstock%20v5.dc.html": "/",
-      "Everstock%20v5.dc.html#how-it-works": "/#how-it-works",
-      "Everstock%20v5.dc.html#industries": "/#industries",
+      "Everstock%20v8.dc.html": "/",
+      "Everstock%20v8.dc.html#how-it-works": "/#how-it-works",
+      "Everstock%20v8.dc.html#industries": "/#industries",
     },
   },
 };
@@ -273,7 +201,12 @@ function applyPatches(src, patches, kind) {
   for (const p of patches) {
     const n = typeof p.find === "string" ? src.split(p.find).length - 1 : (src.match(p.find) || []).length;
     const want = p.count ?? 1;
-    if (n !== want) throw new Error(`${kind} patch anchor matched ${n} times (expected ${want}): ${p.why}`);
+    if (n !== want) {
+      const msg = `${kind} patch anchor matched ${n} times (expected ${want}): ${p.why}`;
+      // PORT_CHECK=1 lists every stale anchor instead of stopping at the first (writes nothing useful)
+      if (process.env.PORT_CHECK) { console.log("STALE " + msg); continue; }
+      throw new Error(msg);
+    }
     src = typeof p.find === "string" ? src.split(p.find).join(p.replace) : src.replace(p.find, p.replace);
   }
   return src;
