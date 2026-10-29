@@ -59,6 +59,11 @@ class Component extends DCLogic {
   floorBRef = React.createRef();
   cgRef = React.createRef();
   pfPlaneRef = React.createRef();
+  p3Ref = React.createRef();
+  flowSvgRef = React.createRef();
+  flowDotRef = React.createRef();
+  cgHold = false;
+  spBeatRef = React.createRef(); mFormRef = React.createRef(); mPlaneRef = React.createRef();
   ttlBoxRef = React.createRef(); titleRef = React.createRef(); sheenRef = React.createRef(); traceRef = React.createRef();
 
   /* ---------- theme: sections swap background/ink via tone variables; objects keep their real colours ---------- */
@@ -93,6 +98,7 @@ class Component extends DCLogic {
     this.onResize = () => {
       const w = window.innerWidth >= 900, sh = window.innerHeight < 780, ph = window.innerWidth < 640;
       if (ph !== this.state.phone) this.setState({ phone: ph });
+      document.documentElement.style.setProperty('--edge', w ? this.edgeFor() + 'px' : 'max(16px, env(safe-area-inset-left))');
       // left alignment line: 10vw snapped to the nearest 84px hero lattice column
       const edge = this.edgeFor();
       if (w !== this.state.wide || sh !== this.state.short || edge !== this.state.edge) this.setState({ wide: w, short: sh, edge });
@@ -117,12 +123,13 @@ class Component extends DCLogic {
         const id = en.target.id;
         if (id === 'top') this.setState({ heroOut: !en.isIntersecting });
         if (id === 'hero-cta') this.setState({ heroCtaOut: !en.isIntersecting });
-        if (id === 'price-file') { this.setState({ pfVis: en.isIntersecting }); const was = this.pfIn; this.pfIn = en.intersectionRatio >= 0.3; if (this.pfIn && !was) this.pfT0 = performance.now() / 1000; }
+        if (id === 'stock-plan') this.setState({ pfVis: en.isIntersecting }); if (id === 'capabilities') { const was = this.pfIn; this.pfIn = en.isIntersecting; if (this.pfIn && !was) this.pfT0 = performance.now() / 1000; }
         if (id === 'cta') this.setState({ ctaVis: en.isIntersecting });
       }), { threshold: [0, 0.3] });
-      ['top', 'hero-cta', 'price-file', 'cta'].forEach((id) => { const el = document.getElementById(id); if (el) this.ioM.observe(el); });
+      ['top', 'hero-cta', 'stock-plan', 'capabilities', 'cta'].forEach((id) => { const el = document.getElementById(id); if (el) this.ioM.observe(el); });
     } else { this.pfIn = true; this.pfT0 = performance.now() / 1000; }
     this.rafPF = requestAnimationFrame(this.pfLoop);
+    this.rafSB = requestAnimationFrame(this.spLoop);
     this.scene3 = this.buildScene();
     window.addEventListener('scroll', this.schedule, { passive: true });
     window.addEventListener('resize', this.schedule);
@@ -176,7 +183,7 @@ class Component extends DCLogic {
     cancelAnimationFrame(this.rafW); if (this.ioWhy) this.ioWhy.disconnect(); if (this.ioWhyR) this.ioWhyR.disconnect(); if (this.roWhy) this.roWhy.disconnect(); (this.whyTimers || []).forEach(clearTimeout);
     cancelAnimationFrame(this.rafA); if (this.ioAct) this.ioAct.disconnect(); if (this.roAct) this.roAct.disconnect();
     cancelAnimationFrame(this.rafSt); if (this.ioSt) this.ioSt.disconnect(); (this.stkTimers || []).forEach(clearTimeout);
-    cancelAnimationFrame(this.rafPF); if (this.ioM) this.ioM.disconnect(); window.removeEventListener('keydown', this.onKeyAcc); document.documentElement.style.overflow = '';
+    cancelAnimationFrame(this.rafPF); cancelAnimationFrame(this.rafSB); cancelAnimationFrame(this.rafMP); if (this.ioM) this.ioM.disconnect(); window.removeEventListener('keydown', this.onKeyAcc); document.documentElement.style.overflow = '';
     clearTimeout(this.typeT);
     window.removeEventListener('scroll', this.onScroll);
     window.removeEventListener('resize', this.onResize);
@@ -186,12 +193,11 @@ class Component extends DCLogic {
   componentDidUpdate(pp, ps) {
     const redA = this.isReduced(); if (this.actData && redA !== this.lastRedA) { this.lastRedA = redA; setTimeout(() => { if (!this.dead) { this.layoutActs(); this.actKick(); } }, 0); }
     if (ps && ps.wide !== this.state.wide) setTimeout(() => { if (!this.dead) { this.layoutActs(); this.layoutWhy(); } }, 0);
-    if (!!ps.modal !== !!this.state.modal) { document.documentElement.style.overflow = this.state.modal ? 'hidden' : ''; if (this.state.modal) setTimeout(() => { const el = document.getElementById('acc-name'); if (el) el.focus(); }, 30); }
     this.planSprite();
     this.fillJImgs();
     this.fillClosing();
-    if (pp.motion !== this.props.motion) { this.jDirty = true; this.layoutJourney(); }
-    if (pp.motion !== this.props.motion) { this.restartFloor(); this.lastPs = -9; this.schedule(); }
+    if (pp && pp.motion !== this.props.motion) { this.jDirty = true; this.layoutJourney(); }
+    if (pp && pp.motion !== this.props.motion) { this.restartFloor(); this.lastPs = -9; this.schedule(); }
     if (ps && ps.boxSrc !== this.state.boxSrc) this.schedule();
   }
 
@@ -213,10 +219,10 @@ class Component extends DCLogic {
     };
     const S = (ic, t, d, flag) => ({ d1: I[ic][0], d2: I[ic][1], d3: I[ic][2], t, d, flag: !!flag });
     this._wf = [
-      { label: 'Matches invoices to POs', desc: 'Every supplier invoice is checked line by line against the PO and what actually arrived.', steps: [S('mail', 'Invoice arrives', 'INV-4471'), S('doc', 'Reads the line items', '12 lines'), S('clip', 'Matches the PO', 'PO-2291'), S('box', 'Checks the receipt', '10 of 12 received'), S('phone', 'Texts you the gap', '$84.00 over', true)] },
-      { label: 'Chases late suppliers', desc: 'When a shipment slips, the supplier hears from Everstock before you would have noticed.', steps: [S('clock', 'Ship date passes', 'Northline · 2 days late'), S('msg', 'Sends a follow-up', '07:02'), S('mail', 'Reads the reply', 'ETA 14 Mar'), S('trend', 'Re-checks your cover', '9 days left'), S('check', 'Updates the PO', 'PO-2288')] },
-      { label: 'Flags short shipments', desc: 'Deliveries are counted against the packing slip, so shortages become credits instead of write-offs.', steps: [S('truck', 'Delivery logged', '6 cartons'), S('box', 'Counts against the slip', '46 of 48'), S('alert', 'Flags the shortage', '2 units'), S('msg', 'Requests a credit', '$96.40'), S('check', 'Tracks it until paid', 'CR-0112')] },
-      { label: 'Drafts the reorder', desc: 'Reorders are drafted from your sales pace, the supplier’s lead time and the vendor you would pick.', steps: [S('trend', 'Sees stock falling', '11 days of cover'), S('clock', 'Checks the lead time', '9 days'), S('box', 'Picks the vendor', 'Meridian · same price'), S('draft', 'Drafts the PO', '480 units · $19,392'), S('phone', 'Texts you to approve', 'Approve or hold', true)] }
+      { label: 'Matches invoices to POs', desc: 'Every supplier invoice is checked line by line against the PO and what actually arrived.', steps: [S('mail', 'Invoice arrives', 'INV-4471'), S('doc', 'Reads the line items', '12 lines'), S('clip', 'Matches the PO', 'PO-2291'), S('box', 'Checks the receipt', '10 of 12 received'), S('phone', 'Texts you the gap', '$84.00 over', true)], stake: '$84 paid for 4 bolt kits that never arrived.' },
+      { label: 'Chases late suppliers', desc: 'When a shipment slips, the supplier hears from Everstock before you would have noticed.', steps: [S('clock', 'Ship date passes', 'Northline · 2 days late'), S('msg', 'Sends a follow-up', '07:02'), S('mail', 'Reads the reply', 'ETA 14 Mar'), S('trend', 'Re-checks your cover', '9 days left'), S('check', 'Updates the PO', 'PO-2288')], stake: 'you find out Northline is late when the shelf is empty.' },
+      { label: 'Flags short shipments', desc: 'Deliveries are counted against the packing slip, so shortages become credits instead of write-offs.', steps: [S('truck', 'Delivery logged', '6 cartons'), S('box', 'Counts against the slip', '10 of 12'), S('alert', 'Flags the shortage', '2 cartons'), S('msg', 'Requests a credit', '$96.40'), S('check', 'Tracks it until paid', 'CR-0112')], stake: 'short counts get paid in full.' },
+      { label: 'Drafts the reorder', desc: 'Reorders are drafted from your sales pace, the supplier’s lead time and the vendor you would pick.', steps: [S('trend', 'Sees stock falling', '11 days of cover'), S('clock', 'Checks the lead time', '9 days'), S('box', 'Picks the vendor', 'Meridian · same price'), S('draft', 'Drafts the PO', '480 units · $19,392'), S('phone', 'Texts you to approve', 'Approve or hold', true)], stake: 'the reorder happens after the stockout.' }
     ];
     return this._wf;
   }
@@ -230,30 +236,49 @@ class Component extends DCLogic {
     if (cs && 'ResizeObserver' in window) { this.trRO = new ResizeObserver(() => this.measureTraces()); this.trRO.observe(cs); }
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!this.dead) this.measureTraces(); });
     setTimeout(() => this.measureTraces(), 400);
+    const p3 = this.p3Ref.current;
+    if (p3 && 'IntersectionObserver' in window) {
+      this.p3io = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting || this.p3Done) return; this.p3Done = true; this.p3io.disconnect();
+        [0, 1, 2].forEach((i) => setTimeout(() => { if (!this.dead) this.setState({ p3: i + 1 }); }, 240 + i * 560));
+      }), { threshold: 0.6 });
+      this.p3io.observe(p3);
+    } else this.state.p3 = 3;
   }
   v8Tick() {
-    if (this.dead || this.isReduced() || !(this.v7vis || {}).capabilities) return;
+    return;
     this.setState((s) => ({ vc: (s.vc + 1) % 17 }));
   }
   measureTraces() {
-    const sec = document.getElementById('capabilities'); if (!sec || this.dead) return;
-    if (!this.trTmp) { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('style', 'position:absolute;left:0;top:0;width:0;height:0;visibility:hidden;'); document.body.appendChild(s); this.trTmp = document.createElementNS('http://www.w3.org/2000/svg', 'path'); s.appendChild(this.trTmp); }
-    const tr = {};
-    sec.querySelectorAll('[data-trcard]').forEach((card) => {
-      const k = card.dataset.trcard, cr = card.getBoundingClientRect(), dst = card.querySelector('[data-trdst]'); if (!dst) return;
-      const dr = dst.getBoundingClientRect(), ex = Math.round(dr.left + dr.width / 2 - cr.left) + 0.5, ey = Math.round(dr.top - cr.top) - 4;
-      tr[k] = Array.from(card.querySelectorAll('[data-trsrc]')).map((s, j) => {
-        const r = s.getBoundingClientRect(), sx = Math.round(r.left + r.width / 2 - cr.left) + 0.5, sy = Math.round(r.bottom - cr.top) + 3;
-        const R = 8, ly = ey - 12 - j * 6; let d;
-        if (ly - R <= sy + 2) d = 'M' + sx + ' ' + sy + ' L' + ex + ' ' + ey;
-        else if (Math.abs(sx - ex) < 2 * R) d = 'M' + sx + ' ' + sy + ' V' + ly + ' L' + ex + ' ' + (ly + 4) + ' V' + ey;
-        else { const dir = ex < sx ? -1 : 1; d = 'M' + sx + ' ' + sy + ' V' + (ly - R) + ' Q' + sx + ' ' + ly + ' ' + (sx + dir * R) + ' ' + ly + ' H' + (ex - dir * R) + ' Q' + ex + ' ' + ly + ' ' + ex + ' ' + (ly + R) + ' V' + ey; }
-        this.trTmp.setAttribute('d', d);
-        return { d, ex, ey, len: Math.ceil(this.trTmp.getTotalLength()) + 2, ord: +s.dataset.trord };
-      });
-    });
-    if (JSON.stringify(tr) !== JSON.stringify(this.state.tr)) this.setState({ tr });
+    const art = document.querySelector('[data-flow]'); if (!art || this.dead) return;
+    const ar = art.getBoundingClientRect(), R = (el) => { const r = el.getBoundingClientRect(); return { l: r.left - ar.left, r: r.right - ar.left, t: r.top - ar.top, b: r.bottom - ar.top, cx: (r.left + r.right) / 2 - ar.left, cy: (r.top + r.bottom) / 2 - ar.top }; };
+    const bot = art.querySelector('[data-fbot]'); if (!bot) return;
+    const B = R(bot), f = (n) => Math.round(n * 10) / 10;
+    const cur = (a, b) => {
+      if (b.l >= a.r - 4) { const x0 = a.r + 4, y0 = a.cy, x1 = b.l - 4, y1 = b.cy, m = (x1 - x0) * 0.55; return 'M' + f(x0) + ' ' + f(y0) + ' C' + f(x0 + m) + ' ' + f(y0) + ' ' + f(x1 - m) + ' ' + f(y1) + ' ' + f(x1) + ' ' + f(y1); }
+      const x0 = a.cx, y0 = a.b + 4, x1 = b.cx, y1 = b.t - 4, m = Math.max(12, (y1 - y0) * 0.55); return 'M' + f(x0) + ' ' + f(y0) + ' C' + f(x0) + ' ' + f(y0 + m) + ' ' + f(x1) + ' ' + f(y1 - m) + ' ' + f(x1) + ' ' + f(y1);
+    };
+    const ps = [];
+    art.querySelectorAll('[data-fsrc]').forEach((el) => ps.push(cur(R(el), B)));
+    art.querySelectorAll('[data-fout]').forEach((el) => ps.push(cur(B, R(el))));
+    const flowPaths = ps.map((d, i) => ({ d, i: String(i) }));
+    if (JSON.stringify(flowPaths) !== JSON.stringify(this.state.flowPaths)) this.setState({ flowPaths });
+    if (!this.rafFlow) this.rafFlow = requestAnimationFrame(this.flowLoop);
   }
+  // one dot at a time: source -> stockbot -> output
+  flowLoop = (now) => {
+    if (this.dead) return;
+    this.rafFlow = requestAnimationFrame(this.flowLoop);
+    const c = this.flowDotRef.current, svg = this.flowSvgRef.current; if (!c || !svg) return;
+    if (this.isReduced() || !(this.v7vis || {}).capabilities) { if (c.getAttribute('opacity') !== '0') c.setAttribute('opacity', '0'); return; }
+    const SEG = 1.1, CYC = SEG * 2 + 0.6, t = (now / 1000) % (CYC * 6), k = Math.floor(t / CYC), u = t - k * CYC;
+    let idx, p;
+    if (u < SEG) { idx = k; p = u / SEG; } else if (u < SEG * 2) { idx = 6 + (k % 3); p = (u - SEG) / SEG; } else { c.setAttribute('opacity', '0'); return; }
+    const path = svg.querySelector('path[data-i="' + idx + '"]'); if (!path) return;
+    const e = 0.5 - 0.5 * Math.cos(Math.PI * p), L = path.getTotalLength(), pt = path.getPointAtLength(e * L);
+    c.setAttribute('cx', pt.x.toFixed(1)); c.setAttribute('cy', pt.y.toFixed(1));
+    c.setAttribute('opacity', String(u < 0.12 ? u / 0.12 : u > SEG * 2 - 0.12 ? (SEG * 2 - u) / 0.12 : 1));
+  };
   v7Tick() {
     if (this.dead || this.isReduced()) return;
     const v = this.v7vis || {}, s = {};
@@ -287,13 +312,13 @@ class Component extends DCLogic {
     const wfSteps = cur.steps.map((s, i) => {
       let k = i < ws - 1 || ws > n ? 'done' : i === ws - 1 ? 'active' : 'pending';
       if (k === 'done' && s.flag) k = 'attn';
-      return { ...s, ...ST[k], line: i < n - 1 };
+      return { ...s, ...ST[k], line: i < n - 1, lineOp: i < n - 1 ? 1 : 0 };
     });
     const wfTabs = W.map((w, i) => {
       const a = i === wf;
       return { label: w.label, n: '0' + (i + 1), sel: a ? 'true' : 'false', bg: a ? 'rgb(var(--ink) / 0.06)' : 'transparent', bd: a ? 'rgb(var(--ink) / 0.16)' : 'transparent', col: a ? 'rgb(var(--ink))' : 'rgb(var(--ink) / 0.56)', numCol: a ? 'rgb(var(--ink) / 0.72)' : 'rgb(var(--ink) / 0.40)', pick: () => { this.v7auto = false; this.setState({ wf: i, ws: 0 }); } };
     });
-    return { ...trs, th1o: o(1), th1t: tf(1), th2o: o(2), th2t: tf(2), th3o: o(3), th3t: tf(3), th4o: o(4), th4t: tf(4), apBg: on(3) ? '#1A1B1F' : 'transparent', apCol: on(3) ? '#FAF7F1' : '#1A1B1F', hoOp: on(3) ? 0.4 : 1, wfTabs, wfSteps, wfDesc: cur.desc };
+    return { ...trs, wfI0: wf === 0, wfI1: wf === 1, wfI2: wf === 2, wfI3: wf === 3, wfFrom: ['25 min', '45 min', '30 min', '1 hr'][wf], wfTo: ['40 sec', '2 min', '1 min', '3 min'][wf], th1o: o(1), th1t: tf(1), th2o: o(2), th2t: tf(2), th3o: o(3), th3t: tf(3), th4o: o(4), th4t: tf(4), apBg: on(3) ? '#1A1B1F' : 'transparent', apCol: on(3) ? '#FAF7F1' : '#1A1B1F', hoOp: on(3) ? 0.4 : 1, wfTabs, wfSteps, wfDesc: cur.desc, wfStake: cur.stake };
   }
   isReduced() {
     const m = this.props.motion ?? 'auto';
@@ -564,6 +589,7 @@ class Component extends DCLogic {
     if (this.dead) return;
     this.rafC = requestAnimationFrame(this.cgLoop);
     if (!this.cgVis && this.cgDrawn) return;
+    if (this.cgHold && this.cgDrawn) { const c = this.cgRef.current, k = c ? c.clientWidth + 'x' + c.clientHeight + (this.state.theme || '') : ''; if (k === this.cgKey) return; this.cgKey = k; }
     this.drawChicago(now / 1000); this.cgDrawn = true;
   };
   drawChicago(t) {
@@ -572,7 +598,7 @@ class Component extends DCLogic {
     const dpr = Math.min(2, window.devicePixelRatio || 1), W = Math.round(w * dpr), H = Math.round(hh * dpr);
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
     const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, hh);
-    const red = this.isReduced(), { HOLD, SPREAD, DUR, TILT } = this.CG, END = HOLD + SPREAD + DUR;
+    const red = this.isReduced() || this.cgHold, { HOLD, SPREAD, DUR, TILT } = this.CG, END = HOLD + SPREAD + DUR;
     // loop: city holds 3s, diffuses into the globe, globe holds 3s, condenses back
     const HC = 3, MO = SPREAD + DUR, HG = 3, PER = HC + MO + HG + MO;
     let T = -1, rev = false, Tr = 0, cyc = 0, tau = 0;
@@ -595,7 +621,7 @@ class Component extends DCLogic {
       { kind: 'ship', rx: 1.3, ry: 0.28, tl: 0.1, sp: 0.11, ph: 2.3 },
       { kind: 'truck', rx: 1.42, ry: 0.4, tl: 0.24, sp: 0.15, ph: 4.1 },
       { kind: 'box', rx: 1.2, ry: 0.62, tl: -0.72, sp: 0.18, ph: 5.4 },
-    ].map((o) => { const th = o.ph + o.sp * Math.max(0, ot), lx = o.rx * Rg * Math.cos(th), ly = o.ry * Rg * Math.sin(th), c = Math.cos(o.tl), s = Math.sin(o.tl); const vx = -o.rx * Math.sin(th) * c - o.ry * Math.cos(th) * s; return { ...o, x: cx + lx * c - ly * s, y: cy + lx * s + ly * c, depth: Math.sin(th), flip: vx < 0 }; });
+    ].map((o) => { const th = o.ph + o.sp * Math.max(0, ot), lx = o.rx * Rg * Math.cos(th), ly = o.ry * Rg * Math.sin(th), c = Math.cos(o.tl), s = Math.sin(o.tl); const vx = -o.rx * Math.sin(th) * c - o.ry * Math.cos(th) * s; return { ...o, x: cx + lx * c - ly * s, y: cy + lx * s + ly * c, depth: Math.sin(th), flip: vx < 0 }; }).filter((o) => !(this.cgHold && o.kind === 'plane'));
     if (oa > 0) {
       g.save(); g.setLineDash([2, 6]); g.lineWidth = 1; g.strokeStyle = INK(0.16 * oa);
       ORB.forEach((o) => { g.beginPath(); g.ellipse(cx, cy, o.rx * Rg, o.ry * Rg, o.tl, 0, Math.PI * 2); g.stroke(); });
@@ -715,14 +741,52 @@ class Component extends DCLogic {
   toggleMenu = () => this.setState((s) => ({ navMenu: !s.navMenu }));
   closeMenu = () => this.setState({ navMenu: false });
   openLater(fn) { if (performance.now() - (this.lastTouch || -1e9) < 700 && !this.isReduced()) { clearTimeout(this.tapT); this.tapT = setTimeout(() => { if (this.dead) return; fn(); this.setState({ ctaHov: null }); }, 320); } else fn(); }
-  openAccess = (e) => { if (e && e.preventDefault) e.preventDefault(); this.accReturn = document.activeElement; this.setState({ navMenu: false }); this.openLater(() => this.setState({ modal: true, plan: 'early', accSent: false })); };
-  openDemo = (e) => { if (e && e.preventDefault) e.preventDefault(); this.accReturn = document.activeElement; this.setState({ navMenu: false }); this.openLater(() => this.setState({ modal: true, plan: 'demo', accSent: false })); };
+  mOpen(kind, e) { if (e && e.preventDefault) e.preventDefault(); this.accReturn = document.activeElement; this.setState({ navMenu: false }); this.openLater(() => { this.mpT0 = 0; this.setState({ modal: kind, mSent: false }); document.documentElement.style.overflow = 'hidden'; setTimeout(() => { const f = this.mFormRef.current, el = f && f.querySelector('input'); if (el) el.focus(); }, 40); }); }
+  openAccess = (e) => this.mOpen('early', e);
+  openDemo = (e) => this.mOpen('demo', e);
   ctaIn = (e) => { if (e && e.type === 'touchstart') this.lastTouch = performance.now(); const k = e.currentTarget && e.currentTarget.dataset.cta; if (k) this.setState({ ctaHov: k }); };
   ctaOut = () => { if (this.state.ctaHov) this.setState({ ctaHov: '' }); };
-  openFounding = (e) => { if (e && e.preventDefault) e.preventDefault(); this.accReturn = document.activeElement; this.setState({ navMenu: false }); this.openLater(() => this.setState({ modal: true, plan: 'founding', accSent: false })); };
-  closeAccess = () => { this.setState({ modal: false }); const r = this.accReturn; if (r && r.focus) setTimeout(() => r.focus(), 0); };
+  openFounding = (e) => this.mOpen('early', e);
+  goPF = (e) => this.mOpen('plan', e);
+  closeAccess = () => { this.setState({ modal: false }); document.documentElement.style.overflow = ''; this.mpT0 = 0; cancelAnimationFrame(this.rafMP); const c = this.mPlaneRef.current; if (c) c.getContext('2d').clearRect(0, 0, c.width, c.height); const r = this.accReturn; if (r && r.focus) setTimeout(() => r.focus(), 0); };
   submitAccess = (e) => { e.preventDefault(); this.setState({ accSent: true }); };
-  goPF = (e) => { const el = document.getElementById('price-file'); if (!el) return; if (e && e.preventDefault) e.preventDefault(); window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 68, behavior: this.isReduced() ? 'auto' : 'smooth' }); };
+  mKey = (e) => {
+    if (e.key !== 'Tab') return; const f = this.mFormRef.current; if (!f) return;
+    const els = [...f.querySelectorAll('button,input,textarea,[href]')].filter((x) => !x.disabled && x.getClientRects().length); if (!els.length) return;
+    const a = els[0], z = els[els.length - 1];
+    if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+  };
+  mSubmit = (e) => {
+    e.preventDefault(); const f = e.currentTarget;
+    if (this.state.modal === 'plan' && !this.isReduced()) { const b = f.querySelector('button[type=submit]'); if (b) { const r = b.getBoundingClientRect(); this.mpFrom = [r.left + r.width * 0.5, r.top + r.height / 2]; this.mpT0 = performance.now() / 1000; this.mpPath = null; cancelAnimationFrame(this.rafMP); this.rafMP = requestAnimationFrame(this.mpLoop); } }
+    this.setState({ mSent: true }); setTimeout(() => { const c = f.querySelector('[data-mclose]'); if (c) c.focus(); }, 0);
+  };
+  // the Stock Plan modal's send: the paper plane lifts off the button and leaves the viewport
+  mpLoop = (now) => {
+    if (this.dead || !this.mpT0) return;
+    const cv = this.mPlaneRef.current; if (!cv) return;
+    const w = window.innerWidth, hh = window.innerHeight, dpr = Math.min(2, window.devicePixelRatio || 1), CW = Math.round(w * dpr), CH = Math.round(hh * dpr);
+    if (cv.width !== CW || cv.height !== CH) { cv.width = CW; cv.height = CH; }
+    const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, hh);
+    const T = now / 1000 - this.mpT0, DUR = 2.6, FADE = 0.9;
+    if (T > DUR + FADE) { this.mpT0 = 0; return; }
+    this.rafMP = requestAnimationFrame(this.mpLoop);
+    if (!this.mpPath) {
+      const [x0, y0] = this.mpFrom, c1 = [x0 - Math.min(180, w * 0.22), y0 - 30], c2 = [x0 - Math.min(260, w * 0.3), y0 - Math.min(360, hh * 0.45)], p3 = [w + 90, Math.max(-60, y0 - hh * 0.75)], pts = [];
+      for (let i = 0; i <= 220; i++) { const u = i / 220, q = 1 - u; pts.push([q * q * q * x0 + 3 * q * q * u * c1[0] + 3 * q * u * u * c2[0] + u * u * u * p3[0], q * q * q * y0 + 3 * q * q * u * c1[1] + 3 * q * u * u * c2[1] + u * u * u * p3[1]]); }
+      const cum = [0]; for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+      const dots = []; for (let d = 14; d < cum[cum.length - 1]; d += 10) { let i = 1; while (cum[i] < d) i++; const fr = (d - cum[i - 1]) / (cum[i] - cum[i - 1] || 1); dots.push([pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * fr, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * fr, d]); }
+      const fr = this.mFormRef.current, br = fr ? fr.getBoundingClientRect() : null;
+      this.mpPath = { pts, cum, L: cum[cum.length - 1], dots, card: br };
+    }
+    const P = this.mpPath, u = Math.min(1, T / DUR), e = 0.22 * u + 0.78 * u * u, dist = e * P.L, fa = T > DUR ? 1 - (T - DUR) / FADE : 1, C = P.card;
+    P.dots.forEach((d) => { if (d[2] > dist - 18) return; const on = C && d[0] > C.left && d[0] < C.right && d[1] > C.top && d[1] < C.bottom; g.fillStyle = (on ? 'rgba(26,27,31,' : 'rgba(250,247,241,') + ((on ? 0.3 : 0.55) * fa).toFixed(3) + ')'; g.fillRect(Math.round(d[0]) - 1, Math.round(d[1]) - 1, 2, 2); });
+    if (T < DUR) {
+      let i = 1; while (i < P.cum.length - 1 && P.cum[i] < dist) i++;
+      const a0 = P.pts[i - 1], a1 = P.pts[i], fr = (dist - P.cum[i - 1]) / (P.cum[i] - P.cum[i - 1] || 1), x = a0[0] + (a1[0] - a0[0]) * fr, y = a0[1] + (a1[1] - a0[1]) * fr, an = Math.atan2(a1[1] - a0[1], a1[0] - a0[0]), sc = (w >= 900 ? 0.9 : 0.7) * (0.8 + 0.35 * Math.min(1, u * 2));
+      g.save(); g.globalAlpha = Math.min(1, T / 0.15); g.translate(x, y); g.rotate(an); g.scale(sc, Math.cos(an) < 0 ? -sc : sc); g.imageSmoothingEnabled = false; g.drawImage(this.pfSprite(), -36, -22); g.restore();
+    }
+  };
 
   /* ---------- 09 price file: a paper plane loops, then glides out left ---------- */
   pfSprite() {
@@ -746,13 +810,12 @@ class Component extends DCLogic {
   }
   // five planes, each with its own entry, manoeuvre, size and interval; at most two in flight
   pfPlanes = [
-    { from: 'r', L: [0.86, 0.4], man: 'loop', r: 64, s: 1, exitY: 0.62, sc: 1 },
-    { from: 'tr', L: [0.74, 0.2], man: 'ell', rx: 38, ry: 66, s: 1, exitY: 0.08, sc: 0.86 },
-    { from: 'br', L: [0.8, 0.8], man: 'ell', rx: 84, ry: 40, s: -1, exitY: 0.94, sc: 1.14 },
-    { from: 't', L: [0.62, 0.1], man: 'wave', exitY: 0.24, sc: 0.9 },
-    { from: 'r', L: [0.93, 0.64], man: 'loop', r: 32, s: -1, exitY: 0.5, sc: 0.82 },
-    { from: 'tr', L: [0.8, 0.28], man: 'loop', r: 48, s: 1, exitY: 0.44, sc: 0.94, mir: true },
-    { from: 'br', L: [0.86, 0.72], man: 'wave', exitY: 0.86, sc: 1.06, mir: true },
+    { from: 'tr', L: [0.78, 0.14], man: 'loop', r: 64, s: 1, exitY: 0.22, sc: 1 },
+    { from: 'r', L: [0.9, 0.36], man: 'line', exitY: 0.34, sc: 0.86 },
+    { from: 'tr', L: [0.8, 0.5], man: 'ell', rx: 84, ry: 40, s: -1, exitY: 0.58, sc: 0.92, mir: true },
+    { from: 'r', L: [0.86, 0.7], man: 'line', spin: true, exitY: 0.72, sc: 1.04, mir: true },
+    { from: 'r', L: [0.84, 0.86], man: 'wave', exitY: 0.95, sc: 0.94 },
+    { from: 'tr', L: [0.75, 0.28], man: 'loop', r: 48, s: -1, exitY: 0.42, sc: 0.82, mir: true },
   ];
   pfPos(P, T, W, H) {
     if (P.mir) { const B0 = this.pfBox; if (B0) this.pfBox = { ...B0, x: W - B0.x - B0.w }; const q = this.pfPos({ ...P, mir: false }, T, W, H); this.pfBox = B0; return [W - q[0], q[1]]; }
@@ -763,6 +826,7 @@ class Component extends DCLogic {
       const th = u * Math.PI * 2;
       if (P.man === 'loop') { const r = P.r * k; return [L[0] - r * Math.sin(th), L[1] - P.s * r * (1 - Math.cos(th))]; }
       if (P.man === 'ell') return [L[0] - P.rx * k * Math.sin(th), L[1] - P.s * P.ry * k * (1 - Math.cos(th))];
+      if (P.man === 'line') return [L[0] - u * W * 0.16, L[1]];
       return [L[0] - u * W * 0.16, L[1] + Math.sin(th) * H * (wide ? 0.05 : 0.02)];
     };
     if (T < 0.7) { const p = T / 0.7, q = 1 - p, C = [L[0] + 90 * k, L[1]]; return [q * q * S[0] + 2 * q * p * C[0] + p * p * L[0], q * q * S[1] + 2 * q * p * C[1] + p * p * L[1]]; }
@@ -773,6 +837,14 @@ class Component extends DCLogic {
     const yX = H * (wide ? P.exitY : P.exitY > 0.5 ? 0.95 : 0.06);
     return [E[0] + (-120 - E[0]) * e, E[1] + (yX - E[1]) * e + Math.sin(e * Math.PI * 1.4) * H * 0.03 * (1 - e)];
   }
+  spSubmit = (e) => {
+    e.preventDefault();
+    const b = e.currentTarget.querySelector('button[type=submit]'), cv = this.spBeatRef.current;
+    if (b && cv) { const r = b.getBoundingClientRect(), c = cv.getBoundingClientRect(); this.spFrom = [r.left + r.width * 0.35 - c.left, r.top + r.height / 2 - c.top]; }
+    this.spT0 = performance.now() / 1000; this.spPath = null; this.sbDrawn = null;
+    this.setState({ spSent: true });
+  };
+  spOnFile = (e) => { const f = e.target.files && e.target.files[0]; this.setState({ spFile: f ? f.name : '' }); };
   pfLoop = (now) => {
     if (this.dead) return;
     this.rafPF = requestAnimationFrame(this.pfLoop);
@@ -791,15 +863,15 @@ class Component extends DCLogic {
     }
     const t = now / 1000, sp = this.pfSprite(), base = w >= 900 ? 1.15 : 0.8;
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, hh);
-    const plane = (P, T, a) => { const p = this.pfPos(P, T, w, hh), q = this.pfPos(P, Math.min(4.4, T + 0.02), w, hh), an = a == null ? Math.atan2(q[1] - p[1], q[0] - p[0]) : a, s = base * P.sc; g.save(); g.translate(p[0], p[1]); g.rotate(an); g.scale(s, s); g.imageSmoothingEnabled = false; g.drawImage(sp, -36, -22); g.restore(); };
+    const plane = (P, T, a) => { const p = this.pfPos(P, T, w, hh), q = this.pfPos(P, Math.min(4.4, T + 0.02), w, hh), an = a == null ? Math.atan2(q[1] - p[1], q[0] - p[0]) : a, s = base * P.sc; g.save(); g.translate(p[0], p[1]); g.rotate(an); g.scale(s, s * (P.spin && T > 0.7 && T < 2.1 ? Math.cos(((T - 0.7) / 1.4) * Math.PI * 2) : 1)); g.imageSmoothingEnabled = false; g.drawImage(sp, -36, -22); g.restore(); };
     if (red) {
       g.fillStyle = this.effDark('light') ? 'rgba(236,234,228,0.26)' : 'rgba(22,23,27,0.22)'; this.pfDots[0].forEach((d) => { if (d[2] > 1.25 && d[2] <= 2.0) g.fillRect(Math.round(d[0]) - 1, Math.round(d[1]) - 1, 2, 2); });
       plane(this.pfPlanes[0], 2.1, Math.PI); this.pfDrawn = key; return;
     }
-    if (!this.pfSched) this.pfSched = this.pfPlanes.map(() => ({ next: t + Math.random() * 4, start: -1e9 }));
+    if (!this.pfSched) this.pfSched = this.pfPlanes.map((_, i) => ({ next: t + i * 1.8 + Math.random() * 1.2, start: -1e9 }));
     let fl = this.pfSched.filter((s) => t - s.start < 4.4).length;
     const pfMax = window.innerWidth < 900 ? 3 : this.pfSched.length;
-    this.pfSched.forEach((s, si) => { if (si >= pfMax) return; if (t >= s.next && t - s.start > 7.2) { if (fl < 2) { s.start = t; s.next = t + 6 + Math.random() * 4; fl++; } else s.next = t + 0.4 + Math.random() * 0.8; } });
+    this.pfSched.forEach((s, si) => { if (si >= pfMax) return; if (t >= s.next && t - s.start > 7.2) { if (fl < 3) { s.start = t; s.next = t + 6 + Math.random() * 4; fl++; } else s.next = t + 0.4 + Math.random() * 0.8; } });
     this.pfSched.forEach((s, i) => {
       const T = t - s.start; if (T > 7.2 || T < 0) return;
       const ta = T <= 6.4 ? 1 : Math.max(0, 1 - (T - 6.4) / 0.6);
@@ -808,6 +880,60 @@ class Component extends DCLogic {
       if (T < 4.4) plane(this.pfPlanes[i], T);
     });
     this.pfDrawn = true;
+  };
+  // one beat: on send, the plane leaves the label, arcs once around the globe and flies off
+  spLoop = (now) => {
+    if (this.dead) return;
+    this.rafSB = requestAnimationFrame(this.spLoop);
+    const cv = this.spBeatRef.current; if (!cv) return;
+    const w = cv.clientWidth, hh = cv.clientHeight; if (!w || !hh) return;
+    const red = this.isReduced(), t = now / 1000, DUR = 4.4, FADE = 1.2;
+    const T = this.state.spSent && this.spT0 ? t - this.spT0 : -1, live = T >= 0 && !red && T < DUR + FADE;
+    const key = w + 'x' + hh + ':' + (T >= 0 ? 1 : 0) + (red ? 'r' : '') + (this.state.theme || '');
+    if (!live && this.sbDrawn === key) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1), CW = Math.round(w * dpr), CH = Math.round(hh * dpr);
+    if (cv.width !== CW || cv.height !== CH) { cv.width = CW; cv.height = CH; }
+    const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, hh);
+    this.sbDrawn = live ? null : key;
+    if (T < 0 || (!red && !live)) return;
+    const gc = this.cgRef.current; if (!gc) return;
+    const cr = cv.getBoundingClientRect(), gr = gc.getBoundingClientRect();
+    const gx = gr.left - cr.left + gr.width / 2, gy = gr.top - cr.top + gr.height / 2, Rg = Math.min(gr.height * 0.34, gr.width / 3.4);
+    const rx = Rg * 1.48, ry = Rg * 0.5, tl = -0.28, ct = Math.cos(tl), st = Math.sin(tl);
+    const ell = (th) => [gx + rx * Math.cos(th) * ct - ry * Math.sin(th) * st, gy + rx * Math.cos(th) * st + ry * Math.sin(th) * ct, Math.sin(th)];
+    const ink = this.effDark('light') ? 'rgba(236,234,228,' : 'rgba(22,23,27,';
+    const sp = this.pfSprite(), sc = w >= 900 ? 0.9 : 0.7;
+    const hidden = (p) => p[2] < 0 && Math.hypot(p[0] - gx, p[1] - gy) < Rg;
+    const plane = (x, y, an, a) => { g.save(); g.globalAlpha = a; g.translate(x, y); g.rotate(an); g.scale(sc, Math.cos(an) < 0 ? -sc : sc); g.imageSmoothingEnabled = false; g.drawImage(sp, -36, -22); g.restore(); };
+    if (red) {
+      g.fillStyle = ink + '0.26)';
+      for (let th = 0.1; th < Math.PI * 0.62; th += 0.05) { const p = ell(th); g.fillRect(Math.round(p[0]) - 1, Math.round(p[1]) - 1, 2, 2); }
+      const p = ell(Math.PI * 0.7), q = ell(Math.PI * 0.71); plane(p[0], p[1], Math.atan2(q[1] - p[1], q[0] - p[0]), 1); return;
+    }
+    const pk = w + 'x' + hh + ':' + Math.round(gx) + ',' + Math.round(gy);
+    if (!this.spPath || this.spPath.k !== pk) {
+      const P0 = this.spFrom || [w * 0.75, hh * 0.85];
+      let th0 = Math.PI / 2, bd = 1e9;
+      for (let i = 0; i < 96; i++) { const th = (i / 96) * Math.PI * 2, p = ell(th); if (p[2] < 0.15) continue; const d = Math.hypot(p[0] - P0[0], p[1] - P0[1]); if (d < bd) { bd = d; th0 = th; } }
+      const E0 = ell(th0), C = [(P0[0] + E0[0]) / 2, Math.min(P0[1], E0[1]) - Math.max(60, bd * 0.4)];
+      const pts = [];
+      for (let i = 0; i <= 40; i++) { const u = i / 40, q = 1 - u; pts.push([q * q * P0[0] + 2 * q * u * C[0] + u * u * E0[0], q * q * P0[1] + 2 * q * u * C[1] + u * u * E0[1], 1]); }
+      const tg = ell(th0 + 0.02), dir = (tg[0] - E0[0]) * (E0[0] - C[0]) + (tg[1] - E0[1]) * (E0[1] - C[1]) >= 0 ? 1 : -1;
+      for (let i = 1; i <= 180; i++) pts.push(ell(th0 + dir * (i / 180) * Math.PI * 2.1));
+      const A = pts[pts.length - 1], B = pts[pts.length - 2], an = Math.atan2(A[1] - B[1], A[0] - B[0]);
+      for (let i = 1; i <= 40; i++) pts.push([A[0] + Math.cos(an) * i * 14, A[1] + Math.sin(an) * i * 14 - i * i * 0.4, 1]);
+      const cum = [0]; for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+      const dots = []; for (let d = 6; d < cum[cum.length - 1]; d += 10) { let i = 1; while (cum[i] < d) i++; const f = (d - cum[i - 1]) / (cum[i] - cum[i - 1] || 1), a0 = pts[i - 1], a1 = pts[i]; dots.push([a0[0] + (a1[0] - a0[0]) * f, a0[1] + (a1[1] - a0[1]) * f, a1[2], d]); }
+      this.spPath = { k: pk, pts, cum, L: cum[cum.length - 1], dots };
+    }
+    const P = this.spPath, u = Math.min(1, T / DUR), e = 0.5 - 0.5 * Math.cos(Math.PI * u), dist = e * P.L * 0.999, fa = T > DUR ? 1 - (T - DUR) / FADE : 1;
+    P.dots.forEach((d) => { if (d[3] > dist - 16) return; const hid = hidden(d); g.fillStyle = ink + ((hid ? 0.07 : 0.26) * fa).toFixed(3) + ')'; g.fillRect(Math.round(d[0]) - 1, Math.round(d[1]) - 1, 2, 2); });
+    if (T < DUR) {
+      let i = 1; while (i < P.cum.length - 1 && P.cum[i] < dist) i++;
+      const a0 = P.pts[i - 1], a1 = P.pts[i], f = (dist - P.cum[i - 1]) / (P.cum[i] - P.cum[i - 1] || 1), x = a0[0] + (a1[0] - a0[0]) * f, y = a0[1] + (a1[1] - a0[1]) * f;
+      const pa = (hidden([x, y, a1[2]]) ? 0.2 : 1) * (u > 0.88 ? Math.max(0, 1 - (u - 0.88) / 0.12) : 1);
+      plane(x, y, Math.atan2(a1[1] - a0[1], a1[0] - a0[0]), pa);
+    }
   };
 
   initFloor() {
@@ -1747,14 +1873,17 @@ class Component extends DCLogic {
         if (this.stkVisible) this.stkKick();
       }), { threshold: [0, 0.5] });
       this.ioSt.observe(sec);
+      this.ioStL = new IntersectionObserver((es) => es.forEach((en) => {
+        if (!en.isIntersecting) return; const i = +en.target.dataset.stkline;
+        this.setState((st) => ({ stkL: { ...(st.stkL || {}), [i]: true } })); this.ioStL.unobserve(en.target);
+      }), { threshold: 0.35, rootMargin: '0px 0px -8% 0px' });
+      sec.querySelectorAll('[data-stkline]').forEach((el) => this.ioStL.observe(el));
     } else { this.stkVisible = true; this.startStakes(); }
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (this.dead) return; this.stkPaper = null; this.layoutStakes(); });
   }
   startStakes() {
     this.stkStarted = true; this.stkEl = 0;
     if (this.isReduced()) { this.setState({ stkLines: 3, stkCta: true }); this.stkDraw(); return; }
-    this.setState({ stkLines: 1 });
-    this.stkTimers = [450, 900].map((ms, i) => setTimeout(() => { if (!this.dead) this.setState({ stkLines: i + 2 }); }, ms));
     this.stkKick();
   }
   stkKick = () => { if (this.isReduced()) { this.stkDraw(); return; } if (this.rafSt || !this.stkVisible || this.stkDone) return; this.stkLast = performance.now(); this.rafSt = requestAnimationFrame(this.stkLoop); };
@@ -2496,6 +2625,7 @@ class Component extends DCLogic {
     const drops = Array.from(sec.querySelectorAll('[data-prstack]')).map((st) => Array.from(st.querySelectorAll('img[data-prdrop]')));
     const msgs = Array.from(sec.querySelectorAll('[data-chat]')), typing = sec.querySelector('[data-chattyping]'), comp = sec.querySelector('[data-composer]'), ph = sec.querySelector('[data-composerph]');
     const rd = () => this.isReduced();
+    if (!typing || !comp) return;
     const showAll = () => { msgs.forEach((m) => { m.style.display = ''; m.style.opacity = '1'; }); typing.style.display = 'none'; comp.textContent = ''; ph.style.display = ''; };
     if (rd()) showAll(); else { msgs.forEach((m) => { m.style.display = 'none'; }); drops.flat().forEach((im) => { im.style.opacity = '0'; }); }
     let dropped = false, chatOn = false, step = 0;
@@ -2516,7 +2646,7 @@ class Component extends DCLogic {
       else if (e.isIntersecting && !e.target.dataset.dropped) { e.target.dataset.dropped = '1'; const list0 = Array.from(e.target.querySelectorAll('img[data-prdrop]')); if (rd()) { list0.forEach((im) => { im.style.opacity = '1'; }); return; }
         [list0].forEach((list) => list.forEach((im, i) => { im.animate([{ opacity: 0, transform: 'translateY(-46px)' }, { opacity: 1, transform: 'translateY(2px)', offset: 0.75 }, { opacity: 1, transform: 'none' }], { duration: 460, delay: 120 + i * 170, easing: 'cubic-bezier(.4,0,.6,1)', fill: 'backwards' }); im.style.opacity = '1'; })); }
     }), { threshold: 0.25 });
-    this.prIO.observe(sec.querySelector('[data-chatlog]'));
+    const cl = sec.querySelector('[data-chatlog]'); if (cl) this.prIO.observe(cl);
     sec.querySelectorAll('[data-prstack]').forEach((st) => this.prIO.observe(st));
   }
   submitForm = (e) => { e.preventDefault(); this.setState({ sent: true }); };
@@ -3259,10 +3389,18 @@ class Component extends DCLogic {
       mqAnim: this.isReduced() ? 'none' : 'esMarquee 52s linear infinite',
       mqPlayState: this.state.mqHover ? 'paused' : 'running',
       mqPause: () => this.setState({ mqHover: true }), mqPlay: () => this.setState({ mqHover: false }),
-      cgRef: this.cgRef, pfPlaneRef: this.pfPlaneRef,
+      cgRef: this.cgRef, pfPlaneRef: this.pfPlaneRef, p3Ref: this.p3Ref, flowSvgRef: this.flowSvgRef, flowDotRef: this.flowDotRef, flowPaths: this.state.flowPaths || [],
+      flowCols: wide ? 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)', flowGap: wide ? '24px clamp(48px,7vw,120px)' : '44px', flowSrcDir: wide ? 'column' : 'row', flowOutJ: wide ? 'end' : 'center', p3Flex: wide ? '0 0 auto' : '1 1 100%',
+      p3Steps: ['Forward an invoice or connect your inbox', 'Stockbot learns how you buy', 'You approve by text'].map((t, i) => { const on = red || (this.state.p3 || 0) > i; return { t, n: '0' + (i + 1), arrow: wide && i < 2, op: 1, bd: 'rgb(22 23 27 / 0.22)', dot: on ? '#08745A' : '#E2DDD2', dotSh: on ? '0 0 0 1.5px rgba(8,116,90,0.22),0 1px 1.5px rgba(0,0,0,0.3)' : 'inset 0 1px 1.5px rgba(0,0,0,0.28)', tr: red ? 'none' : 'opacity 360ms cubic-bezier(.2,.8,.25,1), border-color 360ms cubic-bezier(.2,.8,.25,1), background-color 360ms, box-shadow 360ms' }; }),
+      ...(() => { const cs = (on) => ({ on: on ? 'true' : 'false', bg: on ? '#1A1B1F' : 'transparent', col: on ? '#F4F1EA' : '#1A1B1F', bd: on ? '#1A1B1F' : 'rgba(26,27,31,0.32)' }), wh = this.state.spWhere || [];
+        return { spSubmit: this.spSubmit, spOnFile: this.spOnFile, spSent: !!this.state.spSent, spNotSent: !this.state.spSent, spFileHint: this.state.spFile || 'PDF, photo or spreadsheet',
+          spWhere: ['Shopify', 'Etsy', 'Amazon', 'Wholesale', 'Other'].map((t) => ({ t, ...cs(wh.includes(t)), pick: () => this.setState((s) => { const a = s.spWhere || []; return { spWhere: a.includes(t) ? a.filter((x) => x !== t) : a.concat(t) }; }) })),
+          spTrack: ['Spreadsheet', 'Shopify', 'ERP', 'My head'].map((t) => ({ t, ...cs(this.state.spTrack === t), pick: () => this.setState((s) => ({ spTrack: s.spTrack === t ? '' : t })) })) }; })(),
       birdIn: () => { this.birdHover = true; }, birdOut: () => { this.birdHover = false; },
       openAccess: this.openAccess, openFounding: this.openFounding, closeAccess: this.closeAccess, submitAccess: this.submitAccess, goPF: this.goPF,
       pickEarly: () => this.setState({ plan: 'early' }), pickFounding: () => this.setState({ plan: 'founding' }),
+      ...(() => { const k = this.state.modal || 'plan', nar = window.innerWidth < 640, sent = !!this.state.mSent, M = { plan: ['Get your free Stock Plan', 'Free · 1 page', 'Stock Plan · Chicago', 'Send my Stock Plan', 'On its way. Expect your plan within 2 business days.'], early: ['Get early access', 'Early access', 'Early access · Chicago', 'Get early access', 'You\'re on the list.'], demo: ['Book a demo', '30 min', 'Demo · Chicago', 'Book my demo', 'Request received. Look for a calendar invite by email.'] }[k];
+        return { mIsPlan: k === 'plan', mIsEarly: k === 'early', mIsDemo: k === 'demo', mTitle: M[0], mBadge: M[1], mCode: M[2], mSubmitLabel: M[3], mDone: M[4], mSent: sent, mNotSent: !sent, mPlace: nar ? 'end stretch' : 'center', mPad: nar ? '0' : '20px', mW: nar ? '100%' : 'min(560px,100%)', mRad: nar ? '12px 12px 0 0' : '3px', mMaxH: nar ? '92svh' : 'calc(100svh - 40px)', mKey: this.mKey, mSubmit: this.mSubmit, mFormRef: this.mFormRef, mPlaneRef: this.mPlaneRef, spBeatRef: this.spBeatRef }; })(),
       modal: !!this.state.modal, accForm: !this.state.accSent, accSent: !!this.state.accSent,
       accEyebrow: this.state.plan === 'demo' ? '30 minutes with the founders' : 'Founding partner access',
       accPlanName: this.state.plan === 'demo' ? 'a demo' : 'the founding partner waitlist',
@@ -3272,7 +3410,7 @@ class Component extends DCLogic {
       mbarShow: !wide && !!this.state.heroCtaOut && !this.state.pfVis && !this.state.ctaVis && !this.state.modal,
       valLinkOp: this.state.active >= 3 ? 1 : 0, valLinkPE: this.state.active >= 3 ? 'auto' : 'none',
       ttlBoxRef: this.ttlBoxRef, titleRef: this.titleRef, sheenRef: this.sheenRef, traceRef: this.traceRef,
-      heroPad: wide ? '120px max(clamp(20px,4vw,40px), calc((100% - 1280px) / 2 + clamp(20px,4vw,40px))) 96px ' + (this.state.edge || this.edgeFor()) + 'px' : '112px 20px 44svh',
+      heroPad: wide ? '120px var(--edge) 96px' : '112px 20px 44svh',
       toggleMenu: this.toggleMenu, closeMenu: this.closeMenu, navMenuOpen: !wide && !!this.state.navMenu, navMenuAria: !wide && !!this.state.navMenu ? 'true' : 'false',
       mnTop: this.state.navMenu ? 'translateY(5px) rotate(45deg)' : 'none', mnBot: this.state.navMenu ? 'translateY(-5px) rotate(-45deg)' : 'none', mnMidO: this.state.navMenu ? 0 : 1,
       navPad: wide ? '0 ' + (this.state.edge || this.edgeFor()) + 'px' : '0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left))',
@@ -3307,7 +3445,7 @@ class Component extends DCLogic {
       narrow: !wide,
       footStampR: wide ? '-12px' : '10px', footColW: wide ? 'auto' : '100%',
       ...(this.state.phone ? { footCols: 'minmax(0,1fr)', footA1: '1 / 1 / 2 / 2', footA2: '2 / 1 / 3 / 2', footA4: '3 / 1 / 4 / 2', footA3: '4 / 1 / 5 / 2', footArtJs: 'center', footArtMt: '40px', footArtMr: '0' }
-        : { footCols: 'minmax(0,1fr) auto', footA1: '1 / 1 / 2 / 2', footA2: '2 / 1 / 3 / 2', footA4: '1 / 2 / 3 / 3', footA3: '3 / 1 / 4 / 3', footArtJs: 'end', footArtMt: '0', footArtMr: 'clamp(0px,4vw,64px)' }), footBtnFlex: wide ? '0 0 auto' : '1 1 100%', footNavDisp: wide ? 'flex' : 'grid', footNavGap: wide ? '12px 28px' : '0 16px',
+        : { footCols: 'auto auto', footA1: '1 / 1 / 2 / 2', footA2: '2 / 1 / 3 / 2', footA4: '1 / 2 / 2 / 3', footA3: '3 / 1 / 4 / 3', footArtJs: 'start', footArtMt: '-52px', footArtMr: '0' }), footBtnFlex: wide ? '0 0 auto' : '1 1 100%', footNavDisp: wide ? 'flex' : 'grid', footNavGap: wide ? '12px 28px' : '0 16px',
       formW: wide ? '500px' : '100%', formMl: wide ? 'max(0px, min(50%, calc(100% + 16px - 500px)))' : '0',
       offColDisp: wide ? 'grid' : 'contents', offO1: wide ? 0 : 1, offO2: wide ? 0 : 2, offO3: wide ? 0 : 3,
       whyTagDisp: wide ? 'flex' : 'grid', whyTagGap: wide ? '22px' : '10px', whyTagWs: wide ? 'nowrap' : 'normal',
@@ -3323,12 +3461,12 @@ class Component extends DCLogic {
       wCtaTf: red || this.state.whyCta ? 'translateY(0px)' : 'translateY(10px)', wCtaTr: red ? 'none' : 'opacity 520ms cubic-bezier(.2,.8,.25,1), transform 520ms cubic-bezier(.2,.8,.25,1)',
       stkCtaRef: this.stkCtaRef, stkCtaOp: red || this.state.stkCta ? 1 : 0, stkCtaPE: red || this.state.stkCta ? 'auto' : 'none', stkCtaTf: red || this.state.stkCta ? 'translateY(0px)' : 'translateY(12px)', stkCtaTab: red || this.state.stkCta ? 0 : -1,
       stkCvRef: this.stkCvRef, stkL2Ref: this.stkL2Ref, stkL3Ref: this.stkL3Ref,
-      stakesPad: wide ? '0 clamp(20px,4vw,40px)' : '100px 20px 0',
+      stakesPad: wide ? 'clamp(48px,7svh,80px) var(--edge) clamp(96px,14svh,150px)' : '56px var(--edge) 300px',
       stakesJustify: wide ? 'center' : 'flex-start',
       stMax: wide ? 'min(44vw,560px)' : '100%',
       stTr: red ? 'none' : 'opacity 620ms cubic-bezier(.2,.8,.25,1), transform 620ms cubic-bezier(.2,.8,.25,1)',
-      ...[0, 1, 2].reduce((o, i) => {
-        const on = red || i < (this.state.stkLines || 0);
+      ...[0, 1, 2, 3].reduce((o, i) => {
+        const on = red || i === 0 || !!(this.state.stkL || {})[i] || !('IntersectionObserver' in window);
         o['so' + i] = on ? 1 : 0;
         o['st' + i] = on ? 'translateY(0px)' : 'translateY(18px)';
         return o;
@@ -3362,7 +3500,7 @@ class Component extends DCLogic {
       xfade: red ? 'none' : 'opacity 520ms cubic-bezier(.2,.8,.25,1)',
       labHead: this.state.labHead, labPart: this.state.labPart, labFits: this.state.labFits, labFrom: this.state.labFrom,
       stampOp: this.state.stampOn ? 1 : 0,
-      stampTf: this.state.stampOn ? 'rotate(-6deg) scale(1)' : 'rotate(-6deg) scale(1.3)',
+      stampTf: this.state.stampOn ? 'translate(6px,16px) rotate(-6deg) scale(1)' : 'translate(6px,16px) rotate(-6deg) scale(1.3)',
       stampTr: red ? 'none' : 'opacity 140ms cubic-bezier(.2,.8,.25,1), transform 220ms cubic-bezier(.2,.8,.25,1)',
       indStageRef: this.indStageRef, indBoxWrapRef: this.indBoxWrapRef, indBoxRef: this.indBoxRef, indLabelRef: this.indLabelRef,
       videoRef: this.videoRef, toggleVideo: this.toggleVideo, videoLabel: this.state.videoOn ? 'Pause' : 'Play',

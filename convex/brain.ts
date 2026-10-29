@@ -99,7 +99,7 @@ export function pageFor(r: Doc<"accessRequests">): Page {
   const content = [
     `*Inbound access request from tryeverstock.com, received ${when(r.createdAt)}. Synced automatically by the landing site; the status is edited in the landing site's Convex dashboard and this page mirrors the latest submission.*`,
     ``,
-    `**${r.name}** at **${r.company}** ${r.source === "book-demo" ? "booked a demo" : r.source === "waitlist" ? "joined the waitlist" : "asked for founding-partner access"}.`,
+    `**${r.name}** at **${r.company}** ${r.source === "book-demo" ? "booked a demo" : r.source === "waitlist" ? "joined the waitlist" : r.source === "stock-plan" ? "asked for a free Stock Plan" : "asked for founding-partner access"}.`,
     ``,
     ...facts,
     ...(r.note ? [``, `## What they want off their desk`, ``, `> ${r.note.replace(/\r?\n/g, "\n> ")}`] : []),
@@ -116,9 +116,10 @@ export function pageFor(r: Doc<"accessRequests">): Page {
       "inbound",
       "access-request",
       ...(r.source === "book-demo" ? ["book-demo"] : []),
+      ...(r.source === "stock-plan" ? ["stock-plan"] : []),
       ...(r.waitlist || r.source === "waitlist" ? ["waitlist"] : []),
       // older rows came from the founding-partner form itself; newer ones answer the question
-      ...(r.foundingInterest ?? (r.source !== "book-demo" && r.source !== "waitlist") ? ["founding-partner"] : []),
+      ...(r.foundingInterest ?? (r.source !== "book-demo" && r.source !== "waitlist" && r.source !== "stock-plan") ? ["founding-partner"] : []),
       r.stack,
       `status-${r.status}`,
     ],

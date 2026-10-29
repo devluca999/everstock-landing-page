@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 /* Pricing, ported from Claude Design ("Everstock site" → Pricing.dc.html). The source
-   of truth is mockup/v8/; regenerate components/pricing/generated with `npm run port`.
+   of truth is mockup/v9/; regenerate components/pricing/generated with `npm run port`.
    It links to the home page with plain anchors (full loads), so each page only ever
    has its own design CSS. */
 export default function Pricing() {

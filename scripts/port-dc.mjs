@@ -2,7 +2,7 @@
 /**
  * Ports a Claude Design `.dc.html` page into the Next.js app without retyping it.
  *
- *   node scripts/port-dc.mjs v8|pricing   (see PAGES below; `npm run port` runs both)
+ *   node scripts/port-dc.mjs v9|pricing   (see PAGES below; `npm run port` runs both)
  *
  * The design runs on the dc-runtime (support.js): a template compiled at runtime into
  * React elements, driven by a logic class. This script does the compile step ahead of
@@ -104,14 +104,27 @@ const MARQUEE_DAYS = {
   find: "'Live in two weeks'",
   replace: "'Live in a few days'",
 };
+// v9's forms (the Stock Plan card and the plan / early access / demo modal) post through
+// components/v9/DcPage.jsx; these two template patches are what the site needs around them.
+const NO_INVOICE_DROP = {
+  why: "Forms: 'Drop an invoice' is left out of both Stock Plan forms until the site can store files (the request route takes JSON only, so an upload would be silently lost)",
+  find: /\n *<label style="position:relative;display:flex;align-items:center;justify-content:space-between;[^\n]*?Drop an invoice[^\n]*?<\/label>/g,
+  count: 2,
+  replace: "",
+};
+const FORM_HONEYPOT = {
+  why: "Forms: the request route's honeypot field, last in both v9 forms (the modal focuses its first input)",
+  find: "</form>",
+  count: 2,
+  replace: '<input name="website" type="text" tabIndex="-1" autoComplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"></form>',
+};
 const PAGES = {
-  // the home page (Claude Design "Everstock v8.dc.html")
-  v8: {
-    src: "mockup/v8/Everstock v8.dc.html",
-    runtime: "mockup/v8/support.js",
-    out: "components/v8/generated",
+  // the home page (Claude Design "Everstock v9.dc.html")
+  v9: {
+    src: "mockup/v9/Everstock v9.dc.html",
+    runtime: "mockup/v9/support.js",
+    out: "components/v9/generated",
     logicPatches: [
-      accessFocus(1),
       MARQUEE_DAYS,
       {
         why: "Plan autoplays: the section is no longer pinned for 2-2.5 screens of scroll; it sits in the flow like the others",
@@ -136,14 +149,19 @@ const PAGES = {
     ],
     templatePatches: [
       {
-        why: "Structure: v8 closes the root div right before </main>, so the footer, the phone bar and the modal render outside it (and lose its Space Grotesk, falling back to Times); the root closes at the end, as in v5",
+        why: "Structure: v8/v9 close the root div right before </main>, so the footer, the phone bar and the modal render outside it (and lose its Space Grotesk, falling back to Times); the root closes at the end, as in v5",
         find: "\n</div>\n</main>\n\n<footer id=\"cta\"",
         replace: "\n</main>\n\n<footer id=\"cta\"",
       },
       NO_LEGAL_NAV,
-      ACCESS_FIELDS,
-      ACCESS_STEPS,
       FOOTER_FEEDBACK,
+      NO_INVOICE_DROP,
+      FORM_HONEYPOT,
+      {
+        why: "Links: the footer's 'How it works' points at #how-it-works, which v9 hides; the top nav's goes to #workflows, so this one does too",
+        find: 'href="#how-it-works"',
+        replace: 'href="#workflows"',
+      },
     ],
     hrefBindings: {
       ...CTA_BINDINGS,
@@ -153,8 +171,8 @@ const PAGES = {
   },
   // /pricing (Claude Design "Pricing.dc.html")
   pricing: {
-    src: "mockup/v8/Pricing.dc.html",
-    runtime: "mockup/v8/support.js",
+    src: "mockup/v9/Pricing.dc.html",
+    runtime: "mockup/v9/support.js",
     out: "components/pricing/generated",
     logicPatches: [
       accessFocus(2),
@@ -180,10 +198,10 @@ const PAGES = {
     bakes: [{ method: "paintStack", png: "public/pricing/stack-{hash}.png" }],
     hrefBindings: {
       ...CTA_BINDINGS,
-      "Everstock%20v8.dc.html": "/",
+      "Everstock%20v9.dc.html": "/",
       // v8 hides #how-it-works; its own nav sends "How it works" to #workflows
-      "Everstock%20v8.dc.html#how-it-works": "/#workflows",
-      "Everstock%20v8.dc.html#industries": "/#industries",
+      "Everstock%20v9.dc.html#how-it-works": "/#workflows",
+      "Everstock%20v9.dc.html#industries": "/#industries",
     },
   },
 };

@@ -1,19 +1,19 @@
 "use client";
 
 /**
- * Everstock v8 (the home page), hosted by components/dc/host.jsx. The page's CSS (helmet,
+ * Everstock v9 (the home page), hosted by components/dc/host.jsx. The page's CSS (helmet,
  * pseudo-classes, host) is imported by app/page.tsx so it is in the first HTML
  * response, before this client-only chunk arrives.
  *
  * Site-side wiring on top of the design's logic (the design itself only flips its
  * forms to a local "sent" state):
  * - CTA destinations come from lib/cta.ts: the template's hrefs are bound to the
- *   cta*Href render values below. "Join the waitlist" opens the modal in founding
- *   partner mode; "Book a demo" goes to the booking URL once set, else the demo modal.
- * - The waitlist / Book a demo modal posts to /api/request-access → Convex, then asks its
- *   follow-up questions (components/dc/accessFlow.js).
- * - The closing Book a demo card validates the email, shows its RECEIVED stamp, then
- *   opens the booking link (recording the email first) or the demo modal prefilled.
+ *   cta*Href render values below. "Book a demo" goes to the booking URL once set, else
+ *   the demo modal; "Get early access" opens the modal in early access (waitlist) mode.
+ * - v9's forms (the Stock Plan card and the plan / early access / demo modal) post to
+ *   /api/request-access → Convex before showing the design's sent state. The fields the
+ *   route has no column for (what they sell, where, how they track, what to look at)
+ *   travel in the note.
  * - Below-the-fold paints are deferred until their section is half a screen away
  *   (see DEFERRED), so the first load does not pay for the whole page at once.
  */
@@ -22,31 +22,64 @@ import defineLogic from "./generated/logic";
 import tree from "./generated/template.json";
 import defaults from "./generated/props.json";
 import { createDcPage, sendRequest } from "../dc/host";
-import { submitAccess as sendAccess, accessVals } from "../dc/accessFlow";
 import { CTA } from "@/lib/cta";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const pageLoadedAt = typeof performance !== "undefined" ? performance.now() : 0;
 
-const NOTES = { demo: "Book a demo", waitlist: "Waitlist" };
-// the design calls the waitlist mode "founding"; the site's forms say waitlist
-const planOf = (state) => (state.plan === "demo" ? "demo" : "waitlist");
-const CARD_NOTE = "Book a demo card";
+// modal mode (or the Stock Plan card) → how the row is stored
+const KINDS = {
+  plan: { source: "stock-plan", note: "Stock Plan" },
+  early: { source: "waitlist", note: "Early access", waitlist: true },
+  demo: { source: "book-demo", note: "Book a demo" },
+};
 
-/* Sets the modal's email once it has rendered (the input is uncontrolled). */
-function prefillModalEmail(email) {
-  let tries = 0;
-  const tick = () => {
-    const input = document.getElementById("acc-email");
-    if (input) {
-      if (!input.value) input.value = email;
-      const name = input.form && input.form.elements.namedItem("name");
-      if (name && name.focus) name.focus();
-      return;
+/* Reads and checks a v9 form; flags the first problem on its field and returns null. */
+function readForm(form, state) {
+  const field = (n) => form.elements.namedItem(n);
+  const val = (n) => String((field(n) && field(n).value) || "").trim();
+  const flag = (n, msg) => {
+    const input = field(n);
+    if (input && input.setCustomValidity) {
+      input.setCustomValidity(msg);
+      input.reportValidity();
+      form.addEventListener("input", () => input.setCustomValidity(""), { once: true });
     }
-    if (++tries < 90) requestAnimationFrame(tick);
+    return null;
   };
-  requestAnimationFrame(tick);
+  const name = val("name");
+  const email = val("email");
+  if (name.length < 2) return flag("name", "Add your name.");
+  if (!EMAIL.test(email)) return flag("email", "Enter an email like you@company.com.");
+  // the where / track choices are shared state; only a form that shows them sends them
+  const has = (group) => !!form.querySelector(`[role="group"][aria-labelledby$="-${group}"]`);
+  const where = has("where") ? (state.spWhere || []).join(", ") : "";
+  const track = has("track") ? state.spTrack : "";
+  const extra = [
+    val("sell") && `Sells: ${val("sell")}`,
+    where && `Sells on: ${where}`,
+    track && `Tracks inventory in: ${track}`,
+    val("look") && `Look at: ${val("look")}`,
+  ].filter(Boolean);
+  return { name, email, company: val("company"), website: val("website"), extra };
+}
+
+function send(data, kind, elapsed) {
+  const k = KINDS[kind];
+  return sendRequest(
+    {
+      name: data.name,
+      email: data.email,
+      company: data.company,
+      website: data.website, // honeypot, checked by the route
+      stack: "other",
+      source: k.source,
+      waitlist: k.waitlist,
+      note: [k.note, ...data.extra].join("\n"),
+      elapsed,
+    },
+    "v9"
+  );
 }
 
 /* The design paints every section's sprites and canvases in componentDidMount (about
@@ -76,8 +109,8 @@ const extend = (DesignLogic) =>
     constructor(props) {
       super(props);
       const openDemo = this.openDemo;
-      const submitAccess = this.submitAccess;
-      const submitForm = this.submitForm;
+      const mSubmit = this.mSubmit;
+      const spSubmit = this.spSubmit;
 
       // readiness is per instance (DEFERRED is shared module state)
       const io = typeof IntersectionObserver !== "undefined";
@@ -91,19 +124,6 @@ const extend = (DesignLogic) =>
         };
       }
 
-      const opened = () => {
-        this.accOpenedAt = performance.now();
-        this.fromCard = false;
-      };
-      // "Join the waitlist" is now a stamped primary CTA, so it opens the way the design's
-      // openDemo does (closes the phone menu, waits for the tap stamp), in founding mode
-      this.openFounding = (e) => {
-        if (e && e.preventDefault) e.preventDefault();
-        this.accReturn = document.activeElement;
-        this.setState({ navMenu: false });
-        opened();
-        this.openLater(() => this.setState({ modal: true, plan: "founding", accSent: false }));
-      };
       this.openDemo = (e) => {
         if (CTA.bookDemo.externalUrl) {
           // opened synchronously (not after the tap stamp) so it is not popup-blocked
@@ -112,49 +132,33 @@ const extend = (DesignLogic) =>
           window.open(CTA.bookDemo.externalUrl, "_blank", "noopener,noreferrer");
           return;
         }
-        opened();
         openDemo(e);
       };
 
-      this.submitAccess = (e) => {
-        const plan = planOf(this.state);
-        sendAccess(this, e, {
-          plan,
-          note: this.fromCard && plan === "demo" ? CARD_NOTE : NOTES[plan],
-          elapsed: performance.now() - (this.accOpenedAt || pageLoadedAt),
-          tag: "v8",
-          designSubmit: submitAccess,
-        });
+      // the modal (plan / early access / demo)
+      this.mSubmit = (e) => {
+        e.preventDefault();
+        if (this.state.mSent) return;
+        const data = readForm(e.currentTarget, this.state);
+        if (!data) return;
+        send(data, this.state.modal || "plan", performance.now() - (this.accOpenedAt || pageLoadedAt));
+        mSubmit(e);
       };
+      // the Stock Plan card in its section
+      this.spSubmit = (e) => {
+        e.preventDefault();
+        if (this.state.spSent) return;
+        const data = readForm(e.currentTarget, this.state);
+        if (!data) return;
+        send(data, "plan", performance.now() - pageLoadedAt);
+        spSubmit(e);
+      };
+    }
 
-      // the closing Book a demo card (the design's records form, patched)
-      this.submitForm = (e) => {
-        const form = e.currentTarget;
-        const input = form.elements.namedItem("email");
-        const email = String((input && input.value) || "").trim();
-        if (!EMAIL.test(email)) {
-          e.preventDefault();
-          if (input && input.setCustomValidity) {
-            input.setCustomValidity("Enter an email, like you@company.com.");
-            input.reportValidity();
-            input.addEventListener("input", () => input.setCustomValidity(""), { once: true });
-          }
-          return;
-        }
-        submitForm(e); // the design's RECEIVED state
-        if (CTA.bookDemo.externalUrl) {
-          // record the email first: the booking tool is outside the site
-          sendRequest({ email, stack: "other", source: "book-demo", note: CARD_NOTE, elapsed: performance.now() - pageLoadedAt }, "v8");
-          window.open(CTA.bookDemo.externalUrl, "_blank", "noopener,noreferrer");
-          return;
-        }
-        this.openDemo();
-        this.fromCard = true;
-        // the route's minimum-fill-time bot check counts from here; the visitor already
-        // filled the card, so the clock starts at page load, not at the modal
-        this.accOpenedAt = pageLoadedAt;
-        prefillModalEmail(email);
-      };
+    // every modal opener goes through mOpen; the route's minimum-fill-time check counts from here
+    mOpen(kind, e) {
+      this.accOpenedAt = performance.now();
+      super.mOpen(kind, e);
     }
 
     componentDidMount() {
@@ -165,8 +169,8 @@ const extend = (DesignLogic) =>
         this.watchDeferred();
       }
       // CTA links opened in a new tab, shared, or typed arrive as /#book-demo or
-      // /#waitlist (#access, #request: the older early-access links, which now mean the
-      // waitlist); they open what the click would have
+      // /#waitlist (#access, #request: the older early-access links); they open what the
+      // click would have
       this.onHash = () => {
         const h = location.hash;
         if (h === "#book-demo") {
@@ -231,11 +235,10 @@ const extend = (DesignLogic) =>
     renderVals() {
       return {
         ...super.renderVals(),
-        ...accessVals(this, planOf(this.state)),
         ctaWaitlistHref: CTA.waitlist.href,
         ctaBookDemoHref: CTA.bookDemo.href,
       };
     }
   };
 
-export default createDcPage({ name: "Everstock v8", tree, defaults, dcrt, defineLogic, extend });
+export default createDcPage({ name: "Everstock v9", tree, defaults, dcrt, defineLogic, extend });
