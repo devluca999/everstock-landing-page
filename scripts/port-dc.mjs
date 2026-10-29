@@ -181,7 +181,8 @@ const PAGES = {
     hrefBindings: {
       ...CTA_BINDINGS,
       "Everstock%20v8.dc.html": "/",
-      "Everstock%20v8.dc.html#how-it-works": "/#how-it-works",
+      // v8 hides #how-it-works; its own nav sends "How it works" to #workflows
+      "Everstock%20v8.dc.html#how-it-works": "/#workflows",
       "Everstock%20v8.dc.html#industries": "/#industries",
     },
   },
