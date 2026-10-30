@@ -226,6 +226,49 @@ class Component extends DCLogic {
     ];
     return this._wf;
   }
+  wfPanes(red, W, wf, ws, ST) {
+    const E = 'cubic-bezier(.2,.8,.25,1)', o = {};
+    W.forEach((w, p) => {
+      const act = p === wf, n = w.steps.length, k = red ? 99 : act ? ws : 0, on = (at) => red || k >= at;
+      const T = (s) => (red || !act ? 'none' : s);
+      // a value that lands when step 'at' starts (fades up into place), d = small stagger
+      const land = (at, d) => on(at) ? 'opacity:1;transform:none;transition:' + T('opacity 420ms ' + E + ' ' + d + 'ms,transform 520ms ' + E + ' ' + d + 'ms') : 'opacity:0;transform:translateY(6px);transition:none';
+      const v = {
+        pane: act ? 'visibility:visible;opacity:1;transition:' + T('opacity 320ms ' + E) : 'visibility:hidden;opacity:0;transition:none',
+        hid: act ? 'false' : 'true', desc: w.desc, stake: w.stake,
+        from: ['25 min', '45 min', '30 min', '1 hr'][p], to: ['40 sec', '2 min', '1 min', '3 min'][p]
+      };
+      for (let at = 0; at <= 6; at++) {
+        for (let d = 0; d < 4; d++) v['s' + at + (d ? 'd' + d : '')] = land(at, d * 120);
+        // the "Working" chip that a final word replaces
+        v['w' + at] = on(at) ? 'opacity:0;transition:' + T('opacity 240ms ' + E) : 'opacity:1;transition:none';
+        // the agent reading a field (blue), only while that step runs
+        v['hl' + at] = !red && act && k === at && at > 0 ? 'background-color:rgba(46,123,255,0.12);box-shadow:inset 2px 0 0 #2E7BFF' : 'background-color:transparent;box-shadow:inset 0 0 0 transparent';
+      }
+      v.mk3 = on(3) ? 'background-color:rgba(46,123,255,0.16);box-shadow:0 1.5px 0 #2E7BFF' : 'background-color:transparent;box-shadow:0 0 0 transparent';
+      for (let i = 0; i < 12; i++) v['ck' + i] = on(2) ? 'opacity:1;transform:none;transition:' + T('opacity 200ms ' + E + ' ' + (i * 70) + 'ms,transform 260ms ' + E + ' ' + (i * 70) + 'ms') : 'opacity:0;transform:scale(0.5);transition:none';
+      v.miss = on(3) ? 'border:1.5px dashed #B4441C;color:#B4441C' : 'border:1.5px dashed rgba(26,27,31,0.35);color:rgba(26,27,31,0.45)';
+      const stamp = (at, rot) => on(at) ? 'opacity:0.92;transform:rotate(' + rot + 'deg) scale(1);transition:' + T('opacity 160ms ease-out,transform 260ms cubic-bezier(.3,1.4,.5,1)') : 'opacity:0;transform:rotate(' + rot + 'deg) scale(1.4);transition:none';
+      v.stamp5 = stamp(5, -6); v.stamp3 = stamp(3, -4);
+      v.flag4 = on(4) ? 'background:rgba(232,161,58,0.09);box-shadow:inset 0 0 0 1px rgba(232,161,58,0.45);transition:' + T('background-color 400ms ' + E + ',box-shadow 400ms ' + E) : 'background:transparent;box-shadow:inset 0 0 0 1px transparent;transition:none';
+      v.ring3 = on(3) ? 'box-shadow:inset 0 0 0 1px rgba(232,161,58,0.4),0 26px 44px -24px rgba(0,0,0,0.8)' : 'box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 26px 44px -24px rgba(0,0,0,0.8)';
+      // the read pass over the invoice while "Reads the line items" runs
+      v.scan = !red && act && k === 2 ? 'top:100%;opacity:1;transition:top 950ms linear,opacity 160ms' : 'top:' + (on(3) ? '100%' : '0%') + ';opacity:0;transition:' + (on(3) ? T('opacity 240ms') : 'none');
+      v.draw = on(1) ? 'stroke-dashoffset:0;transition:' + T('stroke-dashoffset 1100ms ' + E) : 'stroke-dashoffset:1.05;transition:none';
+      v.area = on(1) ? 'opacity:1;transition:' + T('opacity 700ms ' + E + ' 400ms') : 'opacity:0;transition:none';
+      // the rail fills dot to dot, blue while it runs, green once every step is done
+      const pr = red || k > n ? 1 : Math.max(0, Math.min(1, (k - 1) / (n - 1))), done = red || k > n;
+      const fill = (ax) => 'transform:scale' + ax + '(' + pr + ');background:' + (done ? 'rgba(47,203,143,0.8)' : '#2E7BFF') + ';transition:' + T('transform 900ms ' + E + ',background-color 400ms ' + E);
+      v.fillH = fill('X'); v.fillV = fill('Y');
+      v.steps = w.steps.map((s, i) => {
+        let st = i < k - 1 || k > n ? 'done' : i === k - 1 ? 'active' : 'pending';
+        if (st === 'done' && s.flag) st = 'attn';
+        return { ...s, ...ST[st], dCol: st === 'active' ? '#8DB6FF' : 'rgba(242,241,237,0.64)' };
+      });
+      o['wp' + p] = v;
+    });
+    return o;
+  }
   v7Start() {
     this.v7vis = {}; this.v7auto = true;
     this.v7io = new IntersectionObserver((es) => es.forEach((e) => { this.v7vis[e.target.id] = e.isIntersecting; }), { threshold: 0.2 });
@@ -316,9 +359,10 @@ class Component extends DCLogic {
     });
     const wfTabs = W.map((w, i) => {
       const a = i === wf;
-      return { label: w.label, n: '0' + (i + 1), sel: a ? 'true' : 'false', bg: a ? 'rgb(var(--ink) / 0.06)' : 'transparent', bd: a ? 'rgb(var(--ink) / 0.16)' : 'transparent', col: a ? 'rgb(var(--ink))' : 'rgb(var(--ink) / 0.56)', numCol: a ? 'rgb(var(--ink) / 0.72)' : 'rgb(var(--ink) / 0.40)', pick: () => { this.v7auto = false; this.setState({ wf: i, ws: 0 }); } };
+      return { label: w.label, n: '0' + (i + 1), sel: a ? 'true' : 'false', bg: a ? 'rgb(var(--ink) / 0.06)' : 'transparent', bd: a ? 'rgb(var(--ink) / 0.16)' : 'transparent', col: a ? 'rgb(var(--ink))' : 'rgb(var(--ink) / 0.56)', numCol: a ? 'rgb(var(--ink) / 0.72)' : 'rgb(var(--ink) / 0.40)', bar: a && this.v7auto && !red ? 'opacity:1;transform:scaleX(' + Math.min(1, ws / (n + 3)) + ');transition:' + (ws ? 'transform 1000ms linear' : 'none') : 'opacity:0;transform:scaleX(0);transition:none', pick: () => { this.v7auto = false; this.setState({ wf: i, ws: 0 }); } };
     });
-    return { ...trs, wfI0: wf === 0, wfI1: wf === 1, wfI2: wf === 2, wfI3: wf === 3, wfFrom: ['25 min', '45 min', '30 min', '1 hr'][wf], wfTo: ['40 sec', '2 min', '1 min', '3 min'][wf], th1o: o(1), th1t: tf(1), th2o: o(2), th2t: tf(2), th3o: o(3), th3t: tf(3), th4o: o(4), th4t: tf(4), apBg: on(3) ? '#1A1B1F' : 'transparent', apCol: on(3) ? '#FAF7F1' : '#1A1B1F', hoOp: on(3) ? 0.4 : 1, wfTabs, wfSteps, wfDesc: cur.desc, wfStake: cur.stake };
+    const wpx = this.wfPanes(red, W, wf, ws, ST);
+    return { ...trs, ...wpx, wfI0: wf === 0, wfI1: wf === 1, wfI2: wf === 2, wfI3: wf === 3, wfFrom: ['25 min', '45 min', '30 min', '1 hr'][wf], wfTo: ['40 sec', '2 min', '1 min', '3 min'][wf], th1o: o(1), th1t: tf(1), th2o: o(2), th2t: tf(2), th3o: o(3), th3t: tf(3), th4o: o(4), th4t: tf(4), apBg: on(3) ? '#1A1B1F' : 'transparent', apCol: on(3) ? '#FAF7F1' : '#1A1B1F', hoOp: on(3) ? 0.4 : 1, wfTabs, wfSteps, wfDesc: cur.desc, wfStake: cur.stake };
   }
   isReduced() {
     const m = this.props.motion ?? 'auto';
