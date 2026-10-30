@@ -1,0 +1,170 @@
+[
+  {
+    "id": "top",
+    "footer": false,
+    "blocks": [
+      {
+        "h": 1,
+        "text": "Stay in stock with Everstock."
+      },
+      {
+        "p": "Purchase orders, supplier follow-ups and invoice matching handle themselves. You approve the exceptions."
+      }
+    ]
+  },
+  {
+    "id": "integrations",
+    "footer": false,
+    "blocks": [
+      {
+        "p": "Built for sellers on Shopify, Etsy, and wherever you sell next."
+      },
+      {
+        "p": "Etsy"
+      },
+      {
+        "p": "Text stockbot on WhatsApp or Telegram."
+      }
+    ]
+  },
+  {
+    "id": "problem",
+    "footer": false,
+    "blocks": [
+      {
+        "p": "POs, supplier chasing and invoice reconciliation eat your week."
+      },
+      {
+        "p": "You’re always firefighting, never sure what’s coming."
+      },
+      {
+        "p": "Running out of stock shouldn’t be the cost of growing."
+      },
+      {
+        "p": "We’ve chased the same late shipments. So we built the thing we wished we had."
+      },
+      {
+        "p": "Right part, first time"
+      },
+      {
+        "p": "Built with operators"
+      },
+      {
+        "p": "Pilots live"
+      }
+    ]
+  },
+  {
+    "id": "capabilities",
+    "footer": false,
+    "blocks": [
+      {
+        "h": 2,
+        "text": "Everstock learns your operation. Then it buys the way you would."
+      },
+      {
+        "h": 3,
+        "text": "Approvals by text that take one tap."
+      },
+      {
+        "h": 3,
+        "text": "Purchase orders drafted before the shelf empties."
+      },
+      {
+        "h": 3,
+        "text": "Invoice matching that catches what you’d miss."
+      },
+      {
+        "h": 3,
+        "text": "Learns your rules from every order you approve."
+      }
+    ]
+  },
+  {
+    "id": "workflows",
+    "footer": false,
+    "blocks": [
+      {
+        "h": 2,
+        "text": "The supply work that runs itself."
+      },
+      {
+        "p": "Hi Dana, PO-2288 was due to ship 10 Mar and hasn’t moved. Can you confirm a new ship date?"
+      },
+      {
+        "p": "Sorry for the delay. We can ship the 96 pad sets on 12 Mar, ETA 14 Mar."
+      }
+    ]
+  },
+  {
+    "id": "industries",
+    "footer": false,
+    "blocks": [
+      {
+        "h": 2,
+        "text": "Built for anything that ships in a box."
+      }
+    ]
+  },
+  {
+    "id": "pricing",
+    "footer": false,
+    "blocks": [
+      {
+        "p": "stockbot $20 /mo founding price"
+      },
+      {
+        "h": 3,
+        "text": "Text it your paperwork. It catches what you’d miss."
+      },
+      {
+        "p": "Grow into Base, Scale or Enterprise when you need your inbox and team on it."
+      },
+      {
+        "a": "See all plans →",
+        "href": "/pricing"
+      }
+    ]
+  },
+  {
+    "id": "stock-plan",
+    "footer": false,
+    "blocks": [
+      {
+        "p": "Built in Chicago, delivered to the world."
+      },
+      {
+        "h": 2,
+        "text": "Get your free Stock Plan."
+      },
+      {
+        "p": "Tell us what you sell and how you buy. We’ll send a one-page plan showing what Everstock would take off your plate, and what it’s costing you now. No call required."
+      }
+    ]
+  },
+  {
+    "id": "cta",
+    "footer": true,
+    "blocks": [
+      {
+        "h": 2,
+        "text": "Stay in stock, with Everstock."
+      },
+      {
+        "p": "Your week back. Shelves full. Suppliers on time."
+      },
+      {
+        "a": "How it works",
+        "href": "#workflows"
+      },
+      {
+        "a": "Industries",
+        "href": "#industries"
+      },
+      {
+        "a": "Pricing",
+        "href": "/pricing"
+      }
+    ]
+  }
+]

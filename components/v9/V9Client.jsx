@@ -9,7 +9,10 @@ import DcPage from "./DcPage";
 // of after hydration; it simply renders nothing on the server.
 const subscribe = () => () => {};
 
-export default function V9Client() {
+// `fallback` is the server-rendered text of the page (components/dc/SeoFallback.tsx), shown
+// until the design mounts
+/** @param {{ fallback?: import("react").ReactNode }} props */
+export default function V9Client({ fallback = null }) {
   const mounted = useSyncExternalStore(subscribe, () => true, () => false);
-  return mounted ? <DcPage /> : null;
+  return mounted ? <DcPage /> : fallback;
 }

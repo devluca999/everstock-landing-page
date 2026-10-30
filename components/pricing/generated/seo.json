@@ -1,0 +1,126 @@
+[
+  {
+    "id": "top",
+    "footer": false,
+    "blocks": [
+      {
+        "h": 1,
+        "text": "Everstock grows with you."
+      },
+      {
+        "p": "From the living room to the loading dock. Same agent, same history, more room."
+      }
+    ]
+  },
+  {
+    "id": "stockbot",
+    "footer": false,
+    "blocks": [
+      {
+        "p": "Not ready for a plan? Start with stockbot, $20/mo."
+      },
+      {
+        "p": "Bring your stockbot to Everstock. Your history and setup come with you."
+      }
+    ]
+  },
+  {
+    "id": "integrations",
+    "footer": false,
+    "blocks": [
+      {
+        "p": "Built for sellers on Shopify, Etsy, and wherever you sell next."
+      },
+      {
+        "p": "Etsy"
+      },
+      {
+        "p": "Text stockbot on WhatsApp, Telegram or iMessage."
+      }
+    ]
+  },
+  {
+    "id": "compare",
+    "footer": false,
+    "blocks": [
+      {
+        "h": 2,
+        "text": "Every feature, side by side."
+      }
+    ]
+  },
+  {
+    "id": "faq",
+    "footer": false,
+    "blocks": [
+      {
+        "h": 2,
+        "text": "Your burning questions, answered."
+      },
+      {
+        "h": 3,
+        "text": "What does stockbot actually do?"
+      },
+      {
+        "p": "stockbot is an agent you text. Send it a photo or PDF of an invoice, quote or packing slip. It reads it, matches it to your orders, and flags overcharges, missing items and price changes. It can draft the reply to your supplier for you."
+      },
+      {
+        "h": 3,
+        "text": "What happens to my data when I upgrade?"
+      },
+      {
+        "p": "It comes with you. Your documents, order history, suppliers and setup move into your Everstock workspace. There is nothing to export or re-enter."
+      },
+      {
+        "h": 3,
+        "text": "How does per-seat pricing work on Base?"
+      },
+      {
+        "p": "Base is $199/mo plus $75 for each seat. Your bill is capped at $499/mo, so adding people past that point costs nothing extra."
+      },
+      {
+        "h": 3,
+        "text": "Do I need an ERP?"
+      },
+      {
+        "p": "No. Everstock works from your inbox, documents and spreadsheets. If you already run an ERP, Enterprise plugs into it."
+      },
+      {
+        "h": 3,
+        "text": "Which platforms do you work with?"
+      },
+      {
+        "p": "Shopify, Etsy, Excel, Google Sheets, your ERP, WhatsApp and Telegram. stockbot also works right in the Everstock app."
+      },
+      {
+        "h": 3,
+        "text": "Can I cancel anytime?"
+      },
+      {
+        "p": "Yes. There are no setup fees and no lock-in. Cancel anytime, and your data comes with you."
+      }
+    ]
+  },
+  {
+    "id": "cta",
+    "footer": true,
+    "blocks": [
+      {
+        "h": 2,
+        "text": "Stay in stock, with Everstock."
+      },
+      {
+        "a": "How it works",
+        "href": "/#workflows"
+      },
+      {
+        "a": "Industries",
+        "href": "/#industries"
+      },
+      {
+        "a": "Pricing",
+        "href": "#top"
+      }
+    ]
+  }
+]

@@ -3,6 +3,8 @@ import PricingClient from "@/components/pricing/PricingClient";
 import "@/components/pricing/generated/helmet.css";
 import "@/components/pricing/generated/pseudo.css";
 import "@/components/dc/dc-host.css";
+import SeoFallback, { type SeoSection } from "@/components/dc/SeoFallback";
+import seo from "@/components/pricing/generated/seo.json";
 
 const TITLE = "Pricing · Everstock";
 const DESCRIPTION =
@@ -21,5 +23,5 @@ export const metadata: Metadata = {
    It links to the home page with plain anchors (full loads), so each page only ever
    has its own design CSS. */
 export default function Pricing() {
-  return <PricingClient />;
+  return <PricingClient fallback={<SeoFallback sections={seo as SeoSection[]} />} />;
 }
