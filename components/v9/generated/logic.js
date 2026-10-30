@@ -529,7 +529,7 @@ class Component extends DCLogic {
   CG = { HOLD: 1.3, SPREAD: 1.4, DUR: 2.3, TILT: 0.38 };
   initChicago() {
     const cv = this.cgRef.current; if (!cv) return;
-    const W0 = 640, H0 = 400, C = 4, rnd = this.rng(20260929);
+    const W0 = 640, H0 = 400, C = 3, rnd = this.rng(20260929);
     const mk = (w, hh) => { const c = document.createElement('canvas'); c.width = w; c.height = hh; const o = c.getContext('2d'); o.fillStyle = '#fff'; o.fillRect(0, 0, w, hh); return [c, o]; };
     const [off, o] = mk(W0, H0), [toff, to] = mk(200, 30);
     const dv = (v) => { const c = Math.round(255 * (1 - v)); return 'rgb(' + c + ',' + c + ',' + c + ')'; };
@@ -558,7 +558,7 @@ class Component extends DCLogic {
     const B8 = this.B8, pts = [];
     const sample = (ctx, w, hh, tr) => { const d = ctx.getImageData(0, 0, w, hh).data; for (let y = 0; y < hh; y += C) for (let x = 0; x < w; x += C) { const v = 1 - d[((y + 1) * w + x + 1) * 4] / 255; if (v > 0.02 && v > B8[(y / C) & 7][(x / C) & 7]) pts.push({ x, y: tr ? y + 222 : y, tr }); } };
     sample(o, W0, H0, 0); sample(to, 200, 30, 1);
-    const NG = 4200, gx = new Float32Array(NG), gy = new Float32Array(NG), gz = new Float32Array(NG), land = new Uint8Array(NG), hit = new Uint8Array(NG);
+    const NG = 7600, gx = new Float32Array(NG), gy = new Float32Array(NG), gz = new Float32Array(NG), land = new Uint8Array(NG), hit = new Uint8Array(NG);
     for (let i = 0; i < NG; i++) {
       const y = 1 - (2 * (i + 0.5)) / NG, r = Math.sqrt(1 - y * y), th = i * 2.399963;
       gx[i] = Math.cos(th) * r; gy[i] = y; gz[i] = Math.sin(th) * r;
@@ -595,7 +595,7 @@ class Component extends DCLogic {
   drawChicago(t) {
     const cv = this.cgRef.current, cg = this.cg; if (!cv || !cg) return;
     const w = cv.clientWidth, hh = cv.clientHeight; if (!w || !hh) return;
-    const dpr = Math.min(2, window.devicePixelRatio || 1), W = Math.round(w * dpr), H = Math.round(hh * dpr);
+    const dpr = Math.min(w * hh > 200000 ? 2 : 3, window.devicePixelRatio || 1), W = Math.round(w * dpr), H = Math.round(hh * dpr);
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
     const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, hh);
     const red = this.isReduced() || this.cgHold, { HOLD, SPREAD, DUR, TILT } = this.CG, END = HOLD + SPREAD + DUR;
@@ -607,14 +607,16 @@ class Component extends DCLogic {
       const T0 = t - this.cgStart; cyc = Math.floor(T0 / PER); tau = T0 - cyc * PER;
       if (tau < HC) T = 0; else if (tau < HC + MO) T = HOLD + (tau - HC); else if (tau < HC + MO + HG) T = END + (tau - HC - MO); else { rev = true; Tr = tau - HC - MO - HG; T = END + HG; }
     }
-    const sway = (s2) => Math.sin(s2 * 0.55) * 0.28, angEnd = (this.cg ? this.cg.yaw0 : 0) + (rev ? sway(HG) : 0), pca = Math.cos(angEnd), psa = Math.sin(angEnd);
-    const k = Math.min(w / 640, hh / 400) * 0.96, ox = (w - 640 * k) / 2, oy = (hh - 400 * k) / 2;
-    const cx = w / 2, cy = hh / 2, Rg = Math.min(hh * 0.34, w / 3.4), ds = Math.max(1.5, Math.round(cg.C * k * 0.72 * dpr) / dpr), sn = (v) => Math.round(v * dpr) / dpr;
-    const cgDK = this.effDark('light'), INK = (a) => (cgDK ? 'rgba(236,234,228,' : 'rgba(22,23,27,') + Math.max(0, Math.min(1, a)).toFixed(3) + ')';
+    const sway = (s2) => Math.sin(s2 * 0.55) * 0.28, angEnd = (this.cg ? this.cg.yaw0 : 0) + (rev ? sway(HG) : 0), pca = Math.cos(angEnd), psa = Math.sin(angEnd), pbk = angEnd + ',' + w + ',' + hh;
+    if (this.cgPBk !== pbk || this.cgPBo !== cg.P) { this.cgPBk = pbk; this.cgPBo = cg.P; this.cgPB = []; }
+    const PB = this.cgPB;
+    const k0 = Math.min(w / 640, hh / 400) * 0.96, cq = cg.C * dpr, cpx = Math.round(k0 * cq), k = (cpx / cq > Math.min(w / 640, hh / 384) ? Math.max(2, Math.floor(k0 * cq)) : Math.max(2, cpx)) / cq, ox = Math.round(((w - 640 * k) / 2) * dpr) / dpr, oy = Math.round(((hh - 400 * k) / 2) * dpr) / dpr;
+    const cx = w / 2, cy = hh / 2, Rg = Math.min(hh * 0.34, w / 3.4), ds = Math.max(2, Math.round(cg.C * k * 0.72 * dpr)) / dpr, sn = (v) => Math.round(v * dpr) / dpr;
+    const cgDK = this.effDark('light'), INKT = (this.cgInk && this.cgInk.dk === cgDK) ? this.cgInk : (this.cgInk = Object.assign(Array.from({ length: 256 }, (_, q) => (cgDK ? 'rgba(236,234,228,' : 'rgba(22,23,27,') + (q / 255).toFixed(3) + ')'), { dk: cgDK })), INK = (a) => INKT[Math.round(Math.max(0, Math.min(1, a)) * 255)];
     const clamp = (v) => Math.max(0, Math.min(1, v)), ease = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
     const ct = Math.cos(TILT), st = Math.sin(TILT);
     const proj = (i, ca, sa) => { const x1 = cg.gx[i] * ca + cg.gz[i] * sa, z1 = -cg.gx[i] * sa + cg.gz[i] * ca, y2 = cg.gy[i] * ct - z1 * st, z2 = cg.gy[i] * st + z1 * ct; return [cx + x1 * Rg, cy - y2 * Rg, z2]; };
-    const trT = !this.cgStart || red ? t : this.cgStart + cyc * HC + Math.min(tau, HC), trX = ((trT * 46) % 672) - 200;
+    const RMP = 0.7, VT = (46 * HC) / (HC - RMP), trD = (u) => (u < RMP ? (VT * u * u) / (2 * RMP) : u > HC - RMP ? VT * (HC - RMP) - (VT * (HC - u) * (HC - u)) / (2 * RMP) : VT * (u - RMP / 2)), trX = ((!this.cgStart || red ? t * 46 : (this.cgStart * 46) % 672 + cyc * 46 * HC + trD(Math.min(tau, HC))) % 672) - 200;
     const oa = red ? 1 : rev ? clamp(1 - Tr / 0.6) : clamp((T - (END - 0.6)) / 0.9), ot = T - (END - 0.6);
     const ORB = [
       { kind: 'plane', rx: 1.52, ry: 0.5, tl: -0.3, sp: 0.2, ph: 0.4 },
@@ -642,8 +644,8 @@ class Component extends DCLogic {
       for (let n = 0; n < cg.P.length; n++) {
         const P = cg.P[n]; let x = P.x; if (P.tr) { x += trX; if (x < 0 || x > 466) continue; }
         const ax = ox + x * k, ay = oy + P.y * k, pp = rev ? 1 - clamp((Tr - (P.dl - HOLD)) / DUR) : T < 0 ? 0 : clamp((T - P.dl) / DUR);
-        if (pp <= 0) { const tf = P.tr ? clamp(Math.min(x, 466 - x) / 28) : 1; if (tf <= 0) continue; g.fillStyle = INK(0.86 * tf); g.fillRect(P.tr ? ax : sn(ax), sn(ay), ds, ds); continue; }
-        const b = proj(P.tg, pca, psa), e = ease(pp), s = Math.sin(Math.PI * pp), am = P.amp * k * s;
+        if (pp <= 0) { if (!P.tr && P.y >= 222 && P.y < 247 && x > 14 && x < 452) { const q = x - trX; if (q >= -1 && q < 190 && (q + 64) % 64 < 61) continue; } const tf = P.tr ? clamp(Math.min(x, 466 - x) / 28) : 1; if (tf <= 0) continue; g.fillStyle = INK((P.tr ? 0.94 : 0.86) * tf); g.fillRect(P.tr && dpr < 2 ? ax : sn(ax), sn(ay), ds, ds); continue; }
+        const b = PB[n] || (PB[n] = proj(P.tg, pca, psa)), e = ease(pp), s = Math.sin(Math.PI * pp), am = P.amp * k * s;
         const px = ax + (b[0] - ax) * e + am * Math.cos(P.ph + t * 1.7 + P.y * 0.03);
         const py = ay + (b[1] - ay) * e + am * Math.sin(P.ph * 1.3 + t * 1.3 + P.x * 0.025) - am * 0.55;
         const ta = 0.84 * (0.3 + 0.7 * b[2]), a = (0.86 + (ta - 0.86) * e) * (1 - 0.45 * s), sz = ds * (1 - 0.25 * s);
@@ -3444,8 +3446,8 @@ class Component extends DCLogic {
       a2PaidShow: this.state.a2paid ? 'flex' : 'none',
       narrow: !wide,
       footStampR: wide ? '-12px' : '10px', footColW: wide ? 'auto' : '100%',
-      ...(this.state.phone ? { footCols: 'minmax(0,1fr)', footA1: '1 / 1 / 2 / 2', footA2: '2 / 1 / 3 / 2', footA4: '3 / 1 / 4 / 2', footA3: '4 / 1 / 5 / 2', footArtJs: 'center', footArtMt: '40px', footArtMr: '0' }
-        : { footCols: 'auto auto', footA1: '1 / 1 / 2 / 2', footA2: '2 / 1 / 3 / 2', footA4: '1 / 2 / 2 / 3', footA3: '3 / 1 / 4 / 3', footArtJs: 'start', footArtMt: '-52px', footArtMr: '0' }), footBtnFlex: wide ? '0 0 auto' : '1 1 100%', footNavDisp: wide ? 'flex' : 'grid', footNavGap: wide ? '12px 28px' : '0 16px',
+      ...(this.state.phone ? { fCols: 'minmax(0,1fr)', fH: '1 / 1 / 2 / 2', fP: '2 / 1 / 3 / 2', fB: '3 / 1 / 4 / 2', fArt: '4 / 1 / 5 / 2', fArtH: 'auto', fArtMt: '56px', fRuleMt: '72px', fLinkCols: 'repeat(2,minmax(0,1fr))', fBrandSpan: '1 / -1' }
+        : { fCols: 'auto minmax(0,1fr)', fH: '1 / 1 / 2 / 2', fP: '2 / 1 / 3 / 2', fB: '3 / 1 / 4 / 2', fArt: '2 / 2 / 3 / 3', fArtH: '0px', fArtMt: '24px', fRuleMt: 'clamp(104px,13svh,136px)', fLinkCols: wide ? 'minmax(0,1.7fr) repeat(3,minmax(0,1fr))' : 'repeat(3,minmax(0,1fr))', fBrandSpan: wide ? 'auto' : '1 / -1' }), footBtnFlex: wide ? '0 0 auto' : '1 1 100%', footNavDisp: wide ? 'flex' : 'grid', footNavGap: wide ? '12px 28px' : '0 16px',
       formW: wide ? '500px' : '100%', formMl: wide ? 'max(0px, min(50%, calc(100% + 16px - 500px)))' : '0',
       offColDisp: wide ? 'grid' : 'contents', offO1: wide ? 0 : 1, offO2: wide ? 0 : 2, offO3: wide ? 0 : 3,
       whyTagDisp: wide ? 'flex' : 'grid', whyTagGap: wide ? '22px' : '10px', whyTagWs: wide ? 'nowrap' : 'normal',
