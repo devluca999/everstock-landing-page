@@ -71,6 +71,30 @@
         "text": "Purchase orders drafted before the shelf empties."
       },
       {
+        "p": "On hand"
+      },
+      {
+        "p": "205"
+      },
+      {
+        "p": "Sells a day"
+      },
+      {
+        "p": "19"
+      },
+      {
+        "p": "Days of cover"
+      },
+      {
+        "p": "11"
+      },
+      {
+        "p": "Lead time"
+      },
+      {
+        "p": "9 days"
+      },
+      {
         "h": 3,
         "text": "Invoice matching that catches what you’d miss."
       },
