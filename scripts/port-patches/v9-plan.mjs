@@ -33,6 +33,9 @@ const PLAN_CTA =
 // v5's Plan section, set like its v9 neighbours: General Sans heading, var(--edge) gutters, the
 // light grid. The canvas stays the direct parent-sibling of the <ol> (layoutPlan finds the step
 // columns with cv.parentElement.querySelectorAll('ol > li')).
+// The brief banner (MARQUEE_SECTION) goes right after the Plan, before Pricing (Luca, 2026-10-30:
+// two sections above it, two below: Pricing + Stock Plan). It scrolls on its own, pauses on hover,
+// and is one static row under reduced motion.
 const PLAN_SECTION = [
   `<section ref="{{ planRef }}" id="plan" data-tone="light" data-screen-label="06b Plan" aria-labelledby="plan-h" style="position:relative;height:{{ planSecH }};${GRID_BG}color:rgb(var(--ink));border-top:1px solid rgb(var(--ink) / 0.10);">`,
   `    <div style="position:{{ planPos }};top:0;padding:clamp(88px,12svh,128px) var(--edge) clamp(64px,9svh,96px);display:grid;gap:clamp(28px,4.4svh,48px);">`,
@@ -108,18 +111,13 @@ export const templatePatches = [
   {
     why: "Plan (2026-10-30, Luca): v5's 'Up and running' section comes back, right after Industries and before Pricing, so setup and price read as one stretch. It autoplays (see the Plan logic patches in port-dc.mjs); heading 'Up and running in days.', footnote 'Send it Monday. Approve orders by Friday.' (setup takes days, not two weeks); the CTA is v9's 'Get early access'",
     find: '<section id="pricing" data-tone="light"',
-    replace: PLAN_SECTION + '<section id="pricing" data-tone="light"',
+    replace: PLAN_SECTION + MARQUEE_SECTION + '<section id="pricing" data-tone="light"',
   },
   {
     why: "Pricing (2026-10-30, Luca): the tiers are on the home page in a small footprint: Base, Scale and Enterprise as three hairline rows beside the stockbot card (price, who it's for), with 'Compare plans →' to /pricing, in place of the one line that only named them",
     find: /\n( *)<div style="flex:1 1 300px;min-width:0;display:grid;gap:10px;justify-items:start;">\n *<p [^\n]*Grow into Base, Scale or Enterprise[^\n]*\n *<a href="Pricing\.dc\.html"[^\n]*See all plans →<\/a>\n *<\/div>/g,
     count: 1,
     replace: (_m, ind) => "\n" + ind + TIERS(ind),
-  },
-  {
-    why: "Marquee (2026-10-30, Luca): v5's brief banner (every part matched to what it fits, you approve every order, no rip and replace, runs with your ERP or without one …) comes back between Pricing and the Stock Plan; it scrolls on its own, pauses on hover, and is one static row under reduced motion",
-    find: '<section id="stock-plan" data-tone="light"',
-    replace: MARQUEE_SECTION + '<section id="stock-plan" data-tone="light"',
   },
 ];
 
