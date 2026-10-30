@@ -158,6 +158,13 @@ const PAGES = {
       NO_INVOICE_DROP,
       FORM_HONEYPOT,
       {
+        // EVERSTOCK is clamp(40px, 8.3vw, 150px) with a cap height of about 0.7em, so ~42% of
+        // its cap height is ~0.29 of its size: clamp(14px, 2.45vw, 44px)
+        why: "Hero (2026-10-29): 'Stay in stock with' supports the EVERSTOCK wordmark instead of competing with it: regular weight, ~42% of the wordmark's cap height, off-white ink at 70%, +0.015em tracking, sitting close above it as one lockup",
+        find: `<p aria-hidden="true" style="margin:0 0 clamp(10px,1.6svh,18px);font-family:'General Sans','Space Grotesk',sans-serif;font-weight:600;font-size:clamp(26px,3.4vw,58px);line-height:1.05;letter-spacing:-0.022em;color:rgb(var(--ink));">Stay in stock with</p>`,
+        replace: `<p aria-hidden="true" style="margin:0 0 clamp(2px,0.5svh,6px);font-family:'General Sans','Space Grotesk',sans-serif;font-weight:400;font-size:clamp(14px,2.45vw,44px);line-height:1.1;letter-spacing:0.015em;color:rgb(var(--ink) / 0.7);">Stay in stock with</p>`,
+      },
+      {
         why: "Links: the footer's 'How it works' points at #how-it-works, which v9 hides; the top nav's goes to #workflows, so this one does too",
         find: 'href="#how-it-works"',
         replace: 'href="#workflows"',
