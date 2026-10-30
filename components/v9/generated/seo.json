@@ -154,6 +154,16 @@
         "p": "Your week back. Shelves full. Suppliers on time."
       },
       {
+        "a": "Everstock home",
+        "href": "#top"
+      },
+      {
+        "p": "Supply chain software that reads your quotes, orders and invoices and drafts every order for your sign-off."
+      },
+      {
+        "p": "Product"
+      },
+      {
         "a": "How it works",
         "href": "#workflows"
       },
@@ -164,6 +174,20 @@
       {
         "a": "Pricing",
         "href": "/pricing"
+      },
+      {
+        "a": "Compare",
+        "href": "/pricing#compare"
+      },
+      {
+        "p": "Get started"
+      },
+      {
+        "a": "Get a Stock Plan",
+        "href": "#stock-plan"
+      },
+      {
+        "p": "Company"
       }
     ]
   }
