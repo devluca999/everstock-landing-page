@@ -135,4 +135,14 @@ export const logicPatches = [
     find: "if (now - (this.plLast || 0) < 30) return; this.plLast = now;",
     replace: "if (now - (this.plLast || 0) < 15) return; this.plLast = now;",
   },
+  {
+    why: "Plan (Luca, 2026-10-30): the paperwork and the live model each hold for 1.5s before moving on (the model used to give way after about a second). The clock is in seconds: paperwork lands (0.7s) and holds to 2.2s, flies to the model by 3.3s, the model holds to 4.8s, flies to the box by 5.8s, the box is checked and APPROVED by about 6.9s, then the whole thing holds and loops every 9.8s. The seconds map onto the design's own 0-1 phase marks, so every stage draws as designed",
+    find: "const p = this.plT0 == null ? 0 : c01(((t - this.plT0) % 9.5) / 7), S = L.S, C3 = L.cols;",
+    replace: "const plK = [[0, 0], [2.2, 0.28], [3.3, 0.44], [4.8, 0.58], [5.8, 0.72], [7.8, 1]], plS = this.plT0 == null ? 0 : (t - this.plT0) % 9.8;\n    let p = 1; for (let i = 1; i < plK.length; i++) if (plS <= plK[i][0]) { const a = plK[i - 1], b = plK[i]; p = a[1] + ((plS - a[0]) / (b[0] - a[0])) * (b[1] - a[1]); break; }\n    const S = L.S, C3 = L.cols;",
+  },
+  {
+    why: "Plan (Luca, 2026-10-30): each picture is centred on its step's title, not on the whole column (the titles are left-aligned, so 'Review your live model' sat right of its words)",
+    find: "const cols = wide && lis.length === 3 ? lis.map((li) => { const r = li.getBoundingClientRect(); return r.left - cr.left + r.width / 2; }) : [w / 2, w / 2, w / 2];",
+    replace: "const cols = wide && lis.length === 3 ? lis.map((li) => { const r = (li.children[1] || li).getBoundingClientRect(); return r.left - cr.left + r.width / 2; }) : [w / 2, w / 2, w / 2];",
+  },
 ];

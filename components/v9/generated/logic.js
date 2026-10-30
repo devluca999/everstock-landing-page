@@ -2941,7 +2941,7 @@ class Component extends DCLogic {
     const w = cv.clientWidth, hh = cv.clientHeight; if (!w || !hh) return;
     const dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.round(w * dpr); cv.height = Math.round(hh * dpr);
     const cr = cv.getBoundingClientRect(), lis = Array.from(cv.parentElement.querySelectorAll('ol > li')), wide = w >= 700;
-    const cols = wide && lis.length === 3 ? lis.map((li) => { const r = li.getBoundingClientRect(); return r.left - cr.left + r.width / 2; }) : [w / 2, w / 2, w / 2];
+    const cols = wide && lis.length === 3 ? lis.map((li) => { const r = (li.children[1] || li).getBoundingClientRect(); return r.left - cr.left + r.width / 2; }) : [w / 2, w / 2, w / 2];
     const sr = sec.getBoundingClientRect();
     this.PL = { w, h: hh, dpr, cols, wide, top: sr.top + window.scrollY, span: Math.max(1, sec.offsetHeight - window.innerHeight), S: wide ? Math.max(2, Math.min(3, Math.floor(hh / 108))) : 2 };
     if (!this.plSp) this.buildPlanSprites();
@@ -2991,7 +2991,9 @@ class Component extends DCLogic {
       return;
     }
     if (this.plT0 == null && cv.getBoundingClientRect().top < window.innerHeight * 0.75) this.plT0 = t;
-    const p = this.plT0 == null ? 0 : c01(((t - this.plT0) % 9.5) / 7), S = L.S, C3 = L.cols;
+    const plK = [[0, 0], [2.2, 0.28], [3.3, 0.44], [4.8, 0.58], [5.8, 0.72], [7.8, 1]], plS = this.plT0 == null ? 0 : (t - this.plT0) % 9.8;
+    let p = 1; for (let i = 1; i < plK.length; i++) if (plS <= plK[i][0]) { const a = plK[i - 1], b = plK[i]; p = a[1] + ((plS - a[0]) / (b[0] - a[0])) * (b[1] - a[1]); break; }
+    const S = L.S, C3 = L.cols;
     const st = p < 0.36 ? 0 : p < 0.65 ? 1 : 2; if (st !== this.state.planStep) this.setState({ planStep: st });
     const trans = (P, q, x0, x1) => { for (let i = 0; i < P.length; i++) { const o = P[i], qi = c01((q - o.dl * 0.35) / 0.65), e = ease(qi), s = Math.sin(Math.PI * qi), am = o.amp * S * s, sx = x0 + o.ax * S, sy = cy + o.ay * S, dx = x1 + o.bx * S, dy = cy + o.by * S; g.fillStyle = qi < 0.5 ? o.ac : o.bc; const z = S * (1 - 0.3 * s); g.fillRect(sx + (dx - sx) * e + Math.cos(o.ph + t * 2.1) * am, sy + (dy - sy) * e + Math.sin(o.ph * 1.3 + t * 1.7) * am - am * 0.4, z, z); } };
     if (p < 0.28) docs(C3[0], cy, S, c01(p / 0.1), t);
