@@ -210,7 +210,7 @@ const PAGES = {
       ...V9_AREAS.flatMap((a) => a.templatePatches),
     ],
     // the sections v9 shows, in order (the older ones are still in the design at zero height)
-    seo: { sections: ["top", "integrations", "problem", "capabilities", "workflows", "industries", "pricing", "stock-plan", "cta"] },
+    seo: { sections: ["top", "integrations", "problem", "capabilities", "workflows", "industries", "plan", "pricing", "stock-plan", "cta"] },
     hrefBindings: {
       ...CTA_BINDINGS,
       "Pricing.dc.html": "/pricing",
