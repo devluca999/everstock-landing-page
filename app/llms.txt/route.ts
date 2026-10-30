@@ -18,6 +18,7 @@ Everstock is built in Chicago and is in early access, with pilots live. Start wi
 - Supplier follow-ups: chases late shipments and drafts the replies.
 - Learns your rules from every order you approve, then buys the way you would.
 - Works with Shopify, Etsy, Excel, Google Sheets, your ERP, WhatsApp and Telegram. stockbot also works in the Everstock app.
+- Up and running in days: send your paperwork, review the model Everstock builds from it, approve your first orders. No rip and replace.
 
 ## Who it is for
 

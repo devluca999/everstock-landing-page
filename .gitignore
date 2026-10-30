@@ -45,3 +45,4 @@ next-env.d.ts
 
 # large design input archives (kept out of the repo)
 *.zip
+.claude/worktrees/

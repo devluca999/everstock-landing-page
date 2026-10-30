@@ -129,6 +129,7 @@ class Component extends DCLogic {
       ['top', 'hero-cta', 'stock-plan', 'capabilities', 'cta'].forEach((id) => { const el = document.getElementById(id); if (el) this.ioM.observe(el); });
     } else { this.pfIn = true; this.pfT0 = performance.now() / 1000; }
     this.rafPF = requestAnimationFrame(this.pfLoop);
+    this.capSetup();
     this.rafSB = requestAnimationFrame(this.spLoop);
     this.scene3 = this.buildScene();
     window.addEventListener('scroll', this.schedule, { passive: true });
@@ -183,7 +184,7 @@ class Component extends DCLogic {
     cancelAnimationFrame(this.rafW); if (this.ioWhy) this.ioWhy.disconnect(); if (this.ioWhyR) this.ioWhyR.disconnect(); if (this.roWhy) this.roWhy.disconnect(); (this.whyTimers || []).forEach(clearTimeout);
     cancelAnimationFrame(this.rafA); if (this.ioAct) this.ioAct.disconnect(); if (this.roAct) this.roAct.disconnect();
     cancelAnimationFrame(this.rafSt); if (this.ioSt) this.ioSt.disconnect(); (this.stkTimers || []).forEach(clearTimeout);
-    cancelAnimationFrame(this.rafPF); cancelAnimationFrame(this.rafSB); cancelAnimationFrame(this.rafMP); if (this.ioM) this.ioM.disconnect(); window.removeEventListener('keydown', this.onKeyAcc); document.documentElement.style.overflow = '';
+    cancelAnimationFrame(this.rafPF); cancelAnimationFrame(this.rafCS); if (this.capRO) this.capRO.disconnect(); if (this.capIO) this.capIO.disconnect(); clearTimeout(this.capRuleT); cancelAnimationFrame(this.rafSB); cancelAnimationFrame(this.rafMP); if (this.ioM) this.ioM.disconnect(); window.removeEventListener('keydown', this.onKeyAcc); document.documentElement.style.overflow = '';
     clearTimeout(this.typeT);
     window.removeEventListener('scroll', this.onScroll);
     window.removeEventListener('resize', this.onResize);
@@ -225,6 +226,49 @@ class Component extends DCLogic {
       { label: 'Drafts the reorder', desc: 'Reorders are drafted from your sales pace, the supplier’s lead time and the vendor you would pick.', steps: [S('trend', 'Sees stock falling', '11 days of cover'), S('clock', 'Checks the lead time', '9 days'), S('box', 'Picks the vendor', 'Meridian · same price'), S('draft', 'Drafts the PO', '480 units · $19,392'), S('phone', 'Texts you to approve', 'Approve or hold', true)], stake: 'the reorder happens after the stockout.' }
     ];
     return this._wf;
+  }
+  wfPanes(red, W, wf, ws, ST) {
+    const E = 'cubic-bezier(.2,.8,.25,1)', o = {};
+    W.forEach((w, p) => {
+      const act = p === wf, n = w.steps.length, k = red ? 99 : act ? ws : 0, on = (at) => red || k >= at;
+      const T = (s) => (red || !act ? 'none' : s);
+      // a value that lands when step 'at' starts (fades up into place), d = small stagger
+      const land = (at, d) => on(at) ? 'opacity:1;transform:none;transition:' + T('opacity 420ms ' + E + ' ' + d + 'ms,transform 520ms ' + E + ' ' + d + 'ms') : 'opacity:0;transform:translateY(6px);transition:none';
+      const v = {
+        pane: act ? 'visibility:visible;opacity:1;transition:' + T('opacity 320ms ' + E) : 'visibility:hidden;opacity:0;transition:none',
+        hid: act ? 'false' : 'true', desc: w.desc, stake: w.stake,
+        from: ['25 min', '45 min', '30 min', '1 hr'][p], to: ['40 sec', '2 min', '1 min', '3 min'][p]
+      };
+      for (let at = 0; at <= 6; at++) {
+        for (let d = 0; d < 4; d++) v['s' + at + (d ? 'd' + d : '')] = land(at, d * 120);
+        // the "Working" chip that a final word replaces
+        v['w' + at] = on(at) ? 'opacity:0;transition:' + T('opacity 240ms ' + E) : 'opacity:1;transition:none';
+        // the agent reading a field (blue), only while that step runs
+        v['hl' + at] = !red && act && k === at && at > 0 ? 'background-color:rgba(46,123,255,0.12);box-shadow:inset 2px 0 0 #2E7BFF' : 'background-color:transparent;box-shadow:inset 0 0 0 transparent';
+      }
+      v.mk3 = on(3) ? 'background-color:rgba(46,123,255,0.16);box-shadow:0 1.5px 0 #2E7BFF' : 'background-color:transparent;box-shadow:0 0 0 transparent';
+      for (let i = 0; i < 12; i++) v['ck' + i] = on(2) ? 'opacity:1;transform:none;transition:' + T('opacity 200ms ' + E + ' ' + (i * 70) + 'ms,transform 260ms ' + E + ' ' + (i * 70) + 'ms') : 'opacity:0;transform:scale(0.5);transition:none';
+      v.miss = on(3) ? 'border:1.5px dashed #B4441C;color:#B4441C' : 'border:1.5px dashed rgba(26,27,31,0.35);color:rgba(26,27,31,0.45)';
+      const stamp = (at, rot) => on(at) ? 'opacity:0.92;transform:rotate(' + rot + 'deg) scale(1);transition:' + T('opacity 160ms ease-out,transform 260ms cubic-bezier(.3,1.4,.5,1)') : 'opacity:0;transform:rotate(' + rot + 'deg) scale(1.4);transition:none';
+      v.stamp5 = stamp(5, -6); v.stamp3 = stamp(3, -4);
+      v.flag4 = on(4) ? 'background:rgba(232,161,58,0.09);box-shadow:inset 0 0 0 1px rgba(232,161,58,0.45);transition:' + T('background-color 400ms ' + E + ',box-shadow 400ms ' + E) : 'background:transparent;box-shadow:inset 0 0 0 1px transparent;transition:none';
+      v.ring3 = on(3) ? 'box-shadow:inset 0 0 0 1px rgba(232,161,58,0.4),0 26px 44px -24px rgba(0,0,0,0.8)' : 'box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 26px 44px -24px rgba(0,0,0,0.8)';
+      // the read pass over the invoice while "Reads the line items" runs
+      v.scan = !red && act && k === 2 ? 'top:100%;opacity:1;transition:top 950ms linear,opacity 160ms' : 'top:' + (on(3) ? '100%' : '0%') + ';opacity:0;transition:' + (on(3) ? T('opacity 240ms') : 'none');
+      v.draw = on(1) ? 'stroke-dashoffset:0;transition:' + T('stroke-dashoffset 1100ms ' + E) : 'stroke-dashoffset:1.05;transition:none';
+      v.area = on(1) ? 'opacity:1;transition:' + T('opacity 700ms ' + E + ' 400ms') : 'opacity:0;transition:none';
+      // the rail fills dot to dot, blue while it runs, green once every step is done
+      const pr = red || k > n ? 1 : Math.max(0, Math.min(1, (k - 1) / (n - 1))), done = red || k > n;
+      const fill = (ax) => 'transform:scale' + ax + '(' + pr + ');background:' + (done ? 'rgba(47,203,143,0.8)' : '#2E7BFF') + ';transition:' + T('transform 900ms ' + E + ',background-color 400ms ' + E);
+      v.fillH = fill('X'); v.fillV = fill('Y');
+      v.steps = w.steps.map((s, i) => {
+        let st = i < k - 1 || k > n ? 'done' : i === k - 1 ? 'active' : 'pending';
+        if (st === 'done' && s.flag) st = 'attn';
+        return { ...s, ...ST[st], dCol: st === 'active' ? '#8DB6FF' : 'rgba(242,241,237,0.64)' };
+      });
+      o['wp' + p] = v;
+    });
+    return o;
   }
   v7Start() {
     this.v7vis = {}; this.v7auto = true;
@@ -316,9 +360,10 @@ class Component extends DCLogic {
     });
     const wfTabs = W.map((w, i) => {
       const a = i === wf;
-      return { label: w.label, n: '0' + (i + 1), sel: a ? 'true' : 'false', bg: a ? 'rgb(var(--ink) / 0.06)' : 'transparent', bd: a ? 'rgb(var(--ink) / 0.16)' : 'transparent', col: a ? 'rgb(var(--ink))' : 'rgb(var(--ink) / 0.56)', numCol: a ? 'rgb(var(--ink) / 0.72)' : 'rgb(var(--ink) / 0.40)', pick: () => { this.v7auto = false; this.setState({ wf: i, ws: 0 }); } };
+      return { label: w.label, n: '0' + (i + 1), sel: a ? 'true' : 'false', bg: a ? 'rgb(var(--ink) / 0.06)' : 'transparent', bd: a ? 'rgb(var(--ink) / 0.16)' : 'transparent', col: a ? 'rgb(var(--ink))' : 'rgb(var(--ink) / 0.56)', numCol: a ? 'rgb(var(--ink) / 0.72)' : 'rgb(var(--ink) / 0.40)', bar: a && this.v7auto && !red ? 'opacity:1;transform:scaleX(' + Math.min(1, ws / (n + 3)) + ');transition:' + (ws ? 'transform 1000ms linear' : 'none') : 'opacity:0;transform:scaleX(0);transition:none', pick: () => { this.v7auto = false; this.setState({ wf: i, ws: 0 }); } };
     });
-    return { ...trs, wfI0: wf === 0, wfI1: wf === 1, wfI2: wf === 2, wfI3: wf === 3, wfFrom: ['25 min', '45 min', '30 min', '1 hr'][wf], wfTo: ['40 sec', '2 min', '1 min', '3 min'][wf], th1o: o(1), th1t: tf(1), th2o: o(2), th2t: tf(2), th3o: o(3), th3t: tf(3), th4o: o(4), th4t: tf(4), apBg: on(3) ? '#1A1B1F' : 'transparent', apCol: on(3) ? '#FAF7F1' : '#1A1B1F', hoOp: on(3) ? 0.4 : 1, wfTabs, wfSteps, wfDesc: cur.desc, wfStake: cur.stake };
+    const wpx = this.wfPanes(red, W, wf, ws, ST);
+    return { ...trs, ...wpx, wfI0: wf === 0, wfI1: wf === 1, wfI2: wf === 2, wfI3: wf === 3, wfFrom: ['25 min', '45 min', '30 min', '1 hr'][wf], wfTo: ['40 sec', '2 min', '1 min', '3 min'][wf], th1o: o(1), th1t: tf(1), th2o: o(2), th2t: tf(2), th3o: o(3), th3t: tf(3), th4o: o(4), th4t: tf(4), apBg: on(3) ? '#1A1B1F' : 'transparent', apCol: on(3) ? '#FAF7F1' : '#1A1B1F', hoOp: on(3) ? 0.4 : 1, wfTabs, wfSteps, wfDesc: cur.desc, wfStake: cur.stake };
   }
   isReduced() {
     const m = this.props.motion ?? 'auto';
@@ -529,7 +574,7 @@ class Component extends DCLogic {
   CG = { HOLD: 1.3, SPREAD: 1.4, DUR: 2.3, TILT: 0.38 };
   initChicago() {
     const cv = this.cgRef.current; if (!cv) return;
-    const W0 = 640, H0 = 400, C = 4, rnd = this.rng(20260929);
+    const W0 = 640, H0 = 400, C = 3, rnd = this.rng(20260929);
     const mk = (w, hh) => { const c = document.createElement('canvas'); c.width = w; c.height = hh; const o = c.getContext('2d'); o.fillStyle = '#fff'; o.fillRect(0, 0, w, hh); return [c, o]; };
     const [off, o] = mk(W0, H0), [toff, to] = mk(200, 30);
     const dv = (v) => { const c = Math.round(255 * (1 - v)); return 'rgb(' + c + ',' + c + ',' + c + ')'; };
@@ -556,9 +601,9 @@ class Component extends DCLogic {
     for (let x = 12; x < 470; x += 38) { R(x, 259, 5, 69, 0.82); if (x + 38 < 470) { L(x + 5, 262, x + 38, 296, 1.2, 0.5); L(x + 38, 262, x + 5, 296, 1.2, 0.5); } }
     for (let c = 0; c < 3; c++) { const x = c * 64; R(x + 2, 2, 56, 2, 0.8, to); R(x, 4, 60, 22, 0.95, to); for (let j = 0; j < 5; j++) R(x + 6 + j * 10.5, 8, 6, 8, 0.26, to); R(x + 4, 22, 52, 2, 0.6, to); }
     const B8 = this.B8, pts = [];
-    const sample = (ctx, w, hh, tr) => { const d = ctx.getImageData(0, 0, w, hh).data; for (let y = 0; y < hh; y += C) for (let x = 0; x < w; x += C) { const v = 1 - d[((y + 1) * w + x + 1) * 4] / 255; if (v > 0.02 && v > B8[(y / C) & 7][(x / C) & 7]) pts.push({ x, y: tr ? y + 222 : y, tr }); } };
+    const sample = (ctx, w, hh, tr) => { const d = ctx.getImageData(0, 0, w, hh).data; for (let y = 0; y < hh; y += C) for (let x = 0; x < w; x += C) { const v = 1 - d[((y + 1) * w + x + 1) * 4] / 255; if (v > 0.02 && (v >= 0.8 || 0.3 + 0.7 * v > B8[(y / C) & 7][(x / C) & 7])) pts.push({ x, y: tr ? y + 222 : y, tr, v }); } };
     sample(o, W0, H0, 0); sample(to, 200, 30, 1);
-    const NG = 4200, gx = new Float32Array(NG), gy = new Float32Array(NG), gz = new Float32Array(NG), land = new Uint8Array(NG), hit = new Uint8Array(NG);
+    const NG = 7600, gx = new Float32Array(NG), gy = new Float32Array(NG), gz = new Float32Array(NG), land = new Uint8Array(NG), hit = new Uint8Array(NG);
     for (let i = 0; i < NG; i++) {
       const y = 1 - (2 * (i + 0.5)) / NG, r = Math.sqrt(1 - y * y), th = i * 2.399963;
       gx[i] = Math.cos(th) * r; gy[i] = y; gz[i] = Math.sin(th) * r;
@@ -576,7 +621,7 @@ class Component extends DCLogic {
       const u = (p.x - 320) / 330, v = (p.y - 215) / 200;
       let best = F[0], bd = 1e9; for (let q = 0; q < 18; q++) { const c = F[Math.floor(rnd() * F.length)], d = (c.u - u) ** 2 + (c.v - v) ** 2; if (d < bd) { bd = d; best = c; } }
       hit[best.i] = 1;
-      return { x: p.x, y: p.y, tr: p.tr, tg: best.i, dl: HOLD + (p.x / 640) * SPREAD * 0.78 + rnd() * SPREAD * 0.22, amp: 14 + rnd() * 44, ph: rnd() * 6.283 };
+      return { x: p.x, y: p.y, tr: p.tr, a: p.tr ? 0.94 : 0.26 + 0.66 * p.v, sm: !p.tr && p.v < 0.6, tg: best.i, dl: HOLD + (p.x / 640) * SPREAD * 0.78 + rnd() * SPREAD * 0.22, amp: 14 + rnd() * 44, ph: rnd() * 6.283 };
     });
     this.cg = { C, P, gx, gy, gz, land, hit, NG, yaw0 };
     if ('IntersectionObserver' in window) {
@@ -595,7 +640,7 @@ class Component extends DCLogic {
   drawChicago(t) {
     const cv = this.cgRef.current, cg = this.cg; if (!cv || !cg) return;
     const w = cv.clientWidth, hh = cv.clientHeight; if (!w || !hh) return;
-    const dpr = Math.min(2, window.devicePixelRatio || 1), W = Math.round(w * dpr), H = Math.round(hh * dpr);
+    const dpr = Math.min(w * hh > 200000 ? 2 : 3, window.devicePixelRatio || 1), W = Math.round(w * dpr), H = Math.round(hh * dpr);
     if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
     const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, hh);
     const red = this.isReduced() || this.cgHold, { HOLD, SPREAD, DUR, TILT } = this.CG, END = HOLD + SPREAD + DUR;
@@ -607,14 +652,16 @@ class Component extends DCLogic {
       const T0 = t - this.cgStart; cyc = Math.floor(T0 / PER); tau = T0 - cyc * PER;
       if (tau < HC) T = 0; else if (tau < HC + MO) T = HOLD + (tau - HC); else if (tau < HC + MO + HG) T = END + (tau - HC - MO); else { rev = true; Tr = tau - HC - MO - HG; T = END + HG; }
     }
-    const sway = (s2) => Math.sin(s2 * 0.55) * 0.28, angEnd = (this.cg ? this.cg.yaw0 : 0) + (rev ? sway(HG) : 0), pca = Math.cos(angEnd), psa = Math.sin(angEnd);
-    const k = Math.min(w / 640, hh / 400) * 0.96, ox = (w - 640 * k) / 2, oy = (hh - 400 * k) / 2;
-    const cx = w / 2, cy = hh / 2, Rg = Math.min(hh * 0.34, w / 3.4), ds = Math.max(1.5, Math.round(cg.C * k * 0.72 * dpr) / dpr), sn = (v) => Math.round(v * dpr) / dpr;
-    const cgDK = this.effDark('light'), INK = (a) => (cgDK ? 'rgba(236,234,228,' : 'rgba(22,23,27,') + Math.max(0, Math.min(1, a)).toFixed(3) + ')';
+    const sway = (s2) => Math.sin(s2 * 0.55) * 0.28, angEnd = (this.cg ? this.cg.yaw0 : 0) + (rev ? sway(HG) : 0), pca = Math.cos(angEnd), psa = Math.sin(angEnd), pbk = angEnd + ',' + w + ',' + hh;
+    if (this.cgPBk !== pbk || this.cgPBo !== cg.P) { this.cgPBk = pbk; this.cgPBo = cg.P; this.cgPB = []; }
+    const PB = this.cgPB;
+    const k0 = Math.min(w / 640, hh / 400) * 0.96, cq = cg.C * dpr, cpx = Math.round(k0 * cq), k = (cpx / cq > Math.min(w / 640, hh / 384) ? Math.max(2, Math.floor(k0 * cq)) : Math.max(2, cpx)) / cq, ox = Math.round(((w - 640 * k) / 2) * dpr) / dpr, oy = Math.round(((hh - 400 * k) / 2) * dpr) / dpr;
+    const cx = w / 2, cy = hh / 2, Rg = Math.min(hh * 0.34, w / 3.4), ds = Math.max(2, Math.round(cg.C * k * 0.72 * dpr)) / dpr, sn = (v) => Math.round(v * dpr) / dpr, dsS = Math.max(1 / dpr, Math.round(ds * 0.67 * dpr) / dpr), dsO = sn((ds - dsS) / 2);
+    const cgDK = this.effDark('light'), INKT = (this.cgInk && this.cgInk.dk === cgDK) ? this.cgInk : (this.cgInk = Object.assign(Array.from({ length: 256 }, (_, q) => (cgDK ? 'rgba(236,234,228,' : 'rgba(22,23,27,') + (q / 255).toFixed(3) + ')'), { dk: cgDK })), INK = (a) => INKT[Math.round(Math.max(0, Math.min(1, a)) * 255)];
     const clamp = (v) => Math.max(0, Math.min(1, v)), ease = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
     const ct = Math.cos(TILT), st = Math.sin(TILT);
     const proj = (i, ca, sa) => { const x1 = cg.gx[i] * ca + cg.gz[i] * sa, z1 = -cg.gx[i] * sa + cg.gz[i] * ca, y2 = cg.gy[i] * ct - z1 * st, z2 = cg.gy[i] * st + z1 * ct; return [cx + x1 * Rg, cy - y2 * Rg, z2]; };
-    const trT = !this.cgStart || red ? t : this.cgStart + cyc * HC + Math.min(tau, HC), trX = ((trT * 46) % 672) - 200;
+    const RMP = 0.7, VT = (46 * HC) / (HC - RMP), trD = (u) => (u < RMP ? (VT * u * u) / (2 * RMP) : u > HC - RMP ? VT * (HC - RMP) - (VT * (HC - u) * (HC - u)) / (2 * RMP) : VT * (u - RMP / 2)), trX = ((!this.cgStart || red ? t * 46 : (this.cgStart * 46) % 672 + cyc * 46 * HC + trD(Math.min(tau, HC))) % 672) - 200;
     const oa = red ? 1 : rev ? clamp(1 - Tr / 0.6) : clamp((T - (END - 0.6)) / 0.9), ot = T - (END - 0.6);
     const ORB = [
       { kind: 'plane', rx: 1.52, ry: 0.5, tl: -0.3, sp: 0.2, ph: 0.4 },
@@ -642,11 +689,11 @@ class Component extends DCLogic {
       for (let n = 0; n < cg.P.length; n++) {
         const P = cg.P[n]; let x = P.x; if (P.tr) { x += trX; if (x < 0 || x > 466) continue; }
         const ax = ox + x * k, ay = oy + P.y * k, pp = rev ? 1 - clamp((Tr - (P.dl - HOLD)) / DUR) : T < 0 ? 0 : clamp((T - P.dl) / DUR);
-        if (pp <= 0) { const tf = P.tr ? clamp(Math.min(x, 466 - x) / 28) : 1; if (tf <= 0) continue; g.fillStyle = INK(0.86 * tf); g.fillRect(P.tr ? ax : sn(ax), sn(ay), ds, ds); continue; }
-        const b = proj(P.tg, pca, psa), e = ease(pp), s = Math.sin(Math.PI * pp), am = P.amp * k * s;
+        if (pp <= 0) { if (!P.tr && P.y >= 222 && P.y < 247 && x > 14 && x < 452) { const q = x - trX; if (q >= -1 && q < 190 && (q + 64) % 64 < 61) continue; } const tf = P.tr ? clamp(Math.min(x, 466 - x) / 28) : 1; if (tf <= 0) continue; g.fillStyle = INK(P.a * tf); if (P.sm) g.fillRect(sn(ax) + dsO, sn(ay) + dsO, dsS, dsS); else g.fillRect(P.tr && dpr < 2 ? ax : sn(ax), sn(ay), ds, ds); continue; }
+        const b = PB[n] || (PB[n] = proj(P.tg, pca, psa)), e = ease(pp), s = Math.sin(Math.PI * pp), am = P.amp * k * s;
         const px = ax + (b[0] - ax) * e + am * Math.cos(P.ph + t * 1.7 + P.y * 0.03);
         const py = ay + (b[1] - ay) * e + am * Math.sin(P.ph * 1.3 + t * 1.3 + P.x * 0.025) - am * 0.55;
-        const ta = 0.84 * (0.3 + 0.7 * b[2]), a = (0.86 + (ta - 0.86) * e) * (1 - 0.45 * s), sz = ds * (1 - 0.25 * s);
+        const ta = 0.84 * (0.3 + 0.7 * b[2]), a = (P.a + (ta - P.a) * e) * (1 - 0.45 * s), sz = ((P.sm ? dsS : ds) + (ds - (P.sm ? dsS : ds)) * e) * (1 - 0.25 * s);
         g.fillStyle = INK(a); g.fillRect(px - sz / 2, py - sz / 2, sz, sz);
       }
     }
@@ -789,6 +836,169 @@ class Component extends DCLogic {
   };
 
   /* ---------- 09 price file: a paper plane loops, then glides out left ---------- */
+  /* ---------- 03 capabilities (site patch v9-capabilities): card density + the plane band ---------- */
+  capSkyRef = React.createRef(); capRulesRef = React.createRef();
+  capSetup() {
+    const sec = document.getElementById('capabilities'); if (!sec) return;
+    this.capMeasure();
+    if ('ResizeObserver' in window) { this.capRO = new ResizeObserver(() => this.capMeasure()); this.capRO.observe(sec); }
+    const rl = this.capRulesRef.current;
+    if (rl && 'IntersectionObserver' in window) {
+      this.capIO = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting || this.capRuleDone) return; this.capRuleDone = true; this.capIO.disconnect();
+        this.capRuleT = setTimeout(() => { if (!this.dead) this.setState({ capRuleIn: true }); }, 320);
+      }), { threshold: 0.45 });
+      this.capIO.observe(rl);
+    } else this.setState({ capRuleIn: true });
+    this.rafCS = requestAnimationFrame(this.capSkyLoop);
+  }
+  // layouts follow each card's own width (the cards wrap at different viewport widths)
+  capMeasure() {
+    if (this.dead) return;
+    const W = (k) => { const el = document.querySelector('#capabilities [data-cap="' + k + '"]'); return el ? el.getBoundingClientRect().width : 0; };
+    const T = (k) => { const el = document.querySelector('#capabilities [data-cap="' + k + '"]'); return el ? Math.round(el.getBoundingClientRect().top) : 0; }, pair = (a, b) => Math.abs(T(a) - T(b)) < 2;
+    // side by side, a list fills its card next to a taller neighbour; stacked (phones), it shows fewer rows
+    const nx = { capApMore: W('ap') >= 452, capPoFull: pair('ap', 'po') || W('po') >= 600, capInvWide: W('inv') >= 600, capPoWide: W('po') >= 600, capPoXL: W('po') >= 700, capInvMid: W('inv') >= 470, capRuFull: pair('inv', 'ru') || W('ru') >= 600 };
+    if (Object.keys(nx).some((k) => nx[k] !== !!this.state[k])) this.setState(nx);
+  }
+  capVals(red) {
+    const S = this.state, wide = !!S.capInvWide;
+    const ST = {
+      d: ['Drafted', '#0B5FFF', '0 0 0 1.5px #FFFFFF,0 0 0 2.5px rgba(11,95,255,0.35)'],
+      w: ['Waiting on you', '#FFFDF9', 'inset 0 0 0 1.5px #16171B'],
+      c: ['Confirmed', '#08745A', '0 0 0 1.5px rgba(8,116,90,0.22),0 1px 1.5px rgba(0,0,0,0.3)'],
+      l: ['Late · chasing', '#A35A00', '0 0 0 1.5px #FFFFFF,0 0 0 2.5px rgba(163,90,0,0.3)'],
+      r: ['Received', '#9A968D', 'none'],
+    };
+    const po = [
+      ['PO-2291', 'Meridian Supply', '480 rotors', '$19,392.00', 'd', 1], ['PO-2292', 'Kestrel Fasteners', '5,000 M8 bolts', '$1,450.00', 'w', 1],
+      ['PO-2290', 'Arcadia Electronics', '2,000 connectors', '$1,140.00', 'c', 1], ['PO-2289', 'Halden Industrial', '60 bearings', '$702.00', 'c', 0],
+      ['PO-2288', 'Northline Parts', '96 pad sets', '$3,072.00', 'l', 1], ['PO-2287', 'Corvan Hydraulics', '24 hose kits', '$1,176.00', 'r', 0],
+    ].filter((r) => S.capPoFull || r[5]);
+    const rules = [
+      ['06', 'From 14 orders', 'Order Arcadia connectors in boxes of ', '500', ' or more', 1], ['05', 'You set this', 'Ask before paying more than ', '3%', ' over the last price', 1],
+      ['04', 'From 9 deliveries', 'Add ', '4 days', ' to Northline’s quoted lead time', 1], ['03', 'From 12 orders', 'Split POs above ', '600 units', ' across two suppliers', 1],
+      ['02', 'You set this', 'Hold invoices more than ', '2%', ' over quote', 0], ['01', 'You set this', 'Ask before any order for SKU ', 'CB-118', '', 0],
+    ].filter((r) => S.capRuFull || r[5]);
+    const shown = red || S.capRuleIn;
+    return {
+      capSkyRef: this.capSkyRef, capRulesRef: this.capRulesRef, capApMore: !!S.capApMore, capInvWide: wide,
+      capPoRows: po.map((r, i, a) => ({ po: r[0], sup: r[1], qty: r[2], tot: r[3], st: ST[r[4]][0], dot: ST[r[4]][1], dsh: ST[r[4]][2], bg: i === 0 ? 'rgba(11,95,255,0.04)' : 'transparent', bb: i < a.length - 1 ? '1px solid rgb(22 23 27 / 0.08)' : '0' })),
+      capRules: rules.map((r, i, a) => ({ n: r[0], src: r[1], a: r[2], num: r[3], b: r[4], bt: i ? '0' : '1px', rad: (i ? '0 0 ' : '10px 10px ') + (i === a.length - 1 ? '10px 10px' : '0 0'), sh: i === a.length - 1 ? '0 18px 36px -22px rgba(22,23,27,0.3)' : 'none' })),
+      capInvCols: wide ? 'minmax(0,1fr) 236px' : 'minmax(0,1fr)', capInvGap: wide ? '14px' : '10px', capInvPr: wide ? 'clamp(20px,2.4vw,28px)' : '0',
+      capGmW: wide ? '100%' : 'min(460px,calc(100% - 24px))', capOlW: wide ? '100%' : 'min(340px,calc(100% - 48px))', capOlMl: wide ? '0' : '24px',
+      capSpS: !S.capPoWide, capSpM: !!S.capPoWide && !S.capPoXL, capSpL: !!S.capPoXL, capPoMr: S.capPoWide ? '-24px' : '-140px', capPoMin: S.capPoWide ? '0' : '620px', capPoCols: S.capPoWide ? '72px minmax(0,1fr) 128px 92px 120px' : '96px minmax(0,1.4fr) 132px 110px minmax(0,1fr)', capPoGap: S.capPoWide ? '12px' : '14px',
+      capApL: S.capApMore ? 'clamp(14px,1.8vw,24px)' : 'clamp(20px,2.6vw,32px)', capApW: S.capApMore ? '184px' : '196px', capApR: S.capApMore ? '16px' : 'clamp(20px,3vw,40px)', capTblPl: wide ? 'clamp(28px,5vw,64px)' : S.capInvMid ? '12px' : 'clamp(28px,5vw,64px)', capTblMin: wide || !S.capInvMid ? '520px' : '0',
+      capArPl: wide ? '42%' : 'clamp(120px,40%,220px)', capStampMr: wide ? '6px' : 'clamp(24px,4vw,56px)',
+      capNewOp: shown ? 1 : 0, capNewTf: shown ? 'none' : 'translateY(-14px) scale(0.98)', capNewTr: red ? 'none' : 'opacity 520ms ease, transform 680ms cubic-bezier(0.2,0.8,0.2,1)',
+    };
+  }
+  // one flight in the open band: a dense polyline [x, y, speed factor], built for one direction
+  capPath(kind, dir, w, o) {
+    const R = Math.random, E = 90, pts = []; let steep = false;
+    const seg = (a, b) => {
+      // climbs and dives stay gentle: the curve is steepest at its middle, 1.5x the average slope
+      if (Math.abs(b[1] - a[1]) * 1.5 > Math.abs(b[0] - a[0]) * 0.9) steep = true;
+      const n = Math.max(8, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 5)), mx = (a[0] + b[0]) / 2;
+      for (let i = pts.length ? 1 : 0; i <= n; i++) { const u = i / n, q = 1 - u, x = q * q * q * a[0] + 3 * q * u * mx + u * u * u * b[0], y = (q * q * q + 3 * q * q * u) * a[1] + (3 * q * u * u + u * u * u) * b[1]; pts.push([x, y, 1]); }
+      return b;
+    };
+    // loop-the-loop: up and over, drifting forward k px; slower over the top
+    const loop = (a, r, k, d) => { const n = Math.ceil((2 * Math.PI * r + k) / 4); for (let i = 1; i <= n; i++) { const th = (i / n) * Math.PI * 2; pts.push([a[0] + d * (r * Math.sin(th) + (k * th) / (Math.PI * 2)), a[1] - r * (1 - Math.cos(th)), 0.74 + 0.26 * Math.cos(th)]); } return [a[0] + d * k, a[1]]; };
+    const lane = () => o.yMin + R() * (o.yLane - o.yMin), L = -E, Rx = w + E, xR = o.xR;
+    if (kind === 'line' || kind === 'roll') {
+      const y0 = lane(), y1 = Math.max(o.yMin, Math.min(o.yLane, y0 + (R() - 0.5) * 30));
+      const a = dir > 0 ? [L, y0] : [Rx, y0], b = dir > 0 ? [Rx, y1] : [L, y1]; seg(a, b);
+      const ph = R() * 6, amp = 2 + R() * 4; pts.forEach((p) => { p[1] += Math.sin(ph + p[0] / 140) * amp; });
+      return pts;
+    }
+    const yR = () => o.yLane + R() * Math.max(0, o.yLow - o.yLane);
+    if (kind === 'drift') {
+      const y0 = lane(), yD = yR();
+      if (dir > 0) { seg([L, y0], [xR, y0]); seg([xR, y0], [Rx, yD]); } else { seg([Rx, yD], [xR, y0]); seg([xR, y0], [L, y0 + (R() - 0.5) * 16]); }
+      return steep ? null : pts;
+    }
+    const r = o.wide ? 30 + R() * 16 : 19 + R() * 7, k = r * (0.5 + R() * 0.7), yA = o.yMin + 2 * r + 8 + R() * Math.max(0, o.yLow - (o.yMin + 2 * r + 8));
+    if (yA > o.yLow) return null;
+    if (dir > 0) {
+      const x0 = xR + r + 70, x1 = w - r - k - 40; if (x1 < x0) return null;
+      const xL = x0 + R() * (x1 - x0), y0 = lane();
+      seg([L, y0], [xR - 10, y0]); seg([xR - 10, y0], [xL, yA]); const e = loop([xL, yA], r, k, 1);
+      seg(e, [Rx, Math.min(o.yLow, yA + 12 + R() * 46)]);
+    } else {
+      const x0 = xR + r + k + 80, x1 = w - r - 30; if (x1 < x0) return null;
+      const xL = x0 + R() * (x1 - x0), yS = o.yMin + R() * Math.max(0, yA - o.yMin), y1 = lane();
+      seg([Rx, yS], [xL, yA]); const e = loop([xL, yA], r, k, -1);
+      seg(e, [xR - 10, y1]); seg([xR - 10, y1], [L, y1 + (R() - 0.5) * 14]);
+    }
+    return steep ? null : pts;
+  }
+  capMake(w, h, cv, other) {
+    const R = Math.random, cr = cv.getBoundingClientRect(), box = cv.parentElement;
+    const obs = [box.querySelector('h2'), ...box.querySelectorAll('ol > li > span')].filter(Boolean)
+      .map((el) => { const r = el.getBoundingClientRect(); return [r.left - cr.left, r.top - cr.top, r.right - cr.left, r.bottom - cr.top]; }).filter((r) => r[2] > r[0]);
+    if (!obs.length) return null;
+    const wide = w >= 900, sc = (wide ? 0.74 : 0.5) * (0.88 + R() * 0.24), pad = 30 * sc + 10;
+    // the top lane keeps clear of the sticky nav, which covers the band's top edge while the headline is read
+    const top = Math.min(...obs.map((b) => b[1])), yMin = Math.max(14 + 22 * sc, top * 0.42), yLane = top - pad;
+    if (yLane < yMin) return null;
+    // the open area right of the headline, down to the step pills (or the band's foot)
+    const xR = obs[0][2] + 28, below = obs.slice(1).filter((b) => b[2] > xR).map((b) => b[1]);
+    const yLow = Math.min(h - pad, below.length ? Math.min(...below) - pad : h - pad);
+    const hit = (pts) => pts.some((p) => p[1] < yMin - 8 || p[1] > h - 12 * sc - 4 || obs.some((b) => p[0] > b[0] - pad && p[0] < b[2] + pad && p[1] > b[1] - pad && p[1] < b[3] + pad));
+    const dir = other ? (R() < 0.75 ? -other.dir : other.dir) : R() < 0.5 ? 1 : -1;
+    const room = w - 20 - xR > (wide ? 260 : 150) && yLow - yMin > (wide ? 96 : 60);
+    const kinds = room ? ['line', 'line', 'roll', 'drift', 'drift', 'loop', 'loop', 'loop'] : ['line', 'line', 'line', 'roll'];
+    const v = (wide ? 190 : 112) * (0.85 + R() * 0.3);
+    for (let tr = 0; tr < 16; tr++) {
+      const kind = tr > 11 ? 'line' : kinds[Math.floor(R() * kinds.length)], pts = this.capPath(kind, dir, w, { yMin, yLane, yLow, xR, wide });
+      if (!pts || pts.length < 2 || hit(pts)) continue;
+      const tt = [0], dots = []; let acc = 0, run = 0;
+      for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); acc += d / (v * pts[i][2]); tt.push(acc); run += d; if (run >= 9) { run = 0; dots.push([pts[i][0], pts[i][1], acc]); } }
+      const f = { pts, tt, dots, dur: acc, dir, sc, i: 0, lag: (30 * sc) / v + 0.06 };
+      if (kind === 'roll') { const a = acc * (0.3 + R() * 0.35); f.roll = [a, a + 1.15]; }
+      return f;
+    }
+    return null;
+  }
+  // 0-2 planes at a time, at uneven gaps; nothing under reduced motion or off screen
+  capSkyLoop = (now) => {
+    if (this.dead) return;
+    this.rafCS = requestAnimationFrame(this.capSkyLoop);
+    const cv = this.capSkyRef.current; if (!cv) return;
+    const g = cv.getContext('2d'), red = this.isReduced();
+    let on = !red && !!this.pfIn;
+    if (on) { const vr = cv.getBoundingClientRect(); on = vr.bottom > 0 && vr.top < window.innerHeight; }
+    if (!on) { if (this.csDrawn) { g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); this.csDrawn = false; } this.csF = []; this.csNext = 0; return; }
+    const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1), CW = Math.round(w * dpr), CH = Math.round(h * dpr);
+    if (cv.width !== CW || cv.height !== CH) { cv.width = CW; cv.height = CH; }
+    const t = now / 1000, key = w + 'x' + h;
+    if (this.csKey !== key || !this.csF) { this.csKey = key; this.csF = []; this.csNext = 0; }
+    if (!this.csNext) this.csNext = t + 0.8 + Math.random() * 1.8;
+    this.csF = this.csF.filter((f) => t - f.t0 < f.dur + 4);
+    if (t >= this.csNext) {
+      const live = this.csF.filter((f) => t - f.t0 < f.dur);
+      if (live.length < 2 && !live.some((f) => (t - f.t0) / f.dur < 0.3)) {
+        const f = this.capMake(w, h, cv, live[0]); if (f) { f.t0 = t; this.csF.push(f); }
+        this.csNext = t + (Math.random() < 0.3 ? 2.4 + Math.random() * 2.4 : 5.5 + Math.random() * 7);
+      } else this.csNext = t + 0.8 + Math.random() * 1.6;
+    }
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+    const ink = this.effDark('light') ? 'rgba(236,234,228,' : 'rgba(22,23,27,', sp = this.pfSprite();
+    this.csF.forEach((f) => {
+      const T = t - f.t0;
+      // the dashed trail: each dot shows once the plane is past it and fades a few seconds later
+      f.dots.forEach((d) => { const age = T - d[2]; if (age < f.lag) return; const a = 0.24 * Math.min(1, Math.max(0, 1 - (age - 2.6) / 1.2)); if (a <= 0) return; g.fillStyle = ink + a.toFixed(3) + ')'; g.fillRect(Math.round(d[0]) - 1, Math.round(d[1]) - 1, 2, 2); });
+      if (T >= f.dur) return;
+      const P = f.pts, TT = f.tt; let i = f.i; while (i < P.length - 2 && TT[i + 1] < T) i++; f.i = i;
+      const u = Math.max(0, Math.min(1, (T - TT[i]) / Math.max(1e-6, TT[i + 1] - TT[i]))), x = P[i][0] + (P[i + 1][0] - P[i][0]) * u, y = P[i][1] + (P[i + 1][1] - P[i][1]) * u;
+      const a0 = P[Math.max(0, i - 2)], a1 = P[Math.min(P.length - 1, i + 3)], an = Math.atan2(a1[1] - a0[1], a1[0] - a0[0]);
+      let sy = f.dir < 0 ? -1 : 1; if (f.roll && T > f.roll[0] && T < f.roll[1]) sy *= Math.cos(((T - f.roll[0]) / (f.roll[1] - f.roll[0])) * Math.PI * 2);
+      g.save(); g.translate(x, y); g.rotate(an); g.scale(f.sc, f.sc * sy); g.imageSmoothingEnabled = false; g.drawImage(sp, -36, -22); g.restore();
+    });
+    this.csDrawn = true;
+  };
   pfSprite() {
     if (this.pfSp) return this.pfSp;
     const w = 72, h = 44, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
@@ -861,7 +1071,7 @@ class Component extends DCLogic {
       this.pfKey = key;
       this.pfDots = this.pfPlanes.map((P) => { const dots = []; let last = null, acc = 0; for (let n = 0; n <= 900; n++) { const T = (n / 900) * 4.4, p = this.pfPos(P, T, w, hh); if (last) { acc += Math.hypot(p[0] - last[0], p[1] - last[1]); if (acc >= 9) { acc = 0; dots.push([p[0], p[1], T]); } } last = p; } return dots; });
     }
-    const t = now / 1000, sp = this.pfSprite(), base = w >= 900 ? 1.15 : 0.8;
+    const t = now / 1000 / 1.6, sp = this.pfSprite(), base = w >= 900 ? 1.15 : 0.8;
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, hh);
     const plane = (P, T, a) => { const p = this.pfPos(P, T, w, hh), q = this.pfPos(P, Math.min(4.4, T + 0.02), w, hh), an = a == null ? Math.atan2(q[1] - p[1], q[0] - p[0]) : a, s = base * P.sc; g.save(); g.translate(p[0], p[1]); g.rotate(an); g.scale(s, s * (P.spin && T > 0.7 && T < 2.1 ? Math.cos(((T - 0.7) / 1.4) * Math.PI * 2) : 1)); g.imageSmoothingEnabled = false; g.drawImage(sp, -36, -22); g.restore(); };
     if (red) {
@@ -2731,7 +2941,7 @@ class Component extends DCLogic {
     const w = cv.clientWidth, hh = cv.clientHeight; if (!w || !hh) return;
     const dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.round(w * dpr); cv.height = Math.round(hh * dpr);
     const cr = cv.getBoundingClientRect(), lis = Array.from(cv.parentElement.querySelectorAll('ol > li')), wide = w >= 700;
-    const cols = wide && lis.length === 3 ? lis.map((li) => { const r = li.getBoundingClientRect(); return r.left - cr.left + r.width / 2; }) : [w / 2, w / 2, w / 2];
+    const cols = wide && lis.length === 3 ? lis.map((li) => { const r = (li.children[1] || li).getBoundingClientRect(); return r.left - cr.left + r.width / 2; }) : [w / 2, w / 2, w / 2];
     const sr = sec.getBoundingClientRect();
     this.PL = { w, h: hh, dpr, cols, wide, top: sr.top + window.scrollY, span: Math.max(1, sec.offsetHeight - window.innerHeight), S: wide ? Math.max(2, Math.min(3, Math.floor(hh / 108))) : 2 };
     if (!this.plSp) this.buildPlanSprites();
@@ -2741,7 +2951,7 @@ class Component extends DCLogic {
   planLoop = (now) => {
     this.plRaf = 0; if (this.dead || !this.planVis || this.isReduced()) return;
     this.plRaf = requestAnimationFrame(this.planLoop);
-    if (now - (this.plLast || 0) < 30) return; this.plLast = now;
+    if (now - (this.plLast || 0) < 15) return; this.plLast = now;
     this.drawPlan(now / 1000);
   };
   drawPlan(t) {
@@ -2781,7 +2991,9 @@ class Component extends DCLogic {
       return;
     }
     if (this.plT0 == null && cv.getBoundingClientRect().top < window.innerHeight * 0.75) this.plT0 = t;
-    const p = this.plT0 == null ? 0 : c01(((t - this.plT0) % 9.5) / 7), S = L.S, C3 = L.cols;
+    const plK = [[0, 0], [2.2, 0.28], [3.3, 0.44], [4.8, 0.58], [5.8, 0.72], [7.8, 1]], plS = this.plT0 == null ? 0 : (t - this.plT0) % 9.8;
+    let p = 1; for (let i = 1; i < plK.length; i++) if (plS <= plK[i][0]) { const a = plK[i - 1], b = plK[i]; p = a[1] + ((plS - a[0]) / (b[0] - a[0])) * (b[1] - a[1]); break; }
+    const S = L.S, C3 = L.cols;
     const st = p < 0.36 ? 0 : p < 0.65 ? 1 : 2; if (st !== this.state.planStep) this.setState({ planStep: st });
     const trans = (P, q, x0, x1) => { for (let i = 0; i < P.length; i++) { const o = P[i], qi = c01((q - o.dl * 0.35) / 0.65), e = ease(qi), s = Math.sin(Math.PI * qi), am = o.amp * S * s, sx = x0 + o.ax * S, sy = cy + o.ay * S, dx = x1 + o.bx * S, dy = cy + o.by * S; g.fillStyle = qi < 0.5 ? o.ac : o.bc; const z = S * (1 - 0.3 * s); g.fillRect(sx + (dx - sx) * e + Math.cos(o.ph + t * 2.1) * am, sy + (dy - sy) * e + Math.sin(o.ph * 1.3 + t * 1.7) * am - am * 0.4, z, z); } };
     if (p < 0.28) docs(C3[0], cy, S, c01(p / 0.1), t);
@@ -3385,11 +3597,11 @@ class Component extends DCLogic {
       solidBg: wide
         ? 'linear-gradient(90deg,rgb(var(--bg)) 0%,rgb(var(--bg)) 28%,rgb(var(--bg) / 0) 72%)'
         : 'linear-gradient(180deg,rgb(var(--bg)) 0%,rgb(var(--bg)) 42%,rgb(var(--bg) / 0.6) 60%,rgb(var(--bg) / 0) 78%)',
-      mqItems: ['No rip and replace', 'Runs with your ERP, or without one', 'Nothing buys itself', 'Findings in days', 'Live in a few days', 'Every part matched to what it fits', 'You approve every order'], mqStatic: this.isReduced(), mqLive: !this.isReduced(),
+      mqItems: ['No rip and replace', 'Runs with your ERP, or without one', 'Nothing buys itself', 'Live in days', 'Every part matched to what it fits', 'You approve every order'], mqStatic: this.isReduced(), mqLive: !this.isReduced(),
       mqAnim: this.isReduced() ? 'none' : 'esMarquee 52s linear infinite',
       mqPlayState: this.state.mqHover ? 'paused' : 'running',
       mqPause: () => this.setState({ mqHover: true }), mqPlay: () => this.setState({ mqHover: false }),
-      cgRef: this.cgRef, pfPlaneRef: this.pfPlaneRef, p3Ref: this.p3Ref, flowSvgRef: this.flowSvgRef, flowDotRef: this.flowDotRef, flowPaths: this.state.flowPaths || [],
+      ...this.capVals(red), cgRef: this.cgRef, pfPlaneRef: this.pfPlaneRef, p3Ref: this.p3Ref, flowSvgRef: this.flowSvgRef, flowDotRef: this.flowDotRef, flowPaths: this.state.flowPaths || [],
       flowCols: wide ? 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)', flowGap: wide ? '24px clamp(48px,7vw,120px)' : '44px', flowSrcDir: wide ? 'column' : 'row', flowOutJ: wide ? 'end' : 'center', p3Flex: wide ? '0 0 auto' : '1 1 100%',
       p3Steps: ['Forward an invoice or connect your inbox', 'Stockbot learns how you buy', 'You approve by text'].map((t, i) => { const on = red || (this.state.p3 || 0) > i; return { t, n: '0' + (i + 1), arrow: wide && i < 2, op: 1, bd: 'rgb(22 23 27 / 0.22)', dot: on ? '#08745A' : '#E2DDD2', dotSh: on ? '0 0 0 1.5px rgba(8,116,90,0.22),0 1px 1.5px rgba(0,0,0,0.3)' : 'inset 0 1px 1.5px rgba(0,0,0,0.28)', tr: red ? 'none' : 'opacity 360ms cubic-bezier(.2,.8,.25,1), border-color 360ms cubic-bezier(.2,.8,.25,1), background-color 360ms, box-shadow 360ms' }; }),
       ...(() => { const cs = (on) => ({ on: on ? 'true' : 'false', bg: on ? '#1A1B1F' : 'transparent', col: on ? '#F4F1EA' : '#1A1B1F', bd: on ? '#1A1B1F' : 'rgba(26,27,31,0.32)' }), wh = this.state.spWhere || [];
@@ -3444,8 +3656,8 @@ class Component extends DCLogic {
       a2PaidShow: this.state.a2paid ? 'flex' : 'none',
       narrow: !wide,
       footStampR: wide ? '-12px' : '10px', footColW: wide ? 'auto' : '100%',
-      ...(this.state.phone ? { footCols: 'minmax(0,1fr)', footA1: '1 / 1 / 2 / 2', footA2: '2 / 1 / 3 / 2', footA4: '3 / 1 / 4 / 2', footA3: '4 / 1 / 5 / 2', footArtJs: 'center', footArtMt: '40px', footArtMr: '0' }
-        : { footCols: 'auto auto', footA1: '1 / 1 / 2 / 2', footA2: '2 / 1 / 3 / 2', footA4: '1 / 2 / 2 / 3', footA3: '3 / 1 / 4 / 3', footArtJs: 'start', footArtMt: '-52px', footArtMr: '0' }), footBtnFlex: wide ? '0 0 auto' : '1 1 100%', footNavDisp: wide ? 'flex' : 'grid', footNavGap: wide ? '12px 28px' : '0 16px',
+      ...(this.state.phone ? { fCols: 'minmax(0,1fr)', fH: '1 / 1 / 2 / 2', fP: '2 / 1 / 3 / 2', fB: '3 / 1 / 4 / 2', fArt: '4 / 1 / 5 / 2', fArtH: 'auto', fArtMt: '56px', fRuleMt: '72px', fLinkCols: 'repeat(2,minmax(0,1fr))', fBrandSpan: '1 / -1' }
+        : { fCols: 'auto minmax(0,1fr)', fH: '1 / 1 / 2 / 2', fP: '2 / 1 / 3 / 2', fB: '3 / 1 / 4 / 2', fArt: '2 / 2 / 3 / 3', fArtH: '0px', fArtMt: '24px', fRuleMt: 'clamp(104px,13svh,136px)', fLinkCols: wide ? 'minmax(0,1.7fr) repeat(3,minmax(0,1fr))' : 'repeat(3,minmax(0,1fr))', fBrandSpan: wide ? 'auto' : '1 / -1' }), footBtnFlex: wide ? '0 0 auto' : '1 1 100%', footNavDisp: wide ? 'flex' : 'grid', footNavGap: wide ? '12px 28px' : '0 16px',
       formW: wide ? '500px' : '100%', formMl: wide ? 'max(0px, min(50%, calc(100% + 16px - 500px)))' : '0',
       offColDisp: wide ? 'grid' : 'contents', offO1: wide ? 0 : 1, offO2: wide ? 0 : 2, offO3: wide ? 0 : 3,
       whyTagDisp: wide ? 'flex' : 'grid', whyTagGap: wide ? '22px' : '10px', whyTagWs: wide ? 'nowrap' : 'normal',
@@ -3500,7 +3712,7 @@ class Component extends DCLogic {
       xfade: red ? 'none' : 'opacity 520ms cubic-bezier(.2,.8,.25,1)',
       labHead: this.state.labHead, labPart: this.state.labPart, labFits: this.state.labFits, labFrom: this.state.labFrom,
       stampOp: this.state.stampOn ? 1 : 0,
-      stampTf: this.state.stampOn ? 'translate(6px,16px) rotate(-6deg) scale(1)' : 'translate(6px,16px) rotate(-6deg) scale(1.3)',
+      stampTf: this.state.stampOn ? 'rotate(-6deg) scale(1)' : 'rotate(-6deg) scale(1.3)',
       stampTr: red ? 'none' : 'opacity 140ms cubic-bezier(.2,.8,.25,1), transform 220ms cubic-bezier(.2,.8,.25,1)',
       indStageRef: this.indStageRef, indBoxWrapRef: this.indBoxWrapRef, indBoxRef: this.indBoxRef, indLabelRef: this.indLabelRef,
       videoRef: this.videoRef, toggleVideo: this.toggleVideo, videoLabel: this.state.videoOn ? 'Pause' : 'Play',

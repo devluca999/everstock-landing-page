@@ -26,6 +26,12 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { parseFragment } from "parse5";
+import * as v9Capabilities from "./port-patches/v9-capabilities.mjs";
+import * as v9Workflows from "./port-patches/v9-workflows.mjs";
+import * as v9Plan from "./port-patches/v9-plan.mjs";
+import * as v9Footer from "./port-patches/v9-footer.mjs";
+import * as v9Industries from "./port-patches/v9-industries.mjs";
+const V9_AREAS = [v9Capabilities, v9Workflows, v9Plan, v9Footer, v9Industries];
 /* Site-side patches shared by both pages. */
 const NO_LEGAL_NAV = {
   why: "Footer legal nav: Privacy, Terms and LinkedIn are placeholder anchors (#privacy, #terms, #linkedin) with nothing behind them; left out until the pages and the company URL exist",
@@ -178,6 +184,7 @@ const PAGES = {
         find: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.42;",
         replace: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.72;",
       },
+      ...V9_AREAS.flatMap((a) => a.logicPatches),
     ],
     templatePatches: [
       {
@@ -201,9 +208,10 @@ const PAGES = {
         find: 'href="#how-it-works"',
         replace: 'href="#workflows"',
       },
+      ...V9_AREAS.flatMap((a) => a.templatePatches),
     ],
     // the sections v9 shows, in order (the older ones are still in the design at zero height)
-    seo: { sections: ["top", "integrations", "problem", "capabilities", "workflows", "industries", "pricing", "stock-plan", "cta"] },
+    seo: { sections: ["top", "integrations", "problem", "capabilities", "workflows", "industries", "plan", "pricing", "stock-plan", "cta"] },
     hrefBindings: {
       ...CTA_BINDINGS,
       "Pricing.dc.html": "/pricing",
