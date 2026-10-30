@@ -2741,7 +2741,7 @@ class Component extends DCLogic {
   planLoop = (now) => {
     this.plRaf = 0; if (this.dead || !this.planVis || this.isReduced()) return;
     this.plRaf = requestAnimationFrame(this.planLoop);
-    if (now - (this.plLast || 0) < 30) return; this.plLast = now;
+    if (now - (this.plLast || 0) < 15) return; this.plLast = now;
     this.drawPlan(now / 1000);
   };
   drawPlan(t) {
@@ -3385,7 +3385,7 @@ class Component extends DCLogic {
       solidBg: wide
         ? 'linear-gradient(90deg,rgb(var(--bg)) 0%,rgb(var(--bg)) 28%,rgb(var(--bg) / 0) 72%)'
         : 'linear-gradient(180deg,rgb(var(--bg)) 0%,rgb(var(--bg)) 42%,rgb(var(--bg) / 0.6) 60%,rgb(var(--bg) / 0) 78%)',
-      mqItems: ['No rip and replace', 'Runs with your ERP, or without one', 'Nothing buys itself', 'Findings in days', 'Live in a few days', 'Every part matched to what it fits', 'You approve every order'], mqStatic: this.isReduced(), mqLive: !this.isReduced(),
+      mqItems: ['No rip and replace', 'Runs with your ERP, or without one', 'Nothing buys itself', 'Live in days', 'Every part matched to what it fits', 'You approve every order'], mqStatic: this.isReduced(), mqLive: !this.isReduced(),
       mqAnim: this.isReduced() ? 'none' : 'esMarquee 52s linear infinite',
       mqPlayState: this.state.mqHover ? 'paused' : 'running',
       mqPause: () => this.setState({ mqHover: true }), mqPlay: () => this.setState({ mqHover: false }),

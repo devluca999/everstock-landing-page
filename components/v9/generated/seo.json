@@ -107,6 +107,28 @@
     ]
   },
   {
+    "id": "plan",
+    "footer": false,
+    "blocks": [
+      {
+        "h": 2,
+        "text": "Up and running in days."
+      },
+      {
+        "p": "01 Send us your paperwork. Get early access"
+      },
+      {
+        "p": "02 Review your live model."
+      },
+      {
+        "p": "03 Approve your first orders."
+      },
+      {
+        "p": "Send it Monday. Approve orders by Friday."
+      }
+    ]
+  },
+  {
     "id": "pricing",
     "footer": false,
     "blocks": [
@@ -118,11 +140,17 @@
         "text": "Text it your paperwork. It catches what you’d miss."
       },
       {
-        "p": "Grow into Base, Scale or Enterprise when you need your inbox and team on it."
+        "a": "Compare plans →",
+        "href": "/pricing"
       },
       {
-        "a": "See all plans →",
-        "href": "/pricing"
+        "p": "Base from $199/mo stockbot reads your inbox, so paperwork sorts itself.+ $75 per seat · capped at $499/mo"
+      },
+      {
+        "p": "Scale $999/mo Your team and your agent, working off the same page.Up to 50 seats"
+      },
+      {
+        "p": "Enterprise Custom Multiple agents, your systems, your rules."
       }
     ]
   },

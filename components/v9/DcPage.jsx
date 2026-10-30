@@ -99,8 +99,10 @@ const DEFERRED = [
   // lays out both acts; a jump can land near act 2 without passing act 1
   { fn: "layoutActs", sections: ["act-1", "act-2"], kick: "actKick", margin: HALF_SCREEN },
   { fn: "layoutWhy", sections: ["why"], kick: "whyKick", margin: HALF_SCREEN },
-  // v8 dropped the Plan section (layoutPlan bails without its refs); the closing crate
-  // stack is in the footer
+  // the Plan section is back (2026-10-30, scripts/port-patches/v9-plan.mjs); its loop runs
+  // while it is on screen and simply draws nothing until this layout exists
+  { fn: "layoutPlan", sections: ["plan"], margin: HALF_SCREEN },
+  // the closing crate stack is in the footer
   { fn: "fillClosing", sections: ["cta"], margin: HALF_SCREEN },
 ];
 
