@@ -3584,7 +3584,7 @@ class Component extends DCLogic {
       intAnim: this.isReduced() ? 'none' : 'esMarquee 60s linear infinite', intPlayState: this.state.intHover ? 'paused' : 'running',
       intPause: () => this.setState({ intHover: true }), intPlay: () => this.setState({ intHover: false }),
       stampTr: this.isReduced() ? 'none' : 'opacity 120ms cubic-bezier(.2,.8,.25,1),transform 260ms cubic-bezier(.34,1.5,.5,1)',
-      ...['nav','hero','foot','bar','ba','a2','plan','offer','stk','why','prs','prb','prc','pre'].reduce((o, k) => { const on = this.state.ctaHov === k; o[k + 'StampOp'] = on ? 1 : 0; o[k + 'StampTf'] = on ? 'rotate(-8deg) scale(1)' : 'rotate(-14deg) scale(1.7)'; return o; }, {}),
+      ...['nav','hero','foot','bar','ba','a2','plan','offer','stk','why','prs','prb','prc','pre','cap','prob','wf','ind','tb','ts','te','foot3'].reduce((o, k) => { const on = this.state.ctaHov === k; o[k + 'StampOp'] = on ? 1 : 0; o[k + 'StampTf'] = on ? 'rotate(-8deg) scale(1)' : 'rotate(-14deg) scale(1.7)'; return o; }, {}),
       accTitle: this.state.plan === 'demo' ? 'Book a demo' : 'Get early access',
       accPicker: false, accSubmit: this.state.plan === 'demo' ? 'Book a demo' : 'Get early access',
       themeLabel: this.state.theme === 'light' ? 'Dark' : 'Light', toggleTheme: this.toggleTheme,

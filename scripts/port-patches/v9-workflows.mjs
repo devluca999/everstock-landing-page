@@ -1,3 +1,4 @@
+import { stampedCta } from "./cta.mjs";
 // v9 site patches for one area of the home page (2026-10-30). Same rules as the patches in
 // scripts/port-dc.mjs: each anchor must match its count exactly against the design text as
 // the earlier patches left it, or the port fails.
@@ -41,7 +42,8 @@ const CHECK = (c = "#1A1B1F", s = 12) =>
 const CSS = [
   "#workflows .wfx{padding:clamp(96px,13svh,144px) var(--edge);display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:'h' 't' 'p';row-gap:clamp(28px,4.4svh,44px);}",
   "#workflows .wfx-h{grid-area:h;font-size:clamp(32px,4vw,56px);}",
-  "#workflows .wfx-t{grid-area:t;display:grid;gap:6px;align-content:start;}",
+  "#workflows .wfx-tw{grid-area:t;display:grid;gap:clamp(22px,3svh,32px);align-content:start;min-width:0;}",
+  "#workflows .wfx-t{display:grid;gap:6px;align-content:start;}",
   "#workflows .wfx-p{grid-area:p;min-width:0;container-type:inline-size;}",
   "@media (max-width:1099.98px){#workflows .wfx-t{grid-template-columns:repeat(2,minmax(0,1fr));}}",
   // phones: the four tabs as a 2 x 2 grid of compact cards, number above the label
@@ -246,14 +248,20 @@ function pane(p) {
         </div>`;
 }
 
+// the section's CTA, under the four workflows (Luca, 2026-10-30: "under that, there could be a button ... urging people to try it now")
+const WF_CTA = `<div style="display:grid;gap:10px;justify-items:start;">${stampedCta({ key: "wf", to: "plan", label: "Try it now" })}<span style="font-size:14px;line-height:1.45;color:rgb(var(--ink) / 0.64);">Free Stock Plan. No call required.</span></div>`;
+
 const SECTION_BODY = `
     <style>${CSS}</style>
     <div class="wfx">
       <h2 class="wfx-h" style="font-family:'General Sans','Space Grotesk',sans-serif;letter-spacing:-0.022em;margin:0;max-width:18ch;font-weight:600;line-height:1.05;color:rgb(var(--ink));text-wrap:balance;">The supply work that runs itself.</h2>
+      <div class="wfx-tw">
       <div role="tablist" aria-label="Workflows" aria-orientation="vertical" class="wfx-t">
           <sc-for list="{{ wfTabs }}" as="tab" hint-placeholder-count="4">
             <button type="button" role="tab" class="wfx-tab" aria-selected="{{ tab.sel }}" aria-controls="wf-panel" onClick="{{ tab.pick }}" style="position:relative;overflow:hidden;display:grid;grid-template-columns:28px minmax(0,1fr);align-items:baseline;gap:12px;min-height:64px;padding:16px 18px;text-align:left;border-radius:10px;border:1px solid {{ tab.bd }};background:{{ tab.bg }};color:{{ tab.col }};cursor:pointer;font:inherit;transition:background-color 260ms ${E},border-color 260ms ${E},color 260ms ${E};" style-hover="color:rgb(var(--ink));"><span style="font-family:'Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums lining-nums;font-size:12px;color:{{ tab.numCol }};">{{ tab.n }}</span><span class="wfx-tl" style="font-family:'General Sans','Space Grotesk',sans-serif;font-weight:600;font-size:clamp(19px,1.6vw,22px);line-height:1.2;letter-spacing:-0.022em;">{{ tab.label }}</span><span aria-hidden="true" style="position:absolute;left:18px;right:18px;bottom:0;height:2px;border-radius:1px;background:rgb(var(--ink) / 0.32);transform-origin:0 50%;{{ tab.bar }}"></span></button>
           </sc-for>
+      </div>
+      ${WF_CTA}
       </div>
       <div id="wf-panel" role="tabpanel" aria-live="polite" class="wfx-p" style="position:relative;padding:clamp(20px,2.2vw,30px);border-radius:12px;background-color:#111215;background-image:radial-gradient(rgba(242,241,237,0.13) 1px,transparent 1.3px);background-size:16px 16px;border:1px solid rgba(242,241,237,0.10);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),0 1px 2px rgba(0,0,0,0.4),0 36px 64px -36px rgba(0,0,0,0.75);color:#F2F1ED;">
         <div class="wfx-stack">

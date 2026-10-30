@@ -1,3 +1,4 @@
+import { outlineCta } from "./cta.mjs";
 /**
  * v9 home page: the v5 Plan section ("Up and running in days.") and the brief marquee come
  * back, and the Pricing section lists the tiers (2026-10-30, Luca).
@@ -86,11 +87,11 @@ const MARQUEE_SECTION = [
 // The tiers, beside the stockbot card (it stays the "Start here" offer): one hairline row each,
 // name and price on top, who it's for underneath. Replaces the "Grow into Base, Scale or
 // Enterprise…" line, so nothing on the page says the same thing twice.
-const tier = (name, price, line, note = "") =>
+const tier = (name, price, line, note = "", cta = "") =>
   `<li style="display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:4px 16px;padding:12px 0;border-bottom:1px solid rgb(var(--ink) / 0.14);">` +
   `<span style="font-family:'General Sans','Space Grotesk',sans-serif;font-size:17px;font-weight:600;letter-spacing:-0.01em;color:rgb(var(--ink));">${name}</span>` +
   `<span style="${MONO}font-variant-numeric:tabular-nums lining-nums;font-size:15px;font-weight:500;color:rgb(var(--ink));white-space:nowrap;">${price}</span>` +
-  `<span style="grid-column:1 / -1;font-size:14px;line-height:1.45;color:rgb(var(--ink) / 0.72);text-wrap:pretty;">${line}${note ? `<span style="display:block;margin-top:2px;${MONO}font-size:11.5px;letter-spacing:0.02em;color:rgb(var(--ink) / 0.64);">${note}</span>` : ""}</span></li>`;
+  `<span style="grid-column:${cta ? "1" : "1 / -1"};font-size:14px;line-height:1.45;color:rgb(var(--ink) / 0.72);text-wrap:pretty;">${line}${note ? `<span style="display:block;margin-top:2px;${MONO}font-size:11.5px;letter-spacing:0.02em;color:rgb(var(--ink) / 0.64);">${note}</span>` : ""}</span>${cta ? `<span style="grid-column:2;grid-row:2 / span 2;align-self:center;justify-self:end;padding-top:6px;">${cta}</span>` : ""}</li>`;
 const PER = `<span style="font-size:12px;color:rgb(var(--ink) / 0.64);">/mo</span>`;
 const TIERS = (ind) =>
   [
@@ -100,14 +101,23 @@ const TIERS = (ind) =>
     `    <a href="Pricing.dc.html" style="display:inline-flex;align-items:center;min-height:44px;font-size:15px;font-weight:600;color:rgb(var(--ink));text-decoration:underline;text-decoration-color:rgb(var(--ink) / 0.35);text-underline-offset:5px;" style-hover="text-decoration-color:rgb(var(--ink));">Compare plans →</a>`,
     `  </div>`,
     `  <ul aria-label="Plans" style="list-style:none;margin:0;padding:0;display:grid;border-top:1px solid rgb(var(--ink) / 0.14);">`,
-    `    ${tier("Base", `<span style="font-size:12px;color:rgb(var(--ink) / 0.64);">from </span>$199${PER}`, "stockbot reads your inbox, so paperwork sorts itself.", "+ $75 per seat · capped at $499/mo")}`,
-    `    ${tier("Scale", `$999${PER}`, "Your team and your agent, working off the same page.", "Up to 50 seats")}`,
-    `    ${tier("Enterprise", "Custom", "Multiple agents, your systems, your rules.")}`,
+    `    ${tier("Base", `<span style="font-size:12px;color:rgb(var(--ink) / 0.64);">from </span>$199${PER}`, "stockbot reads your inbox, so paperwork sorts itself.", "+ $75 per seat · capped at $499/mo", outlineCta({ key: "tb", to: "early", label: "Start with Base" }))}`,
+    `    ${tier("Scale", `$999${PER}`, "Your team and your agent, working off the same page.", "Up to 50 seats", outlineCta({ key: "ts", to: "early", label: "Start with Scale" }))}`,
+    `    ${tier("Enterprise", "Custom", "Multiple agents, your systems, your rules.", "", outlineCta({ key: "te", to: "demo", label: "Talk to us" }))}`,
     `  </ul>`,
     `</div>`,
   ].join("\n" + ind);
 
 export const templatePatches = [
+  {
+    why: "Pricing (Luca, 2026-10-30): the section says the path in one line: land with stockbot, expand with Everstock, with a sentence on what grows (each tier now has its own 'Start with …' button)",
+    find: /(<section id="pricing"[^>]*>\n *<div style="padding:clamp\(72px,10svh,112px\) var\(--edge\);display:grid;gap:20px;">\n *<span [^>]*>Pricing<\/span>)/g,
+    count: 1,
+    replace: (m) =>
+      m +
+      `<div style="display:grid;gap:12px;margin-bottom:clamp(8px,1.6svh,18px);"><h2 style="margin:0;max-width:22ch;font-family:'General Sans','Space Grotesk',sans-serif;font-weight:600;font-size:clamp(30px,3.6vw,50px);line-height:1.05;letter-spacing:-0.03em;color:rgb(var(--ink));text-wrap:balance;">Land with stockbot. Expand with Everstock.</h2>` +
+      `<p style="margin:0;max-width:56ch;font-size:clamp(16px,1.3vw,18px);line-height:1.5;color:rgb(var(--ink) / 0.68);text-wrap:pretty;">Start by text for $20 a month. Add your inbox, your team and your systems when you need them. Your history and setup come with you.</p></div>`,
+  },
   {
     why: "Plan (2026-10-30, Luca): v5's 'Up and running' section comes back, right after Industries and before Pricing, so setup and price read as one stretch. It autoplays (see the Plan logic patches in port-dc.mjs); heading 'Up and running in days.', footnote 'Send it Monday. Approve orders by Friday.' (setup takes days, not two weeks); the CTA is v9's 'Get early access'",
     find: '<section id="pricing" data-tone="light"',

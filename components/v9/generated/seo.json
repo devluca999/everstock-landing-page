@@ -157,6 +157,13 @@
     "footer": false,
     "blocks": [
       {
+        "h": 2,
+        "text": "Land with stockbot. Expand with Everstock."
+      },
+      {
+        "p": "Start by text for $20 a month. Add your inbox, your team and your systems when you need them. Your history and setup come with you."
+      },
+      {
         "p": "stockbot $20 /mo founding price"
       },
       {
@@ -168,13 +175,13 @@
         "href": "/pricing"
       },
       {
-        "p": "Base from $199/mo stockbot reads your inbox, so paperwork sorts itself.+ $75 per seat · capped at $499/mo"
+        "p": "Base from $199/mo stockbot reads your inbox, so paperwork sorts itself.+ $75 per seat · capped at $499/mo Start with Base"
       },
       {
-        "p": "Scale $999/mo Your team and your agent, working off the same page.Up to 50 seats"
+        "p": "Scale $999/mo Your team and your agent, working off the same page.Up to 50 seats Start with Scale"
       },
       {
-        "p": "Enterprise Custom Multiple agents, your systems, your rules."
+        "p": "Enterprise Custom Multiple agents, your systems, your rules. Talk to us"
       }
     ]
   },
