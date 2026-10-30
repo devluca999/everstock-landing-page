@@ -118,6 +118,37 @@ const FORM_HONEYPOT = {
   count: 2,
   replace: '<input name="website" type="text" tabIndex="-1" autoComplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"></form>',
 };
+// The Stock Plan section's Chicago → globe canvas (same code as v4/v5). It snapped every dot
+// to a whole CSS pixel while the L train moves ~0.7px a frame, so the train stood still on
+// alternate frames (the stutter); dots ~2.7px wide blurred and shimmered on the pixel grid;
+// and train cars popped in and out at the track ends. (2026-10-30)
+const CHICAGO_SMOOTH = [
+  {
+    why: "Chicago: dots are a whole number of device pixels (crisp, no shimmer); positions snap to device pixels, not CSS pixels (half the step on Retina)",
+    find: "ds = Math.max(1.4, cg.C * k * 0.72);",
+    replace: "ds = Math.max(1.5, Math.round(cg.C * k * 0.72 * dpr) / dpr), sn = (v) => Math.round(v * dpr) / dpr;",
+  },
+  {
+    why: "Chicago: the L train moves at sub-pixel precision (no stutter) and fades in and out over the last stretch of track instead of popping",
+    find: "if (pp <= 0) { g.fillStyle = INK(0.86); g.fillRect(Math.round(ax), Math.round(ay), ds, ds); continue; }",
+    replace: "if (pp <= 0) { const tf = P.tr ? clamp(Math.min(x, 466 - x) / 28) : 1; if (tf <= 0) continue; g.fillStyle = INK(0.86 * tf); g.fillRect(P.tr ? ax : sn(ax), sn(ay), ds, ds); continue; }",
+  },
+  {
+    why: "Chicago: globe land dots snap to device pixels",
+    find: "g.fillRect(Math.round(p[0] - ds / 2), Math.round(p[1] - ds / 2), ds, ds); }",
+    replace: "g.fillRect(sn(p[0] - ds / 2), sn(p[1] - ds / 2), ds, ds); }",
+  },
+  {
+    why: "Chicago: globe sea dots are whole device pixels and snap to them",
+    find: "const s2 = ds * 0.62; g.fillStyle = INK(0.3 * sh * ga); g.fillRect(Math.round(p[0] - s2 / 2), Math.round(p[1] - s2 / 2), s2, s2); }",
+    replace: "const s2 = Math.max(1 / dpr, Math.round(ds * 0.62 * dpr) / dpr); g.fillStyle = INK(0.3 * sh * ga); g.fillRect(sn(p[0] - s2 / 2), sn(p[1] - s2 / 2), s2, s2); }",
+  },
+  {
+    why: "Chicago: the city ↔ globe particles glide at sub-pixel precision instead of hopping a CSS pixel at a time",
+    find: "g.fillStyle = INK(a); g.fillRect(Math.round(px - sz / 2), Math.round(py - sz / 2), sz, sz);",
+    replace: "g.fillStyle = INK(a); g.fillRect(px - sz / 2, py - sz / 2, sz, sz);",
+  },
+];
 const PAGES = {
   // the home page (Claude Design "Everstock v9.dc.html")
   v9: {
@@ -126,6 +157,7 @@ const PAGES = {
     out: "components/v9/generated",
     logicPatches: [
       MARQUEE_DAYS,
+      ...CHICAGO_SMOOTH,
       {
         why: "Plan autoplays: the section is no longer pinned for 2-2.5 screens of scroll; it sits in the flow like the others",
         find: "planSecH: red ? 'auto' : wide ? '250svh' : '200svh', planPos: red ? 'relative' : 'sticky',",

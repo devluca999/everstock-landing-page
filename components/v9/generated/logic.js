@@ -609,7 +609,7 @@ class Component extends DCLogic {
     }
     const sway = (s2) => Math.sin(s2 * 0.55) * 0.28, angEnd = (this.cg ? this.cg.yaw0 : 0) + (rev ? sway(HG) : 0), pca = Math.cos(angEnd), psa = Math.sin(angEnd);
     const k = Math.min(w / 640, hh / 400) * 0.96, ox = (w - 640 * k) / 2, oy = (hh - 400 * k) / 2;
-    const cx = w / 2, cy = hh / 2, Rg = Math.min(hh * 0.34, w / 3.4), ds = Math.max(1.4, cg.C * k * 0.72);
+    const cx = w / 2, cy = hh / 2, Rg = Math.min(hh * 0.34, w / 3.4), ds = Math.max(1.5, Math.round(cg.C * k * 0.72 * dpr) / dpr), sn = (v) => Math.round(v * dpr) / dpr;
     const cgDK = this.effDark('light'), INK = (a) => (cgDK ? 'rgba(236,234,228,' : 'rgba(22,23,27,') + Math.max(0, Math.min(1, a)).toFixed(3) + ')';
     const clamp = (v) => Math.max(0, Math.min(1, v)), ease = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
     const ct = Math.cos(TILT), st = Math.sin(TILT);
@@ -634,20 +634,20 @@ class Component extends DCLogic {
         if ((T < END || rev) && cg.hit[i]) continue;
         const p = proj(i, ca, sa); if (p[2] <= 0) continue;
         const sh = 0.3 + 0.7 * p[2];
-        if (cg.land[i]) { g.fillStyle = INK(0.84 * sh * (T >= END && !rev ? 1 : ga)); g.fillRect(Math.round(p[0] - ds / 2), Math.round(p[1] - ds / 2), ds, ds); }
-        else { const s2 = ds * 0.62; g.fillStyle = INK(0.3 * sh * ga); g.fillRect(Math.round(p[0] - s2 / 2), Math.round(p[1] - s2 / 2), s2, s2); }
+        if (cg.land[i]) { g.fillStyle = INK(0.84 * sh * (T >= END && !rev ? 1 : ga)); g.fillRect(sn(p[0] - ds / 2), sn(p[1] - ds / 2), ds, ds); }
+        else { const s2 = Math.max(1 / dpr, Math.round(ds * 0.62 * dpr) / dpr); g.fillStyle = INK(0.3 * sh * ga); g.fillRect(sn(p[0] - s2 / 2), sn(p[1] - s2 / 2), s2, s2); }
       }
     }
     if (T < END || rev) {
       for (let n = 0; n < cg.P.length; n++) {
         const P = cg.P[n]; let x = P.x; if (P.tr) { x += trX; if (x < 0 || x > 466) continue; }
         const ax = ox + x * k, ay = oy + P.y * k, pp = rev ? 1 - clamp((Tr - (P.dl - HOLD)) / DUR) : T < 0 ? 0 : clamp((T - P.dl) / DUR);
-        if (pp <= 0) { g.fillStyle = INK(0.86); g.fillRect(Math.round(ax), Math.round(ay), ds, ds); continue; }
+        if (pp <= 0) { const tf = P.tr ? clamp(Math.min(x, 466 - x) / 28) : 1; if (tf <= 0) continue; g.fillStyle = INK(0.86 * tf); g.fillRect(P.tr ? ax : sn(ax), sn(ay), ds, ds); continue; }
         const b = proj(P.tg, pca, psa), e = ease(pp), s = Math.sin(Math.PI * pp), am = P.amp * k * s;
         const px = ax + (b[0] - ax) * e + am * Math.cos(P.ph + t * 1.7 + P.y * 0.03);
         const py = ay + (b[1] - ay) * e + am * Math.sin(P.ph * 1.3 + t * 1.3 + P.x * 0.025) - am * 0.55;
         const ta = 0.84 * (0.3 + 0.7 * b[2]), a = (0.86 + (ta - 0.86) * e) * (1 - 0.45 * s), sz = ds * (1 - 0.25 * s);
-        g.fillStyle = INK(a); g.fillRect(Math.round(px - sz / 2), Math.round(py - sz / 2), sz, sz);
+        g.fillStyle = INK(a); g.fillRect(px - sz / 2, py - sz / 2, sz, sz);
       }
     }
     if (oa > 0) ORB.forEach((o) => { if (o.depth >= 0) this.cgIcon(g, o, Rg, oa); });
