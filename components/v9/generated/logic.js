@@ -129,6 +129,7 @@ class Component extends DCLogic {
       ['top', 'hero-cta', 'stock-plan', 'capabilities', 'cta'].forEach((id) => { const el = document.getElementById(id); if (el) this.ioM.observe(el); });
     } else { this.pfIn = true; this.pfT0 = performance.now() / 1000; }
     this.rafPF = requestAnimationFrame(this.pfLoop);
+    this.capSetup();
     this.rafSB = requestAnimationFrame(this.spLoop);
     this.scene3 = this.buildScene();
     window.addEventListener('scroll', this.schedule, { passive: true });
@@ -183,7 +184,7 @@ class Component extends DCLogic {
     cancelAnimationFrame(this.rafW); if (this.ioWhy) this.ioWhy.disconnect(); if (this.ioWhyR) this.ioWhyR.disconnect(); if (this.roWhy) this.roWhy.disconnect(); (this.whyTimers || []).forEach(clearTimeout);
     cancelAnimationFrame(this.rafA); if (this.ioAct) this.ioAct.disconnect(); if (this.roAct) this.roAct.disconnect();
     cancelAnimationFrame(this.rafSt); if (this.ioSt) this.ioSt.disconnect(); (this.stkTimers || []).forEach(clearTimeout);
-    cancelAnimationFrame(this.rafPF); cancelAnimationFrame(this.rafSB); cancelAnimationFrame(this.rafMP); if (this.ioM) this.ioM.disconnect(); window.removeEventListener('keydown', this.onKeyAcc); document.documentElement.style.overflow = '';
+    cancelAnimationFrame(this.rafPF); cancelAnimationFrame(this.rafCS); if (this.capRO) this.capRO.disconnect(); if (this.capIO) this.capIO.disconnect(); clearTimeout(this.capRuleT); cancelAnimationFrame(this.rafSB); cancelAnimationFrame(this.rafMP); if (this.ioM) this.ioM.disconnect(); window.removeEventListener('keydown', this.onKeyAcc); document.documentElement.style.overflow = '';
     clearTimeout(this.typeT);
     window.removeEventListener('scroll', this.onScroll);
     window.removeEventListener('resize', this.onResize);
@@ -835,6 +836,169 @@ class Component extends DCLogic {
   };
 
   /* ---------- 09 price file: a paper plane loops, then glides out left ---------- */
+  /* ---------- 03 capabilities (site patch v9-capabilities): card density + the plane band ---------- */
+  capSkyRef = React.createRef(); capRulesRef = React.createRef();
+  capSetup() {
+    const sec = document.getElementById('capabilities'); if (!sec) return;
+    this.capMeasure();
+    if ('ResizeObserver' in window) { this.capRO = new ResizeObserver(() => this.capMeasure()); this.capRO.observe(sec); }
+    const rl = this.capRulesRef.current;
+    if (rl && 'IntersectionObserver' in window) {
+      this.capIO = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting || this.capRuleDone) return; this.capRuleDone = true; this.capIO.disconnect();
+        this.capRuleT = setTimeout(() => { if (!this.dead) this.setState({ capRuleIn: true }); }, 320);
+      }), { threshold: 0.45 });
+      this.capIO.observe(rl);
+    } else this.setState({ capRuleIn: true });
+    this.rafCS = requestAnimationFrame(this.capSkyLoop);
+  }
+  // layouts follow each card's own width (the cards wrap at different viewport widths)
+  capMeasure() {
+    if (this.dead) return;
+    const W = (k) => { const el = document.querySelector('#capabilities [data-cap="' + k + '"]'); return el ? el.getBoundingClientRect().width : 0; };
+    const T = (k) => { const el = document.querySelector('#capabilities [data-cap="' + k + '"]'); return el ? Math.round(el.getBoundingClientRect().top) : 0; }, pair = (a, b) => Math.abs(T(a) - T(b)) < 2;
+    // side by side, a list fills its card next to a taller neighbour; stacked (phones), it shows fewer rows
+    const nx = { capApMore: W('ap') >= 452, capPoFull: pair('ap', 'po') || W('po') >= 600, capInvWide: W('inv') >= 600, capPoWide: W('po') >= 600, capPoXL: W('po') >= 700, capInvMid: W('inv') >= 470, capRuFull: pair('inv', 'ru') || W('ru') >= 600 };
+    if (Object.keys(nx).some((k) => nx[k] !== !!this.state[k])) this.setState(nx);
+  }
+  capVals(red) {
+    const S = this.state, wide = !!S.capInvWide;
+    const ST = {
+      d: ['Drafted', '#0B5FFF', '0 0 0 1.5px #FFFFFF,0 0 0 2.5px rgba(11,95,255,0.35)'],
+      w: ['Waiting on you', '#FFFDF9', 'inset 0 0 0 1.5px #16171B'],
+      c: ['Confirmed', '#08745A', '0 0 0 1.5px rgba(8,116,90,0.22),0 1px 1.5px rgba(0,0,0,0.3)'],
+      l: ['Late · chasing', '#A35A00', '0 0 0 1.5px #FFFFFF,0 0 0 2.5px rgba(163,90,0,0.3)'],
+      r: ['Received', '#9A968D', 'none'],
+    };
+    const po = [
+      ['PO-2291', 'Meridian Supply', '480 rotors', '$19,392.00', 'd', 1], ['PO-2292', 'Kestrel Fasteners', '5,000 M8 bolts', '$1,450.00', 'w', 1],
+      ['PO-2290', 'Arcadia Electronics', '2,000 connectors', '$1,140.00', 'c', 1], ['PO-2289', 'Halden Industrial', '60 bearings', '$702.00', 'c', 0],
+      ['PO-2288', 'Northline Parts', '96 pad sets', '$3,072.00', 'l', 1], ['PO-2287', 'Corvan Hydraulics', '24 hose kits', '$1,176.00', 'r', 0],
+    ].filter((r) => S.capPoFull || r[5]);
+    const rules = [
+      ['06', 'From 14 orders', 'Order Arcadia connectors in boxes of ', '500', ' or more', 1], ['05', 'You set this', 'Ask before paying more than ', '3%', ' over the last price', 1],
+      ['04', 'From 9 deliveries', 'Add ', '4 days', ' to Northline’s quoted lead time', 1], ['03', 'From 12 orders', 'Split POs above ', '600 units', ' across two suppliers', 1],
+      ['02', 'You set this', 'Hold invoices more than ', '2%', ' over quote', 0], ['01', 'You set this', 'Ask before any order for SKU ', 'CB-118', '', 0],
+    ].filter((r) => S.capRuFull || r[5]);
+    const shown = red || S.capRuleIn;
+    return {
+      capSkyRef: this.capSkyRef, capRulesRef: this.capRulesRef, capApMore: !!S.capApMore, capInvWide: wide,
+      capPoRows: po.map((r, i, a) => ({ po: r[0], sup: r[1], qty: r[2], tot: r[3], st: ST[r[4]][0], dot: ST[r[4]][1], dsh: ST[r[4]][2], bg: i === 0 ? 'rgba(11,95,255,0.04)' : 'transparent', bb: i < a.length - 1 ? '1px solid rgb(22 23 27 / 0.08)' : '0' })),
+      capRules: rules.map((r, i, a) => ({ n: r[0], src: r[1], a: r[2], num: r[3], b: r[4], bt: i ? '0' : '1px', rad: (i ? '0 0 ' : '10px 10px ') + (i === a.length - 1 ? '10px 10px' : '0 0'), sh: i === a.length - 1 ? '0 18px 36px -22px rgba(22,23,27,0.3)' : 'none' })),
+      capInvCols: wide ? 'minmax(0,1fr) 236px' : 'minmax(0,1fr)', capInvGap: wide ? '14px' : '10px', capInvPr: wide ? 'clamp(20px,2.4vw,28px)' : '0',
+      capGmW: wide ? '100%' : 'min(460px,calc(100% - 24px))', capOlW: wide ? '100%' : 'min(340px,calc(100% - 48px))', capOlMl: wide ? '0' : '24px',
+      capSpS: !S.capPoWide, capSpM: !!S.capPoWide && !S.capPoXL, capSpL: !!S.capPoXL, capPoMr: S.capPoWide ? '-24px' : '-140px', capPoMin: S.capPoWide ? '0' : '620px', capPoCols: S.capPoWide ? '72px minmax(0,1fr) 128px 92px 120px' : '96px minmax(0,1.4fr) 132px 110px minmax(0,1fr)', capPoGap: S.capPoWide ? '12px' : '14px',
+      capApL: S.capApMore ? 'clamp(14px,1.8vw,24px)' : 'clamp(20px,2.6vw,32px)', capApW: S.capApMore ? '184px' : '196px', capApR: S.capApMore ? '16px' : 'clamp(20px,3vw,40px)', capTblPl: wide ? 'clamp(28px,5vw,64px)' : S.capInvMid ? '12px' : 'clamp(28px,5vw,64px)', capTblMin: wide || !S.capInvMid ? '520px' : '0',
+      capArPl: wide ? '42%' : 'clamp(120px,40%,220px)', capStampMr: wide ? '6px' : 'clamp(24px,4vw,56px)',
+      capNewOp: shown ? 1 : 0, capNewTf: shown ? 'none' : 'translateY(-14px) scale(0.98)', capNewTr: red ? 'none' : 'opacity 520ms ease, transform 680ms cubic-bezier(0.2,0.8,0.2,1)',
+    };
+  }
+  // one flight in the open band: a dense polyline [x, y, speed factor], built for one direction
+  capPath(kind, dir, w, o) {
+    const R = Math.random, E = 90, pts = []; let steep = false;
+    const seg = (a, b) => {
+      // climbs and dives stay gentle: the curve is steepest at its middle, 1.5x the average slope
+      if (Math.abs(b[1] - a[1]) * 1.5 > Math.abs(b[0] - a[0]) * 0.9) steep = true;
+      const n = Math.max(8, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 5)), mx = (a[0] + b[0]) / 2;
+      for (let i = pts.length ? 1 : 0; i <= n; i++) { const u = i / n, q = 1 - u, x = q * q * q * a[0] + 3 * q * u * mx + u * u * u * b[0], y = (q * q * q + 3 * q * q * u) * a[1] + (3 * q * u * u + u * u * u) * b[1]; pts.push([x, y, 1]); }
+      return b;
+    };
+    // loop-the-loop: up and over, drifting forward k px; slower over the top
+    const loop = (a, r, k, d) => { const n = Math.ceil((2 * Math.PI * r + k) / 4); for (let i = 1; i <= n; i++) { const th = (i / n) * Math.PI * 2; pts.push([a[0] + d * (r * Math.sin(th) + (k * th) / (Math.PI * 2)), a[1] - r * (1 - Math.cos(th)), 0.74 + 0.26 * Math.cos(th)]); } return [a[0] + d * k, a[1]]; };
+    const lane = () => o.yMin + R() * (o.yLane - o.yMin), L = -E, Rx = w + E, xR = o.xR;
+    if (kind === 'line' || kind === 'roll') {
+      const y0 = lane(), y1 = Math.max(o.yMin, Math.min(o.yLane, y0 + (R() - 0.5) * 30));
+      const a = dir > 0 ? [L, y0] : [Rx, y0], b = dir > 0 ? [Rx, y1] : [L, y1]; seg(a, b);
+      const ph = R() * 6, amp = 2 + R() * 4; pts.forEach((p) => { p[1] += Math.sin(ph + p[0] / 140) * amp; });
+      return pts;
+    }
+    const yR = () => o.yLane + R() * Math.max(0, o.yLow - o.yLane);
+    if (kind === 'drift') {
+      const y0 = lane(), yD = yR();
+      if (dir > 0) { seg([L, y0], [xR, y0]); seg([xR, y0], [Rx, yD]); } else { seg([Rx, yD], [xR, y0]); seg([xR, y0], [L, y0 + (R() - 0.5) * 16]); }
+      return steep ? null : pts;
+    }
+    const r = o.wide ? 30 + R() * 16 : 19 + R() * 7, k = r * (0.5 + R() * 0.7), yA = o.yMin + 2 * r + 8 + R() * Math.max(0, o.yLow - (o.yMin + 2 * r + 8));
+    if (yA > o.yLow) return null;
+    if (dir > 0) {
+      const x0 = xR + r + 70, x1 = w - r - k - 40; if (x1 < x0) return null;
+      const xL = x0 + R() * (x1 - x0), y0 = lane();
+      seg([L, y0], [xR - 10, y0]); seg([xR - 10, y0], [xL, yA]); const e = loop([xL, yA], r, k, 1);
+      seg(e, [Rx, Math.min(o.yLow, yA + 12 + R() * 46)]);
+    } else {
+      const x0 = xR + r + k + 80, x1 = w - r - 30; if (x1 < x0) return null;
+      const xL = x0 + R() * (x1 - x0), yS = o.yMin + R() * Math.max(0, yA - o.yMin), y1 = lane();
+      seg([Rx, yS], [xL, yA]); const e = loop([xL, yA], r, k, -1);
+      seg(e, [xR - 10, y1]); seg([xR - 10, y1], [L, y1 + (R() - 0.5) * 14]);
+    }
+    return steep ? null : pts;
+  }
+  capMake(w, h, cv, other) {
+    const R = Math.random, cr = cv.getBoundingClientRect(), box = cv.parentElement;
+    const obs = [box.querySelector('h2'), ...box.querySelectorAll('ol > li > span')].filter(Boolean)
+      .map((el) => { const r = el.getBoundingClientRect(); return [r.left - cr.left, r.top - cr.top, r.right - cr.left, r.bottom - cr.top]; }).filter((r) => r[2] > r[0]);
+    if (!obs.length) return null;
+    const wide = w >= 900, sc = (wide ? 0.74 : 0.5) * (0.88 + R() * 0.24), pad = 30 * sc + 10;
+    // the top lane keeps clear of the sticky nav, which covers the band's top edge while the headline is read
+    const top = Math.min(...obs.map((b) => b[1])), yMin = Math.max(14 + 22 * sc, top * 0.42), yLane = top - pad;
+    if (yLane < yMin) return null;
+    // the open area right of the headline, down to the step pills (or the band's foot)
+    const xR = obs[0][2] + 28, below = obs.slice(1).filter((b) => b[2] > xR).map((b) => b[1]);
+    const yLow = Math.min(h - pad, below.length ? Math.min(...below) - pad : h - pad);
+    const hit = (pts) => pts.some((p) => p[1] < yMin - 8 || p[1] > h - 12 * sc - 4 || obs.some((b) => p[0] > b[0] - pad && p[0] < b[2] + pad && p[1] > b[1] - pad && p[1] < b[3] + pad));
+    const dir = other ? (R() < 0.75 ? -other.dir : other.dir) : R() < 0.5 ? 1 : -1;
+    const room = w - 20 - xR > (wide ? 260 : 150) && yLow - yMin > (wide ? 96 : 60);
+    const kinds = room ? ['line', 'line', 'roll', 'drift', 'drift', 'loop', 'loop', 'loop'] : ['line', 'line', 'line', 'roll'];
+    const v = (wide ? 190 : 112) * (0.85 + R() * 0.3);
+    for (let tr = 0; tr < 16; tr++) {
+      const kind = tr > 11 ? 'line' : kinds[Math.floor(R() * kinds.length)], pts = this.capPath(kind, dir, w, { yMin, yLane, yLow, xR, wide });
+      if (!pts || pts.length < 2 || hit(pts)) continue;
+      const tt = [0], dots = []; let acc = 0, run = 0;
+      for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); acc += d / (v * pts[i][2]); tt.push(acc); run += d; if (run >= 9) { run = 0; dots.push([pts[i][0], pts[i][1], acc]); } }
+      const f = { pts, tt, dots, dur: acc, dir, sc, i: 0, lag: (30 * sc) / v + 0.06 };
+      if (kind === 'roll') { const a = acc * (0.3 + R() * 0.35); f.roll = [a, a + 1.15]; }
+      return f;
+    }
+    return null;
+  }
+  // 0-2 planes at a time, at uneven gaps; nothing under reduced motion or off screen
+  capSkyLoop = (now) => {
+    if (this.dead) return;
+    this.rafCS = requestAnimationFrame(this.capSkyLoop);
+    const cv = this.capSkyRef.current; if (!cv) return;
+    const g = cv.getContext('2d'), red = this.isReduced();
+    let on = !red && !!this.pfIn;
+    if (on) { const vr = cv.getBoundingClientRect(); on = vr.bottom > 0 && vr.top < window.innerHeight; }
+    if (!on) { if (this.csDrawn) { g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); this.csDrawn = false; } this.csF = []; this.csNext = 0; return; }
+    const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1), CW = Math.round(w * dpr), CH = Math.round(h * dpr);
+    if (cv.width !== CW || cv.height !== CH) { cv.width = CW; cv.height = CH; }
+    const t = now / 1000, key = w + 'x' + h;
+    if (this.csKey !== key || !this.csF) { this.csKey = key; this.csF = []; this.csNext = 0; }
+    if (!this.csNext) this.csNext = t + 0.8 + Math.random() * 1.8;
+    this.csF = this.csF.filter((f) => t - f.t0 < f.dur + 4);
+    if (t >= this.csNext) {
+      const live = this.csF.filter((f) => t - f.t0 < f.dur);
+      if (live.length < 2 && !live.some((f) => (t - f.t0) / f.dur < 0.3)) {
+        const f = this.capMake(w, h, cv, live[0]); if (f) { f.t0 = t; this.csF.push(f); }
+        this.csNext = t + (Math.random() < 0.3 ? 2.4 + Math.random() * 2.4 : 5.5 + Math.random() * 7);
+      } else this.csNext = t + 0.8 + Math.random() * 1.6;
+    }
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+    const ink = this.effDark('light') ? 'rgba(236,234,228,' : 'rgba(22,23,27,', sp = this.pfSprite();
+    this.csF.forEach((f) => {
+      const T = t - f.t0;
+      // the dashed trail: each dot shows once the plane is past it and fades a few seconds later
+      f.dots.forEach((d) => { const age = T - d[2]; if (age < f.lag) return; const a = 0.24 * Math.min(1, Math.max(0, 1 - (age - 2.6) / 1.2)); if (a <= 0) return; g.fillStyle = ink + a.toFixed(3) + ')'; g.fillRect(Math.round(d[0]) - 1, Math.round(d[1]) - 1, 2, 2); });
+      if (T >= f.dur) return;
+      const P = f.pts, TT = f.tt; let i = f.i; while (i < P.length - 2 && TT[i + 1] < T) i++; f.i = i;
+      const u = Math.max(0, Math.min(1, (T - TT[i]) / Math.max(1e-6, TT[i + 1] - TT[i]))), x = P[i][0] + (P[i + 1][0] - P[i][0]) * u, y = P[i][1] + (P[i + 1][1] - P[i][1]) * u;
+      const a0 = P[Math.max(0, i - 2)], a1 = P[Math.min(P.length - 1, i + 3)], an = Math.atan2(a1[1] - a0[1], a1[0] - a0[0]);
+      let sy = f.dir < 0 ? -1 : 1; if (f.roll && T > f.roll[0] && T < f.roll[1]) sy *= Math.cos(((T - f.roll[0]) / (f.roll[1] - f.roll[0])) * Math.PI * 2);
+      g.save(); g.translate(x, y); g.rotate(an); g.scale(f.sc, f.sc * sy); g.imageSmoothingEnabled = false; g.drawImage(sp, -36, -22); g.restore();
+    });
+    this.csDrawn = true;
+  };
   pfSprite() {
     if (this.pfSp) return this.pfSp;
     const w = 72, h = 44, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
@@ -907,7 +1071,7 @@ class Component extends DCLogic {
       this.pfKey = key;
       this.pfDots = this.pfPlanes.map((P) => { const dots = []; let last = null, acc = 0; for (let n = 0; n <= 900; n++) { const T = (n / 900) * 4.4, p = this.pfPos(P, T, w, hh); if (last) { acc += Math.hypot(p[0] - last[0], p[1] - last[1]); if (acc >= 9) { acc = 0; dots.push([p[0], p[1], T]); } } last = p; } return dots; });
     }
-    const t = now / 1000, sp = this.pfSprite(), base = w >= 900 ? 1.15 : 0.8;
+    const t = now / 1000 / 1.6, sp = this.pfSprite(), base = w >= 900 ? 1.15 : 0.8;
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, hh);
     const plane = (P, T, a) => { const p = this.pfPos(P, T, w, hh), q = this.pfPos(P, Math.min(4.4, T + 0.02), w, hh), an = a == null ? Math.atan2(q[1] - p[1], q[0] - p[0]) : a, s = base * P.sc; g.save(); g.translate(p[0], p[1]); g.rotate(an); g.scale(s, s * (P.spin && T > 0.7 && T < 2.1 ? Math.cos(((T - 0.7) / 1.4) * Math.PI * 2) : 1)); g.imageSmoothingEnabled = false; g.drawImage(sp, -36, -22); g.restore(); };
     if (red) {
@@ -3435,7 +3599,7 @@ class Component extends DCLogic {
       mqAnim: this.isReduced() ? 'none' : 'esMarquee 52s linear infinite',
       mqPlayState: this.state.mqHover ? 'paused' : 'running',
       mqPause: () => this.setState({ mqHover: true }), mqPlay: () => this.setState({ mqHover: false }),
-      cgRef: this.cgRef, pfPlaneRef: this.pfPlaneRef, p3Ref: this.p3Ref, flowSvgRef: this.flowSvgRef, flowDotRef: this.flowDotRef, flowPaths: this.state.flowPaths || [],
+      ...this.capVals(red), cgRef: this.cgRef, pfPlaneRef: this.pfPlaneRef, p3Ref: this.p3Ref, flowSvgRef: this.flowSvgRef, flowDotRef: this.flowDotRef, flowPaths: this.state.flowPaths || [],
       flowCols: wide ? 'minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)', flowGap: wide ? '24px clamp(48px,7vw,120px)' : '44px', flowSrcDir: wide ? 'column' : 'row', flowOutJ: wide ? 'end' : 'center', p3Flex: wide ? '0 0 auto' : '1 1 100%',
       p3Steps: ['Forward an invoice or connect your inbox', 'Stockbot learns how you buy', 'You approve by text'].map((t, i) => { const on = red || (this.state.p3 || 0) > i; return { t, n: '0' + (i + 1), arrow: wide && i < 2, op: 1, bd: 'rgb(22 23 27 / 0.22)', dot: on ? '#08745A' : '#E2DDD2', dotSh: on ? '0 0 0 1.5px rgba(8,116,90,0.22),0 1px 1.5px rgba(0,0,0,0.3)' : 'inset 0 1px 1.5px rgba(0,0,0,0.28)', tr: red ? 'none' : 'opacity 360ms cubic-bezier(.2,.8,.25,1), border-color 360ms cubic-bezier(.2,.8,.25,1), background-color 360ms, box-shadow 360ms' }; }),
       ...(() => { const cs = (on) => ({ on: on ? 'true' : 'false', bg: on ? '#1A1B1F' : 'transparent', col: on ? '#F4F1EA' : '#1A1B1F', bd: on ? '#1A1B1F' : 'rgba(26,27,31,0.32)' }), wh = this.state.spWhere || [];
