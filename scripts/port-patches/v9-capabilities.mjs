@@ -6,6 +6,8 @@
 // Luca, 2026-10-30: planes in the open band around the headline (both directions, semi-erratic,
 // straight / drift / roll / loop), the existing planes slower, and denser cards (more POs and a
 // "why now" strip, more approvals, an Outlook thread caught on the invoice, a list of rules).
+// Round 2 (Luca, 2026-10-30): a "Try it now" CTA on the Example week strip, and the approvals card
+// rebuilt around a big iPhone whose thread plays out and then hands the PO to the Everstock web app.
 // Carry these into the design, then delete the patches.
 
 /* ---------- shared bits of markup (the cards' own visual language) ---------- */
@@ -71,23 +73,109 @@ const poCard = (shopify) => `<article data-cap="po" style="flex:3 1 460px;min-wi
             </div>
           </article>`;
 
-/* ---------- Approvals card: more replies beside the phone ---------- */
-const miniChip = (po, dot, st, col, body, rot, ml) => `<div role="listitem" style="width:176px;box-sizing:border-box;display:grid;gap:4px;margin-left:${ml};padding:10px 12px;${PAPER}transform:rotate(${rot});">
-                  <span style="display:flex;justify-content:space-between;gap:8px;${MONO}font-size:11.5px;font-weight:600;">${po}<span style="display:flex;align-items:center;gap:6px;font-family:'Space Grotesk',sans-serif;font-weight:500;color:${col};">${dot}${st}</span></span>
-                  ${body}
-                </div>`;
-const apChips = `<div role="list" aria-label="Recent replies" style="position:absolute;z-index:3;left:{{ capApL }};bottom:clamp(110px,11vw,150px);display:flex;flex-direction:column;align-items:flex-start;gap:12px;">
-              <sc-if value="{{ capApMore }}" hint-placeholder-val="{{ true }}">
-                ${miniChip("PO-2286", DOT_A, "Held", "#A35A00", '<span style="font-size:12px;line-height:1.35;color:#5A564E;">Fuse price up 9%. You replied “Hold”.</span>', "1.2deg", "8px")}
-                ${miniChip("PO-2289", DOT_G, "Swapped", "#08745A", '<span style="font-size:12px;line-height:1.35;color:#5A564E;">Bearings moved to Halden. Ships in 3 days, not 12.</span>', "-1deg", "0px")}
-                ${miniChip("PO-2290", DOT_G, "Approved", "#08745A", `<span style="font-size:12px;line-height:1.35;color:#5A564E;">Arcadia’s new connector price</span><span style="${MONO}font-size:11.5px;color:#16171B;">$0.55 → $0.57 a unit</span>`, "1.6deg", "12px")}
-              </sc-if>
-              <div role="listitem" style="width:{{ capApW }};box-sizing:border-box;display:grid;gap:5px;padding:12px 14px;${PAPER}transform:rotate(-2deg);">
-                <span style="display:flex;justify-content:space-between;gap:8px;${MONO}font-size:12px;font-weight:600;">PO-2291<span style="display:flex;align-items:center;gap:6px;font-family:'Space Grotesk',sans-serif;font-weight:500;color:#08745A;">${DOT_G}Sent</span></span>
-                <span style="font-size:12.5px;color:#5A564E;">Meridian Supply · 480 rotors</span>
-                <span style="${MONO}font-size:15px;font-weight:500;">$19,392.00</span>
+/* ---------- Approvals card: a big iPhone whose thread plays out, then the PO opens in Everstock ---------- */
+// Luca, 2026-10-30 (round 2): the phone takes most of the card, the thread plays like a real
+// iMessage exchange (typing, the ask, reply options, Approve, Delivered, the confirmation with a
+// link), then the same PO shows up in the Everstock web app beside the phone, and it loops.
+// Every animated row is a grid whose one track eases 0fr <-> 1fr, so the thread grows smoothly and
+// nothing outside the phone moves. The phone is drawn at 300 x 620 and scaled as a whole (crisp text).
+const SF = "font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;";
+const BUB_IN = "flex:none;max-width:78%;align-self:flex-start;padding:8px 13px;border-radius:20px;background:#E9E9EB;color:#000000;font-size:15.5px;line-height:1.3;text-wrap:pretty;";
+const BUB_OUT = "flex:none;max-width:70%;align-self:flex-end;padding:8px 14px;border-radius:20px;background:#0A84FF;color:#FFFFFF;font-size:15.5px;line-height:1.3;";
+// one animated row of the thread: k is the key the logic finds it by, pt the space above it
+const cxRow = (k, pt, inner, col = "column") => `<div data-cx="${k}" style="flex:none;display:grid;grid-template-rows:1fr;transition:grid-template-rows 440ms cubic-bezier(.2,.8,.25,1);"><div style="min-height:0;overflow:hidden;display:flex;flex-direction:${col};"><div data-cxb="true" style="display:flex;flex-direction:column;padding-top:${pt}px;transform-origin:50% 100%;transition:opacity 320ms ease,transform 440ms cubic-bezier(.2,.8,.25,1);">${inner}</div></div></div>`;
+const typing = (k) => cxRow(k, 6, `<div aria-hidden="true" style="flex:none;align-self:flex-start;display:flex;align-items:center;gap:5px;padding:12px 15px;border-radius:20px;background:#E9E9EB;"><span data-cxdot="true" style="width:9px;height:9px;border-radius:50%;background:#8E8E93;"></span><span data-cxdot="true" style="width:9px;height:9px;border-radius:50%;background:#8E8E93;"></span><span data-cxdot="true" style="width:9px;height:9px;border-radius:50%;background:#8E8E93;"></span></div>`);
+const chip = (k, t) => `<span data-cxchip="${k}" style="flex:none;padding:7px 12px;border:1.5px solid #0A84FF;border-radius:18px;background:#FFFFFF;color:#0A84FF;font-size:13.5px;font-weight:600;line-height:1.2;white-space:nowrap;transition:background-color 200ms ease,color 200ms ease,transform 200ms ease;">${t}</span>`;
+const LOGO_LINK = `<img src="assets/logo-mark-dark.svg" width="58" height="36" alt="" style="display:block;">`;
+
+const apPhone = `<div data-cxphone="true" style="position:absolute;z-index:2;left:50%;top:0;width:300px;height:620px;margin-left:-150px;transform-origin:50% 0;transition:transform 760ms cubic-bezier(.65,0,.25,1),filter 760ms ease;">
+              <div style="position:relative;width:300px;height:620px;box-sizing:border-box;padding:11px;border-radius:54px;background:#1C1C1E;transform:scale({{ capApS }});transform-origin:50% 0;box-shadow:inset 0 0 0 1.5px #48484A,inset 0 0 0 3.5px #0B0B0C,0 2px 4px rgba(22,23,27,0.2),0 40px 70px -30px rgba(22,23,27,0.55);">
+              <span aria-hidden="true" style="position:absolute;left:-3px;top:118px;width:3.5px;height:28px;border-radius:2px 0 0 2px;background:#2C2C2E;"></span>
+              <span aria-hidden="true" style="position:absolute;left:-3px;top:166px;width:3.5px;height:52px;border-radius:2px 0 0 2px;background:#2C2C2E;"></span>
+              <span aria-hidden="true" style="position:absolute;left:-3px;top:228px;width:3.5px;height:52px;border-radius:2px 0 0 2px;background:#2C2C2E;"></span>
+              <span aria-hidden="true" style="position:absolute;right:-3px;top:186px;width:3.5px;height:80px;border-radius:0 2px 2px 0;background:#2C2C2E;"></span>
+              <div style="position:relative;height:100%;border-radius:43px;overflow:hidden;background:#FFFFFF;display:flex;flex-direction:column;${SF}color:#000000;">
+                <div style="position:relative;flex:none;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 26px 0 32px;">
+                  <span style="font-size:16px;font-weight:600;letter-spacing:-0.01em;">9:41</span>
+                  <span aria-hidden="true" style="position:absolute;left:50%;top:11px;width:92px;height:27px;transform:translateX(-50%);border-radius:14px;background:#000000;"></span>
+                  <span aria-hidden="true" style="display:flex;align-items:center;gap:5px;">
+                    <span style="display:flex;align-items:flex-end;gap:2px;height:11px;"><span style="width:3.5px;height:4px;border-radius:1px;background:#000;"></span><span style="width:3.5px;height:6px;border-radius:1px;background:#000;"></span><span style="width:3.5px;height:8.5px;border-radius:1px;background:#000;"></span><span style="width:3.5px;height:11px;border-radius:1px;background:#000;"></span></span>
+                    <svg width="16" height="12" viewBox="0 0 24 18" fill="#000000"><path d="M12 18 8.4 14.1a5.2 5.2 0 0 1 7.2 0L12 18Zm-6-6.4L3.6 9a12 12 0 0 1 16.8 0L18 11.6a8.6 8.6 0 0 0-12 0ZM1.2 6.4 0 5.1C6.6-1.7 17.4-1.7 24 5.1l-1.2 1.3a15.4 15.4 0 0 0-21.6 0Z"></path></svg>
+                    <span style="position:relative;width:25px;height:12px;box-sizing:border-box;border:1px solid rgba(0,0,0,0.4);border-radius:3.5px;padding:1.5px;"><span style="display:block;width:80%;height:100%;border-radius:2px;background:#000000;"></span><span style="position:absolute;right:-3.5px;top:3px;width:2px;height:4px;border-radius:0 1px 1px 0;background:rgba(0,0,0,0.4);"></span></span>
+                  </span>
+                </div>
+                <div style="flex:none;display:grid;grid-template-columns:48px 1fr 48px;align-items:center;padding:0 10px 9px;border-bottom:0.5px solid #D1D1D6;background:#F7F7F8;">
+                  <svg aria-hidden="true" width="14" height="23" viewBox="0 0 12 20" fill="none" stroke="#0A84FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 2 10l8 8"></path></svg>
+                  <span style="display:grid;justify-items:center;gap:4px;">
+                    <span aria-hidden="true" style="width:46px;height:46px;display:grid;place-items:center;border-radius:50%;background:#E8E4DA;overflow:hidden;"><img data-prbox="true" data-pr-scale="1.15" data-keep="true" alt="" style="display:block;image-rendering:pixelated;"></span>
+                    <span style="display:flex;align-items:center;gap:3px;font-size:12.5px;font-weight:500;">stockbot<svg aria-hidden="true" width="7" height="11" viewBox="0 0 6 9" fill="none" stroke="#8E8E93" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m1.5 1 3.5 3.5L1.5 8"></path></svg></span>
+                  </span>
+                  <svg aria-hidden="true" width="27" height="17" viewBox="0 0 24 16" fill="#0A84FF" style="justify-self:end;margin-right:4px;"><rect x="0" y="1" width="15" height="14" rx="3.5"></rect><path d="m16.5 6 6-3.6c.6-.3 1.5.1 1.5.8v9.6c0 .7-.9 1.1-1.5.8l-6-3.6Z"></path></svg>
+                </div>
+                <div data-cxlog="true" style="flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:12px 12px 10px;">
+                  <span style="flex:none;align-self:center;margin-bottom:8px;text-align:center;font-size:11.5px;line-height:1.35;color:#8E8E93;">Mon 11:02 AM</span>
+                  <div style="${BUB_IN}">Arcadia’s connector price went from $0.55 to $0.57 a unit. Order the 2,000 at the new price?</div>
+                  <div style="${BUB_OUT}margin-top:7px;">Yes</div>
+                  <span style="flex:none;align-self:center;margin:14px 0 8px;text-align:center;font-size:11.5px;line-height:1.35;color:#8E8E93;">Yesterday 4:12 PM</span>
+                  <div style="${BUB_IN}">Northline needs 12 days for the 60 bearings. Halden can ship in 3 at the same price. Switch?</div>
+                  <div style="${BUB_OUT}margin-top:7px;">Switch</div>
+                  <span style="flex:none;align-self:center;margin:14px 0 4px;text-align:center;font-size:11.5px;line-height:1.35;color:#8E8E93;"><span style="font-weight:600;">iMessage</span><br>Today 9:38 AM</span>
+                  ${typing("t1")}
+                  ${cxRow("m1", 6, `<div style="${BUB_IN}">Reorder ready: 480 brake rotors from Meridian, $19,392. Unit price is up 4% since March. Approve or hold?</div>`)}
+                  ${cxRow("ch", 10, `<div style="flex:none;display:flex;justify-content:flex-end;gap:6px;">${chip("ok", "Approve")}${chip("hold", "Hold")}${chip("qty", "Change qty")}</div>`)}
+                  ${cxRow("me", 8, `<div style="${BUB_OUT}">Approve</div>`)}
+                  ${cxRow("dl", 2, `<span style="flex:none;align-self:flex-end;margin-right:5px;font-size:11.5px;font-weight:500;color:#8E8E93;">Delivered</span>`)}
+                  ${typing("t2")}
+                  ${cxRow("m2", 6, `<div style="${BUB_IN}">Sent. PO-2291 is with Meridian. Chasing at 3pm if it isn’t confirmed.</div>`)}
+                  ${cxRow("ln", 4, `<div data-cxlink="true" style="flex:none;align-self:flex-start;width:206px;border-radius:18px;overflow:hidden;background:#E9E9EB;transition:filter 200ms ease,transform 200ms ease;"><div style="height:74px;display:grid;place-items:center;background:#16171B;">${LOGO_LINK}</div><div style="display:grid;gap:2px;padding:8px 13px 10px;"><span style="font-size:14px;font-weight:600;line-height:1.25;">Open PO-2291 in Everstock</span><span style="font-size:12px;color:#8E8E93;">tryeverstock.com</span></div></div>`)}
+                </div>
+                <div style="flex:none;display:flex;align-items:center;gap:8px;padding:6px 11px 3px;">
+                  <span aria-hidden="true" style="flex:none;width:33px;height:33px;display:grid;place-items:center;border-radius:50%;background:#E9E9EB;"><svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round"><path d="M6 1v10M1 6h10"></path></svg></span>
+                  <span style="flex:1;min-width:0;height:35px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 14px;border:1px solid #D1D1D6;border-radius:18px;font-size:14.5px;color:#B0B0B5;">Text Message<svg aria-hidden="true" width="11" height="16" viewBox="0 0 10 14" fill="none" stroke="#B0B0B5" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="1" width="4" height="8" rx="2"></rect><path d="M1 7a4 4 0 0 0 8 0M5 11v2"></path></svg></span>
+                </div>
+                <div aria-hidden="true" style="flex:none;height:25px;display:grid;place-items:center;"><span style="width:112px;height:5px;border-radius:3px;background:#000000;"></span></div>
+              </div>
               </div>
             </div>`;
+
+// the Everstock web app, drawn at 400 x 290 and scaled to the card
+const navItem = (t, on) => `<span style="display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:6px;background:${on ? "rgba(242,241,237,0.1)" : "transparent"};color:${on ? "#F2F1ED" : "rgba(242,241,237,0.6)"};font-size:12.5px;font-weight:${on ? 600 : 500};"><span aria-hidden="true" style="flex:none;width:5px;height:5px;border-radius:50%;background:${on ? "#F2F1ED" : "rgba(242,241,237,0.3)"};"></span>${t}</span>`;
+const appRow = (po, sup, tot, dot, st, note, hi) => `<div ${hi ? 'data-cxhi="true" ' : ""}style="display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:3px 10px;align-items:baseline;padding:9px 14px;border-top:1px solid rgb(22 23 27 / 0.07);${hi ? "box-shadow:inset 2px 0 0 #0B5FFF;background:rgba(11,95,255,0.05);transition:background-color 600ms ease;" : ""}">
+                  <span style="${MONO}font-size:11.5px;font-weight:600;color:#16171B;">${po}</span><span style="min-width:0;font-size:12px;font-weight:500;color:#16171B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${sup}</span><span style="${MONO}font-size:11.5px;color:#16171B;">${tot}</span>
+                  <span></span><span style="grid-column:span 2;display:flex;align-items:center;gap:6px;min-width:0;font-size:11px;color:#5A564E;white-space:nowrap;">${dot}<span style="overflow:hidden;text-overflow:ellipsis;">${st}</span>${note ? `<span style="margin-left:auto;${MONO}font-size:10px;color:#6A665D;">${note}</span>` : ""}</span>
+                </div>`;
+const DOT_W = '<span aria-hidden="true" style="flex:none;width:7px;height:7px;border-radius:50%;background:#FFFDF9;box-shadow:inset 0 0 0 1.5px #16171B;"></span>';
+const apApp = `<div data-cxapp="true" aria-hidden="true" style="position:absolute;z-index:3;left:0;top:0;width:400px;height:290px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;border-radius:10px;background:#FFFDF9;border:1px solid rgb(22 23 27 / 0.14);box-shadow:0 1px 2px rgba(22,23,27,0.1),0 30px 60px -24px rgba(22,23,27,0.45);transform-origin:0 0;opacity:0;pointer-events:none;transition:transform 760ms cubic-bezier(.2,.8,.25,1),opacity 460ms ease;">
+              <div style="flex:none;height:28px;display:flex;align-items:center;gap:6px;padding:0 11px;border-bottom:1px solid rgb(22 23 27 / 0.08);background:#F3F0EA;"><span style="width:8px;height:8px;border-radius:50%;background:#D4CFC5;"></span><span style="width:8px;height:8px;border-radius:50%;background:#D4CFC5;"></span><span style="width:8px;height:8px;border-radius:50%;background:#D4CFC5;"></span><span style="flex:1;text-align:center;margin-right:30px;${MONO}font-size:10px;color:#6A665D;">Everstock · Orders</span></div>
+              <div style="flex:1;min-height:0;display:grid;grid-template-columns:112px minmax(0,1fr);">
+                <div style="display:flex;flex-direction:column;gap:2px;padding:12px 8px;background:#16171B;">
+                  <span style="display:flex;align-items:center;gap:7px;padding:0 4px 12px;"><img src="assets/logo-mark-dark.svg" width="23" height="14" alt="" style="display:block;flex:none;"><span style="font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.07em;color:#F2F1ED;">EVERSTOCK</span></span>
+                  ${navItem("Orders", true)}${navItem("Invoices")}${navItem("Suppliers")}${navItem("Rules")}
+                </div>
+                <div style="min-width:0;display:flex;flex-direction:column;font-family:'Space Grotesk',sans-serif;color:#16171B;">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:12px 14px 9px;"><span style="font-family:'General Sans','Space Grotesk',sans-serif;font-size:16px;font-weight:600;letter-spacing:-0.01em;">Orders</span><span style="${LABEL}font-size:9px;">This week</span></div>
+                  ${appRow("PO-2291", "Meridian Supply", "$19,392.00", DOT_G, "Approved · sent to Meridian", "", true)}
+                  ${appRow("PO-2292", "Kestrel Fasteners", "$1,450.00", DOT_W, "Waiting on you", "", false)}
+                  ${appRow("PO-2290", "Arcadia Electronics", "$1,140.00", DOT_G, "Confirmed", "", false)}
+                  ${appRow("PO-2288", "Northline Parts", "$3,072.00", DOT_A, "Late · chasing", "", false)}
+                </div>
+              </div>
+            </div>`;
+
+const apStep = (k, t) => `<span data-cxstep="${k}" style="display:inline-flex;align-items:center;gap:7px;color:#6A665D;transition:color 400ms ease;"><span data-cxsdot="true" style="flex:none;width:7px;height:7px;border-radius:50%;box-sizing:border-box;border:1.5px solid currentColor;background:transparent;transition:background-color 400ms ease;"></span>${t}</span>`;
+const apCard = `<article data-cap="ap" style="flex:2 1 340px;min-width:0;position:relative;overflow:hidden;display:flex;flex-direction:column;border-radius:12px;border:1px solid rgb(22 23 27 / 0.10);background-color:#FDFBF7;background-image:radial-gradient(rgb(22 23 27 / 0.16) 1px,transparent 1.3px);background-size:16px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 1px 2px rgba(22,23,27,0.06),0 28px 56px -36px rgba(22,23,27,0.28);color:#16171B;">
+            <div style="position:relative;z-index:3;display:grid;gap:12px;padding:clamp(22px,2.6vw,32px) clamp(22px,2.6vw,32px) 0;">
+              <h3 style="margin:0;max-width:16ch;font-family:'General Sans','Space Grotesk',sans-serif;font-weight:600;font-size:clamp(25px,2.4vw,34px);line-height:1.1;letter-spacing:-0.025em;color:#16171B;text-wrap:balance;">Approvals by text <span style="color:#6A665D;">that take one tap.</span></h3>
+              <p style="margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;${MONO}font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">${apStep("0", "Starts in your texts")}<span style="display:inline-flex;align-items:center;gap:10px;"><svg aria-hidden="true" width="18" height="8" viewBox="0 0 18 8" fill="none" stroke="rgba(22,23,27,0.45)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4h15M13 1l3 3-3 3"></path></svg>${apStep("1", "Grows into Everstock")}</span></p>
+            </div>
+            <div data-cxstage="true" role="img" aria-label="stockbot texts you about a reorder of 480 brake rotors from Meridian, $19,392. You tap Approve, it confirms PO-2291 is sent and links to the order, which shows in the Everstock web app as Approved, sent to Meridian." style="position:relative;flex:none;height:{{ capApH }};margin:clamp(20px,2.4vw,28px) clamp(14px,2vw,24px) clamp(22px,2.6vw,30px);">
+              ${apPhone}
+              ${apApp}
+            </div>
+          </article>`;
+
+// "Try it now" at the far right of the Example week strip: the page's stamped ink CTA, compact
+const weekCta = `<a href="#price-file" onClick="{{ goPF }}" data-cta="cap" onMouseEnter="{{ ctaIn }}" onTouchStart="{{ ctaIn }}" onMouseLeave="{{ ctaOut }}" onFocus="{{ ctaIn }}" onBlur="{{ ctaOut }}" style="position:relative;flex:none;height:{{ capWkH }};padding:0 18px;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;background:#16171B;color:#FAF7F1;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;white-space:nowrap;transition:box-shadow 220ms cubic-bezier(.2,.8,.25,1),background-color 220ms cubic-bezier(.2,.8,.25,1);" style-hover="background:#000000;box-shadow:0 10px 22px -10px rgba(0,0,0,0.5);" style-active="transform:scale(0.985);">Try it now<span aria-hidden="true" style="position:absolute;top:-11px;right:-12px;z-index:1;padding:2px 6px;background:#FAF7F1;border:2px solid #08745A;border-radius:3px;color:#08745A;font-family:'Geist Mono',monospace;font-weight:700;font-size:9.5px;line-height:1.2;letter-spacing:0.14em;text-transform:uppercase;-webkit-mask-image:var(--v3-stamp);mask-image:var(--v3-stamp);-webkit-mask-size:140px;mask-size:140px;pointer-events:none;opacity:{{ capStampOp }};transform:{{ capStampTf }};transition:{{ stampTr }};">Approved</span></a>`;
 
 /* ---------- Invoice card: an Outlook thread whose price change is caught on the rotor line ---------- */
 const outlookCard = `<div role="img" aria-label="Outlook thread from Dana Ruiz at Meridian Supply: from 1 March, Rotor 320mm is $41.90 a unit" style="position:relative;z-index:2;width:{{ capOlW }};margin-left:{{ capOlMl }};box-sizing:border-box;min-width:0;overflow:hidden;background:#FFFFFF;border:1px solid rgb(22 23 27 / 0.12);border-radius:10px;box-shadow:0 1px 2px rgba(22,23,27,0.08),0 18px 36px -20px rgba(22,23,27,0.32);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#242424;">
@@ -143,6 +231,7 @@ const CAP_METHODS = String.raw`/* ---------- 03 capabilities (site patch v9-capa
       this.capIO.observe(rl);
     } else this.setState({ capRuleIn: true });
     this.rafCS = requestAnimationFrame(this.capSkyLoop);
+    this.cxSetup();
   }
   // layouts follow each card's own width (the cards wrap at different viewport widths)
   capMeasure() {
@@ -150,8 +239,13 @@ const CAP_METHODS = String.raw`/* ---------- 03 capabilities (site patch v9-capa
     const W = (k) => { const el = document.querySelector('#capabilities [data-cap="' + k + '"]'); return el ? el.getBoundingClientRect().width : 0; };
     const T = (k) => { const el = document.querySelector('#capabilities [data-cap="' + k + '"]'); return el ? Math.round(el.getBoundingClientRect().top) : 0; }, pair = (a, b) => Math.abs(T(a) - T(b)) < 2;
     // side by side, a list fills its card next to a taller neighbour; stacked (phones), it shows fewer rows
-    const nx = { capApMore: W('ap') >= 452, capPoFull: pair('ap', 'po') || W('po') >= 600, capInvWide: W('inv') >= 600, capPoWide: W('po') >= 600, capPoXL: W('po') >= 700, capInvMid: W('inv') >= 470, capRuFull: pair('inv', 'ru') || W('ru') >= 600 };
-    if (Object.keys(nx).some((k) => nx[k] !== !!this.state[k])) this.setState(nx);
+    const nx = { capPoFull: pair('ap', 'po') || W('po') >= 600, capInvWide: W('inv') >= 600, capPoWide: W('po') >= 600, capPoXL: W('po') >= 700, capInvMid: W('inv') >= 470, capRuFull: pair('inv', 'ru') || W('ru') >= 600 };
+    // the phone: 300 x 620 drawn, scaled to the card (most of its height beside the PO table)
+    const aw = W('ap'), apS = !aw ? 1 : Math.round((pair('ap', 'po') ? Math.max(0.9, Math.min(1, aw / 480)) : Math.max(0.9, Math.min(1.1, aw / 520))) * 100) / 100;
+    // Example week: on narrow strips the CTA goes under the figures, full width
+    const wk = document.querySelector('#capabilities [aria-label="Example week"]'), wkFull = !!wk && wk.clientWidth < 600;
+    const ch = Object.keys(nx).some((k) => nx[k] !== !!this.state[k]) || apS !== this.state.capApS || wkFull !== !!this.state.capWkFull;
+    if (ch) this.setState({ ...nx, capApS: apS, capWkFull: wkFull }, () => this.cxPlace());
   }
   capVals(red) {
     const S = this.state, wide = !!S.capInvWide;
@@ -174,13 +268,16 @@ const CAP_METHODS = String.raw`/* ---------- 03 capabilities (site patch v9-capa
     ].filter((r) => S.capRuFull || r[5]);
     const shown = red || S.capRuleIn;
     return {
-      capSkyRef: this.capSkyRef, capRulesRef: this.capRulesRef, capApMore: !!S.capApMore, capInvWide: wide,
+      capSkyRef: this.capSkyRef, capRulesRef: this.capRulesRef, capInvWide: wide,
       capPoRows: po.map((r, i, a) => ({ po: r[0], sup: r[1], qty: r[2], tot: r[3], st: ST[r[4]][0], dot: ST[r[4]][1], dsh: ST[r[4]][2], bg: i === 0 ? 'rgba(11,95,255,0.04)' : 'transparent', bb: i < a.length - 1 ? '1px solid rgb(22 23 27 / 0.08)' : '0' })),
       capRules: rules.map((r, i, a) => ({ n: r[0], src: r[1], a: r[2], num: r[3], b: r[4], bt: i ? '0' : '1px', rad: (i ? '0 0 ' : '10px 10px ') + (i === a.length - 1 ? '10px 10px' : '0 0'), sh: i === a.length - 1 ? '0 18px 36px -22px rgba(22,23,27,0.3)' : 'none' })),
       capInvCols: wide ? 'minmax(0,1fr) 236px' : 'minmax(0,1fr)', capInvGap: wide ? '14px' : '10px', capInvPr: wide ? 'clamp(20px,2.4vw,28px)' : '0',
       capGmW: wide ? '100%' : 'min(460px,calc(100% - 24px))', capOlW: wide ? '100%' : 'min(340px,calc(100% - 48px))', capOlMl: wide ? '0' : '24px',
       capSpS: !S.capPoWide, capSpM: !!S.capPoWide && !S.capPoXL, capSpL: !!S.capPoXL, capPoMr: S.capPoWide ? '-24px' : '-140px', capPoMin: S.capPoWide ? '0' : '620px', capPoCols: S.capPoWide ? '72px minmax(0,1fr) 128px 92px 120px' : '96px minmax(0,1.4fr) 132px 110px minmax(0,1fr)', capPoGap: S.capPoWide ? '12px' : '14px',
-      capApL: S.capApMore ? 'clamp(14px,1.8vw,24px)' : 'clamp(20px,2.6vw,32px)', capApW: S.capApMore ? '184px' : '196px', capApR: S.capApMore ? '16px' : 'clamp(20px,3vw,40px)', capTblPl: wide ? 'clamp(28px,5vw,64px)' : S.capInvMid ? '12px' : 'clamp(28px,5vw,64px)', capTblMin: wide || !S.capInvMid ? '520px' : '0',
+      capApS: S.capApS || 1, capApH: Math.round(620 * (S.capApS || 1)) + 'px',
+      capWkDir: S.capWkFull ? 'column' : 'row', capWkAl: S.capWkFull ? 'stretch' : 'center', capWkH: S.capWkFull ? '44px' : '38px',
+      capStampOp: S.ctaHov === 'cap' ? 1 : 0, capStampTf: S.ctaHov === 'cap' ? 'rotate(-8deg) scale(1)' : 'rotate(-14deg) scale(1.7)',
+      capTblPl: wide ? 'clamp(28px,5vw,64px)' : S.capInvMid ? '12px' : 'clamp(28px,5vw,64px)', capTblMin: wide || !S.capInvMid ? '520px' : '0',
       capArPl: wide ? '42%' : 'clamp(120px,40%,220px)', capStampMr: wide ? '6px' : 'clamp(24px,4vw,56px)',
       capNewOp: shown ? 1 : 0, capNewTf: shown ? 'none' : 'translateY(-14px) scale(0.98)', capNewTr: red ? 'none' : 'opacity 520ms ease, transform 680ms cubic-bezier(0.2,0.8,0.2,1)',
     };
@@ -291,6 +388,93 @@ const CAP_METHODS = String.raw`/* ---------- 03 capabilities (site patch v9-capa
     });
     this.csDrawn = true;
   };
+  /* the approvals thread: stockbot asks, you tap Approve, it confirms, the PO opens in Everstock; loops while on screen */
+  cxSetup() {
+    const card = document.querySelector('#capabilities [data-cap="ap"]'); if (!card) return;
+    const q = (s) => card.querySelector(s), rows = {};
+    card.querySelectorAll('[data-cx]').forEach((el) => { rows[el.dataset.cx] = el; });
+    this.cx = { card, rows, stage: q('[data-cxstage]'), phone: q('[data-cxphone]'), app: q('[data-cxapp]'), link: q('[data-cxlink]'), hi: q('[data-cxhi]'), chips: Array.from(card.querySelectorAll('[data-cxchip]')), steps: Array.from(card.querySelectorAll('[data-cxstep]')), on: false, br: false, anims: [] };
+    if (this.isReduced()) { this.cxFinal(); return; }
+    this.cxShowAll(false, true); this.cxBridge(false, true);
+    const sync = () => {
+      const want = !this.dead && this.cxVis && !document.hidden && !this.isReduced();
+      if (want && !this.cx.on) { this.cx.on = true; this.cxRun(); }
+      else if (!want && this.cx.on) { this.cx.on = false; clearTimeout(this.cxT); this.cxDots(null); if (this.isReduced()) this.cxFinal(); else { this.cxShowAll(false, true); this.cxBridge(false, true); } }
+    };
+    this.cxSync = sync;
+    this.cxIO = new IntersectionObserver((es) => es.forEach((e) => { this.cxVis = e.isIntersecting; sync(); }), { threshold: 0.3 });
+    this.cxIO.observe(card);
+    this.cxVisH = () => sync(); document.addEventListener('visibilitychange', this.cxVisH);
+  }
+  cxTeardown() { clearTimeout(this.cxT); if (this.cxIO) this.cxIO.disconnect(); if (this.cxVisH) document.removeEventListener('visibilitychange', this.cxVisH); this.cxDots(null); }
+  // one row of the thread in or out (instant: no transition, for resets)
+  cxSet(k, on, instant) {
+    const el = this.cx && this.cx.rows[k]; if (!el) return; const b = el.firstChild && el.firstChild.firstChild;
+    this.cxNoTr(instant ? [el, b] : [], () => {
+      el.style.gridTemplateRows = on ? '1fr' : '0fr';
+      if (b) { b.style.opacity = on ? '1' : '0'; b.style.transform = on ? 'none' : 'translateY(10px) scale(0.94)'; }
+    });
+  }
+  // run fn with these elements' transitions off (their own inline transitions come back after)
+  cxNoTr(els, fn) {
+    els = els.filter(Boolean); els.forEach((e) => { if (e.__tr == null) e.__tr = e.style.transition; e.style.transition = 'none'; });
+    fn();
+    if (els.length) { void els[0].offsetHeight; els.forEach((e) => { e.style.transition = e.__tr; }); }
+  }
+  cxShowAll(on, instant) { ['t1', 'm1', 'ch', 'me', 'dl', 't2', 'm2', 'ln'].forEach((k) => this.cxSet(k, on, instant)); this.cxChip(null); this.cxLink(false); }
+  cxChip(k) { (this.cx ? this.cx.chips : []).forEach((c) => { const on = c.dataset.cxchip === k; c.style.background = on ? '#0A84FF' : '#FFFFFF'; c.style.color = on ? '#FFFFFF' : '#0A84FF'; c.style.transform = on ? 'scale(0.95)' : 'none'; }); }
+  cxLink(on) { const l = this.cx && this.cx.link; if (l) { l.style.filter = on ? 'brightness(0.9)' : 'none'; l.style.transform = on ? 'scale(0.97)' : 'none'; } }
+  cxDots(k) {
+    (this.cxAn || []).forEach((a) => a.cancel()); this.cxAn = [];
+    const el = k && this.cx && this.cx.rows[k]; if (!el || !el.animate) return;
+    this.cxAn = Array.from(el.querySelectorAll('[data-cxdot]')).map((d, i) => d.animate([{ opacity: 0.35, transform: 'translateY(0)' }, { opacity: 1, transform: 'translateY(-3px)' }, { opacity: 0.35, transform: 'translateY(0)' }], { duration: 900, delay: i * 150, iterations: Infinity }));
+  }
+  // where the phone and the app window sit; the bridge moves the phone aside and brings the window in
+  cxPlace() {
+    const c = this.cx; if (!c || !c.stage || !c.phone || !c.app) return;
+    const W = c.stage.clientWidth, s = this.state.capApS || 1, H = 620 * s, narrow = W < 500;
+    const a = Math.min(narrow ? s : s * 1.12, (W - (narrow ? 12 : 24)) / 400), aw = 400 * a, ah = 290 * a;
+    const k = narrow ? 0.66 : 0.74, pw = 300 * s * k;
+    const dx = (narrow ? 4 : 10) + pw / 2 - W / 2, dy = narrow ? 0 : (H * (1 - k)) / 2;
+    const ax = narrow ? W - aw : W - aw - 10, ay = narrow ? H - ah : Math.max(0, (H - ah) / 2 + 16 * s);
+    c.phone.style.transform = c.br ? 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(' + k + ')' : 'none';
+    c.phone.style.filter = c.br ? 'saturate(0.85)' : 'none';
+    c.app.style.opacity = c.br ? '1' : '0';
+    c.app.style.transform = 'translate(' + (ax + (c.br ? 0 : 40 * a)).toFixed(1) + 'px,' + ay.toFixed(1) + 'px) scale(' + a.toFixed(3) + ')';
+    c.steps.forEach((el) => { const on = (el.dataset.cxstep === '1') === c.br; el.style.color = on ? '#16171B' : '#6A665D'; const d = el.querySelector('[data-cxsdot]'); if (d) d.style.backgroundColor = on ? 'currentColor' : 'transparent'; });
+  }
+  cxBridge(on, instant) {
+    const c = this.cx; if (!c) return; c.br = on;
+    this.cxNoTr(instant ? [c.phone, c.app, c.hi] : [], () => {
+      this.cxPlace();
+      if (c.hi) c.hi.style.backgroundColor = on && !instant ? 'rgba(11,95,255,0.12)' : 'rgba(11,95,255,0.05)';
+    });
+  }
+  // reduced motion: the whole thread, the PO already open in Everstock
+  cxFinal() { this.cxShowAll(true, true); this.cxSet('t1', false, true); this.cxSet('t2', false, true); this.cxSet('ch', false, true); this.cxBridge(true, true); }
+  cxRun() {
+    const T = (ms, fn) => { this.cxT = setTimeout(() => { if (!this.dead && this.cx.on) fn(); }, ms); };
+    const S = (k, on) => this.cxSet(k, on);
+    this.cxShowAll(false, true); this.cxBridge(false, true);
+    T(700, () => { S('t1', true); this.cxDots('t1');
+    T(1500, () => { this.cxDots(null); S('t1', false); S('m1', true);
+    T(2000, () => { S('ch', true);
+    T(1700, () => { this.cxChip('ok');
+    T(450, () => { S('ch', false); S('me', true);
+    T(600, () => { S('dl', true);
+    T(1300, () => { S('t2', true); this.cxDots('t2');
+    T(1300, () => { this.cxDots(null); S('t2', false); S('m2', true);
+    T(700, () => { S('ln', true);
+    T(2100, () => { this.cxLink(true);
+    T(380, () => { this.cxLink(false); this.cxBridge(true);
+    T(900, () => { if (this.cx.hi) this.cx.hi.style.backgroundColor = 'rgba(11,95,255,0.05)';
+    T(4600, () => { this.cxBridge(false);
+    T(900, () => { ['m1', 'me', 'dl', 'm2', 'ln'].forEach((k) => { const b = this.cx.rows[k] && this.cx.rows[k].firstChild.firstChild; if (b) b.style.opacity = '0'; });
+    T(420, () => { this.cxShowAll(false, false);
+    T(700, () => this.cxRun());
+    });
+    }); }); }); }); }); }); }); }); }); }); }); }); }); });
+  }
   pfSprite() {`;
 
 export const logicPatches = [
@@ -307,7 +491,7 @@ export const logicPatches = [
   {
     why: "Capabilities: stop the plane band and its observers on unmount",
     find: "cancelAnimationFrame(this.rafPF);",
-    replace: "cancelAnimationFrame(this.rafPF); cancelAnimationFrame(this.rafCS); if (this.capRO) this.capRO.disconnect(); if (this.capIO) this.capIO.disconnect(); clearTimeout(this.capRuleT);",
+    replace: "cancelAnimationFrame(this.rafPF); cancelAnimationFrame(this.rafCS); this.cxTeardown(); if (this.capRO) this.capRO.disconnect(); if (this.capIO) this.capIO.disconnect(); clearTimeout(this.capRuleT);",
   },
   {
     why: "Capabilities: the planes over the cards fly about 38% slower (Luca: some still swooshed by too quickly); the whole flight clock runs at 1/1.6, so the gaps between them stretch too",
@@ -333,33 +517,14 @@ export const templatePatches = [
     replace: `        </ol>\n        <canvas ref="{{ capSkyRef }}" aria-hidden="true" style="position:absolute;z-index:1;pointer-events:none;display:block;left:calc(-1 * var(--edge));width:calc(100% + 2 * var(--edge));top:calc(-1 * clamp(96px,13svh,144px));height:calc(100% + clamp(96px,13svh,144px) + clamp(40px,6svh,64px) - 6px);"></canvas>\n      </div>\n      <div style="position:relative;display:grid;gap:clamp(14px,1.6vw,20px);">`,
   },
   {
-    why: "Capabilities › Approvals: the card is measured, so the extra replies only show when they fit beside the phone",
-    find: `<article style="flex:2 1 340px;min-width:0;min-height:660px;`,
-    replace: `<article data-cap="ap" style="flex:2 1 340px;min-width:0;min-height:660px;`,
+    why: "Capabilities › Approvals: the card is rebuilt around a much bigger iPhone (drawn at 300 x 620 and scaled to the card, so the text stays sharp) and a bigger heading; the thread plays out like a real iMessage exchange (typing, the reorder ask, Approve / Hold / Change qty, Approve, Delivered, the confirmation with an Open in Everstock link), then the phone moves aside and PO-2291 shows in the Everstock web app as Approved, sent to Meridian; it loops while on screen. The recent-replies chips are gone: the phone needs the room",
+    find: /<article style="flex:2 1 340px;min-width:0;min-height:660px;[\s\S]*?<\/article>/g,
+    replace: () => apCard,
   },
   {
-    why: "Capabilities › Approvals: with the reply stack showing, the phone sits 16px off the card edge so the stack only overlaps its frame",
-    find: `<div role="img" aria-label="iPhone showing a stockbot iMessage thread: a reorder request, an Approve reply marked Delivered, and confirmation that PO-2291 was sent" style="position:absolute;z-index:2;right:clamp(20px,3vw,40px);`,
-    replace: `<div role="img" aria-label="iPhone showing a stockbot iMessage thread: a supplier switch, a reorder request, an Approve reply marked Delivered, and confirmation that PO-2291 was sent" style="position:absolute;z-index:2;right:{{ capApR }};`,
-  },
-  {
-    why: "Capabilities › Approvals: the thread starts with an earlier exchange (a supplier swap), cut off by the top of the screen like a real scrolled thread",
-    find: `<div style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;padding:10px 9px 8px;">\n                  <span style="align-self:center;margin-bottom:6px;text-align:center;font-size:9.5px;line-height:1.35;color:#8E8E93;"><span style="font-weight:600;">iMessage</span><br>Today 9:38 AM</span>`,
-    replace: `<div style="flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;padding:10px 9px 8px;">
-                  <span style="align-self:center;margin-bottom:6px;text-align:center;font-size:9.5px;line-height:1.35;color:#8E8E93;">Yesterday 4:12 PM</span>
-                  <div style="flex:none;max-width:80%;align-self:flex-start;padding:7px 11px;border-radius:17px;background:#E9E9EB;color:#000000;font-size:12.5px;line-height:1.32;text-wrap:pretty;">Northline needs 12 days for the 60 bearings. Halden can ship in 3 at the same price. Switch?</div>
-                  <div style="flex:none;margin-top:6px;margin-bottom:8px;max-width:70%;align-self:flex-end;padding:7px 12px;border-radius:17px;background:#0A84FF;color:#FFFFFF;font-size:12.5px;line-height:1.32;">Switch</div>
-                  <span style="flex:none;align-self:center;margin-bottom:6px;text-align:center;font-size:9.5px;line-height:1.35;color:#8E8E93;"><span style="font-weight:600;">iMessage</span><br>Today 9:38 AM</span>`,
-  },
-  {
-    why: "Capabilities › Approvals: the thread's bubbles keep their height when the earlier exchange pushes the thread past the top",
-    find: `<div style="max-width:80%;align-self:flex-start;padding:7px 11px;border-radius:17px;background:#E9E9EB;color:#000000;font-size:12.5px;line-height:1.32;text-wrap:pretty;">Reorder ready:`,
-    replace: `<div style="flex:none;max-width:80%;align-self:flex-start;padding:7px 11px;border-radius:17px;background:#E9E9EB;color:#000000;font-size:12.5px;line-height:1.32;text-wrap:pretty;">Reorder ready:`,
-  },
-  {
-    why: "Capabilities › Approvals: a stack of recent replies (a hold, a supplier swap, a price change) above the PO-2291 chip, on cards wide enough to hold them beside the phone",
-    find: /<div aria-hidden="true" style="position:absolute;z-index:3;left:clamp\(20px,2\.6vw,32px\);bottom:clamp\(110px,11vw,150px\);width:196px;[\s\S]*?\$19,392\.00<\/span>\n\s*<\/div>/g,
-    replace: () => apChips,
+    why: "Capabilities › Example week: a 'Try it now' button at the far right of the strip opens the free Stock Plan, styled as the page's stamped ink CTA; the figures wrap in their own column beside it, and on narrow strips the button goes full width under them",
+    find: /(<div aria-label="Example week" style=")position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:8px clamp\(18px,2\.6vw,36px\);([^"]*">)([\s\S]*?Overcharges caught[\s\S]*?<\/span><\/span>)(\n\s*<\/div>)/g,
+    replace: (m, open, rest, kids, close) => open + "position:relative;display:flex;flex-direction:{{ capWkDir }};align-items:{{ capWkAl }};gap:12px clamp(16px,2vw,28px);" + rest + '\n          <div style="flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px clamp(18px,2.6vw,36px);">' + kids + "\n          </div>\n          " + weekCta + close,
   },
   {
     why: "Capabilities › Purchase orders: six POs across suppliers and statuses (four on narrow cards) and a 'why now' strip with the rotor's stock line, reorder point and lead time, so the card is full",

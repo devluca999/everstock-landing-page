@@ -184,7 +184,7 @@ class Component extends DCLogic {
     cancelAnimationFrame(this.rafW); if (this.ioWhy) this.ioWhy.disconnect(); if (this.ioWhyR) this.ioWhyR.disconnect(); if (this.roWhy) this.roWhy.disconnect(); (this.whyTimers || []).forEach(clearTimeout);
     cancelAnimationFrame(this.rafA); if (this.ioAct) this.ioAct.disconnect(); if (this.roAct) this.roAct.disconnect();
     cancelAnimationFrame(this.rafSt); if (this.ioSt) this.ioSt.disconnect(); (this.stkTimers || []).forEach(clearTimeout);
-    cancelAnimationFrame(this.rafPF); cancelAnimationFrame(this.rafCS); if (this.capRO) this.capRO.disconnect(); if (this.capIO) this.capIO.disconnect(); clearTimeout(this.capRuleT); cancelAnimationFrame(this.rafSB); cancelAnimationFrame(this.rafMP); if (this.ioM) this.ioM.disconnect(); window.removeEventListener('keydown', this.onKeyAcc); document.documentElement.style.overflow = '';
+    cancelAnimationFrame(this.rafPF); cancelAnimationFrame(this.rafCS); this.cxTeardown(); if (this.capRO) this.capRO.disconnect(); if (this.capIO) this.capIO.disconnect(); clearTimeout(this.capRuleT); cancelAnimationFrame(this.rafSB); cancelAnimationFrame(this.rafMP); if (this.ioM) this.ioM.disconnect(); window.removeEventListener('keydown', this.onKeyAcc); document.documentElement.style.overflow = '';
     clearTimeout(this.typeT);
     window.removeEventListener('scroll', this.onScroll);
     window.removeEventListener('resize', this.onResize);
@@ -851,6 +851,7 @@ class Component extends DCLogic {
       this.capIO.observe(rl);
     } else this.setState({ capRuleIn: true });
     this.rafCS = requestAnimationFrame(this.capSkyLoop);
+    this.cxSetup();
   }
   // layouts follow each card's own width (the cards wrap at different viewport widths)
   capMeasure() {
@@ -858,8 +859,13 @@ class Component extends DCLogic {
     const W = (k) => { const el = document.querySelector('#capabilities [data-cap="' + k + '"]'); return el ? el.getBoundingClientRect().width : 0; };
     const T = (k) => { const el = document.querySelector('#capabilities [data-cap="' + k + '"]'); return el ? Math.round(el.getBoundingClientRect().top) : 0; }, pair = (a, b) => Math.abs(T(a) - T(b)) < 2;
     // side by side, a list fills its card next to a taller neighbour; stacked (phones), it shows fewer rows
-    const nx = { capApMore: W('ap') >= 452, capPoFull: pair('ap', 'po') || W('po') >= 600, capInvWide: W('inv') >= 600, capPoWide: W('po') >= 600, capPoXL: W('po') >= 700, capInvMid: W('inv') >= 470, capRuFull: pair('inv', 'ru') || W('ru') >= 600 };
-    if (Object.keys(nx).some((k) => nx[k] !== !!this.state[k])) this.setState(nx);
+    const nx = { capPoFull: pair('ap', 'po') || W('po') >= 600, capInvWide: W('inv') >= 600, capPoWide: W('po') >= 600, capPoXL: W('po') >= 700, capInvMid: W('inv') >= 470, capRuFull: pair('inv', 'ru') || W('ru') >= 600 };
+    // the phone: 300 x 620 drawn, scaled to the card (most of its height beside the PO table)
+    const aw = W('ap'), apS = !aw ? 1 : Math.round((pair('ap', 'po') ? Math.max(0.9, Math.min(1, aw / 480)) : Math.max(0.9, Math.min(1.1, aw / 520))) * 100) / 100;
+    // Example week: on narrow strips the CTA goes under the figures, full width
+    const wk = document.querySelector('#capabilities [aria-label="Example week"]'), wkFull = !!wk && wk.clientWidth < 600;
+    const ch = Object.keys(nx).some((k) => nx[k] !== !!this.state[k]) || apS !== this.state.capApS || wkFull !== !!this.state.capWkFull;
+    if (ch) this.setState({ ...nx, capApS: apS, capWkFull: wkFull }, () => this.cxPlace());
   }
   capVals(red) {
     const S = this.state, wide = !!S.capInvWide;
@@ -882,13 +888,16 @@ class Component extends DCLogic {
     ].filter((r) => S.capRuFull || r[5]);
     const shown = red || S.capRuleIn;
     return {
-      capSkyRef: this.capSkyRef, capRulesRef: this.capRulesRef, capApMore: !!S.capApMore, capInvWide: wide,
+      capSkyRef: this.capSkyRef, capRulesRef: this.capRulesRef, capInvWide: wide,
       capPoRows: po.map((r, i, a) => ({ po: r[0], sup: r[1], qty: r[2], tot: r[3], st: ST[r[4]][0], dot: ST[r[4]][1], dsh: ST[r[4]][2], bg: i === 0 ? 'rgba(11,95,255,0.04)' : 'transparent', bb: i < a.length - 1 ? '1px solid rgb(22 23 27 / 0.08)' : '0' })),
       capRules: rules.map((r, i, a) => ({ n: r[0], src: r[1], a: r[2], num: r[3], b: r[4], bt: i ? '0' : '1px', rad: (i ? '0 0 ' : '10px 10px ') + (i === a.length - 1 ? '10px 10px' : '0 0'), sh: i === a.length - 1 ? '0 18px 36px -22px rgba(22,23,27,0.3)' : 'none' })),
       capInvCols: wide ? 'minmax(0,1fr) 236px' : 'minmax(0,1fr)', capInvGap: wide ? '14px' : '10px', capInvPr: wide ? 'clamp(20px,2.4vw,28px)' : '0',
       capGmW: wide ? '100%' : 'min(460px,calc(100% - 24px))', capOlW: wide ? '100%' : 'min(340px,calc(100% - 48px))', capOlMl: wide ? '0' : '24px',
       capSpS: !S.capPoWide, capSpM: !!S.capPoWide && !S.capPoXL, capSpL: !!S.capPoXL, capPoMr: S.capPoWide ? '-24px' : '-140px', capPoMin: S.capPoWide ? '0' : '620px', capPoCols: S.capPoWide ? '72px minmax(0,1fr) 128px 92px 120px' : '96px minmax(0,1.4fr) 132px 110px minmax(0,1fr)', capPoGap: S.capPoWide ? '12px' : '14px',
-      capApL: S.capApMore ? 'clamp(14px,1.8vw,24px)' : 'clamp(20px,2.6vw,32px)', capApW: S.capApMore ? '184px' : '196px', capApR: S.capApMore ? '16px' : 'clamp(20px,3vw,40px)', capTblPl: wide ? 'clamp(28px,5vw,64px)' : S.capInvMid ? '12px' : 'clamp(28px,5vw,64px)', capTblMin: wide || !S.capInvMid ? '520px' : '0',
+      capApS: S.capApS || 1, capApH: Math.round(620 * (S.capApS || 1)) + 'px',
+      capWkDir: S.capWkFull ? 'column' : 'row', capWkAl: S.capWkFull ? 'stretch' : 'center', capWkH: S.capWkFull ? '44px' : '38px',
+      capStampOp: S.ctaHov === 'cap' ? 1 : 0, capStampTf: S.ctaHov === 'cap' ? 'rotate(-8deg) scale(1)' : 'rotate(-14deg) scale(1.7)',
+      capTblPl: wide ? 'clamp(28px,5vw,64px)' : S.capInvMid ? '12px' : 'clamp(28px,5vw,64px)', capTblMin: wide || !S.capInvMid ? '520px' : '0',
       capArPl: wide ? '42%' : 'clamp(120px,40%,220px)', capStampMr: wide ? '6px' : 'clamp(24px,4vw,56px)',
       capNewOp: shown ? 1 : 0, capNewTf: shown ? 'none' : 'translateY(-14px) scale(0.98)', capNewTr: red ? 'none' : 'opacity 520ms ease, transform 680ms cubic-bezier(0.2,0.8,0.2,1)',
     };
@@ -999,6 +1008,93 @@ class Component extends DCLogic {
     });
     this.csDrawn = true;
   };
+  /* the approvals thread: stockbot asks, you tap Approve, it confirms, the PO opens in Everstock; loops while on screen */
+  cxSetup() {
+    const card = document.querySelector('#capabilities [data-cap="ap"]'); if (!card) return;
+    const q = (s) => card.querySelector(s), rows = {};
+    card.querySelectorAll('[data-cx]').forEach((el) => { rows[el.dataset.cx] = el; });
+    this.cx = { card, rows, stage: q('[data-cxstage]'), phone: q('[data-cxphone]'), app: q('[data-cxapp]'), link: q('[data-cxlink]'), hi: q('[data-cxhi]'), chips: Array.from(card.querySelectorAll('[data-cxchip]')), steps: Array.from(card.querySelectorAll('[data-cxstep]')), on: false, br: false, anims: [] };
+    if (this.isReduced()) { this.cxFinal(); return; }
+    this.cxShowAll(false, true); this.cxBridge(false, true);
+    const sync = () => {
+      const want = !this.dead && this.cxVis && !document.hidden && !this.isReduced();
+      if (want && !this.cx.on) { this.cx.on = true; this.cxRun(); }
+      else if (!want && this.cx.on) { this.cx.on = false; clearTimeout(this.cxT); this.cxDots(null); if (this.isReduced()) this.cxFinal(); else { this.cxShowAll(false, true); this.cxBridge(false, true); } }
+    };
+    this.cxSync = sync;
+    this.cxIO = new IntersectionObserver((es) => es.forEach((e) => { this.cxVis = e.isIntersecting; sync(); }), { threshold: 0.3 });
+    this.cxIO.observe(card);
+    this.cxVisH = () => sync(); document.addEventListener('visibilitychange', this.cxVisH);
+  }
+  cxTeardown() { clearTimeout(this.cxT); if (this.cxIO) this.cxIO.disconnect(); if (this.cxVisH) document.removeEventListener('visibilitychange', this.cxVisH); this.cxDots(null); }
+  // one row of the thread in or out (instant: no transition, for resets)
+  cxSet(k, on, instant) {
+    const el = this.cx && this.cx.rows[k]; if (!el) return; const b = el.firstChild && el.firstChild.firstChild;
+    this.cxNoTr(instant ? [el, b] : [], () => {
+      el.style.gridTemplateRows = on ? '1fr' : '0fr';
+      if (b) { b.style.opacity = on ? '1' : '0'; b.style.transform = on ? 'none' : 'translateY(10px) scale(0.94)'; }
+    });
+  }
+  // run fn with these elements' transitions off (their own inline transitions come back after)
+  cxNoTr(els, fn) {
+    els = els.filter(Boolean); els.forEach((e) => { if (e.__tr == null) e.__tr = e.style.transition; e.style.transition = 'none'; });
+    fn();
+    if (els.length) { void els[0].offsetHeight; els.forEach((e) => { e.style.transition = e.__tr; }); }
+  }
+  cxShowAll(on, instant) { ['t1', 'm1', 'ch', 'me', 'dl', 't2', 'm2', 'ln'].forEach((k) => this.cxSet(k, on, instant)); this.cxChip(null); this.cxLink(false); }
+  cxChip(k) { (this.cx ? this.cx.chips : []).forEach((c) => { const on = c.dataset.cxchip === k; c.style.background = on ? '#0A84FF' : '#FFFFFF'; c.style.color = on ? '#FFFFFF' : '#0A84FF'; c.style.transform = on ? 'scale(0.95)' : 'none'; }); }
+  cxLink(on) { const l = this.cx && this.cx.link; if (l) { l.style.filter = on ? 'brightness(0.9)' : 'none'; l.style.transform = on ? 'scale(0.97)' : 'none'; } }
+  cxDots(k) {
+    (this.cxAn || []).forEach((a) => a.cancel()); this.cxAn = [];
+    const el = k && this.cx && this.cx.rows[k]; if (!el || !el.animate) return;
+    this.cxAn = Array.from(el.querySelectorAll('[data-cxdot]')).map((d, i) => d.animate([{ opacity: 0.35, transform: 'translateY(0)' }, { opacity: 1, transform: 'translateY(-3px)' }, { opacity: 0.35, transform: 'translateY(0)' }], { duration: 900, delay: i * 150, iterations: Infinity }));
+  }
+  // where the phone and the app window sit; the bridge moves the phone aside and brings the window in
+  cxPlace() {
+    const c = this.cx; if (!c || !c.stage || !c.phone || !c.app) return;
+    const W = c.stage.clientWidth, s = this.state.capApS || 1, H = 620 * s, narrow = W < 500;
+    const a = Math.min(narrow ? s : s * 1.12, (W - (narrow ? 12 : 24)) / 400), aw = 400 * a, ah = 290 * a;
+    const k = narrow ? 0.66 : 0.74, pw = 300 * s * k;
+    const dx = (narrow ? 4 : 10) + pw / 2 - W / 2, dy = narrow ? 0 : (H * (1 - k)) / 2;
+    const ax = narrow ? W - aw : W - aw - 10, ay = narrow ? H - ah : Math.max(0, (H - ah) / 2 + 16 * s);
+    c.phone.style.transform = c.br ? 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(' + k + ')' : 'none';
+    c.phone.style.filter = c.br ? 'saturate(0.85)' : 'none';
+    c.app.style.opacity = c.br ? '1' : '0';
+    c.app.style.transform = 'translate(' + (ax + (c.br ? 0 : 40 * a)).toFixed(1) + 'px,' + ay.toFixed(1) + 'px) scale(' + a.toFixed(3) + ')';
+    c.steps.forEach((el) => { const on = (el.dataset.cxstep === '1') === c.br; el.style.color = on ? '#16171B' : '#6A665D'; const d = el.querySelector('[data-cxsdot]'); if (d) d.style.backgroundColor = on ? 'currentColor' : 'transparent'; });
+  }
+  cxBridge(on, instant) {
+    const c = this.cx; if (!c) return; c.br = on;
+    this.cxNoTr(instant ? [c.phone, c.app, c.hi] : [], () => {
+      this.cxPlace();
+      if (c.hi) c.hi.style.backgroundColor = on && !instant ? 'rgba(11,95,255,0.12)' : 'rgba(11,95,255,0.05)';
+    });
+  }
+  // reduced motion: the whole thread, the PO already open in Everstock
+  cxFinal() { this.cxShowAll(true, true); this.cxSet('t1', false, true); this.cxSet('t2', false, true); this.cxSet('ch', false, true); this.cxBridge(true, true); }
+  cxRun() {
+    const T = (ms, fn) => { this.cxT = setTimeout(() => { if (!this.dead && this.cx.on) fn(); }, ms); };
+    const S = (k, on) => this.cxSet(k, on);
+    this.cxShowAll(false, true); this.cxBridge(false, true);
+    T(700, () => { S('t1', true); this.cxDots('t1');
+    T(1500, () => { this.cxDots(null); S('t1', false); S('m1', true);
+    T(2000, () => { S('ch', true);
+    T(1700, () => { this.cxChip('ok');
+    T(450, () => { S('ch', false); S('me', true);
+    T(600, () => { S('dl', true);
+    T(1300, () => { S('t2', true); this.cxDots('t2');
+    T(1300, () => { this.cxDots(null); S('t2', false); S('m2', true);
+    T(700, () => { S('ln', true);
+    T(2100, () => { this.cxLink(true);
+    T(380, () => { this.cxLink(false); this.cxBridge(true);
+    T(900, () => { if (this.cx.hi) this.cx.hi.style.backgroundColor = 'rgba(11,95,255,0.05)';
+    T(4600, () => { this.cxBridge(false);
+    T(900, () => { ['m1', 'me', 'dl', 'm2', 'ln'].forEach((k) => { const b = this.cx.rows[k] && this.cx.rows[k].firstChild.firstChild; if (b) b.style.opacity = '0'; });
+    T(420, () => { this.cxShowAll(false, false);
+    T(700, () => this.cxRun());
+    });
+    }); }); }); }); }); }); }); }); }); }); }); }); }); });
+  }
   pfSprite() {
     if (this.pfSp) return this.pfSp;
     const w = 72, h = 44, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
