@@ -3710,7 +3710,7 @@ class Component extends DCLogic {
       xfade: red ? 'none' : 'opacity 520ms cubic-bezier(.2,.8,.25,1)',
       labHead: this.state.labHead, labPart: this.state.labPart, labFits: this.state.labFits, labFrom: this.state.labFrom,
       stampOp: this.state.stampOn ? 1 : 0,
-      stampTf: this.state.stampOn ? 'translate(6px,16px) rotate(-6deg) scale(1)' : 'translate(6px,16px) rotate(-6deg) scale(1.3)',
+      stampTf: this.state.stampOn ? 'rotate(-6deg) scale(1)' : 'rotate(-6deg) scale(1.3)',
       stampTr: red ? 'none' : 'opacity 140ms cubic-bezier(.2,.8,.25,1), transform 220ms cubic-bezier(.2,.8,.25,1)',
       indStageRef: this.indStageRef, indBoxWrapRef: this.indBoxWrapRef, indBoxRef: this.indBoxRef, indLabelRef: this.indLabelRef,
       videoRef: this.videoRef, toggleVideo: this.toggleVideo, videoLabel: this.state.videoOn ? 'Pause' : 'Play',

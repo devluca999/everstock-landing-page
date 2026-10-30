@@ -30,7 +30,8 @@ import * as v9Capabilities from "./port-patches/v9-capabilities.mjs";
 import * as v9Workflows from "./port-patches/v9-workflows.mjs";
 import * as v9Plan from "./port-patches/v9-plan.mjs";
 import * as v9Footer from "./port-patches/v9-footer.mjs";
-const V9_AREAS = [v9Capabilities, v9Workflows, v9Plan, v9Footer];
+import * as v9Industries from "./port-patches/v9-industries.mjs";
+const V9_AREAS = [v9Capabilities, v9Workflows, v9Plan, v9Footer, v9Industries];
 /* Site-side patches shared by both pages. */
 const NO_LEGAL_NAV = {
   why: "Footer legal nav: Privacy, Terms and LinkedIn are placeholder anchors (#privacy, #terms, #linkedin) with nothing behind them; left out until the pages and the company URL exist",
