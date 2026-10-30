@@ -137,5 +137,38 @@ const CHICAGO_HIFI = [
   },
 ];
 
-export const logicPatches = [FOOTER_VALS, ...CHICAGO_HIFI];
+// The skyline was a plain on/off dither: every dot the same size and ink, so a building's tone
+// showed only as how many dots it had, and the whole city read as one even grey speckle. Now
+// each dot carries its tone, the way the globe's land and sea dots do: back buildings and the
+// street are lighter, smaller and a little denser; the towers and front blocks dark and solid.
+// (Luca, 2026-10-30: "too much dither ... all of it is about the same density")
+const CHICAGO_TONE = [
+  {
+    why: "Chicago: the skyline is sampled as halftone, not on/off dither: a cell is kept more often in light areas (fewer holes, less speckle) and each dot remembers its tone",
+    find: "if (v > 0.02 && v > B8[(y / C) & 7][(x / C) & 7]) pts.push({ x, y: tr ? y + 222 : y, tr }); }",
+    replace: "if (v > 0.02 && (v >= 0.8 || 0.3 + 0.7 * v > B8[(y / C) & 7][(x / C) & 7])) pts.push({ x, y: tr ? y + 222 : y, tr, v }); }",
+  },
+  {
+    why: "Chicago: each skyline particle keeps its ink (0.3 for the lightest back buildings and the street up to 0.9 for the towers) and whether it is a small light dot or a full one",
+    find: "return { x: p.x, y: p.y, tr: p.tr, tg: best.i,",
+    replace: "return { x: p.x, y: p.y, tr: p.tr, a: p.tr ? 0.94 : 0.26 + 0.66 * p.v, sm: !p.tr && p.v < 0.6, tg: best.i,",
+  },
+  {
+    why: "Chicago: the light dots are about two thirds the size of the dark ones (whole device pixels, centred in their cell), like the globe's sea dots",
+    find: "sn = (v) => Math.round(v * dpr) / dpr;",
+    replace: "sn = (v) => Math.round(v * dpr) / dpr, dsS = Math.max(1 / dpr, Math.round(ds * 0.67 * dpr) / dpr), dsO = sn((ds - dsS) / 2);",
+  },
+  {
+    why: "Chicago: the standing city draws each dot at its own ink and size",
+    find: "g.fillStyle = INK((P.tr ? 0.94 : 0.86) * tf); g.fillRect(P.tr && dpr < 2 ? ax : sn(ax), sn(ay), ds, ds); continue; }",
+    replace: "g.fillStyle = INK(P.a * tf); if (P.sm) g.fillRect(sn(ax) + dsO, sn(ay) + dsO, dsS, dsS); else g.fillRect(P.tr && dpr < 2 ? ax : sn(ax), sn(ay), ds, ds); continue; }",
+  },
+  {
+    why: "Chicago: the city → globe particles start from their own ink and size and blend to the globe's",
+    find: "a = (0.86 + (ta - 0.86) * e) * (1 - 0.45 * s), sz = ds * (1 - 0.25 * s);",
+    replace: "a = (P.a + (ta - P.a) * e) * (1 - 0.45 * s), sz = ((P.sm ? dsS : ds) + (ds - (P.sm ? dsS : ds)) * e) * (1 - 0.25 * s);",
+  },
+];
+
+export const logicPatches = [FOOTER_VALS, ...CHICAGO_HIFI, ...CHICAGO_TONE];
 export const templatePatches = [FOOTER_LAYOUT];

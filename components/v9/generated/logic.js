@@ -601,7 +601,7 @@ class Component extends DCLogic {
     for (let x = 12; x < 470; x += 38) { R(x, 259, 5, 69, 0.82); if (x + 38 < 470) { L(x + 5, 262, x + 38, 296, 1.2, 0.5); L(x + 38, 262, x + 5, 296, 1.2, 0.5); } }
     for (let c = 0; c < 3; c++) { const x = c * 64; R(x + 2, 2, 56, 2, 0.8, to); R(x, 4, 60, 22, 0.95, to); for (let j = 0; j < 5; j++) R(x + 6 + j * 10.5, 8, 6, 8, 0.26, to); R(x + 4, 22, 52, 2, 0.6, to); }
     const B8 = this.B8, pts = [];
-    const sample = (ctx, w, hh, tr) => { const d = ctx.getImageData(0, 0, w, hh).data; for (let y = 0; y < hh; y += C) for (let x = 0; x < w; x += C) { const v = 1 - d[((y + 1) * w + x + 1) * 4] / 255; if (v > 0.02 && v > B8[(y / C) & 7][(x / C) & 7]) pts.push({ x, y: tr ? y + 222 : y, tr }); } };
+    const sample = (ctx, w, hh, tr) => { const d = ctx.getImageData(0, 0, w, hh).data; for (let y = 0; y < hh; y += C) for (let x = 0; x < w; x += C) { const v = 1 - d[((y + 1) * w + x + 1) * 4] / 255; if (v > 0.02 && (v >= 0.8 || 0.3 + 0.7 * v > B8[(y / C) & 7][(x / C) & 7])) pts.push({ x, y: tr ? y + 222 : y, tr, v }); } };
     sample(o, W0, H0, 0); sample(to, 200, 30, 1);
     const NG = 7600, gx = new Float32Array(NG), gy = new Float32Array(NG), gz = new Float32Array(NG), land = new Uint8Array(NG), hit = new Uint8Array(NG);
     for (let i = 0; i < NG; i++) {
@@ -621,7 +621,7 @@ class Component extends DCLogic {
       const u = (p.x - 320) / 330, v = (p.y - 215) / 200;
       let best = F[0], bd = 1e9; for (let q = 0; q < 18; q++) { const c = F[Math.floor(rnd() * F.length)], d = (c.u - u) ** 2 + (c.v - v) ** 2; if (d < bd) { bd = d; best = c; } }
       hit[best.i] = 1;
-      return { x: p.x, y: p.y, tr: p.tr, tg: best.i, dl: HOLD + (p.x / 640) * SPREAD * 0.78 + rnd() * SPREAD * 0.22, amp: 14 + rnd() * 44, ph: rnd() * 6.283 };
+      return { x: p.x, y: p.y, tr: p.tr, a: p.tr ? 0.94 : 0.26 + 0.66 * p.v, sm: !p.tr && p.v < 0.6, tg: best.i, dl: HOLD + (p.x / 640) * SPREAD * 0.78 + rnd() * SPREAD * 0.22, amp: 14 + rnd() * 44, ph: rnd() * 6.283 };
     });
     this.cg = { C, P, gx, gy, gz, land, hit, NG, yaw0 };
     if ('IntersectionObserver' in window) {
@@ -656,7 +656,7 @@ class Component extends DCLogic {
     if (this.cgPBk !== pbk || this.cgPBo !== cg.P) { this.cgPBk = pbk; this.cgPBo = cg.P; this.cgPB = []; }
     const PB = this.cgPB;
     const k0 = Math.min(w / 640, hh / 400) * 0.96, cq = cg.C * dpr, cpx = Math.round(k0 * cq), k = (cpx / cq > Math.min(w / 640, hh / 384) ? Math.max(2, Math.floor(k0 * cq)) : Math.max(2, cpx)) / cq, ox = Math.round(((w - 640 * k) / 2) * dpr) / dpr, oy = Math.round(((hh - 400 * k) / 2) * dpr) / dpr;
-    const cx = w / 2, cy = hh / 2, Rg = Math.min(hh * 0.34, w / 3.4), ds = Math.max(2, Math.round(cg.C * k * 0.72 * dpr)) / dpr, sn = (v) => Math.round(v * dpr) / dpr;
+    const cx = w / 2, cy = hh / 2, Rg = Math.min(hh * 0.34, w / 3.4), ds = Math.max(2, Math.round(cg.C * k * 0.72 * dpr)) / dpr, sn = (v) => Math.round(v * dpr) / dpr, dsS = Math.max(1 / dpr, Math.round(ds * 0.67 * dpr) / dpr), dsO = sn((ds - dsS) / 2);
     const cgDK = this.effDark('light'), INKT = (this.cgInk && this.cgInk.dk === cgDK) ? this.cgInk : (this.cgInk = Object.assign(Array.from({ length: 256 }, (_, q) => (cgDK ? 'rgba(236,234,228,' : 'rgba(22,23,27,') + (q / 255).toFixed(3) + ')'), { dk: cgDK })), INK = (a) => INKT[Math.round(Math.max(0, Math.min(1, a)) * 255)];
     const clamp = (v) => Math.max(0, Math.min(1, v)), ease = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
     const ct = Math.cos(TILT), st = Math.sin(TILT);
@@ -689,11 +689,11 @@ class Component extends DCLogic {
       for (let n = 0; n < cg.P.length; n++) {
         const P = cg.P[n]; let x = P.x; if (P.tr) { x += trX; if (x < 0 || x > 466) continue; }
         const ax = ox + x * k, ay = oy + P.y * k, pp = rev ? 1 - clamp((Tr - (P.dl - HOLD)) / DUR) : T < 0 ? 0 : clamp((T - P.dl) / DUR);
-        if (pp <= 0) { if (!P.tr && P.y >= 222 && P.y < 247 && x > 14 && x < 452) { const q = x - trX; if (q >= -1 && q < 190 && (q + 64) % 64 < 61) continue; } const tf = P.tr ? clamp(Math.min(x, 466 - x) / 28) : 1; if (tf <= 0) continue; g.fillStyle = INK((P.tr ? 0.94 : 0.86) * tf); g.fillRect(P.tr && dpr < 2 ? ax : sn(ax), sn(ay), ds, ds); continue; }
+        if (pp <= 0) { if (!P.tr && P.y >= 222 && P.y < 247 && x > 14 && x < 452) { const q = x - trX; if (q >= -1 && q < 190 && (q + 64) % 64 < 61) continue; } const tf = P.tr ? clamp(Math.min(x, 466 - x) / 28) : 1; if (tf <= 0) continue; g.fillStyle = INK(P.a * tf); if (P.sm) g.fillRect(sn(ax) + dsO, sn(ay) + dsO, dsS, dsS); else g.fillRect(P.tr && dpr < 2 ? ax : sn(ax), sn(ay), ds, ds); continue; }
         const b = PB[n] || (PB[n] = proj(P.tg, pca, psa)), e = ease(pp), s = Math.sin(Math.PI * pp), am = P.amp * k * s;
         const px = ax + (b[0] - ax) * e + am * Math.cos(P.ph + t * 1.7 + P.y * 0.03);
         const py = ay + (b[1] - ay) * e + am * Math.sin(P.ph * 1.3 + t * 1.3 + P.x * 0.025) - am * 0.55;
-        const ta = 0.84 * (0.3 + 0.7 * b[2]), a = (0.86 + (ta - 0.86) * e) * (1 - 0.45 * s), sz = ds * (1 - 0.25 * s);
+        const ta = 0.84 * (0.3 + 0.7 * b[2]), a = (P.a + (ta - P.a) * e) * (1 - 0.45 * s), sz = ((P.sm ? dsS : ds) + (ds - (P.sm ? dsS : ds)) * e) * (1 - 0.25 * s);
         g.fillStyle = INK(a); g.fillRect(px - sz / 2, py - sz / 2, sz, sz);
       }
     }
