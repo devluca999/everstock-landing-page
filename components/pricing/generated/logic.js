@@ -480,7 +480,7 @@ class Component extends DCLogic {
     const o = {
       rootRef: this.rootRef, frameRef: this.frameRef, sceneCvRef: this.sceneCvRef, fgLabRef: this.fgLabRef, bubRef: this.bubRef, dotsRef: this.dotsRef, infoRef: this.infoRef, sbIconRef: this.sbIconRef, footCvRef: this.footCvRef, stackRef: this.stackRef, markRef: this.markRef,
       mkUnify: red ? 'none' : 'esUnify 6.4s cubic-bezier(.65,0,.35,1) infinite', mkGate: red ? 'none' : 'esMkGate 6.4s linear infinite', mkReduced: red ? 'contrast(1.14) brightness(.9) drop-shadow(0 0 6px rgba(11,95,208,.45))' : 'none',
-      ...[40,32,25,19,18,14,13,10,7,5,4,3,2,'W','G'].reduce((o, L) => { o['mkT' + L] = red ? 'none' : 'esMk' + L + ' 2.1s cubic-bezier(.55,.05,.45,.95) infinite'; return o; }, {}),
+      ...["MkB22b0","MkB12b0","MkB36b0","MkB26b0","MkB18b0","MkB8b0","MkB5b0","MkB3b0","MkB4b1_4","MkB5b1_6","MkB4b1_9","MkB4_5b2_2","MkB30b1_6","MkB14b1_8"].reduce((o, n) => { o['mk_' + n] = red ? 'none' : 'es' + n + ' 6.4s linear infinite'; return o; }, {}),
       wide: s.wide, narrow: !s.wide, navMenuOpen: !s.wide && s.navMenu, navMenuAria: s.navMenu ? 'true' : 'false',
       toggleMenu: () => this.setState({ navMenu: !s.navMenu }), closeMenu: () => this.setState({ navMenu: false }),
       mnTop: s.navMenu ? 'translateY(5px) rotate(45deg)' : 'none', mnBot: s.navMenu ? 'translateY(-5px) rotate(-45deg)' : 'none', mnMidO: s.navMenu ? 0 : 1,

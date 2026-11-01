@@ -33,6 +33,7 @@ import * as v9Footer from "./port-patches/v9-footer.mjs";
 import * as v9Industries from "./port-patches/v9-industries.mjs";
 import * as v9Ctas from "./port-patches/v9-ctas.mjs";
 import * as v9App from "./port-patches/v9-app.mjs";
+import * as pricingMark from "./port-patches/pricing-mark.mjs";
 const V9_AREAS = [v9Capabilities, v9Workflows, v9Plan, v9Footer, v9Industries, v9Ctas, v9App];
 /* Site-side patches shared by both pages. */
 const NO_LEGAL_NAV = {
@@ -244,8 +245,11 @@ const PAGES = {
         find: "this.dead = true; if (this.raf) clearTimeout(this.raf);",
         replace: "this.dead = true; if (this.raf) cancelAnimationFrame(this.raf);",
       },
+      ...pricingMark.logicPatches,
     ],
-    templatePatches: [NO_LEGAL_NAV, ACCESS_FIELDS, ACCESS_STEPS, FOOTER_FEEDBACK],
+    templatePatches: [NO_LEGAL_NAV, ACCESS_FIELDS, ACCESS_STEPS, FOOTER_FEEDBACK, ...pricingMark.templatePatches],
+    // patches to the <helmet> styles (keyframes), applied before they are written to helmet.css
+    helmetPatches: pricingMark.helmetPatches,
     // deterministic paints served as baked PNGs (see bakes below)
     bakes: [{ method: "paintStack", png: "public/pricing/stack-{hash}.png" }],
     hrefBindings: {
@@ -316,7 +320,7 @@ let inner = html.slice(dcOpen + "<x-dc>".length, dcClose);
 
 const helmetMatch = inner.match(/<helmet>([\s\S]*?)<\/helmet>/i);
 if (!helmetMatch) throw new Error("no <helmet>");
-const helmet = helmetMatch[1];
+const helmet = applyPatches(helmetMatch[1], page.helmetPatches || [], "helmet");
 inner = inner.replace(helmetMatch[0], "");
 inner = applyPatches(inner, page.templatePatches, "template");
 
