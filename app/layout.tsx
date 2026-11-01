@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { themeScript, scrollScript } from "./head-scripts";
+import { themeScript, scrollScript, appScript, appLinkCss } from "./head-scripts";
 import FeedbackDialog from "@/components/feedback/FeedbackDialog";
 
 const TITLE = "Everstock · Supply chain software for physical products";
@@ -75,6 +75,8 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: scrollScript }} />
+        <script dangerouslySetInnerHTML={{ __html: appScript(process.env.NEXT_PUBLIC_APP_LIVE === "1") }} />
+        <style dangerouslySetInnerHTML={{ __html: appLinkCss }} />
         {/* the design's <helmet> fonts, as links (the page names these families directly) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
