@@ -101,9 +101,9 @@ const TIERS = (ind) =>
     `    <a href="Pricing.dc.html" style="display:inline-flex;align-items:center;min-height:44px;font-size:15px;font-weight:600;color:rgb(var(--ink));text-decoration:underline;text-decoration-color:rgb(var(--ink) / 0.35);text-underline-offset:5px;" style-hover="text-decoration-color:rgb(var(--ink));">Compare plans →</a>`,
     `  </div>`,
     `  <ul aria-label="Plans" style="list-style:none;margin:0;padding:0;display:grid;border-top:1px solid rgb(var(--ink) / 0.14);">`,
-    `    ${tier("Base", `<span style="font-size:12px;color:rgb(var(--ink) / 0.64);">from </span>$199${PER}`, "stockbot reads your inbox, so paperwork sorts itself.", "+ $75 per seat · capped at $499/mo", outlineCta({ key: "tb", to: "early", label: "Start with Base" }))}`,
-    `    ${tier("Scale", `$999${PER}`, "Your team and your agent, working off the same page.", "Up to 50 seats", outlineCta({ key: "ts", to: "early", label: "Start with Scale" }))}`,
-    `    ${tier("Enterprise", "Custom", "Multiple agents, your systems, your rules.", "", outlineCta({ key: "te", to: "demo", label: "Talk to us" }))}`,
+    `    ${tier("Base", `<span style="font-size:12px;color:rgb(var(--ink) / 0.64);">from </span>$199${PER}`, "stockbot reads your inbox, so paperwork sorts itself.", "+ $75 per seat · capped at $499/mo", outlineCta({ key: "tb", to: "early", label: "{{ ctaClaimLabel }}" }))}`,
+    `    ${tier("Scale", `$999${PER}`, "Your team and your agent, working off the same page.", "Up to 50 seats", outlineCta({ key: "ts", to: "demo", label: "Book a demo" }))}`,
+    `    ${tier("Enterprise", "Custom", "Multiple agents, your systems, your rules.", "", outlineCta({ key: "te", to: "demo", label: "Book a demo" }))}`,
     `  </ul>`,
     `</div>`,
   ].join("\n" + ind);

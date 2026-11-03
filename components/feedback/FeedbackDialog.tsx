@@ -84,7 +84,7 @@ export default function FeedbackDialog() {
           kind,
           message: String(f.get("message") || ""),
           email: String(f.get("email") || ""),
-          website: String(f.get("website") || ""),
+          fax: String(f.get("fax") || ""),
           page: location.pathname,
           elapsed: performance.now() - openedAt.current,
         }),
@@ -161,7 +161,7 @@ export default function FeedbackDialog() {
               </span>
               <input name="email" type="email" autoComplete="email" placeholder="you@example.com" />
             </label>
-            <input className="es-fb-hp" name="website" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+            <input className="es-fb-hp" name="fax" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" />
             {error ? (
               <p className="es-fb-error" role="alert">
                 {error}

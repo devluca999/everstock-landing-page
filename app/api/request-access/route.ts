@@ -1,90 +1,56 @@
 import { ConvexHttpClient } from "convex/browser";
 import { ConvexError } from "convex/values";
 import { api } from "@/convex/_generated/api";
+import { CHANNELS, CLAIM_TEAM, EMAIL } from "@/convex/forms";
+import { context, fail, isBot, readBody, str } from "@/lib/intake";
 
-const STACKS = new Set(["netsuite", "epicor-p21", "sap-b1", "spreadsheets", "other"]);
-const SOURCES = new Set(["hero", "nav", "contract", "final", "sheet", "hash", "early-access", "founding-partner", "price-file", "book-demo", "waitlist", "stock-plan", "scattered-records", "other"]);
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const MIN_FILL_MS = 2500; // a person cannot read and fill four fields faster than this
+const MIN_FILL_MS = 2500; // a person cannot read and fill the form faster than this
 
 /**
- * Request-access intake. Bot checks happen here (honeypot, minimum fill time) so the
- * database never sees them; both return a fake success so a scraper learns nothing.
- * Real submissions go to Convex, which validates again and stores one row per email.
+ * "Claim your spot" (kind "claim") and the free Stock Plan (kind "stock-plan").
+ * Bot checks first (honeypot, minimum fill time: a fake success), then Convex, which
+ * validates again, saves one row per email and queues the event for eBRAiN.
+ * Answers { ok, claim: { id, submission }, planFit } so the success screen's optional
+ * set-up step can update the same claim (/api/request-access/setup).
  */
 export async function POST(req: Request) {
   const url = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!url) return Response.json({ error: "Requests aren't being accepted right now." }, { status: 503 });
+  if (!url) return fail("Requests aren't being accepted right now.", 503);
+  const b = await readBody(req);
+  if (!b) return fail("Bad request.");
+  if (isBot(b, MIN_FILL_MS)) return Response.json({ ok: true });
 
-  let body: Record<string, unknown>;
-  try {
-    body = (await req.json()) as Record<string, unknown>;
-  } catch {
-    return Response.json({ error: "Bad request." }, { status: 400 });
-  }
-  const str = (k: string, max: number) => (typeof body[k] === "string" ? (body[k] as string).trim().slice(0, max) : "");
-
-  if (str("website", 200)) return Response.json({ ok: true }); // honeypot
-  const elapsed = Number(body.elapsed);
-  if (!Number.isFinite(elapsed) || elapsed < MIN_FILL_MS) return Response.json({ ok: true });
-
-  // the forms ask for an email and an optional work email, and need at least one of
-  // them: a work email given on its own becomes the row's email
-  let email = str("email", 200).toLowerCase();
-  let workEmail = str("workEmail", 200).toLowerCase() || undefined;
-  if (!email && workEmail) [email, workEmail] = [workEmail, undefined];
-  if (workEmail === email) workEmail = undefined;
-  if (workEmail && !EMAIL.test(workEmail)) return Response.json({ error: "That work email doesn't look right." }, { status: 400 });
-  // older forms asked for less (the price-file form: email only), so name and company
-  // fall back to what the email already says
-  const [local = "", domain = ""] = (workEmail || email).split("@");
-  const name = str("name", 120) || local;
-  const company = str("company", 160) || domain;
-  const stack = STACKS.has(str("stack", 40)) ? str("stack", 40) : "other";
-  if (name.length < 2) return Response.json({ error: "Please add your name." }, { status: 400 });
-  if (!EMAIL.test(email)) return Response.json({ error: "That email address doesn't look right." }, { status: 400 });
-  if (company.length < 2) return Response.json({ error: "Please add your company." }, { status: 400 });
-
-  const phone = str("phone", 40) || undefined;
-  const note = str("note", 1000) || undefined;
-  const heardFrom = str("heardFrom", 120) || undefined;
-  const waitlist = body.waitlist === true ? true : undefined;
-  const source = SOURCES.has(str("source", 20)) ? str("source", 20) : "other";
-  const referrer = str("referrer", 300) || undefined;
-  const utmRaw = body.utm;
-  const utm =
-    utmRaw && typeof utmRaw === "object"
-      ? Object.fromEntries(
-          Object.entries(utmRaw as Record<string, unknown>)
-            .filter(([k, v]) => /^utm_[a-z_]{1,20}$/.test(k) && typeof v === "string")
-            .map(([k, v]) => [k, (v as string).slice(0, 120)])
-        )
-      : undefined;
-  const userAgent = req.headers.get("user-agent")?.slice(0, 300) || undefined;
-  const refCode = req.headers.get("cookie")?.match(/(?:^|;\s*)es_ref=([A-Za-z0-9-]{3,24})/)?.[1];
+  const kind = str(b, "kind", 20) === "stock-plan" ? "stock-plan" : "claim";
+  const name = str(b, "name", 120);
+  const email = str(b, "email", 200).toLowerCase();
+  if (!name) return fail(kind === "claim" ? "Add your first name." : "Add your name.");
+  if (!EMAIL.test(email)) return fail("That email address doesn't look right.");
+  const sells = str(b, "sells", 300);
+  const teamSize = str(b, "teamSize", 20);
+  if (kind === "claim" && !sells) return fail("Tell us what you sell.");
+  if (kind === "claim" && !(teamSize in CLAIM_TEAM)) return fail("Pick how many people handle buying and stock.");
+  const channels = Array.isArray(b.channels) ? (b.channels as unknown[]).filter((c): c is string => typeof c === "string" && c in CHANNELS) : [];
 
   try {
     const client = new ConvexHttpClient(url);
     const res = await client.mutation(api.accessRequests.submit, {
+      kind,
       name,
       email,
-      company,
-      stack,
-      phone,
-      note,
-      workEmail,
-      heardFrom,
-      waitlist,
-      source,
-      referrer,
-      utm: utm && Object.keys(utm).length ? utm : undefined,
-      refCode,
-      userAgent,
+      sells: sells || undefined,
+      teamSize: teamSize || undefined,
+      channels: channels.length ? channels : undefined,
+      website: str(b, "website", 300) || undefined,
+      phone: str(b, "phone", 40) || undefined,
+      smsConsent: b.smsConsent === true,
+      heardFrom: str(b, "heardFrom", 120) || undefined,
+      note: str(b, "note", 1000) || undefined,
+      ...context(req, b),
     });
-    return Response.json({ ok: true, repeat: res.repeat });
+    return Response.json({ ok: true, claim: { id: res.id, submission: res.submission }, planFit: res.planFit ?? null });
   } catch (e) {
-    if (e instanceof ConvexError) return Response.json({ error: String(e.data) }, { status: 400 });
+    if (e instanceof ConvexError) return fail(String(e.data));
     console.error("request-access failed", e);
-    return Response.json({ error: "Something went wrong on our side. Please try again." }, { status: 502 });
+    return fail("Something went wrong on our side. Please try again.", 502);
   }
 }

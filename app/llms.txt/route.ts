@@ -8,7 +8,7 @@ const BODY = `# Everstock
 
 > Everstock is supply chain software for companies that make, move and sell physical products. It reads your quotes, orders and invoices, drafts purchase orders before the shelf empties, chases suppliers, matches invoices, and sends every order to you for a one-tap approval by text. It works with or without an ERP.
 
-Everstock is built in Chicago and is in early access, with pilots live. Start with stockbot, an agent you text, then move to Base, Scale or Enterprise with your history and setup intact.
+Everstock is built in Chicago, with pilots live. The first 100 customers get founding pricing. Start with stockbot, an agent you text, then move to Base, Scale or Enterprise with your history and setup intact.
 
 ## What it does
 
@@ -40,7 +40,7 @@ Sellers and operators of anything that ships in a box: from a business shipping 
 
 ## Contact
 
-- Get early access: ${SITE_URL}/#waitlist
+- Claim your spot (founding pricing): ${SITE_URL}/#claim
 - Book a demo: ${SITE_URL}/#book-demo
 `;
 

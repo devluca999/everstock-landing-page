@@ -10,11 +10,15 @@
 
 import type * as accessRequests from "../accessRequests.js";
 import type * as admin from "../admin.js";
-import type * as brain from "../brain.js";
+import type * as crons from "../crons.js";
+import type * as demos from "../demos.js";
 import type * as feedback from "../feedback.js";
+import type * as forms from "../forms.js";
+import type * as launch from "../launch.js";
+import type * as launchData from "../launchData.js";
 import type * as notify from "../notify.js";
 import type * as notifyData from "../notifyData.js";
-import type * as stacks from "../stacks.js";
+import type * as outbox from "../outbox.js";
 
 import type {
   ApiFromModules,
@@ -25,11 +29,15 @@ import type {
 declare const fullApi: ApiFromModules<{
   accessRequests: typeof accessRequests;
   admin: typeof admin;
-  brain: typeof brain;
+  crons: typeof crons;
+  demos: typeof demos;
   feedback: typeof feedback;
+  forms: typeof forms;
+  launch: typeof launch;
+  launchData: typeof launchData;
   notify: typeof notify;
   notifyData: typeof notifyData;
-  stacks: typeof stacks;
+  outbox: typeof outbox;
 }>;
 
 /**

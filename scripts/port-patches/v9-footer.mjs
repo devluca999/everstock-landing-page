@@ -53,7 +53,7 @@ const FOOTER_LAYOUT = {
       `        <p style="margin:0;font-size:15px;line-height:1.55;color:rgb(var(--ink) / 0.64);">Supply chain software that reads your quotes, orders and invoices and drafts every order for your sign-off.</p>`,
       `      </div>`,
       `      ${col("Product", [["#workflows", "", "How it works"], ["#industries", "", "Industries"], ["Pricing.dc.html", "", "Pricing"], ["Pricing.dc.html#compare", "", "Compare"]])}`,
-      `      ${col("Get started", [["#stock-plan", "goPF", "Get a Stock Plan"], ["#waitlist", "openFounding", "Get early access"], ["#book-demo", "openDemo", "Book a demo"]])}`,
+      `      ${col("Get started", [["#stock-plan", "goPF", "Get a Stock Plan"], ["#waitlist", "openFounding", "{{ ctaClaimLabel }}"], ["#book-demo", "openDemo", "Book a demo"]])}`,
       `      ${col("Company", [["#feedback", "", "Send feedback"]])}`,
       `    </div>`,
       // the empty slot NO_LEGAL_NAV leaves (Privacy, Terms, LinkedIn come back here once they exist)
