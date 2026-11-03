@@ -23,9 +23,12 @@ export default defineSchema({
     source: v.optional(v.string()), // which form: waitlist | book-demo (older rows: hero | nav | founding-partner | …)
     referrer: v.optional(v.string()),
     utm: v.optional(v.record(v.string(), v.string())),
+    refCode: v.optional(v.string()), // the es_ref cookie (?ref=CODE), the rep or partner who sent them
     userAgent: v.optional(v.string()),
     submissions: v.number(),
-    status: v.string(), // new | contacted | qualified | declined  (edited from the dashboard)
+    // Legacy: lead status now lives in eBRAiN's Pipeline (convex/brain.ts sends
+    // every submission there). Kept so old rows stay valid; nothing reads it.
+    status: v.string(),
     createdAt: v.number(),
     updatedAt: v.number(),
   })

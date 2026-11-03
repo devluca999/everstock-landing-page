@@ -61,6 +61,7 @@ export async function POST(req: Request) {
         )
       : undefined;
   const userAgent = req.headers.get("user-agent")?.slice(0, 300) || undefined;
+  const refCode = req.headers.get("cookie")?.match(/(?:^|;\s*)es_ref=([A-Za-z0-9-]{3,24})/)?.[1];
 
   try {
     const client = new ConvexHttpClient(url);
@@ -77,6 +78,7 @@ export async function POST(req: Request) {
       source,
       referrer,
       utm: utm && Object.keys(utm).length ? utm : undefined,
+      refCode,
       userAgent,
     });
     return Response.json({ ok: true, repeat: res.repeat });
