@@ -19,7 +19,7 @@ import "./forms.css";
 const HEARD = ["Search engine", "LinkedIn", "A colleague or friend", "An event", "An article or newsletter", "Something else"];
 
 const FIT: Record<string, string> = {
-  Stockbot: "Stockbot fits a team of one: text it your paperwork and it catches what you'd miss.",
+  Stockbot: "stockbot fits a team of one: text it your paperwork and it catches what you'd miss.",
   Base: "Base fits a team of 2 to 5: Everstock reads your inbox, so paperwork sorts itself.",
   "Base or Scale": "Base or Scale fits a team of 6 to 20. We'll help you pick when your account is ready.",
   "Book a demo": "With a team your size, a 30 minute demo with the founders is the quickest way in.",

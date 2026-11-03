@@ -15,8 +15,8 @@ export function isTestLead(email: string, name?: string): boolean {
 /** "How many people handle buying and stock?" (Claim your spot). */
 export const CLAIM_TEAM: Record<string, string> = {
   "just-me": "Just me",
-  "2-5": "2–5",
-  "6-20": "6–20",
+  "2-5": "2 to 5",
+  "6-20": "6 to 20",
   "20+": "20+",
 };
 
@@ -62,9 +62,9 @@ export const DEMO_ROLES: Record<string, string> = {
   other: "Other",
 };
 export const DEMO_TEAM: Record<string, string> = {
-  "2-5": "2–5",
-  "6-20": "6–20",
-  "21-50": "21–50",
+  "2-5": "2 to 5",
+  "6-20": "6 to 20",
+  "21-50": "21 to 50",
   "50+": "50+",
 };
 export const RUNS_ON: Record<string, string> = {

@@ -8,7 +8,7 @@
  *
  * The environment is never assumed: --env is required. Runs convex/launch.ts
  * `emailClaimers` on that deployment, which needs SIGNUP_URL, CLAIM_EMAIL_FROM and
- * RESEND_API_KEY in its Convex env. Flip LAUNCH_MODE=live on Vercel first.
+ * the SendPulse credentials (SENDPULSE_API_ID, SENDPULSE_API_SECRET) in its Convex env. Flip LAUNCH_MODE=live on Vercel first.
  */
 import { spawnSync } from "node:child_process";
 
