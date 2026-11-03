@@ -1,10 +1,12 @@
-import { mutation, query } from "./_generated/server";
+import { internalQuery, mutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { ConvexError, v } from "convex/values";
 import { STACKS } from "./stacks";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const clip = (s: string, n: number) => s.trim().slice(0, n);
+/** How long after a submission it is sent to eBRAiN (lets the follow-up answers land first). */
+const SYNC_DELAY = 60_000;
 
 /**
  * Record a request for access. Called from the Next.js route handler, which has
@@ -25,6 +27,7 @@ export const submit = mutation({
     source: v.optional(v.string()),
     referrer: v.optional(v.string()),
     utm: v.optional(v.record(v.string(), v.string())),
+    refCode: v.optional(v.string()),
     userAgent: v.optional(v.string()),
   },
   returns: v.object({ id: v.id("accessRequests"), repeat: v.boolean() }),
@@ -41,6 +44,7 @@ export const submit = mutation({
     const workEmail = args.workEmail ? clip(args.workEmail, 200).toLowerCase() : undefined;
     if (workEmail && !EMAIL.test(workEmail)) throw new ConvexError("That work email doesn't look right.");
     const heardFrom = args.heardFrom ? clip(args.heardFrom, 120) : undefined;
+    const refCode = args.refCode && /^[A-Za-z0-9-]{3,24}$/.test(args.refCode) ? args.refCode.toUpperCase() : undefined;
     const now = Date.now();
 
     const existing = await ctx.db
@@ -59,11 +63,13 @@ export const submit = mutation({
         heardFrom: heardFrom ?? existing.heardFrom,
         waitlist: args.waitlist ?? existing.waitlist,
         source: args.source ?? existing.source,
+        refCode: refCode ?? existing.refCode,
         submissions: existing.submissions + 1,
         updatedAt: now,
       });
-      // refresh the brain page with the latest submission
-      await ctx.scheduler.runAfter(0, internal.brain.syncRequest, { id: existing._id });
+      // Each submission is its own inbound event in eBRAiN. Sent after a minute
+      // so the follow-up answers (accessRequests.answer) ride along.
+      await ctx.scheduler.runAfter(SYNC_DELAY, internal.brain.syncRequest, { id: existing._id, submission: existing.submissions + 1 });
       return { id: existing._id, repeat: true };
     }
 
@@ -80,6 +86,7 @@ export const submit = mutation({
       source: args.source,
       referrer: args.referrer,
       utm: args.utm,
+      refCode,
       userAgent: args.userAgent,
       submissions: 1,
       status: "new",
@@ -88,7 +95,7 @@ export const submit = mutation({
     });
     // the ping and the brain mirror are best-effort and never block the submission
     await ctx.scheduler.runAfter(0, internal.notify.newRequest, { id });
-    await ctx.scheduler.runAfter(0, internal.brain.syncRequest, { id });
+    await ctx.scheduler.runAfter(SYNC_DELAY, internal.brain.syncRequest, { id, submission: 1 });
     return { id, repeat: false };
   },
 });
@@ -116,13 +123,13 @@ export const answer = mutation({
     if (args.waitlist !== undefined) patch.waitlist = args.waitlist;
     if (args.foundingInterest !== undefined) patch.foundingInterest = args.foundingInterest;
     await ctx.db.patch(row._id, patch);
-    await ctx.scheduler.runAfter(0, internal.brain.syncRequest, { id: row._id });
     return true;
   },
 });
 
-/** Newest first, for a future protected /requests page. The dashboard covers today. */
-export const list = query({
+/** Newest first. Internal: it returns every submission's contact details, so it is
+    never callable from the browser. Read it with `npx convex run accessRequests:list`. */
+export const list = internalQuery({
   args: { limit: v.optional(v.number()) },
   returns: v.array(
     v.object({
@@ -141,6 +148,7 @@ export const list = query({
       source: v.optional(v.string()),
       referrer: v.optional(v.string()),
       utm: v.optional(v.record(v.string(), v.string())),
+      refCode: v.optional(v.string()),
       userAgent: v.optional(v.string()),
       submissions: v.number(),
       status: v.string(),
