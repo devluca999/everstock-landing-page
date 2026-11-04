@@ -2,7 +2,18 @@
  * /llms.txt (https://llmstxt.org): a plain-text brief of the site for language models.
  * Keep it true to the live pages (the home and pricing designs); update it with the copy.
  */
+import { FOUNDING, YEARLY_MONTHS_PAID, plan, priceFor, termsFor, usd } from "@/lib/pricing.config";
+
 const SITE_URL = "https://tryeverstock.com";
+const s = plan("stockbot"), b = plan("base"), sc = plan("scale"), en = plan("enterprise");
+// every figure from lib/pricing.config.ts
+const PRICING = [
+  `- stockbot: ${usd(s.monthly!)}/mo, or ${priceFor(s, "yearly").amount}/mo billed yearly (${priceFor(s, "yearly").billed.replace("Billed ", "")}). ${termsFor(s, "monthly")} Founding price: ${usd(FOUNDING.monthly)}/mo for life for the first ${FOUNDING.seats} customers, monthly billing only. Text it a photo or PDF of an invoice, quote or packing slip; it matches it to your orders and flags problems.`,
+  `- Base: ${usd(b.monthly!)}/mo ${priceFor(b, "monthly").seat}, or ${priceFor(b, "yearly").amount}/mo billed yearly (${priceFor(b, "yearly").billed.replace("Billed ", "")}). ${termsFor(b, "monthly")} ${b.promise}`,
+  `- Scale: ${usd(sc.monthly!)}/mo, for a team and its agent working off the same records. ${termsFor(sc, "monthly")}`,
+  `- Enterprise: from ${usd(en.monthly!)}/mo; multiple agents, plugs into your ERP and systems. ${termsFor(en, "monthly")}`,
+  `- Yearly billing (stockbot and Base): pay for ${YEARLY_MONTHS_PAID} months, get 12.`,
+].join("\n");
 
 const BODY = `# Everstock
 
@@ -26,11 +37,7 @@ Sellers and operators of anything that ships in a box: from a business shipping 
 
 ## Pricing
 
-- stockbot: $20/mo (founding price). Text it a photo or PDF of an invoice, quote or packing slip; it matches it to your orders and flags problems.
-- Base: from $199/mo plus $75 per seat, capped at $499/mo.
-- Scale: $999/mo, for a team and its agent working off the same records.
-- Enterprise: custom pricing; multiple agents, plugs into your ERP and systems.
-- No setup fees, no lock-in, cancel anytime; your data comes with you.
+${PRICING}
 
 ## Pages
 
