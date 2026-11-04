@@ -34,6 +34,7 @@ import * as v9Industries from "./port-patches/v9-industries.mjs";
 import * as v9Ctas from "./port-patches/v9-ctas.mjs";
 import * as v9App from "./port-patches/v9-app.mjs";
 import * as claim from "./port-patches/claim.mjs";
+import * as pricingBilling from "./port-patches/pricing-billing.mjs";
 const V9_AREAS = [v9Capabilities, v9Workflows, v9Plan, v9Footer, v9Industries, v9Ctas, v9App];
 /* Site-side patches shared by both pages. */
 const NO_LEGAL_NAV = {
@@ -196,8 +197,9 @@ const PAGES = {
         replace: "this.dead = true; if (this.raf) cancelAnimationFrame(this.raf);",
       },
       ...claim.pricing.logicPatches,
+      ...pricingBilling.logicPatches,
     ],
-    templatePatches: [NO_LEGAL_NAV, FOOTER_FEEDBACK, ...claim.pricing.templatePatches],
+    templatePatches: [NO_LEGAL_NAV, FOOTER_FEEDBACK, ...claim.pricing.templatePatches, ...pricingBilling.templatePatches],
     // deterministic paints served as baked PNGs (see bakes below)
     bakes: [{ method: "paintStack", png: "public/pricing/stack-{hash}.png" }],
     hrefBindings: {

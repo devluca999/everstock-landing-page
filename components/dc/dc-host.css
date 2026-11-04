@@ -16,3 +16,16 @@ html,body{height:100%;margin:0}#dc-root,#dc-root>.sc-host{height:100%}
   position: absolute;
   inset: -12px -4px;
 }
+
+/* Pricing (2026-11-03): a price fades in when the Monthly / Yearly toggle changes it. Two
+   identical keyframes so each change replays (components/dc/pricingVals.ts → prAnim). */
+@keyframes es-price-a { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+@keyframes es-price-b { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { [data-price] { animation: none !important; } }
+
+/* Pricing tier rows on phones: the text takes the full width and the button sits under it
+   (beside it, the terms squeezed into a ~90px column at 375px). */
+@media (max-width: 560px) {
+  [data-tier-row] > [data-tier-text] { grid-column: 1 / -1 !important; }
+  [data-tier-row] > [data-tier-cta] { grid-column: 1 / -1 !important; grid-row: auto !important; justify-self: start !important; padding-top: 10px !important; }
+}

@@ -22,6 +22,7 @@ import defineLogic from "./generated/logic";
 import tree from "./generated/template.json";
 import defaults from "./generated/props.json";
 import { createDcPage, sendRequest } from "../dc/host";
+import { pricingVals } from "../dc/pricingVals";
 import { CLAIM_HREF, DEMO_HREF, claimLabel, currentSeats, loadSeats, onSeats, openClaim, openDemo, seatsLine } from "@/lib/cta";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -219,6 +220,8 @@ const extend = (DesignLogic) =>
         ctaClaimLabel: claimLabel(currentSeats()),
         ctaBookDemoHref: DEMO_HREF,
         seatsLine: seatsLine(currentSeats()),
+        // the pricing section (cards, Monthly / Yearly toggle, billing FAQ), from lib/pricing.config.ts
+        ...pricingVals(this.state, (patch) => this.setState(patch)),
       };
     }
   };

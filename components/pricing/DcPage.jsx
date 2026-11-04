@@ -21,6 +21,7 @@ import tree from "./generated/template.json";
 import defaults from "./generated/props.json";
 import bakes from "./generated/bakes.json";
 import { createDcPage } from "../dc/host";
+import { BILLING_FAQ, FOUNDING, baseSeatsAnswer, plan, priceFor, sceneNote, seatsRow, tierHeader, usd } from "@/lib/pricing.config";
 import { CLAIM_HREF, DEMO_HREF, claimLabel, currentSeats, loadSeats, onSeats, openClaim, openDemo, seatsLine } from "@/lib/cta";
 
 const ctaOf = (e) => (e && e.currentTarget && e.currentTarget.getAttribute && e.currentTarget.getAttribute("data-cta")) || "other";
@@ -39,6 +40,19 @@ const extend = (DesignLogic) =>
       };
       // the tiers' and scenes' claim label (a logic patch reads it, see claim.mjs)
       this.claimText = () => claimLabel(currentSeats());
+    }
+
+    // prices from lib/pricing.config.ts (scripts/port-patches/pricing-billing.mjs calls these from
+    // the design's class fields, so they are prototype methods, there before the fields run)
+    tierHeader(id) {
+      return tierHeader(id);
+    }
+    scenePrice(id) {
+      const pr = priceFor(plan(id), "monthly");
+      return { price: pr.amount, per: !!pr.per, pre: !!pr.pre, note: sceneNote(id) };
+    }
+    seatsRow() {
+      return seatsRow();
     }
 
     paintStack() {
@@ -63,6 +77,9 @@ const extend = (DesignLogic) =>
         ctaClaimLabel: claimLabel(currentSeats()),
         ctaBookDemoHref: DEMO_HREF,
         seatsLine: seatsLine(currentSeats()),
+        prFoundingMo: `${usd(FOUNDING.monthly)}/mo`,
+        faqBaseSeats: baseSeatsAnswer(),
+        faqCancel: BILLING_FAQ[0].a,
       };
     }
   };
