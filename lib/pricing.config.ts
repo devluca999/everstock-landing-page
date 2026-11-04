@@ -118,10 +118,10 @@ export function priceFor(p: Plan, billing: Billing) {
   const billed = yearly ? `Billed ${usd(yearlyTotal(p.monthly))} yearly` : "";
   let seat = "";
   if (p.seatMonthly) {
-    seat = yearly
-      ? `+ ${usd(perMonthOfYearly(p.seatMonthly))}/seat/mo, billed ${usd(yearlyTotal(p.seatMonthly))} per seat yearly`
-      : `+ ${usd(p.seatMonthly)} per seat`;
-    if (p.capMonthly) seat += yearly ? ` · capped at ${usd(yearlyTotal(p.capMonthly))}/yr` : ` · capped at ${usd(p.capMonthly)}/mo`;
+    // the seat price is shown as is in both views (Luca, 2026-11-03: "showing $75 per seat is
+    // enough"; yearly seat maths only gives the customer more numbers to think about)
+    seat = `+ ${usd(p.seatMonthly)} per seat`;
+    if (p.capMonthly && !yearly) seat += ` · capped at ${usd(p.capMonthly)}/mo`;
   } else if (p.maxSeats) seat = `Up to ${p.maxSeats} seats`;
   return { amount, per: "/mo", pre: p.from ? "From" : "", billed, seat };
 }
@@ -172,7 +172,7 @@ export function sceneNote(id: Plan["id"]) {
 
 export function baseSeatsAnswer() {
   const b = plan("base");
-  return `Base is ${usd(b.monthly!)}/mo plus ${usd(b.seatMonthly!)} for each seat, and your bill is capped at ${usd(b.capMonthly!)}/mo, so adding people past that point costs nothing extra. On yearly billing it's ${usd(yearlyTotal(b.monthly!))} a year plus ${usd(yearlyTotal(b.seatMonthly!))} per seat, capped at ${usd(yearlyTotal(b.capMonthly!))}.`;
+  return `Base is ${usd(b.monthly!)}/mo plus ${usd(b.seatMonthly!)} for each seat, and your bill is capped at ${usd(b.capMonthly!)}/mo, so adding people past that point costs nothing extra. On yearly billing, Base is ${usd(yearlyTotal(b.monthly!))} a year.`;
 }
 
 export const seatsRow = () => `${usd(plan("base").seatMonthly!)} each, capped at ${usd(plan("base").capMonthly!)}/mo`;

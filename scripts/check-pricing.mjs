@@ -16,7 +16,7 @@ const checks = [
   [p("base", "monthly").seat, "+ $75 per seat · capped at $499/mo"],
   [p("base", "yearly").amount, "$166"],
   [p("base", "yearly").billed, "Billed $1,990 yearly"],
-  [p("base", "yearly").seat, "+ $63/seat/mo, billed $750 per seat yearly · capped at $4,990/yr"],
+  [p("base", "yearly").seat, "+ $75 per seat"],
   [termsFor(plan("base"), "monthly"), "90-day onboarding commitment, billed monthly."],
   [plan("base").promise, "Core workflows live in 30 days, or cancel with no further charges."],
   [p("scale", "monthly").amount, "$999"],
