@@ -2,13 +2,24 @@
  * /llms.txt (https://llmstxt.org): a plain-text brief of the site for language models.
  * Keep it true to the live pages (the home and pricing designs); update it with the copy.
  */
+import { FOUNDING, YEARLY_MONTHS_PAID, plan, priceFor, termsFor, usd } from "@/lib/pricing.config";
+
 const SITE_URL = "https://tryeverstock.com";
+const s = plan("stockbot"), b = plan("base"), sc = plan("scale"), en = plan("enterprise");
+// every figure from lib/pricing.config.ts
+const PRICING = [
+  `- stockbot: ${usd(s.monthly!)}/mo, or ${priceFor(s, "yearly").amount}/mo billed yearly (${priceFor(s, "yearly").billed.replace("Billed ", "")}). ${termsFor(s, "monthly")} Founding price: ${usd(FOUNDING.monthly)}/mo for life for the first ${FOUNDING.seats} customers, monthly billing only. Text it a photo or PDF of an invoice, quote or packing slip; it matches it to your orders and flags problems.`,
+  `- Base: ${usd(b.monthly!)}/mo ${priceFor(b, "monthly").seat}, or ${priceFor(b, "yearly").amount}/mo billed yearly (${priceFor(b, "yearly").billed.replace("Billed ", "")}). ${termsFor(b, "monthly")} ${b.promise}`,
+  `- Scale: ${usd(sc.monthly!)}/mo, for a team and its agent working off the same records. ${termsFor(sc, "monthly")}`,
+  `- Enterprise: from ${usd(en.monthly!)}/mo; multiple agents, plugs into your ERP and systems. ${termsFor(en, "monthly")}`,
+  `- Yearly billing (stockbot and Base): pay for ${YEARLY_MONTHS_PAID} months, get 12.`,
+].join("\n");
 
 const BODY = `# Everstock
 
 > Everstock is supply chain software for companies that make, move and sell physical products. It reads your quotes, orders and invoices, drafts purchase orders before the shelf empties, chases suppliers, matches invoices, and sends every order to you for a one-tap approval by text. It works with or without an ERP.
 
-Everstock is built in Chicago and is in early access, with pilots live. Start with stockbot, an agent you text, then move to Base, Scale or Enterprise with your history and setup intact.
+Everstock is built in Chicago, with pilots live. The first 100 customers get founding pricing. Start with stockbot, an agent you text, then move to Base, Scale or Enterprise with your history and setup intact.
 
 ## What it does
 
@@ -26,11 +37,7 @@ Sellers and operators of anything that ships in a box: from a business shipping 
 
 ## Pricing
 
-- stockbot: $20/mo (founding price). Text it a photo or PDF of an invoice, quote or packing slip; it matches it to your orders and flags problems.
-- Base: from $199/mo plus $75 per seat, capped at $499/mo.
-- Scale: $999/mo, for a team and its agent working off the same records.
-- Enterprise: custom pricing; multiple agents, plugs into your ERP and systems.
-- No setup fees, no lock-in, cancel anytime; your data comes with you.
+${PRICING}
 
 ## Pages
 
@@ -40,7 +47,7 @@ Sellers and operators of anything that ships in a box: from a business shipping 
 
 ## Contact
 
-- Get early access: ${SITE_URL}/#waitlist
+- Claim your spot (founding pricing): ${SITE_URL}/#claim
 - Book a demo: ${SITE_URL}/#book-demo
 `;
 

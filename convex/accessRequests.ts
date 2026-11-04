@@ -1,161 +1,225 @@
-import { internalQuery, mutation } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { ConvexError, v } from "convex/values";
-import { STACKS } from "./stacks";
+import type { Doc, Id } from "./_generated/dataModel";
+import { enqueue } from "./outbox";
+import { CHANNELS, CLAIM_TEAM, EMAIL, HEADACHES, USES_TODAY, clip, isTestLead, label, pick, planFit, refCodeOf } from "./forms";
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const clip = (s: string, n: number) => s.trim().slice(0, n);
-/** How long after a submission it is sent to eBRAiN (lets the follow-up answers land first). */
-const SYNC_DELAY = 60_000;
+const context = {
+  page: v.optional(v.string()),
+  cta: v.optional(v.string()),
+  referrer: v.optional(v.string()),
+  utm: v.optional(v.record(v.string(), v.string())),
+  refCode: v.optional(v.string()),
+  userAgent: v.optional(v.string()),
+};
+
+const opt = (s: string | undefined, n: number) => (s ? clip(s, n) || undefined : undefined);
+
+/** The spot_claim event for a claim row (eBRAiN's parseInbound reads form.sells / plan / uses_today). */
+function claimEvent(r: Doc<"accessRequests">, n: number) {
+  const form: Record<string, string> = {};
+  const set = (k: string, val: string | undefined) => {
+    if (val) form[k] = val;
+  };
+  const stockPlan = r.source === "stock-plan";
+  set("request", stockPlan ? "Free Stock Plan" : "Founding spot");
+  set("sells", r.sells);
+  set("team_size", label(CLAIM_TEAM, r.teamSize));
+  set("plan", stockPlan ? "Stock Plan" : r.planFit);
+  set("sells_on", r.channels?.map((c) => label(CHANNELS, c)).join(", "));
+  if (r.phone) set("sms_consent", r.smsConsent ? "yes" : "no");
+  set("sms_consent_at", r.smsConsentAt ? new Date(r.smsConsentAt).toISOString() : undefined);
+  set("heard_from", r.heardFrom);
+  set("message", r.note);
+  set("page", r.page);
+  set("cta", r.cta);
+  return {
+    event_id: `claim:${r._id}:${n}`,
+    type: "spot_claim" as const,
+    occurred_at: r.updatedAt,
+    lead: { name: r.name, email: r.email, phone: r.phone, company: r.company, url: r.website },
+    form,
+    ref: r.refCode,
+    utm: r.utm,
+    referrer: r.referrer,
+  };
+}
 
 /**
- * Record a request for access. Called from the Next.js route handler, which has
- * already done the bot checks (honeypot, minimum fill time) and attached the silent
- * context. Validation is repeated here because this is the boundary that matters.
+ * "Claim your spot" and the free Stock Plan. Called from /api/request-access, which has
+ * already done the bot checks (honeypot, minimum fill time). Validation is repeated here
+ * because this is the boundary that matters. One row per email; each submission is saved,
+ * then queued for eBRAiN (convex/outbox.ts).
  */
 export const submit = mutation({
   args: {
+    kind: v.union(v.literal("claim"), v.literal("stock-plan")),
     name: v.string(),
     email: v.string(),
-    company: v.string(),
-    stack: v.string(),
+    sells: v.optional(v.string()),
+    teamSize: v.optional(v.string()),
+    channels: v.optional(v.array(v.string())),
+    website: v.optional(v.string()),
     phone: v.optional(v.string()),
-    note: v.optional(v.string()),
-    workEmail: v.optional(v.string()),
+    smsConsent: v.optional(v.boolean()),
     heardFrom: v.optional(v.string()),
-    waitlist: v.optional(v.boolean()),
-    source: v.optional(v.string()),
-    referrer: v.optional(v.string()),
-    utm: v.optional(v.record(v.string(), v.string())),
-    refCode: v.optional(v.string()),
-    userAgent: v.optional(v.string()),
+    note: v.optional(v.string()),
+    ...context,
   },
-  returns: v.object({ id: v.id("accessRequests"), repeat: v.boolean() }),
+  returns: v.object({ id: v.id("accessRequests"), submission: v.number(), repeat: v.boolean(), planFit: v.optional(v.string()) }),
   handler: async (ctx, args) => {
+    const claim = args.kind === "claim";
     const name = clip(args.name, 120);
     const email = clip(args.email, 200).toLowerCase();
-    const company = clip(args.company, 160);
-    const stack = STACKS.includes(args.stack as (typeof STACKS)[number]) ? args.stack : "other";
-    if (name.length < 2) throw new ConvexError("Please add your name.");
+    if (name.length < 1) throw new ConvexError("Add your first name.");
     if (!EMAIL.test(email)) throw new ConvexError("That email address doesn't look right.");
-    if (company.length < 2) throw new ConvexError("Please add your company.");
-    const phone = args.phone ? clip(args.phone, 40) : undefined;
-    const note = args.note ? clip(args.note, 1000) : undefined;
-    const workEmail = args.workEmail ? clip(args.workEmail, 200).toLowerCase() : undefined;
-    if (workEmail && !EMAIL.test(workEmail)) throw new ConvexError("That work email doesn't look right.");
-    const heardFrom = args.heardFrom ? clip(args.heardFrom, 120) : undefined;
-    const refCode = args.refCode && /^[A-Za-z0-9-]{3,24}$/.test(args.refCode) ? args.refCode.toUpperCase() : undefined;
+    const sells = opt(args.sells, 300);
+    const teamSize = pick(CLAIM_TEAM, args.teamSize);
+    if (claim && !sells) throw new ConvexError("Tell us what you sell.");
+    if (claim && !teamSize) throw new ConvexError("Pick how many people handle buying and stock.");
+    const channels = (args.channels ?? []).filter((c) => c in CHANNELS).slice(0, 6);
+    const phone = opt(args.phone, 40);
     const now = Date.now();
+    // consent only counts with a number to text, and is timestamped when given
+    const smsConsent = phone ? args.smsConsent === true : undefined;
+    const fields = {
+      name,
+      sells,
+      teamSize,
+      planFit: teamSize ? planFit(teamSize) : undefined,
+      channels: channels.length ? channels : undefined,
+      website: opt(args.website, 300),
+      phone,
+      smsConsent,
+      smsConsentAt: smsConsent ? now : undefined,
+      heardFrom: opt(args.heardFrom, 120),
+      note: opt(args.note, 1000),
+      source: args.kind,
+      page: opt(args.page, 200),
+      cta: opt(args.cta, 60),
+      referrer: opt(args.referrer, 300),
+      utm: args.utm && Object.keys(args.utm).length ? args.utm : undefined,
+      refCode: refCodeOf(args.refCode),
+      userAgent: opt(args.userAgent, 300),
+    };
+    const test = isTestLead(email, name) || undefined;
 
     const existing = await ctx.db
       .query("accessRequests")
       .withIndex("by_email", (q) => q.eq("email", email))
       .unique();
 
+    let id: Id<"accessRequests">;
+    let n: number;
+    let firstClaim = false;
     if (existing) {
-      await ctx.db.patch(existing._id, {
-        name,
-        company,
-        stack,
-        phone: phone ?? existing.phone,
-        note: note ?? existing.note,
-        workEmail: workEmail ?? existing.workEmail,
-        heardFrom: heardFrom ?? existing.heardFrom,
-        waitlist: args.waitlist ?? existing.waitlist,
-        source: args.source ?? existing.source,
-        refCode: refCode ?? existing.refCode,
-        submissions: existing.submissions + 1,
+      n = existing.submissions + 1;
+      id = existing._id;
+      // a repeat fills in what is new and never blanks what was there
+      const patch: Partial<Doc<"accessRequests">> = { submissions: n, updatedAt: now, test };
+      for (const [k, val] of Object.entries(fields)) if (val !== undefined) (patch as Record<string, unknown>)[k] = val;
+      if (claim && !existing.claimedAt) {
+        patch.claimedAt = now;
+        firstClaim = true;
+      }
+      // a stock plan request after a claim stays a claim in the row
+      if (!claim && existing.claimedAt) patch.source = existing.source;
+      await ctx.db.patch(id, patch);
+    } else {
+      n = 1;
+      firstClaim = claim;
+      id = await ctx.db.insert("accessRequests", {
+        ...fields,
+        email,
+        claimedAt: claim ? now : undefined,
+        test,
+        submissions: 1,
+        status: "new",
+        createdAt: now,
         updatedAt: now,
       });
-      // Each submission is its own inbound event in eBRAiN. Sent after a minute
-      // so the follow-up answers (accessRequests.answer) ride along.
-      await ctx.scheduler.runAfter(SYNC_DELAY, internal.brain.syncRequest, { id: existing._id, submission: existing.submissions + 1 });
-      return { id: existing._id, repeat: true };
     }
 
-    const id = await ctx.db.insert("accessRequests", {
-      name,
-      email,
-      company,
-      stack,
-      phone,
-      note,
-      workEmail,
-      heardFrom,
-      waitlist: args.waitlist,
-      source: args.source,
-      referrer: args.referrer,
-      utm: args.utm,
-      refCode,
-      userAgent: args.userAgent,
-      submissions: 1,
-      status: "new",
-      createdAt: now,
-      updatedAt: now,
-    });
-    // the ping and the brain mirror are best-effort and never block the submission
-    await ctx.scheduler.runAfter(0, internal.notify.newRequest, { id });
-    await ctx.scheduler.runAfter(SYNC_DELAY, internal.brain.syncRequest, { id, submission: 1 });
-    return { id, repeat: false };
+    const row = (await ctx.db.get(id))!;
+    // the event carries this submission's own source, even when the row stays a claim
+    await enqueue(ctx, claimEvent({ ...row, source: args.kind }, n));
+    await ctx.scheduler.runAfter(0, internal.notify.claim, { id, repeat: !!existing, kind: args.kind });
+    if (firstClaim && !test) await ctx.scheduler.runAfter(0, internal.notify.claimConfirmation, { id });
+    return { id, submission: n, repeat: !!existing, planFit: row.planFit };
   },
 });
 
 /**
- * The questions asked after a form is sent (Book a demo: "the waitlist too?"; both:
- * "the founding partner program?"). Only ever patches the row the form just created, so
- * an answer for an unknown email is dropped and `submissions` stays a count of forms.
+ * The success screen's optional "Help us set you up (30 seconds)" step. Patches the row
+ * the claim just created (the id the route returned, checked against the email) and sends
+ * a spot_claim_update that eBRAiN merges into the same claim.
  */
-export const answer = mutation({
+export const setup = mutation({
   args: {
+    id: v.string(),
+    submission: v.number(),
     email: v.string(),
-    waitlist: v.optional(v.boolean()),
-    foundingInterest: v.optional(v.boolean()),
+    headache: v.optional(v.string()),
+    usesToday: v.optional(v.string()),
   },
   returns: v.boolean(),
   handler: async (ctx, args) => {
-    const email = clip(args.email, 200).toLowerCase();
-    const row = await ctx.db
-      .query("accessRequests")
-      .withIndex("by_email", (q) => q.eq("email", email))
-      .unique();
-    if (!row) return false;
-    const patch: { waitlist?: boolean; foundingInterest?: boolean; updatedAt: number } = { updatedAt: Date.now() };
-    if (args.waitlist !== undefined) patch.waitlist = args.waitlist;
-    if (args.foundingInterest !== undefined) patch.foundingInterest = args.foundingInterest;
-    await ctx.db.patch(row._id, patch);
+    const id = ctx.db.normalizeId("accessRequests", args.id);
+    if (!id) return false;
+    const row = await ctx.db.get(id);
+    if (!row || row.email !== clip(args.email, 200).toLowerCase() || !row.claimedAt) return false;
+    const headache = pick(HEADACHES, args.headache);
+    const usesToday = pick(USES_TODAY, args.usesToday);
+    if (!headache && !usesToday) return false;
+    const now = Date.now();
+    await ctx.db.patch(id, {
+      headache: headache ?? row.headache,
+      usesToday: usesToday ?? row.usesToday,
+      setupAnsweredAt: now,
+      updatedAt: now,
+    });
+    const form: Record<string, string> = {};
+    if (headache) form.biggest_headache = label(HEADACHES, headache)!;
+    if (usesToday) form.uses_today = label(USES_TODAY, usesToday)!;
+    const n = Math.min(Math.max(1, Math.floor(args.submission)), row.submissions);
+    await enqueue(ctx, {
+      event_id: `claimUpdate:${id}:${n}`,
+      type: "spot_claim_update",
+      claim_event_id: `claim:${id}:${n}`,
+      occurred_at: now,
+      lead: { name: row.name, email: row.email },
+      form,
+    });
     return true;
   },
 });
 
-/** Newest first. Internal: it returns every submission's contact details, so it is
-    never callable from the browser. Read it with `npx convex run accessRequests:list`. */
+/**
+ * The founding seat counter. Counts real claims only: one per email (the table is one
+ * row per email), QA addresses excluded. Returns no number until there are at least
+ * FOUNDING_COUNTER_MIN claims (Convex env, default 10), so the page never shows a count
+ * that small or a made-up one.
+ */
+export const seats = query({
+  args: {},
+  returns: v.object({ total: v.number(), claimed: v.union(v.number(), v.null()) }),
+  handler: async (ctx) => {
+    const total = 100;
+    const min = Number(process.env.FOUNDING_COUNTER_MIN ?? 10) || 10;
+    const rows = await ctx.db
+      .query("accessRequests")
+      .withIndex("by_claimedAt", (q) => q.gt("claimedAt", 0))
+      .take(2000);
+    const claimed = rows.filter((r) => !r.test && !isTestLead(r.email, r.name)).length;
+    return { total, claimed: claimed >= min ? claimed : null };
+  },
+});
+
+/** Newest first. Internal: it returns every submission's contact details.
+    Read it with `npx convex run accessRequests:list` (add --prod). */
 export const list = internalQuery({
   args: { limit: v.optional(v.number()) },
-  returns: v.array(
-    v.object({
-      _id: v.id("accessRequests"),
-      _creationTime: v.number(),
-      name: v.string(),
-      email: v.string(),
-      company: v.string(),
-      stack: v.string(),
-      phone: v.optional(v.string()),
-      note: v.optional(v.string()),
-      workEmail: v.optional(v.string()),
-      heardFrom: v.optional(v.string()),
-      waitlist: v.optional(v.boolean()),
-      foundingInterest: v.optional(v.boolean()),
-      source: v.optional(v.string()),
-      referrer: v.optional(v.string()),
-      utm: v.optional(v.record(v.string(), v.string())),
-      refCode: v.optional(v.string()),
-      userAgent: v.optional(v.string()),
-      submissions: v.number(),
-      status: v.string(),
-      createdAt: v.number(),
-      updatedAt: v.number(),
-    })
-  ),
   handler: async (ctx, { limit }) => {
     return await ctx.db
       .query("accessRequests")

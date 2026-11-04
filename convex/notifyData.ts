@@ -1,40 +1,27 @@
-import { internalQuery } from "./_generated/server";
+import { internalMutation, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 
 /** Read side for the notifier (actions cannot touch the database directly). */
-export const get = internalQuery({
+export const getRequest = internalQuery({
   args: { id: v.id("accessRequests") },
-  returns: v.union(
-    v.null(),
-    v.object({
-      name: v.string(),
-      email: v.string(),
-      company: v.string(),
-      stack: v.string(),
-      phone: v.optional(v.string()),
-      note: v.optional(v.string()),
-      workEmail: v.optional(v.string()),
-      heardFrom: v.optional(v.string()),
-      source: v.optional(v.string()),
-      referrer: v.optional(v.string()),
-    })
-  ),
-  handler: async (ctx, { id }) => {
-    const r = await ctx.db.get(id);
-    if (!r) return null;
-    const { name, email, company, stack, phone, note, workEmail, heardFrom, source, referrer } = r;
-    return { name, email, company, stack, phone, note, workEmail, heardFrom, source, referrer };
-  },
+  handler: async (ctx, { id }) => ctx.db.get(id),
 });
 
-/** One feedback message, for the notifier. */
+export const getDemo = internalQuery({
+  args: { id: v.id("demoBookings") },
+  handler: async (ctx, { id }) => ctx.db.get(id),
+});
+
 export const getFeedback = internalQuery({
   args: { id: v.id("feedback") },
   handler: async (ctx, { id }) => ctx.db.get(id),
 });
 
-/** The whole row, for the brain mirror (it records status, counts and timestamps too). */
-export const getRow = internalQuery({
+export const markConfirmationSent = internalMutation({
   args: { id: v.id("accessRequests") },
-  handler: async (ctx, { id }) => ctx.db.get(id),
+  returns: v.null(),
+  handler: async (ctx, { id }) => {
+    await ctx.db.patch(id, { confirmationSentAt: Date.now() });
+    return null;
+  },
 });

@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   }
   const str = (k: string, max: number) => (typeof body[k] === "string" ? (body[k] as string).trim().slice(0, max) : "");
 
-  if (str("website", 200)) return Response.json({ ok: true }); // honeypot
+  if (str("fax", 200)) return Response.json({ ok: true }); // honeypot
   const elapsed = Number(body.elapsed);
   if (!Number.isFinite(elapsed) || elapsed < MIN_FILL_MS) return Response.json({ ok: true });
 

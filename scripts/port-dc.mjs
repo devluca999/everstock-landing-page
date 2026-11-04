@@ -33,6 +33,8 @@ import * as v9Footer from "./port-patches/v9-footer.mjs";
 import * as v9Industries from "./port-patches/v9-industries.mjs";
 import * as v9Ctas from "./port-patches/v9-ctas.mjs";
 import * as v9App from "./port-patches/v9-app.mjs";
+import * as claim from "./port-patches/claim.mjs";
+import * as pricingBilling from "./port-patches/pricing-billing.mjs";
 const V9_AREAS = [v9Capabilities, v9Workflows, v9Plan, v9Footer, v9Industries, v9Ctas, v9App];
 /* Site-side patches shared by both pages. */
 const NO_LEGAL_NAV = {
@@ -45,65 +47,14 @@ const NO_LEGAL_NAV = {
 // CTA destinations come from lib/cta.ts (through renderVals keys the host adds), never
 // from the template; the two design files' links to each other become site routes.
 const CTA_BINDINGS = {
-  "#waitlist": "{{ ctaWaitlistHref }}",
+  "#waitlist": "{{ ctaClaimHref }}",
   "#book-demo": "{{ ctaBookDemoHref }}",
-};
-// The waitlist / Book a demo modal (same markup on both pages): the fields the site asks
-// for, and the questions asked once the form is sent. The logic behind both lives in
-// components/dc/accessFlow.js; the styles are the design's own label/input/button styles.
-const LBL = "font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(22,23,27,0.56);";
-const OPT = '<span style="color:rgba(22,23,27,0.4);"> · optional</span>';
-const INPUT =
-  'style="width:100%;min-width:0;height:44px;padding:0 12px;border:1px solid rgba(22,23,27,0.2);border-radius:7px;background:#FFFFFF;font-family:inherit;font-size:15px;color:#101115;outline:none;box-sizing:border-box;" style-focus="border-color:#101115;"';
-const field = (label, input) => `<label style="display:grid;gap:6px;"><span style="${LBL}">${label}</span>${input}</label>`;
-const BTN_PRIMARY =
-  'style="height:44px;padding:0 18px;border:0;border-radius:8px;background:#16171B;color:#FAF9F5;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;" style-hover="background:#000000;" style-active="transform:scale(0.985);"';
-const BTN_QUIET =
-  'style="height:44px;padding:0 16px;border-radius:8px;border:1px solid rgba(22,23,27,0.2);background:transparent;color:#101115;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;" style-hover="border-color:#101115;"';
-const HEARD = ["Search engine", "LinkedIn", "A colleague or friend", "An event", "An article or newsletter", "Something else"];
-const ACCESS_FIELDS = {
-  why: "Forms: name (required), email and work email (at least one), company and 'How did you hear about us?' (optional), plus the route's honeypot",
-  find: /<label style="display:grid;gap:6px;"><span[^>]*>Work email<\/span><input id="acc-email"[^\n]*\n( *)<label style="display:grid;gap:6px;"><span[^>]*>Company<\/span>[^\n]*?<\/label>/g,
-  count: 1,
-  replace: (_m, ind) =>
-    [
-      `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:18px 12px;">`,
-      `  ${field("Name", `<input id="acc-name" name="name" type="text" required="{{ true }}" autocomplete="name" ${INPUT}>`)}`,
-      `  ${field("Email", `<input id="acc-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" ${INPUT}>`)}`,
-      `  ${field("Work email" + OPT, `<input name="workEmail" type="email" autocomplete="work email" placeholder="you@company.com" ${INPUT}>`)}`,
-      `  ${field("Company" + OPT, `<input name="company" type="text" autocomplete="organization" ${INPUT}>`)}`,
-      `</div>`,
-      field(
-        "How did you hear about us?" + OPT,
-        `<select name="heardFrom" ${INPUT.replace('box-sizing:border-box;"', 'box-sizing:border-box;color-scheme:light;"')}><option value="">Choose one</option>${HEARD.map((h) => `<option>${h}</option>`).join("")}</select>`
-      ),
-      `<input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">`,
-    ].join("\n" + ind),
 };
 const FOOTER_FEEDBACK = {
   why: "Footer: a 'Send feedback' link, styled like its neighbours; components/feedback/FeedbackDialog.tsx (mounted in the root layout) opens on any #feedback link",
   find: /(\n( *)<a href="#book-demo" onClick="\{\{ openDemo \}\}" (style="[^"]*") (style-hover="[^"]*")>Book a demo<\/a>)(\n *<\/nav>)/g,
   count: 1,
   replace: '$1\n$2<a href="#feedback" $3 $4>Send feedback</a>$5',
-};
-const accessFocus = (count) => ({
-  why: "Forms: the modal opens on its first field, which is Name now (the design focuses the email input)",
-  find: "getElementById('acc-email')",
-  replace: "getElementById('acc-name')",
-  count,
-});
-const ACCESS_STEPS = {
-  why: "Forms: the sent state asks the follow-up questions (Book a demo: the waitlist too?; both: the founding partner program?) one at a time, and promises no email (none is sent yet)",
-  find: /<p style="([^"]*)">Request received for \{\{ accPlanName \}\}\. Look for an email with next steps\.<\/p>/g,
-  count: 1,
-  replace: (_m, pStyle) =>
-    `<div aria-live="polite" style="display:grid;gap:20px;"><p style="${pStyle}">{{ accSentText }}</p>` +
-    `<sc-if value="{{ accAsk }}" hint-placeholder-val="{{ true }}"><div style="display:grid;gap:14px;padding-top:20px;border-top:1px solid rgba(22,23,27,0.12);">` +
-    `<div style="display:grid;gap:6px;"><p style="margin:0;font-size:18px;font-weight:600;letter-spacing:-0.01em;line-height:1.3;">{{ accAskTitle }}</p>` +
-    `<p style="margin:0;font-size:14px;line-height:1.5;color:rgba(22,23,27,0.68);">{{ accAskBody }}</p></div>` +
-    `<div style="display:flex;flex-wrap:wrap;gap:10px;"><button type="button" onClick="{{ accYes }}" ${BTN_PRIMARY}>{{ accYesLabel }}</button>` +
-    `<button type="button" onClick="{{ accNo }}" ${BTN_QUIET}>{{ accNoLabel }}</button></div></div></sc-if>` +
-    `<sc-if value="{{ accFinished }}" hint-placeholder-val="{{ false }}"><div><button type="button" onClick="{{ closeAccess }}" ${BTN_PRIMARY}>Done</button></div></sc-if></div>`,
 };
 // Setup time: the site promises "a few days", not two weeks (2026-10-14). v8 dropped the
 // Plan section and the hero checklist that said it; the marquee (both pages) still does.
@@ -121,10 +72,10 @@ const NO_INVOICE_DROP = {
   replace: "",
 };
 const FORM_HONEYPOT = {
-  why: "Forms: the request route's honeypot field, last in both v9 forms (the modal focuses its first input)",
+  why: "Forms: the request route's honeypot field (named fax: the claim form asks for a real website), last in both v9 forms (the modal focuses its first input)",
   find: "</form>",
   count: 2,
-  replace: '<input name="website" type="text" tabIndex="-1" autoComplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"></form>',
+  replace: '<input name="fax" type="text" tabIndex="-1" autoComplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"></form>',
 };
 // The Stock Plan section's Chicago → globe canvas (same code as v4/v5). It snapped every dot
 // to a whole CSS pixel while the L train moves ~0.7px a frame, so the train stood still on
@@ -187,6 +138,7 @@ const PAGES = {
         replace: "o['po' + i] = red || i === Math.max(0, this.state.planStep) ? 1 : 0.72;",
       },
       ...V9_AREAS.flatMap((a) => a.logicPatches),
+      ...claim.home.logicPatches,
     ],
     templatePatches: [
       {
@@ -211,6 +163,7 @@ const PAGES = {
         replace: 'href="#workflows"',
       },
       ...V9_AREAS.flatMap((a) => a.templatePatches),
+      ...claim.home.templatePatches,
     ],
     // the sections v9 shows, in order (the older ones are still in the design at zero height)
     seo: { sections: ["top", "integrations", "problem", "capabilities", "workflows", "industries", "plan", "pricing", "stock-plan", "cta"] },
@@ -227,7 +180,6 @@ const PAGES = {
     runtime: "mockup/v9/support.js",
     out: "components/pricing/generated",
     logicPatches: [
-      accessFocus(2),
       MARQUEE_DAYS,
       {
         why: "Perf: tick clears this.raf before goScene → kick(), so every auto-advance started a second loop (60 → 120 → 180 ticks/s, the scene re-rendered once per loop per frame); the loop is now one vsync-paced rAF chain, capped near 60fps on high-refresh phones",
@@ -244,8 +196,10 @@ const PAGES = {
         find: "this.dead = true; if (this.raf) clearTimeout(this.raf);",
         replace: "this.dead = true; if (this.raf) cancelAnimationFrame(this.raf);",
       },
+      ...claim.pricing.logicPatches,
+      ...pricingBilling.logicPatches,
     ],
-    templatePatches: [NO_LEGAL_NAV, ACCESS_FIELDS, ACCESS_STEPS, FOOTER_FEEDBACK],
+    templatePatches: [NO_LEGAL_NAV, FOOTER_FEEDBACK, ...claim.pricing.templatePatches, ...pricingBilling.templatePatches],
     // deterministic paints served as baked PNGs (see bakes below)
     bakes: [{ method: "paintStack", png: "public/pricing/stack-{hash}.png" }],
     hrefBindings: {

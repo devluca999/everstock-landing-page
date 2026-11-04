@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PricingClient from "@/components/pricing/PricingClient";
+import { FOUNDING, plan, usd } from "@/lib/pricing.config";
 import "@/components/pricing/generated/helmet.css";
 import "@/components/pricing/generated/pseudo.css";
 import "@/components/dc/dc-host.css";
@@ -7,8 +8,7 @@ import SeoFallback, { type SeoSection } from "@/components/dc/SeoFallback";
 import seo from "@/components/pricing/generated/seo.json";
 
 const TITLE = "Pricing · Everstock";
-const DESCRIPTION =
-  "Everstock grows with you. Start with stockbot for $20/mo, then move to Base, Scale or Enterprise with your history and setup intact.";
+const DESCRIPTION = `Everstock grows with you. Start with stockbot for ${usd(plan("stockbot").monthly!)}/mo (${usd(FOUNDING.monthly)}/mo for the first ${FOUNDING.seats} customers), then move to Base, Scale or Enterprise with your history and setup intact.`;
 
 export const metadata: Metadata = {
   title: TITLE,

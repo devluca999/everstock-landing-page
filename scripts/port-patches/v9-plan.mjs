@@ -85,14 +85,20 @@ const MARQUEE_SECTION = [
 ].join("\n");
 
 // The tiers, beside the stockbot card (it stays the "Start here" offer): one hairline row each,
-// name and price on top, who it's for underneath. Replaces the "Grow into Base, Scale or
-// Enterprise…" line, so nothing on the page says the same thing twice.
-const tier = (name, price, line, note = "", cta = "") =>
-  `<li style="display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:4px 16px;padding:12px 0;border-bottom:1px solid rgb(var(--ink) / 0.14);">` +
-  `<span style="font-family:'General Sans','Space Grotesk',sans-serif;font-size:17px;font-weight:600;letter-spacing:-0.01em;color:rgb(var(--ink));">${name}</span>` +
-  `<span style="${MONO}font-variant-numeric:tabular-nums lining-nums;font-size:15px;font-weight:500;color:rgb(var(--ink));white-space:nowrap;">${price}</span>` +
-  `<span style="grid-column:${cta ? "1" : "1 / -1"};font-size:14px;line-height:1.45;color:rgb(var(--ink) / 0.72);text-wrap:pretty;">${line}${note ? `<span style="display:block;margin-top:2px;${MONO}font-size:11.5px;letter-spacing:0.02em;color:rgb(var(--ink) / 0.64);">${note}</span>` : ""}</span>${cta ? `<span style="grid-column:2;grid-row:2 / span 2;align-self:center;justify-self:end;padding-top:6px;">${cta}</span>` : ""}</li>`;
-const PER = `<span style="font-size:12px;color:rgb(var(--ink) / 0.64);">/mo</span>`;
+// name and price on top, who it's for and the billing terms underneath. Every price and term is
+// a render value from lib/pricing.config.ts (components/v9/DcPage.jsx → pricingVals), so the
+// Monthly / Yearly toggle (2026-11-03) changes them without a re-port. Prices fade in on a change
+// ({{ prAnim }}; components/dc/dc-host.css holds the keyframes and the reduced-motion rule).
+const SMALL = `display:block;margin-top:3px;${MONO}font-size:11.5px;letter-spacing:0.02em;color:rgb(var(--ink) / 0.64);`;
+const tier = (id, cta) =>
+  `<li data-tier-row="true" style="display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:4px 16px;padding:12px 0;border-bottom:1px solid rgb(var(--ink) / 0.14);">` +
+  `<span style="font-family:'General Sans','Space Grotesk',sans-serif;font-size:17px;font-weight:600;letter-spacing:-0.01em;color:rgb(var(--ink));">{{ pr_${id}_name }}</span>` +
+  `<span data-price="true" style="${MONO}font-variant-numeric:tabular-nums lining-nums;font-size:15px;font-weight:500;color:rgb(var(--ink));white-space:nowrap;text-align:right;animation:{{ prAnim }};"><span style="font-size:12px;color:rgb(var(--ink) / 0.64);">{{ pr_${id}_pre }} </span>{{ pr_${id}_amount }}<span style="font-size:12px;color:rgb(var(--ink) / 0.64);">{{ pr_${id}_per }}</span><span style="${SMALL}text-align:right;">{{ pr_${id}_billed }}</span></span>` +
+  `<span data-tier-text="true" style="grid-column:1;font-size:14px;line-height:1.45;color:rgb(var(--ink) / 0.72);text-wrap:pretty;">{{ pr_${id}_line }}` +
+  `<span data-price="true" style="${SMALL}animation:{{ prAnim }};">{{ pr_${id}_seat }}</span>` +
+  `<span style="${SMALL}">{{ pr_${id}_terms }}</span>` +
+  `<span style="${SMALL}">{{ pr_${id}_promise }}</span></span>` +
+  `<span data-tier-cta="true" style="grid-column:2;grid-row:2 / span 2;align-self:center;justify-self:end;padding-top:6px;">${cta}</span></li>`;
 const TIERS = (ind) =>
   [
     `<div style="flex:1 1 300px;min-width:0;display:grid;gap:6px;">`,
@@ -101,12 +107,34 @@ const TIERS = (ind) =>
     `    <a href="Pricing.dc.html" style="display:inline-flex;align-items:center;min-height:44px;font-size:15px;font-weight:600;color:rgb(var(--ink));text-decoration:underline;text-decoration-color:rgb(var(--ink) / 0.35);text-underline-offset:5px;" style-hover="text-decoration-color:rgb(var(--ink));">Compare plans →</a>`,
     `  </div>`,
     `  <ul aria-label="Plans" style="list-style:none;margin:0;padding:0;display:grid;border-top:1px solid rgb(var(--ink) / 0.14);">`,
-    `    ${tier("Base", `<span style="font-size:12px;color:rgb(var(--ink) / 0.64);">from </span>$199${PER}`, "stockbot reads your inbox, so paperwork sorts itself.", "+ $75 per seat · capped at $499/mo", outlineCta({ key: "tb", to: "early", label: "Start with Base" }))}`,
-    `    ${tier("Scale", `$999${PER}`, "Your team and your agent, working off the same page.", "Up to 50 seats", outlineCta({ key: "ts", to: "early", label: "Start with Scale" }))}`,
-    `    ${tier("Enterprise", "Custom", "Multiple agents, your systems, your rules.", "", outlineCta({ key: "te", to: "demo", label: "Talk to us" }))}`,
+    `    ${tier("base", outlineCta({ key: "tb", to: "early", label: "{{ ctaClaimLabel }}" }))}`,
+    `    ${tier("scale", outlineCta({ key: "ts", to: "demo", label: "Book a demo" }))}`,
+    `    ${tier("enterprise", outlineCta({ key: "te", to: "demo", label: "Book a demo" }))}`,
     `  </ul>`,
     `</div>`,
   ].join("\n" + ind);
+
+// The Monthly / Yearly toggle (2026-11-03): a two-button group with aria-pressed, keyboard
+// operable as plain buttons; "2 months free" on Yearly. Default Monthly.
+const segBtn = (label, on, pick, tag = "") =>
+  `<button type="button" aria-pressed="{{ ${on} }}" onClick="{{ ${pick} }}" style="display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px;border:0;border-radius:6px;background:{{ ${on}Bg }};color:{{ ${on}Fg }};font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background-color 160ms cubic-bezier(.2,.8,.25,1),color 160ms cubic-bezier(.2,.8,.25,1);">${label}${tag}</button>`;
+const TOGGLE =
+  `<div role="group" aria-label="Billing period" style="justify-self:start;display:inline-flex;gap:2px;padding:3px;border:1.5px solid rgb(var(--ink) / 0.8);border-radius:9px;">` +
+  segBtn("Monthly", "billMonthly", "pickMonthly") +
+  segBtn("Yearly", "billYearly", "pickYearly", `<span style="padding:2px 6px;border-radius:3px;border:1px solid currentColor;${MONO}font-size:10.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;opacity:0.85;">2 months free</span>`) +
+  `</div>`;
+
+// The billing FAQ under the cards: the site's accordion (a button per question with
+// aria-expanded / aria-controls, the answer row grows 0fr → 1fr), from BILLING_FAQ.
+const faqItem = (i) =>
+  `<div style="border-bottom:1px solid rgb(var(--ink) / 0.14);">` +
+  `<h3 style="margin:0;"><button type="button" id="bfaq-q-${i}" aria-expanded="{{ bfaqExp${i} }}" aria-controls="bfaq-a-${i}" onClick="{{ bfaqT${i} }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px;padding:12px 0;border:0;background:transparent;font-family:'General Sans','Space Grotesk',sans-serif;font-size:17px;font-weight:600;letter-spacing:-0.01em;color:rgb(var(--ink));text-align:left;cursor:pointer;">{{ bfaqQ${i} }}<span aria-hidden="true" style="flex:none;font-size:22px;font-weight:400;line-height:1;transform:{{ bfaqRot${i} }};transition:transform 200ms cubic-bezier(.2,.8,.25,1);">+</span></button></h3>` +
+  `<div id="bfaq-a-${i}" role="region" aria-labelledby="bfaq-q-${i}" style="display:grid;grid-template-rows:{{ bfaqRows${i} }};transition:grid-template-rows 220ms cubic-bezier(.2,.8,.25,1);"><div style="overflow:hidden;"><p style="margin:0;padding:0 0 16px;max-width:68ch;font-size:15.5px;line-height:1.55;color:rgb(var(--ink) / 0.76);text-wrap:pretty;">{{ bfaqA${i} }}</p></div></div></div>`;
+const BILLING_FAQ = (n) =>
+  `<div style="display:grid;gap:4px;margin-top:clamp(20px,3svh,36px);max-width:860px;">` +
+  `<span style="${MONO}font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:rgb(var(--ink) / 0.64);padding-bottom:6px;">Billing</span>` +
+  `<div style="border-top:1px solid rgb(var(--ink) / 0.14);">${Array.from({ length: n }, (_, i) => faqItem(i)).join("")}</div></div>`;
+export const BILLING_FAQ_COUNT = 4;
 
 export const templatePatches = [
   {
@@ -116,7 +144,7 @@ export const templatePatches = [
     replace: (m) =>
       m +
       `<div style="display:grid;gap:12px;margin-bottom:clamp(8px,1.6svh,18px);"><h2 style="margin:0;max-width:22ch;font-family:'General Sans','Space Grotesk',sans-serif;font-weight:600;font-size:clamp(30px,3.6vw,50px);line-height:1.05;letter-spacing:-0.03em;color:rgb(var(--ink));text-wrap:balance;">Land with stockbot. Expand with Everstock.</h2>` +
-      `<p style="margin:0;max-width:56ch;font-size:clamp(16px,1.3vw,18px);line-height:1.5;color:rgb(var(--ink) / 0.68);text-wrap:pretty;">Start by text for $20 a month. Add your inbox, your team and your systems when you need them. Your history and setup come with you.</p></div>`,
+      `<p style="margin:0;max-width:56ch;font-size:clamp(16px,1.3vw,18px);line-height:1.5;color:rgb(var(--ink) / 0.68);text-wrap:pretty;">{{ prIntro }}</p></div>` + TOGGLE,
   },
   {
     why: "Plan (2026-10-30, Luca): v5's 'Up and running' section comes back, right after Industries and before Pricing, so setup and price read as one stretch. It autoplays (see the Plan logic patches in port-dc.mjs); heading 'Up and running in days.', footnote 'Send it Monday. Approve orders by Friday.' (setup takes days, not two weeks); the CTA is v9's 'Get early access'",
@@ -130,6 +158,26 @@ export const templatePatches = [
     replace: (_m, ind) => "\n" + ind + TIERS(ind),
   },
 ];
+
+templatePatches.push(
+  {
+    why: "Pricing (2026-11-03): the stockbot card's founding price is a render value from lib/pricing.config.ts (FOUNDING), shown as before",
+    find: '<span style="font-size:30px;font-weight:500;line-height:1;letter-spacing:-0.03em;">$20</span>',
+    replace: '<span style="font-size:30px;font-weight:500;line-height:1;letter-spacing:-0.03em;">{{ prFoundingAmount }}</span>',
+  },
+  {
+    why: "Pricing (2026-11-03): under the stockbot card's headline, the founding terms and the standard price, by billing view (the founding price is monthly only)",
+    find: /(<article aria-label="stockbot"[\s\S]*?<h3 [^>]*>Text it your paperwork\. It catches what you’d miss\.<\/h3>)/g,
+    count: 1,
+    replace: (m) => m + `<p data-price="true" style="margin:0;max-width:44ch;${MONO}font-size:12px;line-height:1.5;letter-spacing:0.01em;color:#4E4A43;animation:{{ prAnim }};">{{ prFoundingLine }}</p>`,
+  },
+  {
+    why: "Pricing (2026-11-03): the billing FAQ under the cards (cancel, upgrade, yearly refunds, Base's 90-day onboarding), from BILLING_FAQ in lib/pricing.config.ts",
+    find: /(<section id="pricing"[\s\S]*?)(\n    <\/div>\n  <\/section>)/g,
+    count: 1,
+    replace: (_m, body, end) => body + BILLING_FAQ(BILLING_FAQ_COUNT) + end,
+  },
+);
 
 export const logicPatches = [
   {

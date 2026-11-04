@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { themeScript, scrollScript, appScript, appLinkCss } from "./head-scripts";
 import FeedbackDialog from "@/components/feedback/FeedbackDialog";
+import ClaimDialog from "@/components/forms/ClaimDialog";
+import DemoDialog from "@/components/forms/DemoDialog";
+import { siteConfig, siteScript } from "@/lib/siteConfig";
 
 const TITLE = "Everstock · Supply chain software for physical products";
 const DESCRIPTION =
@@ -76,6 +79,8 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: scrollScript }} />
         <script dangerouslySetInnerHTML={{ __html: appScript(process.env.NEXT_PUBLIC_APP_LIVE === "1") }} />
+        {/* launch switches for the CTAs (lib/siteConfig.ts → lib/cta.ts) */}
+        <script dangerouslySetInnerHTML={{ __html: siteScript(siteConfig()) }} />
         <style dangerouslySetInnerHTML={{ __html: appLinkCss }} />
         {/* the design's <helmet> fonts, as links (the page names these families directly) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -92,6 +97,8 @@ export default function RootLayout({
       <body>
         {children}
         <FeedbackDialog />
+        <ClaimDialog />
+        <DemoDialog />
       </body>
     </html>
   );

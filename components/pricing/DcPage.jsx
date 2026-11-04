@@ -5,12 +5,12 @@
  * CSS is imported by app/pricing/page.tsx so it is in the first HTML response.
  *
  * Site-side wiring on top of the design's logic, the same as the home page's:
- * - CTA destinations come from lib/cta.ts (the template's hrefs are bound to the
- *   cta*Href render values below); "Book a demo" goes to the booking URL once set.
- * - The waitlist / Book a demo modal posts to /api/request-access → Convex, then asks its
- *   follow-up questions (components/dc/accessFlow.js). The design defines its submit
- *   handler inside renderVals(), so it is wrapped there.
- * - /pricing#book-demo and /pricing#waitlist open the matching modal on arrival.
+ * - Every primary CTA ({{ ctaClaimLabel }}, the stockbot and Base tiers, the scenes) goes
+ *   through lib/cta.ts openClaim: the claim form prelaunch, sign-up once LAUNCH_MODE=live.
+ *   "Book a demo" (Scale, Enterprise, the secondary links) goes through openDemo: Cal.com
+ *   once BOOKING_URL is set, else the fallback form. Both forms live in the root layout and
+ *   also open on /pricing#claim and /pricing#book-demo. The design's own modal is no longer
+ *   opened.
  * - Deterministic paints baked by the port (generated/bakes.json) load as PNGs instead of
  *   painting at mount: the closing crate stack alone was ~100ms of main thread on a fast
  *   desktop, several times that on a phone.
@@ -21,34 +21,38 @@ import tree from "./generated/template.json";
 import defaults from "./generated/props.json";
 import bakes from "./generated/bakes.json";
 import { createDcPage } from "../dc/host";
-import { submitAccess as sendAccess, accessVals } from "../dc/accessFlow";
-import { CTA } from "@/lib/cta";
+import { BILLING_FAQ, FOUNDING, baseSeatsAnswer, plan, priceFor, sceneNote, seatsRow, tierHeader, usd } from "@/lib/pricing.config";
+import { CLAIM_HREF, DEMO_HREF, claimLabel, currentSeats, loadSeats, onSeats, openClaim, openDemo, seatsLine } from "@/lib/cta";
 
-const pageLoadedAt = typeof performance !== "undefined" ? performance.now() : 0;
-const NOTES = { demo: "Book a demo (pricing page)", waitlist: "Waitlist (pricing page)" };
-// the design calls the waitlist mode "founding"; the site's forms say waitlist
-const planOf = (state) => (state.plan === "demo" ? "demo" : "waitlist");
+const ctaOf = (e) => (e && e.currentTarget && e.currentTarget.getAttribute && e.currentTarget.getAttribute("data-cta")) || "other";
 
 const extend = (DesignLogic) =>
   class Logic extends DesignLogic {
     constructor(props) {
       super(props);
-      const openDemo = this.openDemo;
-      const openFounding = this.openFounding;
-      this.openDemo = (e) => {
-        if (CTA.bookDemo.externalUrl) {
-          if (e && e.preventDefault) e.preventDefault();
-          this.setState({ navMenu: false });
-          window.open(CTA.bookDemo.externalUrl, "_blank", "noopener,noreferrer");
-          return;
-        }
-        this.accOpenedAt = performance.now();
-        openDemo(e);
-      };
       this.openFounding = (e) => {
-        this.accOpenedAt = performance.now();
-        openFounding(e);
+        this.setState({ navMenu: false });
+        openClaim(`pricing-${ctaOf(e)}`, e);
       };
+      this.openDemo = (e) => {
+        this.setState({ navMenu: false });
+        openDemo(`pricing-${ctaOf(e)}`, e);
+      };
+      // the tiers' and scenes' claim label (a logic patch reads it, see claim.mjs)
+      this.claimText = () => claimLabel(currentSeats());
+    }
+
+    // prices from lib/pricing.config.ts (scripts/port-patches/pricing-billing.mjs calls these from
+    // the design's class fields, so they are prototype methods, there before the fields run)
+    tierHeader(id) {
+      return tierHeader(id);
+    }
+    scenePrice(id) {
+      const pr = priceFor(plan(id), "monthly");
+      return { price: pr.amount, per: !!pr.per, pre: !!pr.pre, note: sceneNote(id) };
+    }
+    seatsRow() {
+      return seatsRow();
     }
 
     paintStack() {
@@ -57,38 +61,25 @@ const extend = (DesignLogic) =>
 
     componentDidMount() {
       super.componentDidMount();
-      this.onHash = () => {
-        const h = location.hash;
-        if (h === "#book-demo") {
-          if (CTA.bookDemo.externalUrl) location.assign(CTA.bookDemo.externalUrl);
-          else this.openDemo();
-        } else if (h === CTA.waitlist.href) this.openFounding();
-      };
-      this.onHash();
-      window.addEventListener("hashchange", this.onHash);
+      this.offSeats = onSeats(() => !this.dead && this.setState({ seatsAt: Date.now() }));
+      loadSeats();
     }
 
     componentWillUnmount() {
-      window.removeEventListener("hashchange", this.onHash);
+      if (this.offSeats) this.offSeats();
       super.componentWillUnmount();
     }
 
     renderVals() {
-      const vals = super.renderVals();
-      const plan = planOf(this.state);
       return {
-        ...vals,
-        ...accessVals(this, plan),
-        submitAccess: (e) =>
-          sendAccess(this, e, {
-            plan,
-            note: NOTES[plan],
-            elapsed: performance.now() - (this.accOpenedAt || pageLoadedAt),
-            tag: "pricing",
-            designSubmit: (ev) => vals.submitAccess && vals.submitAccess(ev),
-          }),
-        ctaWaitlistHref: CTA.waitlist.href,
-        ctaBookDemoHref: CTA.bookDemo.href,
+        ...super.renderVals(),
+        ctaClaimHref: CLAIM_HREF,
+        ctaClaimLabel: claimLabel(currentSeats()),
+        ctaBookDemoHref: DEMO_HREF,
+        seatsLine: seatsLine(currentSeats()),
+        prFoundingMo: `${usd(FOUNDING.monthly)}/mo`,
+        faqBaseSeats: baseSeatsAnswer(),
+        faqCancel: BILLING_FAQ[0].a,
       };
     }
   };
