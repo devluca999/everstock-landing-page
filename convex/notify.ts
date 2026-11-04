@@ -123,3 +123,21 @@ export const newFeedback = internalAction({
     return null;
   },
 });
+
+/** Send one of the automated emails to an address, with sample values, to check it:
+    `npx convex run notify:testEmail '{"key":"claimConfirmation","to":"you@tryeverstock.com"}'`. */
+export const testEmail = internalAction({
+  args: { key: v.union(v.literal("claimConfirmation"), v.literal("claimConfirmationDemo"), v.literal("accountReady")), to: v.string() },
+  returns: v.boolean(),
+  handler: async (_ctx, { key, to }) => {
+    const m = await mailer();
+    if (!m) return false;
+    const vars: Record<string, string> =
+      key === "claimConfirmation"
+        ? { first_name: "Luca", fit_line: fitLine("Base") }
+        : key === "claimConfirmationDemo"
+          ? { first_name: "Luca", demo_url: process.env.BOOKING_URL || "https://tryeverstock.com/#book-demo" }
+          : { first_name: "Luca", signup_url: process.env.SIGNUP_URL || "https://app.tryeverstock.com/sign-up?founding=1" };
+    return m.sendEmail(key, to, vars);
+  },
+});

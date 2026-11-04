@@ -2,7 +2,8 @@
  * Email through SendPulse's SMTP API (imported by the "use node" actions only).
  *
  * Env on the Convex deployment (SendPulse → Settings → API):
- *   SENDPULSE_API_ID, SENDPULSE_API_SECRET   OAuth client credentials
+ *   SENDPULSE_API_KEY                         an API key (sp_apikey_…), sent as the Bearer token
+ *   (or SENDPULSE_API_ID + SENDPULSE_API_SECRET, the older OAuth client pair)
  *   CLAIM_EMAIL_FROM                          "Name <address>", a sender verified in SendPulse
  *   SENDPULSE_TEMPLATE_CLAIM, SENDPULSE_TEMPLATE_CLAIM_DEMO, SENDPULSE_TEMPLATE_ACCOUNT_READY
  *                                            optional preset ids: when set, SendPulse sends its
@@ -39,12 +40,12 @@ const toHtml = (text: string) =>
  * A sender with one OAuth token (SendPulse tokens last an hour), or null when SendPulse
  * is not configured. `send` resolves true once SendPulse accepted the message.
  */
-type Mailer = { send: (m: Mail) => Promise<boolean>; sendEmail: (key: EmailKey, to: string, vars: Record<string, string>) => Promise<boolean> };
-
-export async function mailer(): Promise<Mailer | null> {
+/** The Bearer token: the API key as is, or an OAuth token from the ID + Secret pair. */
+async function sendpulseToken(): Promise<string | null> {
+  const key = process.env.SENDPULSE_API_KEY;
+  if (key) return key;
   const id = process.env.SENDPULSE_API_ID;
   const secret = process.env.SENDPULSE_API_SECRET;
-  const defaultFrom = process.env.CLAIM_EMAIL_FROM;
   if (!id || !secret) return null;
   const auth = await fetch(`${API}/oauth/access_token`, {
     method: "POST",
@@ -52,10 +53,16 @@ export async function mailer(): Promise<Mailer | null> {
     body: JSON.stringify({ grant_type: "client_credentials", client_id: id, client_secret: secret }),
   }).catch(() => null);
   const token = auth && auth.ok ? ((await auth.json()) as { access_token?: string }).access_token : undefined;
-  if (!token) {
-    console.error("sendpulse auth failed", auth ? auth.status : "network");
-    return null;
-  }
+  if (!token) console.error("sendpulse auth failed", auth ? auth.status : "network");
+  return token ?? null;
+}
+
+type Mailer = { send: (m: Mail) => Promise<boolean>; sendEmail: (key: EmailKey, to: string, vars: Record<string, string>) => Promise<boolean> };
+
+export async function mailer(): Promise<Mailer | null> {
+  const token = await sendpulseToken();
+  const defaultFrom = process.env.CLAIM_EMAIL_FROM;
+  if (!token) return null;
   const post = async (email: Record<string, unknown>) => {
     const r = await fetch(`${API}/smtp/emails`, {
       method: "POST",

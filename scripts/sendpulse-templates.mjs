@@ -7,7 +7,7 @@
  *   node scripts/sendpulse-templates.mjs --upload          create (or update) the presets in
  *                                                          SendPulse and print their ids
  *
- * --upload reads SENDPULSE_API_ID / SENDPULSE_API_SECRET from the environment (e.g.
+ * --upload reads SENDPULSE_API_KEY (or the older SENDPULSE_API_ID / SENDPULSE_API_SECRET) from the environment (e.g.
  * `set -a; . ./.env.local; set +a` first). It keeps the preset ids in
  * scripts/sendpulse-templates.json, so a second run updates the same presets. Set the ids on
  * each Convex deployment as SENDPULSE_TEMPLATE_CLAIM, SENDPULSE_TEMPLATE_CLAIM_DEMO and
@@ -38,15 +38,19 @@ if (process.argv.some((a) => a.startsWith("--preview"))) {
     console.log(`${t.key}: "${f.subject}" → ${path.join(dir, t.key + ".html")}`);
   }
 } else if (process.argv.includes("--upload")) {
-  const { SENDPULSE_API_ID: id, SENDPULSE_API_SECRET: secret } = process.env;
-  if (!id || !secret) throw new Error("Set SENDPULSE_API_ID and SENDPULSE_API_SECRET first.");
-  const auth = await fetch(`${API}/oauth/access_token`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ grant_type: "client_credentials", client_id: id, client_secret: secret }),
-  }).then((r) => r.json());
-  if (!auth.access_token) throw new Error(`SendPulse refused the credentials: ${auth.message || auth.error}`);
-  const headers = { authorization: `Bearer ${auth.access_token}`, "content-type": "application/json" };
+  const { SENDPULSE_API_KEY: key, SENDPULSE_API_ID: id, SENDPULSE_API_SECRET: secret } = process.env;
+  let token = key;
+  if (!token) {
+    if (!id || !secret) throw new Error("Set SENDPULSE_API_KEY (or SENDPULSE_API_ID and SENDPULSE_API_SECRET) first.");
+    const auth = await fetch(`${API}/oauth/access_token`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ grant_type: "client_credentials", client_id: id, client_secret: secret }),
+    }).then((r) => r.json());
+    if (!auth.access_token) throw new Error(`SendPulse refused the credentials: ${auth.message || auth.error}`);
+    token = auth.access_token;
+  }
+  const headers = { authorization: `Bearer ${token}`, "content-type": "application/json" };
   const ids = fs.existsSync(IDS) ? JSON.parse(fs.readFileSync(IDS, "utf8")) : {};
   for (const t of Object.values(EMAILS)) {
     const body = Buffer.from(t.html, "utf8").toString("base64");
