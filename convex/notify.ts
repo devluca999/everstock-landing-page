@@ -12,7 +12,7 @@ import { fitLine } from "./emailTemplates";
  * environment (Dashboard → Settings → Environment Variables); a channel that is not set is
  * skipped and the row is still in the table. Email goes through SendPulse (convex/mail.ts).
  *   SLACK_WEBHOOK_URL      team ping: every claim, Stock Plan request, demo booking, feedback
- *   NOTIFY_EMAIL_TO        team ping by email
+ *   NOTIFY_EMAIL_TO        team ping by email (default hello@tryeverstock.com, the founders' group)
  *   SENDPULSE_API_ID       SendPulse API credentials (Settings → API)
  *   SENDPULSE_API_SECRET
  *   CLAIM_EMAIL_FROM       sender for every email, e.g. "Everstock <hello@tryeverstock.com>",
@@ -31,7 +31,8 @@ async function ping(subject: string, lines: (string | number | null | undefined 
       body: JSON.stringify({ text: `${subject}\n${text}` }),
     }).catch(() => {});
   }
-  const to = process.env.NOTIFY_EMAIL_TO;
+  // the team inbox: hello@ is the founders' Google Group, so both get every ping
+  const to = process.env.NOTIFY_EMAIL_TO || "hello@tryeverstock.com";
   if (to) {
     const m = await mailer();
     if (m) await m.send({ to, subject, text });
@@ -119,7 +120,7 @@ export const newFeedback = internalAction({
     const f = await ctx.runQuery(internal.notifyData.getFeedback, { id });
     if (!f) return null;
     const kind = KIND_LABEL[f.kind] ?? f.kind;
-    await ping(`${kind} from the site`, [f.message, "", f.email ? `Reply to: ${f.email}` : "No reply address", f.page && `Page: ${f.page}`]);
+    await ping(`${kind} from tryeverstock.com${f.page ? ` (${f.page})` : ""}`, [f.message, "", f.email ? `Reply to: ${f.email}` : "No reply address given", f.page && `Page: ${f.page}`, `Sent: ${new Date(f.createdAt).toLocaleString("en-US", { timeZone: "America/Chicago", dateStyle: "medium", timeStyle: "short" })} (Chicago)`]);
     return null;
   },
 });

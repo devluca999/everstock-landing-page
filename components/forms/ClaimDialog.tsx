@@ -35,6 +35,7 @@ export default function ClaimDialog() {
   const [channels, setChannels] = useState<string[]>([]);
   const [phone, setPhone] = useState("");
   const [askHeard, setAskHeard] = useState(false);
+  const [heard, setHeard] = useState("");
   const [claim, setClaim] = useState<Claim | null>(null);
   const [setup, setSetup] = useState<{ headache: string; usesToday: string; state: "idle" | "sending" | "done" }>({ headache: "", usesToday: "", state: "idle" });
   const [seatText, setSeatText] = useState(() => seatsLine(currentSeats()));
@@ -71,7 +72,8 @@ export default function ClaimDialog() {
         website: val("website"),
         phone: val("phone"),
         smsConsent: f.get("smsConsent") === "on",
-        heardFrom: askHeard ? val("heardFrom") : "",
+        // "Something else" carries what they typed: "Something else: a podcast"
+        heardFrom: !askHeard ? "" : heard === "Something else" && val("heardOther") ? `Something else: ${val("heardOther")}` : heard,
         [HONEYPOT]: val(HONEYPOT),
         page: location.pathname,
         cta: meta.cta,
@@ -110,6 +112,7 @@ export default function ClaimDialog() {
     setTeam("");
     setChannels([]);
     setPhone("");
+    setHeard("");
     setSetup({ headache: "", usesToday: "", state: "idle" });
     setPhase("form");
   };
@@ -266,12 +269,20 @@ export default function ClaimDialog() {
                   <label htmlFor="cl-heard">
                     How did you hear about us? <span className="es-f-opt">optional</span>
                   </label>
-                  <select id="cl-heard" name="heardFrom" defaultValue="">
+                  <select id="cl-heard" name="heardFrom" value={heard} onChange={(e) => setHeard(e.target.value)}>
                     <option value="">Choose one</option>
                     {HEARD.map((h) => (
                       <option key={h}>{h}</option>
                     ))}
                   </select>
+                </div>
+              ) : null}
+              {askHeard && heard === "Something else" ? (
+                <div className="es-f-line">
+                  <label htmlFor="cl-heard-other">
+                    Where? <span className="es-f-opt">optional</span>
+                  </label>
+                  <input id="cl-heard-other" name="heardOther" type="text" maxLength={100} placeholder="A podcast, a Slack group, a trade show…" autoFocus />
                 </div>
               ) : null}
               <input className="es-f-hp" name={HONEYPOT} type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" />
