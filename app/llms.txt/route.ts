@@ -8,7 +8,7 @@ const SITE_URL = "https://tryeverstock.com";
 const s = plan("stockbot"), b = plan("base"), sc = plan("scale"), en = plan("enterprise");
 // every figure from lib/pricing.config.ts
 const PRICING = [
-  `- stockbot: ${usd(s.monthly!)}/mo, billed monthly. ${termsFor(s, "monthly")} Founding price: ${foundingTerms()} Text it a photo or PDF of an invoice, quote or packing slip; it matches it to your orders and flags problems.`,
+  `- stockbot: ${usd(s.monthly!)}/mo, billed monthly. ${termsFor(s, "monthly")} Founding price: ${foundingTerms()} Text it a photo or PDF of an invoice, quote or packing slip, confirm the figures, and it checks them against your orders and flags problems.`,
   `- Base: ${usd(b.monthly!)}/mo ${priceFor(b, "monthly").seat}, or ${priceFor(b, "yearly").amount}/mo billed yearly (${priceFor(b, "yearly").billed.replace("Billed ", "")}). ${termsFor(b, "monthly")} ${b.promise}`,
   `- Scale: ${usd(sc.monthly!)}/mo, for a team and its agent working off the same records. ${termsFor(sc, "monthly")}`,
   `- Enterprise: from ${usd(en.monthly!)}/mo; multiple agents, plugs into your ERP and systems. ${termsFor(en, "monthly")}`,
@@ -17,18 +17,18 @@ const PRICING = [
 
 const BODY = `# Everstock
 
-> Everstock is supply chain software for companies that make, move and sell physical products. It reads your quotes, orders and invoices, drafts purchase orders before the shelf empties, chases suppliers, matches invoices, and sends every order to you for a one-tap approval by text. It works with or without an ERP.
+> Everstock is supply chain software for companies that make, move and sell physical products. It works from your quotes, orders and invoices: it drafts purchase orders before the shelf empties, checks invoices against your orders, flags late suppliers, and sends every order to you for approval. Nothing is ordered until a person says yes. It works with or without an ERP.
 
-Everstock is built in Chicago, with pilots live. The first 100 customers get founding pricing. Start with stockbot, an agent you text, then move to Base, Scale or Enterprise with your history and setup intact.
+Everstock is built in Chicago. The first 100 customers get founding pricing. Start with stockbot, an agent you text, then move to Base, Scale or Enterprise with your history and setup intact.
 
 ## What it does
 
 - Approvals by text: every purchase order comes to you for sign-off and takes one tap.
 - Purchase orders: drafted from your sales and stock before you run out.
 - Invoice matching: catches overcharges, missing items and price changes against your orders.
-- Supplier follow-ups: chases late shipments and drafts the replies.
+- Late shipments: flags a supplier that has slipped and drafts the follow-up for you.
 - Learns your rules from every order you approve, then buys the way you would.
-- Works with Shopify, Etsy, Excel, Google Sheets, your ERP, WhatsApp and Telegram. stockbot also works in the Everstock app.
+- Works with Shopify, Etsy, Excel, Google Sheets and your ERP. stockbot works by text; chat in the Everstock app is on Base and up.
 - Up and running in days: send your paperwork, review the model Everstock builds from it, approve your first orders. No rip and replace.
 
 ## Who it is for

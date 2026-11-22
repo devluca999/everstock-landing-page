@@ -80,7 +80,8 @@ export const PLANS: Plan[] = [
       yearly: `Paid yearly up front, refundable within ${YEARLY_REFUND_DAYS} days.`,
     },
     promise: `Core workflows live in ${BASE_PROMISE_DAYS} days, or cancel with no further charges.`,
-    line: "stockbot reads your inbox, so paperwork sorts itself.",
+    // claims pass (2026-11-22): the audit forbids saying Everstock reads supplier email on its own
+    line: "Up to five people, your order history and your rules, in one place.",
     cta: "claim",
   },
   {

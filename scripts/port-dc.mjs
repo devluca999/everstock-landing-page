@@ -35,6 +35,7 @@ import * as v9Ctas from "./port-patches/v9-ctas.mjs";
 import * as v9App from "./port-patches/v9-app.mjs";
 import * as claim from "./port-patches/claim.mjs";
 import * as pricingBilling from "./port-patches/pricing-billing.mjs";
+import * as claims from "./port-patches/claims.mjs";
 const V9_AREAS = [v9Capabilities, v9Workflows, v9Plan, v9Footer, v9Industries, v9Ctas, v9App];
 /* Site-side patches shared by both pages. */
 const NO_LEGAL_NAV = {
@@ -139,6 +140,7 @@ const PAGES = {
       },
       ...V9_AREAS.flatMap((a) => a.logicPatches),
       ...claim.home.logicPatches,
+      ...claims.home.logicPatches,
     ],
     templatePatches: [
       {
@@ -164,6 +166,7 @@ const PAGES = {
       },
       ...V9_AREAS.flatMap((a) => a.templatePatches),
       ...claim.home.templatePatches,
+      ...claims.home.templatePatches,
     ],
     // the sections v9 shows, in order (the older ones are still in the design at zero height)
     seo: { sections: ["top", "integrations", "problem", "capabilities", "workflows", "industries", "plan", "pricing", "stock-plan", "cta"] },
@@ -198,8 +201,9 @@ const PAGES = {
       },
       ...claim.pricing.logicPatches,
       ...pricingBilling.logicPatches,
+      ...claims.pricing.logicPatches,
     ],
-    templatePatches: [NO_LEGAL_NAV, FOOTER_FEEDBACK, ...claim.pricing.templatePatches, ...pricingBilling.templatePatches],
+    templatePatches: [NO_LEGAL_NAV, FOOTER_FEEDBACK, ...claim.pricing.templatePatches, ...pricingBilling.templatePatches, ...claims.pricing.templatePatches],
     // deterministic paints served as baked PNGs (see bakes below)
     bakes: [{ method: "paintStack", png: "public/pricing/stack-{hash}.png" }],
     hrefBindings: {
