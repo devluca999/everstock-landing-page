@@ -82,7 +82,6 @@ const readRef = () => {
 
 function signupHref() {
   const u = new URL(site().signupUrl!);
-  if (seatsLeft(seats) !== 0) u.searchParams.set("founding", "1");
   const ref = readRef();
   if (ref) u.searchParams.set("ref", ref);
   return u.toString();

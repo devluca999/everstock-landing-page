@@ -24,7 +24,7 @@ const ENV = { claimConfirmation: "SENDPULSE_TEMPLATE_CLAIM", claimConfirmationDe
 const SAMPLE = {
   claimConfirmation: { first_name: "Dana", fit_line: fitLine("Base") },
   claimConfirmationDemo: { first_name: "Dana", demo_url: "https://tryeverstock.com/#book-demo" },
-  accountReady: { first_name: "Dana", signup_url: "https://app.tryeverstock.com/sign-up?founding=1" },
+  accountReady: { first_name: "Dana", signup_url: "https://app.tryeverstock.com/sign-up" },
 };
 
 const arg = (k) => process.argv.find((a) => a.startsWith(`--${k}`))?.split("=")[1];

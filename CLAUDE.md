@@ -10,6 +10,15 @@ This repo is the marketing/landing site, live at **tryeverstock.com**, deployed 
 
 Primary audience for the site: the owner/GM/buyer of a company that ships physical products (auto parts is still the lead worked example: "fitment"). Positioning stance is "stealth SaaS": reads as sharp supply-chain software first; agentic-commerce vocabulary is reserved for category/investor-facing contexts, not the buyer-facing copy. The v4 story follows SB7: life without Everstock (stakes, the "before" column) against life with it, and why it beats spreadsheets or a new ERP.
 
+## Pricing rework (2026-11-22): stockbot $99, founding $50 for 12 months
+
+Decision: eBRAiN `decisions/stockbot-pricing-99-2026-11-22`, task "rework the landing page" on `tasks/luca`. **Where this section and older ones disagree, this one wins.**
+
+- **Prices (all in `lib/pricing.config.ts`, checked by `scripts/check-pricing.mjs`):** stockbot $99/mo, **monthly only** (Luca, 2026-11-22: no $990 yearly until confirmed), 14-day trial. Founding: $50/mo for the first 12 months, then $99; monthly only, no trial, first 100 customers (`FOUNDING`, `foundingTerms()`). Base unchanged ($199/mo or $1,990/yr, + $75 a seat, five seats, capped at $499/mo). Scale and Enterprise are Book a demo only.
+- **Retired:** "for life", "locked" and the `founding=1` sign-up parameter (the app ignores it; `ref` stays). The check script fails on "for life" / "locked" / exclamation marks in pricing copy. No one had claimed a spot under the old terms (only QA tests), so no claimant note is owed.
+- **Email copy** (`convex/emailTemplates.ts`) states the founding terms in words; it cannot import the config, so change it by hand with the prices, then re-upload the SendPulse presets (`scripts/sendpulse-templates.mjs`).
+- **Held until the product repo's `docs/value-prop-audit.md` is pushed** (branch `feature/value-prop-audit-and-build`): the claims pass ("Claims we must not make yet": live iMessage/SMS/WhatsApp, reading supplier email automatically, industrial market checks, disputes that chase suppliers, billing proven end to end), the service-business line, and the free supplier price audit as the entry offer (also needs the branch merged to dev and one run on real invoices).
+
 ## Claim your spot (2026-11-03): CTAs, forms, eBRAiN outbox
 
 Decision: eBRAiN `decisions/landing-ctas-founding-cohort-2026-11-03`. **The waitlist is gone** (copy, forms, follow-up questions, the old crm-page mirror). **Where this section and older ones disagree, this one wins.**

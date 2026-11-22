@@ -2,17 +2,17 @@
  * /llms.txt (https://llmstxt.org): a plain-text brief of the site for language models.
  * Keep it true to the live pages (the home and pricing designs); update it with the copy.
  */
-import { FOUNDING, YEARLY_MONTHS_PAID, plan, priceFor, termsFor, usd } from "@/lib/pricing.config";
+import { YEARLY_MONTHS_PAID, foundingTerms, plan, priceFor, termsFor, usd } from "@/lib/pricing.config";
 
 const SITE_URL = "https://tryeverstock.com";
 const s = plan("stockbot"), b = plan("base"), sc = plan("scale"), en = plan("enterprise");
 // every figure from lib/pricing.config.ts
 const PRICING = [
-  `- stockbot: ${usd(s.monthly!)}/mo, or ${priceFor(s, "yearly").amount}/mo billed yearly (${priceFor(s, "yearly").billed.replace("Billed ", "")}). ${termsFor(s, "monthly")} Founding price: ${usd(FOUNDING.monthly)}/mo for life for the first ${FOUNDING.seats} customers, monthly billing only. Text it a photo or PDF of an invoice, quote or packing slip; it matches it to your orders and flags problems.`,
+  `- stockbot: ${usd(s.monthly!)}/mo, billed monthly. ${termsFor(s, "monthly")} Founding price: ${foundingTerms()} Text it a photo or PDF of an invoice, quote or packing slip; it matches it to your orders and flags problems.`,
   `- Base: ${usd(b.monthly!)}/mo ${priceFor(b, "monthly").seat}, or ${priceFor(b, "yearly").amount}/mo billed yearly (${priceFor(b, "yearly").billed.replace("Billed ", "")}). ${termsFor(b, "monthly")} ${b.promise}`,
   `- Scale: ${usd(sc.monthly!)}/mo, for a team and its agent working off the same records. ${termsFor(sc, "monthly")}`,
   `- Enterprise: from ${usd(en.monthly!)}/mo; multiple agents, plugs into your ERP and systems. ${termsFor(en, "monthly")}`,
-  `- Yearly billing (stockbot and Base): pay for ${YEARLY_MONTHS_PAID} months, get 12.`,
+  `- Yearly billing (Base): pay for ${YEARLY_MONTHS_PAID} months, get 12.`,
 ].join("\n");
 
 const BODY = `# Everstock
