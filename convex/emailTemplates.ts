@@ -74,7 +74,7 @@ export const EMAILS: Record<EmailKey, EmailTemplate> = {
   claimConfirmation: {
     key: "claimConfirmation",
     name: "Everstock · Claim confirmation",
-    subject: "You're in: founding pricing is locked",
+    subject: "You're in: your founding spot is saved",
     preheader: "We'll email you when your account is ready.",
     variables: ["first_name", "fit_line"],
     html: layout({
@@ -82,12 +82,12 @@ export const EMAILS: Record<EmailKey, EmailTemplate> = {
       eyebrow: "Founding cohort",
       title: "You're in, {{first_name}}.",
       stampLabel: "Claimed",
-      body: p("Founding pricing is locked for you. We'll email you when your account is ready.") + p("{{fit_line}}") + REPLY + SIGN_OFF,
+      body: p("Your founding spot is saved: $50 a month for your first 12 months, then $99 a month. We'll email you when your account is ready.") + p("{{fit_line}}") + REPLY + SIGN_OFF,
     }),
     text: [
       "Hi {{first_name}},",
       "",
-      "You're in. Founding pricing is locked for you. We'll email you when your account is ready.",
+      "You're in. Your founding spot is saved: $50 a month for your first 12 months, then $99 a month. We'll email you when your account is ready.",
       "",
       "{{fit_line}}",
       "",
@@ -101,7 +101,7 @@ export const EMAILS: Record<EmailKey, EmailTemplate> = {
   claimConfirmationDemo: {
     key: "claimConfirmationDemo",
     name: "Everstock · Claim confirmation (20+ team, demo)",
-    subject: "You're in: founding pricing is locked",
+    subject: "You're in: your founding spot is saved",
     preheader: "With a team your size, a 30 minute demo is the quickest way in.",
     variables: ["first_name", "demo_url"],
     html: layout({
@@ -110,7 +110,7 @@ export const EMAILS: Record<EmailKey, EmailTemplate> = {
       title: "You're in, {{first_name}}.",
       stampLabel: "Claimed",
       body:
-        p("Founding pricing is locked for you. We'll email you when your account is ready.") +
+        p("Your founding spot is saved: $50 a month for your first 12 months, then $99 a month. We'll email you when your account is ready.") +
         p("With a team your size, a 30 minute demo with the founders is the quickest way to see Everstock on your own paperwork.") +
         button("Book a demo", "{{demo_url}}") +
         SIGN_OFF,
@@ -118,7 +118,7 @@ export const EMAILS: Record<EmailKey, EmailTemplate> = {
     text: [
       "Hi {{first_name}},",
       "",
-      "You're in. Founding pricing is locked for you. We'll email you when your account is ready.",
+      "You're in. Your founding spot is saved: $50 a month for your first 12 months, then $99 a month. We'll email you when your account is ready.",
       "",
       "With a team your size, a 30 minute demo with the founders is the quickest way to see Everstock on your own paperwork. Book one here:",
       "{{demo_url}}",

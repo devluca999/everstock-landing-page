@@ -10,7 +10,7 @@ type Setter = (patch: Record<string, unknown>) => void;
 export function pricingVals(state: { billing?: Billing; bfaq?: number; prFlip?: boolean }, set: Setter) {
   const billing: Billing = state.billing === "yearly" ? "yearly" : "monthly";
   const vals: Record<string, unknown> = {
-    prIntro: `Start by text for ${usd(FOUNDING.monthly)} a month at founding pricing. Add your inbox, your team and your systems when you need them. Your history and setup come with you.`,
+    prIntro: `Start by text for ${usd(FOUNDING.monthly)} a month at founding pricing. Add your team and your systems when you need them. Your history and setup come with you.`,
     prFoundingAmount: usd(FOUNDING.monthly),
     prFoundingLine: foundingLine(billing),
     prAnim: state.prFlip === undefined ? "none" : `${state.prFlip ? "es-price-a" : "es-price-b"} 280ms cubic-bezier(.2,.8,.25,1)`,

@@ -137,7 +137,7 @@ export const testEmail = internalAction({
         ? { first_name: "Luca", fit_line: fitLine("Base") }
         : key === "claimConfirmationDemo"
           ? { first_name: "Luca", demo_url: process.env.BOOKING_URL || "https://tryeverstock.com/#book-demo" }
-          : { first_name: "Luca", signup_url: process.env.SIGNUP_URL || "https://app.tryeverstock.com/sign-up?founding=1" };
+          : { first_name: "Luca", signup_url: process.env.SIGNUP_URL || "https://app.tryeverstock.com/sign-up" };
     return m.sendEmail(key, to, vars);
   },
 });

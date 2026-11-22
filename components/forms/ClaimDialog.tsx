@@ -12,6 +12,7 @@
 import { useState } from "react";
 import { CHANNELS, CLAIM_TEAM, HEADACHES, USES_TODAY } from "@/convex/forms";
 import { HONEYPOT } from "@/lib/intake";
+import { FOUNDING, plan, usd } from "@/lib/pricing.config";
 import { CLAIM_HASHES, currentSeats, loadSeats, openClaim, openDemo, rememberLead, seatsLine } from "@/lib/cta";
 import { attribution, post, useDialog } from "./useDialog";
 import "./forms.css";
@@ -135,7 +136,10 @@ export default function ClaimDialog() {
           {phase === "sent" && claim ? (
             <div className="es-f-sent" aria-live="polite">
               <div className="es-f-done">
-                <p>Founding pricing is locked for you. We&apos;ll email you when your account is ready.</p>
+                <p>
+                  Your founding spot is saved: {usd(FOUNDING.monthly)}/mo for your first {FOUNDING.months} months, then{" "}
+                  {usd(plan("stockbot").monthly!)}/mo. We&apos;ll email you when your account is ready.
+                </p>
                 <span className="es-f-stamp">Claimed</span>
               </div>
               {claim.planFit && FIT[claim.planFit] ? <p className="es-f-fit">{FIT[claim.planFit]}</p> : null}

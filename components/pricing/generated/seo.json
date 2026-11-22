@@ -32,7 +32,7 @@
         "p": "Etsy"
       },
       {
-        "p": "Text stockbot on WhatsApp, Telegram or iMessage."
+        "p": "Text stockbot from your phone."
       }
     ]
   },
@@ -59,7 +59,7 @@
         "text": "What does stockbot actually do?"
       },
       {
-        "p": "stockbot is an agent you text. Send it a photo or PDF of an invoice, quote or packing slip. It reads it, matches it to your orders, and flags overcharges, missing items and price changes. It can draft the reply to your supplier for you."
+        "p": "stockbot is an agent you text. Send it a photo or PDF of an invoice, quote or packing slip and confirm the figures it pulls out. It checks them against your orders and flags overcharges, missing items and price changes. It can draft the reply to your supplier for you."
       },
       {
         "h": 3,
@@ -77,14 +77,14 @@
         "text": "Do I need an ERP?"
       },
       {
-        "p": "No. Everstock works from your inbox, documents and spreadsheets. If you already run an ERP, Enterprise plugs into it."
+        "p": "No. Everstock works from your documents and spreadsheets. If you already run an ERP, Enterprise plugs into it."
       },
       {
         "h": 3,
         "text": "Which platforms do you work with?"
       },
       {
-        "p": "Shopify, Etsy, Excel, Google Sheets, your ERP, WhatsApp and Telegram. stockbot also works right in the Everstock app."
+        "p": "Shopify, Etsy, Excel, Google Sheets and your ERP. stockbot works by text."
       },
       {
         "h": 3,

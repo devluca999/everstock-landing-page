@@ -31,7 +31,6 @@ export const emailClaimers = internalAction({
     if (send) {
       for (const r of list) {
         const url = new URL(signup!);
-        url.searchParams.set("founding", "1");
         url.searchParams.set("email", r.email);
         if (r.refCode) url.searchParams.set("ref", r.refCode);
         if (await m!.sendEmail("accountReady", r.email, { first_name: r.name, signup_url: url.toString() })) {

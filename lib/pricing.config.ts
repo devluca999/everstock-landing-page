@@ -38,12 +38,17 @@ export type Plan = {
   cta: "claim" | "demo";
 };
 
+/**
+ * Founding pricing (eBRAiN decisions/stockbot-pricing-99-2026-11-22): $50 a month for the first
+ * 12 months, then stockbot's standard price. Monthly only, no trial, the first 100 customers.
+ */
 export const FOUNDING = {
   plan: "stockbot" as const,
-  monthly: 20,
+  monthly: 50,
+  months: 12,
   seats: FOUNDING_SEATS,
-  /** DECIDE (brief): the founding price has no yearly option. */
   yearly: false,
+  trial: false,
 };
 
 export const BASE_ONBOARDING_DAYS = 90;
@@ -55,10 +60,11 @@ export const PLANS: Plan[] = [
   {
     id: "stockbot",
     name: "stockbot",
-    monthly: 50,
-    yearly: true,
+    monthly: 99,
+    // monthly only for now (Luca, 2026-11-22): a $990 yearly price is not confirmed, so it is not offered
+    yearly: false,
     trialDays: 14,
-    terms: { monthly: "No commitment, cancel anytime. 14-day free trial.", yearly: `Paid yearly up front, refundable within ${YEARLY_REFUND_DAYS} days. 14-day free trial.` },
+    terms: { monthly: "No commitment, cancel anytime. 14-day free trial.", yearly: "Billed monthly only. No commitment, cancel anytime. 14-day free trial." },
     line: "Text it your paperwork. It catches what you'd miss.",
     cta: "claim",
   },
@@ -74,7 +80,8 @@ export const PLANS: Plan[] = [
       yearly: `Paid yearly up front, refundable within ${YEARLY_REFUND_DAYS} days.`,
     },
     promise: `Core workflows live in ${BASE_PROMISE_DAYS} days, or cancel with no further charges.`,
-    line: "stockbot reads your inbox, so paperwork sorts itself.",
+    // claims pass (2026-11-22): the audit forbids saying Everstock reads supplier email on its own
+    line: "Up to five people, your order history and your rules, in one place.",
     cta: "claim",
   },
   {
@@ -149,12 +156,18 @@ export const BILLING_FAQ: { q: string; a: string }[] = [
   },
 ];
 
+/** The founding terms in one sentence (cards, /pricing, llms.txt, the claim form). */
+export function foundingTerms() {
+  const s = plan("stockbot");
+  return `For the first ${FOUNDING.seats} customers: ${usd(FOUNDING.monthly)}/mo for your first ${FOUNDING.months} months, then ${usd(s.monthly!)}/mo. Billed monthly, no trial.`;
+}
+
 /** The founding line for the stockbot card, by billing view. */
 export function foundingLine(billing: Billing) {
   const s = plan("stockbot");
   return billing === "yearly"
-    ? `Founding price is monthly only. Standard yearly: ${priceFor(s, "yearly").amount}/mo, ${priceFor(s, "yearly").billed.toLowerCase()}.`
-    : `For the first ${FOUNDING.seats} customers, for life, billed monthly. Standard: ${usd(s.monthly!)}/mo, no commitment, cancel anytime. ${s.trialDays}-day free trial.`;
+    ? `stockbot is billed monthly only. Founding: ${usd(FOUNDING.monthly)}/mo for your first ${FOUNDING.months} months, then ${usd(s.monthly!)}/mo.`
+    : `${foundingTerms()} Standard: ${usd(s.monthly!)}/mo, no commitment, cancel anytime. ${s.trialDays}-day free trial.`;
 }
 
 /* ---------- /pricing (the compare table, scenes and FAQ show the monthly figures) ---------- */
