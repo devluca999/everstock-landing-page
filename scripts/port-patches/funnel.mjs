@@ -82,7 +82,7 @@ const SECTION = [
 const FREE_ROW =
   `<div aria-label="Free bill check" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 28px;padding:16px clamp(16px,2vw,24px);border:1px solid rgb(var(--ink) / 0.16);border-radius:8px;background:rgb(var(--bg));">` +
   `<div style="flex:1 1 320px;min-width:0;display:grid;gap:6px;">` +
-  `<p style="margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;"><span style="${MONO}font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgb(var(--ink));">{{ prFreeName }}</span><span style="${MONO}font-variant-numeric:tabular-nums lining-nums;font-size:22px;font-weight:500;line-height:1;letter-spacing:-0.02em;color:rgb(var(--ink));">{{ prFreeAmount }}</span><span style="${MONO}font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgb(var(--ink) / 0.64);">Start here</span></p>` +
+  `<p style="margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;"><span style="${MONO}font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgb(var(--ink));">{{ prFreeName }}</span><span style="${MONO}font-variant-numeric:tabular-nums lining-nums;font-size:22px;font-weight:500;line-height:1;letter-spacing:-0.02em;color:rgb(var(--ink));">{{ prFreeAmount }}</span></p>` +
   `<p style="margin:0;max-width:62ch;font-size:15px;line-height:1.5;color:rgb(var(--ink) / 0.74);text-wrap:pretty;">{{ prFreeLine }}</p></div>` +
   `<div style="display:grid;gap:6px;justify-items:end;">${outlineCta({ key: "prf", to: "check", label: "Send us the bills" })}<span style="${MONO}font-size:11px;letter-spacing:0.06em;color:rgb(var(--ink) / 0.64);">{{ billCheckNote }}</span></div></div>`;
 
