@@ -10,6 +10,9 @@
  *   BOOKING_URL        the Cal.com event link, e.g. https://cal.com/everstock/demo. Unset:
  *                      "Book a demo" opens the short fallback form.
  *   FOUNDING_END_DATE  optional, YYYY-MM-DD: "Founding pricing ends <date> or at 100 seats".
+ *   BILL_CHECK_URL     where "Send us the bills. We check them." goes once the free bill check
+ *                      runs (eBRAiN tasks/jordi task 30), e.g. an sms: link to stockbot. Unset:
+ *                      the button opens the claim form and the page says the check opens soon.
  * The seat count itself is never configured: it comes from real claims (/api/founding-seats).
  */
 export type SiteConfig = {
@@ -17,6 +20,7 @@ export type SiteConfig = {
   signupUrl: string | null;
   bookingUrl: string | null;
   foundingEndDate: string | null;
+  billCheckUrl: string | null;
 };
 
 export function siteConfig(): SiteConfig {
@@ -27,6 +31,7 @@ export function siteConfig(): SiteConfig {
     signupUrl: (process.env.SIGNUP_URL || "").trim() || null,
     bookingUrl: (process.env.BOOKING_URL || process.env.NEXT_PUBLIC_BOOKING_URL || "").trim() || null,
     foundingEndDate: /^\d{4}-\d{2}-\d{2}$/.test(end) ? end : null,
+    billCheckUrl: (process.env.BILL_CHECK_URL || "").trim() || null,
   };
 }
 

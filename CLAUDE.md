@@ -10,6 +10,17 @@ This repo is the marketing/landing site, live at **tryeverstock.com**, deployed 
 
 Primary audience for the site: the owner/GM/buyer of a company that ships physical products (auto parts is still the lead worked example: "fitment"). Positioning stance is "stealth SaaS": reads as sharp supply-chain software first; agentic-commerce vocabulary is reserved for category/investor-facing contexts, not the buyer-facing copy. The v4 story follows SB7: life without Everstock (stakes, the "before" column) against life with it, and why it beats spreadsheets or a new ERP.
 
+## Bill-check funnel (2026-11-24): the free check is the way in
+
+Task: eBRAiN `tasks/luca` "Rework the landing page to suit the funnel"; strategy `strategies/bill-check-funnel-gtm`. **Where this section and older ones disagree, this one wins.** All of it is port patch module `scripts/port-patches/funnel.mjs` (loaded after `claims.mjs`, both pages) plus `FREE_CHECK` / `FOUNDING_CLOSE` in `lib/pricing.config.ts`.
+
+- **Line:** "Send us the bills. We check them." (Luca, plural: the check needs two bills from the same supplier). It is the hero's primary button; "Book a demo" stays the secondary; the note under it is `{{ billCheckNote }}` ("Free. No account." plus "Opening soon." until the check runs). The founding seat line moved from the hero to the pricing close.
+- **Removed:** the "Built for sellers on Shopify, Etsy, and wherever you sell next." audience line (both pages) is now "Works with the tools you already run."; the logos stay.
+- **New section `#bill-check`** (after the platforms band): how the check works (three steps plus what it cannot judge) and the privacy block `#privacy` (start with a paid bill, cross out bank details, deleted after the check, only what was read, no logins).
+- **Pricing:** home gets the free entry row ($0) above the stockbot card and the founding close (`FOUNDING_CLOSE`, claim button, seat line) before the billing FAQ; /pricing's stockbot strip leads with the free check and closes on founding pricing. `check-pricing.mjs` checks the free row and that its line names no cross-supplier comparison.
+- **Switch:** `BILL_CHECK_URL` (Vercel env, read at build). Unset: every free-check button opens the claim form, tagged `bill-check-<button>`, with a note that the check opens soon. Set it only once Jordi's task 30 ships; `LAUNCH_MODE` stays `prelaunch` until he confirms the production loop test.
+- **Claims:** only the strategy's ladder (price changes against the buyer's own bills, duplicates, packing-slip quantities). The cross-supplier comparison stays off until Jordi confirms its tests. Privacy promises must stay true once task 30 ships.
+
 ## Pricing rework (2026-11-22): stockbot $99, founding $50 for 12 months
 
 Decision: eBRAiN `decisions/stockbot-pricing-99-2026-11-22`, task "rework the landing page" on `tasks/luca`. **Where this section and older ones disagree, this one wins.**

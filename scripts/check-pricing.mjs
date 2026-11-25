@@ -6,7 +6,7 @@
  *   node --experimental-strip-types scripts/check-pricing.mjs
  */
 import assert from "node:assert/strict";
-import { BILLING_FAQ, FOUNDING, PLANS, foundingLine, foundingTerms, plan, priceFor, termsFor } from "../lib/pricing.config.ts";
+import { BILLING_FAQ, FOUNDING, FOUNDING_CLOSE, FREE_CHECK, PLANS, foundingLine, foundingTerms, plan, priceFor, termsFor } from "../lib/pricing.config.ts";
 
 const p = (id, b) => priceFor(plan(id), b);
 const checks = [
@@ -32,6 +32,10 @@ const checks = [
   [p("enterprise", "monthly").pre + " " + p("enterprise", "monthly").amount + p("enterprise", "monthly").per, "From $2,500/mo"],
   [p("enterprise", "yearly").amount, "$2,500"],
   [termsFor(plan("enterprise"), "monthly"), "Annual contract, billed quarterly or annually. Custom pricing."],
+  // the free entry row (eBRAiN strategies/bill-check-funnel-gtm): free, never a plan, no account
+  [FREE_CHECK.amount, "$0"],
+  [PLANS.some((x) => x.monthly === 0), false],
+  [FOUNDING_CLOSE.line(), foundingTerms()],
 ];
 for (const [got, want] of checks) assert.equal(got, want);
 
@@ -41,9 +45,14 @@ const copy = [
   foundingLine("monthly"),
   foundingLine("yearly"),
   foundingTerms(),
+  FREE_CHECK.name,
+  FREE_CHECK.line,
+  FOUNDING_CLOSE.title,
   ...PLANS.flatMap((x) => ["monthly", "yearly"].flatMap((b) => Object.values(priceFor(x, b)))),
 ];
 for (const c of copy) assert.ok(!/[–—]/.test(c), `dash in: ${c}`);
 for (const c of copy) assert.ok(!/for life|lifetime|locked|forever|grandfather/i.test(c), `retired founding promise in: ${c}`);
 for (const c of copy) assert.ok(!/!/.test(c), `exclamation mark in: ${c}`);
+// the free check may not claim the cross-supplier comparison until Jordi confirms its tests
+assert.ok(!/other supplier|another supplier|market|cheaper/i.test(FREE_CHECK.line), `unconfirmed audit claim in: ${FREE_CHECK.line}`);
 console.log(`pricing config ok: ${checks.length} figures, ${copy.length} strings, no em or en dashes`);

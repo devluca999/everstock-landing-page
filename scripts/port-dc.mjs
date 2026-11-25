@@ -36,6 +36,7 @@ import * as v9App from "./port-patches/v9-app.mjs";
 import * as claim from "./port-patches/claim.mjs";
 import * as pricingBilling from "./port-patches/pricing-billing.mjs";
 import * as claims from "./port-patches/claims.mjs";
+import * as funnel from "./port-patches/funnel.mjs";
 const V9_AREAS = [v9Capabilities, v9Workflows, v9Plan, v9Footer, v9Industries, v9Ctas, v9App];
 /* Site-side patches shared by both pages. */
 const NO_LEGAL_NAV = {
@@ -141,6 +142,7 @@ const PAGES = {
       ...V9_AREAS.flatMap((a) => a.logicPatches),
       ...claim.home.logicPatches,
       ...claims.home.logicPatches,
+      ...funnel.home.logicPatches,
     ],
     templatePatches: [
       {
@@ -167,9 +169,10 @@ const PAGES = {
       ...V9_AREAS.flatMap((a) => a.templatePatches),
       ...claim.home.templatePatches,
       ...claims.home.templatePatches,
+      ...funnel.home.templatePatches,
     ],
     // the sections v9 shows, in order (the older ones are still in the design at zero height)
-    seo: { sections: ["top", "integrations", "problem", "capabilities", "workflows", "industries", "plan", "pricing", "stock-plan", "cta"] },
+    seo: { sections: ["top", "integrations", "bill-check", "problem", "capabilities", "workflows", "industries", "plan", "pricing", "stock-plan", "cta"] },
     hrefBindings: {
       ...CTA_BINDINGS,
       "Pricing.dc.html": "/pricing",
@@ -202,8 +205,9 @@ const PAGES = {
       ...claim.pricing.logicPatches,
       ...pricingBilling.logicPatches,
       ...claims.pricing.logicPatches,
+      ...funnel.pricing.logicPatches,
     ],
-    templatePatches: [NO_LEGAL_NAV, FOOTER_FEEDBACK, ...claim.pricing.templatePatches, ...pricingBilling.templatePatches, ...claims.pricing.templatePatches],
+    templatePatches: [NO_LEGAL_NAV, FOOTER_FEEDBACK, ...claim.pricing.templatePatches, ...pricingBilling.templatePatches, ...claims.pricing.templatePatches, ...funnel.pricing.templatePatches],
     // deterministic paints served as baked PNGs (see bakes below)
     bakes: [{ method: "paintStack", png: "public/pricing/stack-{hash}.png" }],
     hrefBindings: {

@@ -17,13 +17,66 @@
     "footer": false,
     "blocks": [
       {
-        "p": "Built for sellers on Shopify, Etsy, and wherever you sell next."
+        "p": "Works with the tools you already run."
       },
       {
         "p": "Etsy"
       },
       {
         "p": "Text stockbot from your phone."
+      }
+    ]
+  },
+  {
+    "id": "bill-check",
+    "footer": false,
+    "blocks": [
+      {
+        "p": "The free bill check"
+      },
+      {
+        "h": 2,
+        "text": "Send us the bills. We check them."
+      },
+      {
+        "p": "Text stockbot two bills from the same supplier. It checks them and answers in the same thread with what it found. Free, with no account and no card."
+      },
+      {
+        "p": "How the check works"
+      },
+      {
+        "p": "Send two bills Two bills from the same supplier, as photos or PDFs. Bills you have already paid work."
+      },
+      {
+        "p": "stockbot reads them back It lists the supplier, items, quantities and prices it read, so you see exactly what it took from the page."
+      },
+      {
+        "p": "You see what changed Prices that went up since the last bill and charges that appear twice. Add a packing slip and it flags items billed beyond what arrived."
+      },
+      {
+        "p": "What a first check cannot judge: a first order from a supplier, or a price rise the supplier made for every customer. Once orders run through Everstock, every later bill is checked against its order."
+      },
+      {
+        "p": "Privacy"
+      },
+      {
+        "h": 3,
+        "text": "Your bills stay yours."
+      },
+      {
+        "p": "Start with a paid bill A bill you have already paid is enough to show price changes and duplicates."
+      },
+      {
+        "p": "Cross out bank details The check only needs the supplier, items, quantities and prices."
+      },
+      {
+        "p": "Deleted after the check Bills sent for a free check are deleted once the check is done."
+      },
+      {
+        "p": "Only what was read The result shows exactly what stockbot read from the page, and nothing else."
+      },
+      {
+        "p": "No logins No accounting or bank logins. Bills only."
       }
     ]
   },

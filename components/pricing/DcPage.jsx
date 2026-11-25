@@ -21,8 +21,8 @@ import tree from "./generated/template.json";
 import defaults from "./generated/props.json";
 import bakes from "./generated/bakes.json";
 import { createDcPage } from "../dc/host";
-import { BILLING_FAQ, FOUNDING, baseSeatsAnswer, plan, priceFor, sceneNote, seatsRow, tierHeader, usd } from "@/lib/pricing.config";
-import { CLAIM_HREF, DEMO_HREF, claimLabel, currentSeats, loadSeats, onSeats, openClaim, openDemo, seatsLine } from "@/lib/cta";
+import { BILLING_FAQ, FOUNDING, FOUNDING_CLOSE, baseSeatsAnswer, plan, priceFor, sceneNote, seatsRow, tierHeader, usd } from "@/lib/pricing.config";
+import { CLAIM_HREF, DEMO_HREF, billCheckNote, claimLabel, currentSeats, loadSeats, onSeats, openBillCheck, openClaim, openDemo, seatsLine } from "@/lib/cta";
 
 const ctaOf = (e) => (e && e.currentTarget && e.currentTarget.getAttribute && e.currentTarget.getAttribute("data-cta")) || "other";
 
@@ -37,6 +37,11 @@ const extend = (DesignLogic) =>
       this.openDemo = (e) => {
         this.setState({ navMenu: false });
         openDemo(`pricing-${ctaOf(e)}`, e);
+      };
+      // the stockbot strip's free bill check (scripts/port-patches/funnel.mjs)
+      this.openBillCheck = (e) => {
+        this.setState({ navMenu: false });
+        openBillCheck(`pricing-${ctaOf(e)}`, e);
       };
       // the tiers' and scenes' claim label (a logic patch reads it, see claim.mjs)
       this.claimText = () => claimLabel(currentSeats());
@@ -78,6 +83,8 @@ const extend = (DesignLogic) =>
         ctaBookDemoHref: DEMO_HREF,
         seatsLine: seatsLine(currentSeats()),
         prFoundingMo: `${usd(FOUNDING.monthly)}/mo`,
+        billCheckNote: billCheckNote(),
+        prCloseLine: FOUNDING_CLOSE.line(),
         faqBaseSeats: baseSeatsAnswer(),
         faqCancel: BILLING_FAQ[0].a,
       };

@@ -13,7 +13,7 @@ import { useState } from "react";
 import { CHANNELS, CLAIM_TEAM, HEADACHES, USES_TODAY } from "@/convex/forms";
 import { HONEYPOT } from "@/lib/intake";
 import { FOUNDING, plan, usd } from "@/lib/pricing.config";
-import { CLAIM_HASHES, currentSeats, loadSeats, openClaim, openDemo, rememberLead, seatsLine } from "@/lib/cta";
+import { CLAIM_HASHES, currentSeats, isBillCheckCta, loadSeats, openClaim, openDemo, rememberLead, seatsLine } from "@/lib/cta";
 import { attribution, post, useDialog } from "./useDialog";
 import "./forms.css";
 
@@ -213,6 +213,9 @@ export default function ClaimDialog() {
             </div>
           ) : (
             <form className="es-f-form" onSubmit={submit} noValidate={false}>
+              {isBillCheckCta(meta.cta) ? (
+                <p className="es-f-note">The free bill check opens soon. Claim your spot and Everstock emails you when it does.</p>
+              ) : null}
               <div className="es-f-line">
                 <label htmlFor="cl-name">First name</label>
                 <input id="cl-name" name="name" type="text" required autoComplete="given-name" autoFocus />

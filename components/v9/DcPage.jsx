@@ -23,7 +23,7 @@ import tree from "./generated/template.json";
 import defaults from "./generated/props.json";
 import { createDcPage, sendRequest } from "../dc/host";
 import { pricingVals } from "../dc/pricingVals";
-import { CLAIM_HREF, DEMO_HREF, claimLabel, currentSeats, loadSeats, onSeats, openClaim, openDemo, seatsLine } from "@/lib/cta";
+import { CLAIM_HREF, DEMO_HREF, billCheckNote, claimLabel, currentSeats, loadSeats, onSeats, openBillCheck, openClaim, openDemo, seatsLine } from "@/lib/cta";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const pageLoadedAt = typeof performance !== "undefined" ? performance.now() : 0;
@@ -123,6 +123,12 @@ const extend = (DesignLogic) =>
         this.setState({ navMenu: false });
         openDemo(ctaOf(e), e);
       };
+      // "Send us the bills. We check them." (scripts/port-patches/funnel.mjs): BILL_CHECK_URL
+      // once the free check runs, the claim form until then
+      this.openBillCheck = (e) => {
+        this.setState({ navMenu: false });
+        openBillCheck(ctaOf(e), e);
+      };
 
       // the design's modal: only its Stock Plan mode is still opened (goPF)
       this.mSubmit = (e) => {
@@ -220,6 +226,7 @@ const extend = (DesignLogic) =>
         ctaClaimLabel: claimLabel(currentSeats()),
         ctaBookDemoHref: DEMO_HREF,
         seatsLine: seatsLine(currentSeats()),
+        billCheckNote: billCheckNote(),
         // the pricing section (cards, Monthly / Yearly toggle, billing FAQ), from lib/pricing.config.ts
         ...pricingVals(this.state, (patch) => this.setState(patch)),
       };

@@ -18,6 +18,9 @@ export const DEST = {
   plan: 'href="#price-file" onClick="{{ goPF }}"',
   early: 'href="#waitlist" onClick="{{ openFounding }}"',
   demo: 'href="#book-demo" onClick="{{ openDemo }}"',
+  // the free bill check (funnel.mjs): BILL_CHECK_URL once it runs, the claim form until then;
+  // without JS the link opens the claim form like the other primaries
+  check: 'href="#waitlist" onClick="{{ openBillCheck }}"',
 };
 
 export const stampedCta = ({ key, to, label, style = "", h = 50 }) =>

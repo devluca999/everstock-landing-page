@@ -15,7 +15,7 @@ import type { SiteConfig } from "./siteConfig";
 
 export type Seats = { total: number; claimed: number | null };
 
-const FALLBACK: SiteConfig = { launchMode: "prelaunch", signupUrl: null, bookingUrl: null, foundingEndDate: null };
+const FALLBACK: SiteConfig = { launchMode: "prelaunch", signupUrl: null, bookingUrl: null, foundingEndDate: null, billCheckUrl: null };
 export const site = (): SiteConfig =>
   (typeof window !== "undefined" && (window as unknown as { __ES_SITE?: SiteConfig }).__ES_SITE) || FALLBACK;
 
@@ -95,6 +95,31 @@ export function openClaim(cta = "other", e?: { preventDefault?: () => void }) {
     return;
   }
   window.dispatchEvent(new CustomEvent("es:claim", { detail: { cta } }));
+}
+
+/* ---------- The free bill check (eBRAiN strategies/bill-check-funnel-gtm) ---------- */
+
+/** True once BILL_CHECK_URL is set, i.e. the free check runs (eBRAiN tasks/jordi task 30). */
+export const billCheckOpen = () => !!site().billCheckUrl;
+
+/** The note under a free-check button: what it costs, and whether it runs yet. */
+export const billCheckNote = () => (billCheckOpen() ? "Free. No account." : "Free. No account. Opening soon.");
+
+/** Claim-form `cta` values that came from a free-check button (the dialog adds a note). */
+export const isBillCheckCta = (cta: string) => cta.includes("bill-check");
+
+/**
+ * "Send us the bills. We check them." Goes to BILL_CHECK_URL once the check runs; until then
+ * it opens the claim form, tagged bill-check-<button>, and the dialog says the check opens soon.
+ */
+export function openBillCheck(cta = "other", e?: { preventDefault?: () => void }) {
+  const url = site().billCheckUrl;
+  if (url) {
+    if (e && e.preventDefault) e.preventDefault();
+    location.assign(url);
+    return;
+  }
+  openClaim(isBillCheckCta(cta) ? cta : `bill-check-${cta}`, e);
 }
 
 /* ---------- Book a demo ---------- */

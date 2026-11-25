@@ -3,14 +3,20 @@
  * from lib/pricing.config.ts. `billing` is the Monthly / Yearly toggle; `anim` flips between two
  * identical keyframes so each change replays the price fade (dc-host.css, off under reduced motion).
  */
-import { BILLING_FAQ, FOUNDING, PLANS, foundingLine, priceFor, termsFor, usd, type Billing } from "@/lib/pricing.config";
+import { BILLING_FAQ, FOUNDING, FOUNDING_CLOSE, FREE_CHECK, PLANS, foundingLine, priceFor, termsFor, usd, type Billing } from "@/lib/pricing.config";
 
 type Setter = (patch: Record<string, unknown>) => void;
 
 export function pricingVals(state: { billing?: Billing; bfaq?: number; prFlip?: boolean }, set: Setter) {
   const billing: Billing = state.billing === "yearly" ? "yearly" : "monthly";
   const vals: Record<string, unknown> = {
-    prIntro: `Start by text for ${usd(FOUNDING.monthly)} a month at founding pricing. Add your team and your systems when you need them. Your history and setup come with you.`,
+    prIntro: `Start free with a bill check. Then text stockbot for ${usd(FOUNDING.monthly)} a month at founding pricing. Add your team and your systems when you need them. Your history and setup come with you.`,
+    // the free entry row and the founding close (scripts/port-patches/funnel.mjs)
+    prFreeName: FREE_CHECK.name,
+    prFreeAmount: FREE_CHECK.amount,
+    prFreeLine: FREE_CHECK.line,
+    prCloseTitle: FOUNDING_CLOSE.title,
+    prCloseLine: FOUNDING_CLOSE.line(),
     prFoundingAmount: usd(FOUNDING.monthly),
     prFoundingLine: foundingLine(billing),
     prAnim: state.prFlip === undefined ? "none" : `${state.prFlip ? "es-price-a" : "es-price-b"} 280ms cubic-bezier(.2,.8,.25,1)`,

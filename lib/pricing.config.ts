@@ -162,6 +162,25 @@ export function foundingTerms() {
   return `For the first ${FOUNDING.seats} customers: ${usd(FOUNDING.monthly)}/mo for your first ${FOUNDING.months} months, then ${usd(s.monthly!)}/mo. Billed monthly, no trial.`;
 }
 
+/**
+ * The free entry row (eBRAiN strategies/bill-check-funnel-gtm, 2026-11-24): the bill check is
+ * free, needs no account and asks for two bills from the same supplier. It is not a plan: it
+ * has no price to bill, so it sits outside PLANS. Copy only what the check does today: price
+ * changes against the buyer's own bills, duplicates, and with a packing slip, items billed
+ * beyond what arrived. Never the cross-supplier comparison until Jordi confirms its tests.
+ */
+export const FREE_CHECK = {
+  name: "Free bill check",
+  amount: "$0",
+  line: "Send two bills from the same supplier. stockbot reads them and shows what changed. No account, no card.",
+};
+
+/** The founding close at the end of the pricing section (home) and the stockbot strip (/pricing). */
+export const FOUNDING_CLOSE = {
+  title: "Then keep stockbot at founding pricing.",
+  line: () => foundingTerms(),
+};
+
 /** The founding line for the stockbot card, by billing view. */
 export function foundingLine(billing: Billing) {
   const s = plan("stockbot");
